@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLI Tracker</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        success: '#22c55e',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        dark: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            border: '#334155'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dark bg-dark-bg text-gray-100 min-h-screen">
+    <div id="app" class="p-4 max-w-2xl mx-auto">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-6">
+            <h1 class="text-xl font-bold text-primary">TLI Tracker</h1>
+            <div class="flex gap-2">
+                <button id="btn-overlay" class="px-3 py-1.5 bg-dark-card border border-dark-border rounded-lg text-sm hover:bg-dark-border transition">
+                    Overlay
+                </button>
+                <button id="btn-history" class="px-3 py-1.5 bg-dark-card border border-dark-border rounded-lg text-sm hover:bg-dark-border transition">
+                    History
+                </button>
+                <button id="btn-settings" class="px-3 py-1.5 bg-dark-card border border-dark-border rounded-lg text-sm hover:bg-dark-border transition">
+                    ⚙️
+                </button>
+            </div>
+        </header>
+
+        <!-- Status Banner -->
+        <div id="status-banner" class="hidden mb-4 p-3 rounded-lg text-sm">
+            <span id="status-text"></span>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <!-- Current Map & Session Mapping -->
+            <div class="bg-dark-card border border-dark-border rounded-xl p-4">
+                <div class="text-xs text-gray-400 mb-1">Current Map</div>
+                <div id="stat-map-time" class="text-2xl font-bold">--:--</div>
+                <div id="stat-map-value" class="text-sm text-success mb-2">+0</div>
+                <div class="text-xs text-gray-400 mb-1">Total in Map</div>
+                <div id="stat-session-mapping" class="text-lg font-bold">0:00</div>
+            </div>
+
+            <!-- Session Total -->
+            <div class="bg-dark-card border border-dark-border rounded-xl p-4">
+                <div class="text-xs text-gray-400 mb-1">Session Total</div>
+                <div id="stat-session-total" class="text-4xl font-bold">0:00</div>
+                <div id="stat-session-value" class="text-lg text-success">+0</div>
+            </div>
+
+            <!-- Rate -->
+            <div class="bg-dark-card border border-dark-border rounded-xl p-4">
+                <div class="text-xs text-gray-400 mb-1">Rate</div>
+                <div id="stat-rate" class="text-2xl font-bold">0/hr</div>
+                <div id="stat-maps" class="text-sm text-gray-400"><span id="stat-map-count">0</span> maps</div>
+            </div>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-semibold">Drops</h2>
+            <div class="flex bg-dark-card rounded-lg p-1">
+                <button id="btn-mode-value" class="px-3 py-1 text-sm rounded-md bg-primary text-white transition">
+                    Value
+                </button>
+                <button id="btn-mode-items" class="px-3 py-1 text-sm rounded-md text-gray-400 hover:text-white transition">
+                    Items
+                </button>
+            </div>
+        </div>
+
+        <!-- Drops List -->
+        <div id="drops-container" class="bg-dark-card border border-dark-border rounded-xl overflow-hidden mb-2">
+            <div id="drops-list" class="divide-y divide-dark-border max-h-64 overflow-y-auto">
+                <!-- Drops will be inserted here -->
+                <div class="p-4 text-center text-gray-500">
+                    No drops yet
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Note -->
+        <div class="mb-6 text-xs text-center text-gray-500">
+            Showing top 5 items • Gear not tracked
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3">
+            <button id="btn-initialize" class="flex-1 py-3 bg-primary hover:bg-primary/80 rounded-xl font-medium transition">
+                Initialize Bag
+            </button>
+            <button id="btn-reset" class="px-4 py-3 bg-dark-card border border-dark-border hover:bg-danger/20 hover:border-danger rounded-xl transition">
+                Reset
+            </button>
+        </div>
+
+        <!-- Initialize Status -->
+        <div id="init-status" class="mt-3 text-center text-sm text-gray-400">
+            Not initialized - Click "Initialize Bag" then sort your inventory
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-96 max-w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Settings</h3>
+                <button id="btn-close-settings" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Tax Toggle -->
+                <div class="flex items-center justify-between">
+                    <span>Include AH Tax (12.5%)</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="setting-tax" class="sr-only peer">
+                        <div class="w-11 h-6 bg-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- Show Map Value Toggle -->
+                <div class="flex items-center justify-between">
+                    <span>Show Current Map Value</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="setting-map-value" class="sr-only peer">
+                        <div class="w-11 h-6 bg-dark-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- Overlay Opacity -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span>Overlay Opacity</span>
+                        <span id="opacity-value">90%</span>
+                    </div>
+                    <input type="range" id="setting-opacity" min="20" max="100" value="90"
+                           class="w-full h-2 bg-dark-border rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <button id="btn-save-settings" class="w-full mt-6 py-2 bg-primary hover:bg-primary/80 rounded-lg transition">
+                Save Settings
+            </button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-[500px] max-w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Session History</h3>
+                <button id="btn-close-history" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="grid grid-cols-3 gap-2 mb-4 text-center">
+                <div class="bg-dark-bg rounded-lg p-2">
+                    <div class="text-xs text-gray-400">Total Value</div>
+                    <div id="history-total-value" class="font-bold text-success">0</div>
+                </div>
+                <div class="bg-dark-bg rounded-lg p-2">
+                    <div class="text-xs text-gray-400">Total Maps</div>
+                    <div id="history-total-maps" class="font-bold">0</div>
+                </div>
+                <div class="bg-dark-bg rounded-lg p-2">
+                    <div class="text-xs text-gray-400">Avg/Hour</div>
+                    <div id="history-avg-rate" class="font-bold">0</div>
+                </div>
+            </div>
+
+            <!-- Sessions List -->
+            <div id="history-list" class="flex-1 overflow-y-auto space-y-2">
+                <div class="text-center text-gray-500 py-4">No sessions yet</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

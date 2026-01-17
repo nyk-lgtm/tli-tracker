@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLI Overlay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .overlay-container {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .stat {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .stat-value.positive {
+            color: #22c55e;
+        }
+
+        .stat-value.negative {
+            color: #ef4444;
+        }
+
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .in-map-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        .in-map-dot.inactive {
+            background: #6b7280;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay-container">
+        <div class="in-map-dot" id="map-indicator"></div>
+
+        <div class="stat">
+            <span class="stat-value" id="map-time">--:--</span>
+        </div>
+
+        <div class="stat">
+            <span class="stat-value positive" id="map-value">+0</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="stat">
+            <span class="stat-value" id="rate">0</span>
+            <span class="stat-label">/hr</span>
+        </div>
+
+        <div class="stat">
+            <span class="stat-label">#</span>
+            <span class="stat-value" id="map-count">0</span>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let state = {
+            inMap: false,
+            currentMap: null,
+            session: null
+        };
+
+        // DOM elements
+        const els = {
+            mapIndicator: document.getElementById('map-indicator'),
+            mapTime: document.getElementById('map-time'),
+            mapValue: document.getElementById('map-value'),
+            rate: document.getElementById('rate'),
+            mapCount: document.getElementById('map-count')
+        };
+
+        // Event handler from Python
+        window.onPythonEvent = function(eventType, data) {
+            if (eventType === 'state') {
+                updateState(data);
+            }
+        };
+
+        function updateState(data) {
+            state.inMap = data.in_map;
+            state.currentMap = data.current_map;
+            state.session = data.session;
+
+            render();
+        }
+
+        function render() {
+            // Map indicator
+            els.mapIndicator.className = state.inMap ? 'in-map-dot' : 'in-map-dot inactive';
+
+            // Map time
+            if (state.currentMap) {
+                els.mapTime.textContent = formatTime(state.currentMap.duration);
+                els.mapValue.textContent = formatValue(state.currentMap.value);
+                els.mapValue.className = state.currentMap.value >= 0
+                    ? 'stat-value positive'
+                    : 'stat-value negative';
+            } else {
+                els.mapTime.textContent = '--:--';
+                els.mapValue.textContent = '+0';
+                els.mapValue.className = 'stat-value positive';
+            }
+
+            // Session stats
+            if (state.session) {
+                els.rate.textContent = formatCompactRate(state.session.value_per_hour);
+                els.mapCount.textContent = state.session.map_count;
+            } else {
+                els.rate.textContent = '0';
+                els.mapCount.textContent = '0';
+            }
+        }
+
+        function formatTime(seconds) {
+            if (!seconds || seconds < 0) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatValue(value) {
+            if (value === null || value === undefined) return '+0';
+            const prefix = value >= 0 ? '+' : '';
+            const absValue = Math.abs(value);
+            if (absValue >= 1000000) return prefix + (value / 1000000).toFixed(1) + 'M';
+            if (absValue >= 1000) return prefix + (value / 1000).toFixed(1) + 'k';
+            return prefix + Math.round(value);
+        }
+
+        function formatCompactRate(value) {
+            if (!value) return '0';
+            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+            if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
+            return Math.round(value);
+        }
+
+        // Timer loop for smooth updates
+        setInterval(() => {
+            if (state.inMap && state.currentMap) {
+                state.currentMap.duration += 1;
+                els.mapTime.textContent = formatTime(state.currentMap.duration);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
