@@ -155,7 +155,8 @@
             inMap: false,
             currentMap: null,
             session: null,
-            pinned: false  // Start unpinned (button is clickable)
+            pinned: false,
+            showMapValue: true
         };
 
         // Drag state
@@ -180,13 +181,20 @@
             mapCount: document.getElementById('map-count')
         };
 
+        // BroadcastChannel for settings updates
+        const settingsChannel = new BroadcastChannel('tli_settings_channel');
+        settingsChannel.onmessage = (event) => {
+            if (event.data === 'update') {
+                console.log('Settings update received via BroadcastChannel');
+                loadSettings();
+            }
+        };
+
         // Event handler from Python
         window.onPythonEvent = function(eventType, data) {
-            if (eventType === 'state') {
-                updateState(data);
-            }
-            if (eventType === 'settings_reset') {
-                initPinState();
+            if (eventType === 'state') updateState(data);
+            if (eventType === 'settings_reset' || eventType === 'settings_update') {
+                loadSettings();
             }
         };
 
@@ -194,7 +202,6 @@
             state.inMap = data.in_map;
             state.currentMap = data.current_map;
             state.session = data.session;
-
             render();
         }
 
@@ -222,6 +229,12 @@
             } else {
                 els.rate.textContent = '0';
                 els.mapCount.textContent = '0';
+            }
+
+            // Map value visibility
+            const mapValueContainer = els.mapValue.closest('.stat');
+            if (mapValueContainer) {
+                mapValueContainer.style.display = state.showMapValue ? 'flex' : 'none';
             }
         }
 
@@ -251,30 +264,31 @@
         // Pin/Unpin functionality
         async function togglePin() {
             state.pinned = !state.pinned;
+            updatePinUI();
 
-            // Update icon and styling
+            if (state.pinned) {
+                if (typeof api !== 'undefined') {
+                    await api('set_overlay_click_through', true);
+                    await api('save_overlay_position');
+                }
+            } else {
+                if (typeof api !== 'undefined') {
+                    await api('set_overlay_click_through', false);
+                }
+            }
+        }
+
+        function updatePinUI() {
             if (state.pinned) {
                 els.pinIcon.src = '../assets/unpin24.ico';
                 els.pinIcon.alt = 'Unpin';
                 els.container.classList.remove('draggable');
                 els.pinButton.classList.remove('active');
-
-                // Enable click-through
-                if (typeof api !== 'undefined') {
-                    await api('set_overlay_click_through', true);
-                    // Save position when pinning
-                    await api('save_overlay_position');
-                }
             } else {
                 els.pinIcon.src = '../assets/pin24.ico';
                 els.pinIcon.alt = 'Pin';
                 els.container.classList.add('draggable');
                 els.pinButton.classList.add('active');
-
-                // Disable click-through (make draggable)
-                if (typeof api !== 'undefined') {
-                    await api('set_overlay_click_through', false);
-                }
             }
         }
 
@@ -292,29 +306,16 @@
             e.preventDefault();
         }
 
-        // Initialize pin state from config
-        async function initPinState() {
+        async function loadSettings() {
             if (typeof api !== 'undefined') {
                 try {
                     const settings = await api('get_settings');
-                    // Default to unpinned so button works initially
-                    const pinned = settings.overlay_pinned !== undefined ? settings.overlay_pinned : false;
-                    state.pinned = pinned;
-
-                    // Update UI to match loaded state
-                    if (state.pinned) {
-                        els.pinIcon.src = '../assets/unpin24.ico';
-                        els.pinIcon.alt = 'Unpin';
-                        els.container.classList.remove('draggable');
-                        els.pinButton.classList.remove('active');
-                    } else {
-                        els.pinIcon.src = '../assets/pin24.ico';
-                        els.pinIcon.alt = 'Pin';
-                        els.container.classList.add('draggable');
-                        els.pinButton.classList.add('active');
-                    }
+                    state.pinned = settings.overlay_pinned !== undefined ? settings.overlay_pinned : false;
+                    updatePinUI();
+                    state.showMapValue = settings.show_map_value !== undefined ? settings.show_map_value : true;
+                    render();
                 } catch (e) {
-                    console.error('Failed to load pin state:', e);
+                    console.error('Failed to load settings:', e);
                 }
             }
         }
@@ -324,7 +325,7 @@
         els.container.addEventListener('mousedown', handleOverlayDrag);
 
         // Initialize on load
-        waitForApi().then(initPinState);
+        waitForApi().then(loadSettings);
 
         // Timer loop for smooth updates
         setInterval(() => {

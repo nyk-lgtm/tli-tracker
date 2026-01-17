@@ -385,6 +385,18 @@ function applyMapValueVisibility() {
     }
 }
 
+function updateToggleVisual(checkboxId) {
+    const checkbox = document.getElementById(checkboxId);
+    if (!checkbox) return;
+    
+    const label = checkbox.nextElementSibling;
+    if (checkbox.checked) {
+        label.classList.add('checked');
+    } else {
+        label.classList.remove('checked');
+    }
+}
+
 async function loadSettings() {
     try {
         settings = await api('get_settings');
@@ -392,6 +404,8 @@ async function loadSettings() {
         elements.settingMapValue.checked = settings.show_map_value || false;
         elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
         elements.opacityValue.textContent = elements.settingOpacity.value + '%';
+        updateToggleVisual('setting-tax');
+        updateToggleVisual('setting-map-value');
         applyMapValueVisibility();
     } catch (e) {
         console.error('Failed to load settings:', e);
@@ -405,6 +419,9 @@ async function saveSettings() {
 
     try {
         await api('save_settings', settings);
+        const bc = new BroadcastChannel('tli_settings_channel');
+        bc.postMessage('update');
+        bc.close();
         applyMapValueVisibility();
         closeModal('settings');
         showStatus('Settings saved', 'success');
@@ -604,6 +621,10 @@ function init() {
     // Settings modal
     document.getElementById('btn-close-settings').addEventListener('click', () => closeModal('settings'));
     document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
+    document.getElementById('setting-tax').addEventListener('change', () => updateToggleVisual('setting-tax'));
+    document.getElementById('setting-map-value').addEventListener('change', () => {
+        updateToggleVisual('setting-map-value');
+    });
 
     // History modal
     document.getElementById('btn-close-history').addEventListener('click', () => closeModal('history'));
