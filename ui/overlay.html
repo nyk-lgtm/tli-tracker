@@ -32,6 +32,42 @@
             -webkit-backdrop-filter: blur(8px);
         }
 
+        .overlay-container.draggable {
+            cursor: move;
+        }
+
+        .pin-button {
+            padding: 4px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s, background 0.2s, transform 0.2s;
+            opacity: 0.4;
+            transform: scale(0.9);
+        }
+
+        .pin-button.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .pin-button:hover {
+            opacity: 1;
+            background: rgba(99, 102, 241, 0.4);
+            border-color: rgba(99, 102, 241, 0.6);
+            transform: scale(1);
+        }
+
+        .pin-button img {
+            width: 16px;
+            height: 16px;
+            filter: brightness(0) invert(1);
+        }
+
         .stat {
             display: flex;
             align-items: baseline;
@@ -83,7 +119,11 @@
     </style>
 </head>
 <body>
-    <div class="overlay-container">
+    <div class="overlay-container" id="overlay-container">
+        <button class="pin-button" id="pin-button" title="Toggle pin">
+            <img id="pin-icon" src="../assets/unpin24.ico" alt="Pin">
+        </button>
+
         <div class="in-map-dot" id="map-indicator"></div>
 
         <div class="stat">
@@ -107,16 +147,30 @@
         </div>
     </div>
 
+    <script src="js/qwebchannel.js"></script>
+    <script src="js/qt_bridge.js"></script>
     <script>
         // State
         let state = {
             inMap: false,
             currentMap: null,
-            session: null
+            session: null,
+            pinned: false  // Start unpinned (button is clickable)
         };
+
+        // Drag state
+        let dragState = {
+            isDragging: false,
+            startX: 0,
+            startY: 0
+        };
+
 
         // DOM elements
         const els = {
+            container: document.getElementById('overlay-container'),
+            pinButton: document.getElementById('pin-button'),
+            pinIcon: document.getElementById('pin-icon'),
             mapIndicator: document.getElementById('map-indicator'),
             mapTime: document.getElementById('map-time'),
             mapValue: document.getElementById('map-value'),
@@ -188,6 +242,110 @@
             if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
             return Math.round(value);
         }
+
+        // Pin/Unpin functionality
+        async function togglePin() {
+            state.pinned = !state.pinned;
+
+            // Update icon and styling
+            if (state.pinned) {
+                els.pinIcon.src = '../assets/unpin24.ico';
+                els.pinIcon.alt = 'Unpin';
+                els.container.classList.remove('draggable');
+                els.pinButton.classList.remove('active');
+
+                // Enable click-through
+                if (typeof api !== 'undefined') {
+                    await api('set_overlay_click_through', true);
+                    // Save position when pinning
+                    await api('save_overlay_position');
+                }
+            } else {
+                els.pinIcon.src = '../assets/pin24.ico';
+                els.pinIcon.alt = 'Pin';
+                els.container.classList.add('draggable');
+                els.pinButton.classList.add('active');
+
+                // Disable click-through (make draggable)
+                if (typeof api !== 'undefined') {
+                    await api('set_overlay_click_through', false);
+                }
+            }
+        }
+
+        // Drag functionality (only works when unpinned)
+        function handleMouseDown(e) {
+            if (state.pinned || e.target.closest('.pin-button')) {
+                return;
+            }
+
+            dragState.isDragging = true;
+            dragState.startX = e.clientX;
+            dragState.startY = e.clientY;
+
+            e.preventDefault();
+        }
+
+        function handleMouseMove(e) {
+            if (!dragState.isDragging) return;
+
+            const deltaX = e.clientX - dragState.startX;
+            const deltaY = e.clientY - dragState.startY;
+
+            // Call Python to move the window
+            if (typeof api !== 'undefined') {
+                api('move_overlay', deltaX, deltaY);
+            }
+
+            dragState.startX = e.clientX;
+            dragState.startY = e.clientY;
+        }
+
+        function handleMouseUp(e) {
+            if (dragState.isDragging) {
+                dragState.isDragging = false;
+                // Save position when drag ends
+                if (typeof api !== 'undefined') {
+                    api('save_overlay_position');
+                }
+            }
+        }
+
+        // Initialize pin state from config
+        async function initPinState() {
+            if (typeof api !== 'undefined') {
+                try {
+                    const settings = await api('get_settings');
+                    // Default to unpinned so button works initially
+                    const pinned = settings.overlay_pinned !== undefined ? settings.overlay_pinned : false;
+                    state.pinned = pinned;
+
+                    // Update UI to match loaded state
+                    if (state.pinned) {
+                        els.pinIcon.src = '../assets/unpin24.ico';
+                        els.pinIcon.alt = 'Unpin';
+                        els.container.classList.remove('draggable');
+                        els.pinButton.classList.remove('active');
+                    } else {
+                        els.pinIcon.src = '../assets/pin24.ico';
+                        els.pinIcon.alt = 'Pin';
+                        els.container.classList.add('draggable');
+                        els.pinButton.classList.add('active');
+                    }
+                } catch (e) {
+                    console.error('Failed to load pin state:', e);
+                }
+            }
+        }
+
+        // Event listeners
+        els.pinButton.addEventListener('click', togglePin);
+        els.container.addEventListener('mousedown', handleMouseDown);
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+
+        // Initialize on load
+        waitForApi().then(initPinState);
 
         // Timer loop for smooth updates
         setInterval(() => {

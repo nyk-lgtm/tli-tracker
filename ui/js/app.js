@@ -1,7 +1,8 @@
 /**
  * TLI Tracker - Frontend Application
  *
- * Communicates with Python backend via pywebview's js_api bridge.
+ * Communicates with Python backend via QWebChannel bridge (PySide6).
+ * The api() and waitForApi() functions are provided by qt_bridge.js.
  */
 
 // Global state
@@ -48,33 +49,7 @@ const elements = {
     opacityValue: document.getElementById('opacity-value')
 };
 
-// ============ Python API Bridge ============
-
-/**
- * Wait for pywebview API to be ready
- */
-async function waitForApi() {
-    return new Promise((resolve) => {
-        if (window.pywebview && window.pywebview.api) {
-            resolve();
-        } else {
-            window.addEventListener('pywebviewready', resolve);
-        }
-    });
-}
-
-/**
- * Call a Python API method
- */
-async function api(method, ...args) {
-    await waitForApi();
-    try {
-        return await window.pywebview.api[method](...args);
-    } catch (e) {
-        console.error(`API error (${method}):`, e);
-        throw e;
-    }
-}
+// Note: api() and waitForApi() are provided by qt_bridge.js
 
 // ============ Event Handlers from Python ============
 

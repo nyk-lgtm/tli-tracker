@@ -1,7 +1,8 @@
 """
-API bridge for pywebview.
+API bridge for TLI Tracker.
 
-Exposes Python functions to JavaScript via pywebview's js_api.
+Core API class used by both the QWebChannel bridge (PySide6)
+and directly by other Python components.
 """
 
 import json
@@ -11,20 +12,25 @@ from .tracker import Tracker
 from .price_manager import PriceManager
 from .session_manager import SessionManager
 from .storage import load_config, save_config, load_items, get_item_name
-from .overlay import make_overlay, set_overlay_opacity, set_click_through
+from .overlay import set_click_through
 
 
 class Api:
     """
-    API class exposed to JavaScript via pywebview.
+    API class providing all tracker functionality.
 
-    All public methods (not starting with _) are callable from JS:
-        const result = await pywebview.api.method_name(args)
+    For Qt/PySide6: Methods are called via ApiBridge (QWebChannel slots).
+    Python-to-JS events are pushed via the bridge's pythonEvent signal.
     """
 
     def __init__(self):
-        self.window = None  # Main window reference
-        self.overlay_window = None  # Overlay window reference
+        # Qt window references (set by qt_app.py)
+        self._main_window = None
+        self._overlay_window = None
+        self._bridge = None
+
+        # Overlay visibility state
+        self._overlay_visible = False
 
         # Initialize managers
         self.prices = PriceManager()
@@ -37,34 +43,17 @@ class Api:
             on_update=self._push_to_ui
         )
 
-    def set_window(self, window) -> None:
-        """Set the main window reference (called from main.py)."""
-        self.window = window
-
-    def set_overlay_window(self, window) -> None:
-        """Set the overlay window reference."""
-        self.overlay_window = window
-
     def _push_to_ui(self, event_type: str, data: Any) -> None:
         """
-        Push an event from Python to JavaScript.
+        Push an event from Python to JavaScript via QWebChannel.
 
-        Calls window.onPythonEvent(type, data) in the frontend.
+        Emits the pythonEvent signal which JS listens to.
         """
-        if not self.window:
+        if not self._bridge:
             return
 
         try:
-            json_data = json.dumps(data, default=str)
-            self.window.evaluate_js(
-                f'window.onPythonEvent("{event_type}", {json_data})'
-            )
-
-            # Also update overlay if it exists
-            if self.overlay_window:
-                self.overlay_window.evaluate_js(
-                    f'window.onPythonEvent("{event_type}", {json_data})'
-                )
+            self._bridge.emit_event(event_type, data)
         except Exception as e:
             print(f"Error pushing to UI: {e}")
 
@@ -156,6 +145,20 @@ class Api:
         """Save application settings."""
         success = save_config(settings)
         return {"status": "ok" if success else "error"}
+    
+    def reset_settings(self) -> dict:
+        """Reset application settings to defaults."""
+        default_settings = {
+            "display_mode": "value",
+            "overlay_opacity": 1,
+            "overlay_pinned": False,
+            "overlay_position": {"x": 100, "y": 100},
+            "tax_enabled": False,
+            "tax_rate": 0.125,
+            "show_map_value": False,
+        }
+        success = save_config(default_settings)
+        return {"status": "ok" if success else "error"}
 
     def get_setting(self, key: str) -> Any:
         """Get a single setting value."""
@@ -173,61 +176,86 @@ class Api:
 
     def enable_overlay(self, opacity: float = 0.9) -> dict:
         """Enable overlay mode on the overlay window."""
-        if not self.overlay_window:
+        if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            hwnd = self.overlay_window.native_handle
-            success = make_overlay(hwnd, opacity, click_through=True)
-            return {"status": "ok" if success else "error"}
+            # Set opacity using Qt's native method
+            self._overlay_window.setWindowOpacity(opacity)
+
+            # Enable click-through
+            hwnd = int(self._overlay_window.winId())
+            set_click_through(hwnd, True)
+
+            return {"status": "ok"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def set_overlay_opacity(self, opacity: float) -> dict:
         """Set overlay window opacity."""
-        if not self.overlay_window:
+        if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            hwnd = self.overlay_window.native_handle
-            success = set_overlay_opacity(hwnd, opacity)
+            # Use Qt's native opacity control
+            self._overlay_window.setWindowOpacity(opacity)
 
             # Save to settings
             config = load_config()
             config["overlay_opacity"] = opacity
             save_config(config)
 
-            return {"status": "ok" if success else "error"}
+            return {"status": "ok", "opacity": opacity}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def set_overlay_click_through(self, enabled: bool) -> dict:
-        """Enable or disable click-through on overlay."""
-        if not self.overlay_window:
+        """Enable or disable click-through on overlay and save to config."""
+        if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            hwnd = self.overlay_window.native_handle
+            hwnd = int(self._overlay_window.winId())
             success = set_click_through(hwnd, enabled)
+            self._overlay_window.set_click_through(enabled)
+
+            # Save pin state to config (pinned = click-through enabled)
+            config = load_config()
+            config["overlay_pinned"] = enabled
+            save_config(config)
+
+            return {"status": "ok" if success else "error"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def set_overlay_click_through_temp(self, enabled: bool) -> dict:
+        """Temporarily enable or disable click-through (doesn't save to config)."""
+        if not self._overlay_window:
+            return {"status": "error", "message": "No overlay window"}
+
+        try:
+            hwnd = int(self._overlay_window.winId())
+            success = set_click_through(hwnd, enabled)
+            self._overlay_window.set_click_through(enabled)
+
             return {"status": "ok" if success else "error"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def show_overlay(self) -> dict:
-        """Show the overlay window and apply overlay effects."""
-        if not self.overlay_window:
+        """Show the overlay window."""
+        if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            # Show the window
-            self.overlay_window.show()
-
-            # Apply overlay effects (transparent, click-through, topmost)
+            # Load and apply opacity
             config = load_config()
             opacity = config.get("overlay_opacity", 0.9)
+            self._overlay_window.setWindowOpacity(opacity)
 
-            hwnd = self.overlay_window.native_handle
-            make_overlay(hwnd, opacity, click_through=True)
+            # Show the window
+            self._overlay_window.show()
+            self._overlay_visible = True
 
             # Push current state to overlay
             stats = self.tracker.get_stats()
@@ -239,46 +267,74 @@ class Api:
 
     def hide_overlay(self) -> dict:
         """Hide the overlay window."""
-        if not self.overlay_window:
+        if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            self.overlay_window.hide()
+            self._overlay_window.hide()
+            self._overlay_visible = False
             return {"status": "ok", "visible": False}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
     def toggle_overlay(self) -> dict:
         """Toggle overlay window visibility."""
-        if not self.overlay_window:
+        if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            # Check if window is visible by trying to get its position
-            # pywebview doesn't have a direct "is_visible" property
-            # so we track it ourselves
-            if not hasattr(self, '_overlay_visible'):
-                self._overlay_visible = False
-
             if self._overlay_visible:
-                self.overlay_window.hide()
+                self._overlay_window.hide()
                 self._overlay_visible = False
                 return {"status": "ok", "visible": False}
             else:
-                self.overlay_window.show()
-
-                # Apply overlay effects
+                # Load and apply opacity
                 config = load_config()
                 opacity = config.get("overlay_opacity", 0.9)
-                hwnd = self.overlay_window.native_handle
-                make_overlay(hwnd, opacity, click_through=True)
+                self._overlay_window.setWindowOpacity(opacity)
+
+                # Show the window
+                self._overlay_window.show()
+                self._overlay_visible = True
 
                 # Push current state to overlay
                 stats = self.tracker.get_stats()
                 self._push_to_ui("state", stats)
 
-                self._overlay_visible = True
                 return {"status": "ok", "visible": True}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def move_overlay(self, delta_x: int, delta_y: int) -> dict:
+        """Move overlay window by delta amount."""
+        if not self._overlay_window:
+            return {"status": "error", "message": "No overlay window"}
+
+        try:
+            # Get current position
+            current_pos = self._overlay_window.pos()
+            new_x = current_pos.x() + delta_x
+            new_y = current_pos.y() + delta_y
+
+            # Move window
+            self._overlay_window.move(new_x, new_y)
+
+            return {"status": "ok", "x": new_x, "y": new_y}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def save_overlay_position(self) -> dict:
+        """Save current overlay position to config."""
+        if not self._overlay_window:
+            return {"status": "error", "message": "No overlay window"}
+
+        try:
+            pos = self._overlay_window.pos()
+            config = load_config()
+            config["overlay_position"] = {"x": pos.x(), "y": pos.y()}
+            save_config(config)
+
+            return {"status": "ok", "position": {"x": pos.x(), "y": pos.y()}}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
