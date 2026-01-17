@@ -5,6 +5,7 @@ Provides MainWindow and OverlayWindow using QWebEngineView.
 """
 
 import json
+
 from pathlib import Path
 
 from PySide6.QtCore import Qt, QUrl
@@ -154,15 +155,13 @@ class OverlayWindow(QMainWindow):
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint |
             Qt.WindowType.WindowStaysOnTopHint |
-            Qt.WindowType.Tool  # Exclude from taskbar
+            Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
         # Create web view
         self.web_view = QWebEngineView()
         self.setCentralWidget(self.web_view)
-
-        # Make web view transparent
         self.web_view.page().setBackgroundColor(Qt.GlobalColor.transparent)
 
         # Enable settings for loading external resources (Tailwind CDN)
@@ -171,16 +170,13 @@ class OverlayWindow(QMainWindow):
         settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
 
-        # Setup QWebChannel bridge (shared with main window)
         self.channel = QWebChannel()
         self.channel.registerObject("api", bridge)
         self.web_view.page().setWebChannel(self.channel)
 
-        # Load HTML
         html_path = self._get_ui_path("overlay.html")
         self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
 
-        # Start hidden
         self.hide()
 
     def _get_ui_path(self, filename: str) -> Path:

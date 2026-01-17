@@ -117,12 +117,20 @@ function renderUI() {
     if (state.currentMap) {
         elements.statMapTime.textContent = formatTime(state.currentMap.duration);
         elements.statMapValue.textContent = formatValue(state.currentMap.value);
-        elements.statMapValue.className = state.currentMap.value >= 0
-            ? 'text-lg text-success'
-            : 'text-lg text-danger';
+        elements.statMapValue.classList.add('text-lg'); // Ensure base class
+        if (state.currentMap.value >= 0) {
+            elements.statMapValue.classList.remove('text-danger');
+            elements.statMapValue.classList.add('text-success');
+        } else {
+            elements.statMapValue.classList.remove('text-success');
+            elements.statMapValue.classList.add('text-danger');
+        }
     } else {
         elements.statMapTime.textContent = '--:--';
         elements.statMapValue.textContent = '+0';
+        // Reset to default color
+        elements.statMapValue.classList.remove('text-danger');
+        elements.statMapValue.classList.add('text-success');
     }
 
     // Update session stats
@@ -145,6 +153,7 @@ function renderUI() {
 
     // Render drops
     renderDrops();
+    // applyMapValueVisibility();
 }
 
 function updateInitStatus() {
