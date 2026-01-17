@@ -329,24 +329,6 @@ class Api:
             print(f"Drag error: {e}")
             return {"status": "error", "message": str(e)}
 
-    # def move_overlay(self, delta_x: int, delta_y: int) -> dict:
-    #     """Move overlay window by delta amount."""
-    #     if not self._overlay_window:
-    #         return {"status": "error", "message": "No overlay window"}
-
-    #     try:
-    #         # Get current position
-    #         current_pos = self._overlay_window.pos()
-    #         new_x = current_pos.x() + delta_x
-    #         new_y = current_pos.y() + delta_y
-
-    #         # Move window
-    #         self._overlay_window.move(new_x, new_y)
-
-    #         return {"status": "ok", "x": new_x, "y": new_y}
-    #     except Exception as e:
-    #         return {"status": "error", "message": str(e)}
-
     def save_overlay_position(self) -> dict:
         """Save current overlay position to config."""
         if not self._overlay_window:
