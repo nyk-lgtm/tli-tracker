@@ -158,6 +158,12 @@ class Api:
             "show_map_value": False,
         }
         success = save_config(default_settings)
+
+        if self._overlay_window:
+            self.set_overlay_opacity(default_settings["overlay_opacity"])
+            self.set_overlay_click_through(False)
+            self._push_to_ui("settings_reset", {})
+
         return {"status": "ok" if success else "error"}
 
     def get_setting(self, key: str) -> Any:
@@ -305,23 +311,41 @@ class Api:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
-    def move_overlay(self, delta_x: int, delta_y: int) -> dict:
-        """Move overlay window by delta amount."""
+    def start_drag(self) -> dict:
+        """
+        Hand over window moving to the OS (Native Drag).
+        This blocks until the user releases the mouse button.
+        """
         if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            # Get current position
-            current_pos = self._overlay_window.pos()
-            new_x = current_pos.x() + delta_x
-            new_y = current_pos.y() + delta_y
-
-            # Move window
-            self._overlay_window.move(new_x, new_y)
-
-            return {"status": "ok", "x": new_x, "y": new_y}
+            self._overlay_window.windowHandle().startSystemMove()
+            
+            self.save_overlay_position()
+            
+            return {"status": "ok"}
         except Exception as e:
+            print(f"Drag error: {e}")
             return {"status": "error", "message": str(e)}
+
+    # def move_overlay(self, delta_x: int, delta_y: int) -> dict:
+    #     """Move overlay window by delta amount."""
+    #     if not self._overlay_window:
+    #         return {"status": "error", "message": "No overlay window"}
+
+    #     try:
+    #         # Get current position
+    #         current_pos = self._overlay_window.pos()
+    #         new_x = current_pos.x() + delta_x
+    #         new_y = current_pos.y() + delta_y
+
+    #         # Move window
+    #         self._overlay_window.move(new_x, new_y)
+
+    #         return {"status": "ok", "x": new_x, "y": new_y}
+    #     except Exception as e:
+    #         return {"status": "error", "message": str(e)}
 
     def save_overlay_position(self) -> dict:
         """Save current overlay position to config."""

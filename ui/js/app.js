@@ -46,7 +46,9 @@ const elements = {
     settingTax: document.getElementById('setting-tax'),
     settingMapValue: document.getElementById('setting-map-value'),
     settingOpacity: document.getElementById('setting-opacity'),
-    opacityValue: document.getElementById('opacity-value')
+    opacityValue: document.getElementById('opacity-value'),
+    btnSaveSettings: document.getElementById('btn-save-settings'),
+    btnResetSettings: document.getElementById('btn-reset-defaults')
 };
 
 // Note: api() and waitForApi() are provided by qt_bridge.js
@@ -412,6 +414,24 @@ async function saveSettings() {
     }
 }
 
+async function resetDefaults() {
+    try {
+        const result = await api('default_settings');
+        
+        if (result.status === 'ok') {
+            await loadSettings();
+            
+            showStatus('Settings reset to defaults', 'success');
+            setTimeout(() => hideStatus(), 2000);
+        } else {
+            showStatus('Error resetting settings', 'error');
+        }
+    } catch (e) {
+        console.error('Reset defaults failed:', e);
+        showStatus('Failed to reset settings', 'error');
+    }
+}
+
 // ============ History ============
 
 async function loadHistory() {
@@ -579,6 +599,7 @@ function init() {
     elements.btnSettings.addEventListener('click', () => openModal('settings'));
     elements.btnHistory.addEventListener('click', () => openModal('history'));
     elements.btnOverlay.addEventListener('click', toggleOverlay);
+    elements.btnResetSettings.addEventListener('click', resetDefaults);
 
     // Settings modal
     document.getElementById('btn-close-settings').addEventListener('click', () => closeModal('settings'));

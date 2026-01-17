@@ -162,9 +162,11 @@
         let dragState = {
             isDragging: false,
             startX: 0,
-            startY: 0
+            startY: 0,
+            pendingDeltaX: 0,
+            pendingDeltaY: 0,
+            animationFrameId: null
         };
-
 
         // DOM elements
         const els = {
@@ -182,6 +184,9 @@
         window.onPythonEvent = function(eventType, data) {
             if (eventType === 'state') {
                 updateState(data);
+            }
+            if (eventType === 'settings_reset') {
+                initPinState();
             }
         };
 
@@ -273,42 +278,18 @@
             }
         }
 
-        // Drag functionality (only works when unpinned)
-        function handleMouseDown(e) {
+        function handleOverlayDrag(e) {
             if (state.pinned || e.target.closest('.pin-button')) {
                 return;
             }
 
-            dragState.isDragging = true;
-            dragState.startX = e.clientX;
-            dragState.startY = e.clientY;
+            if (e.button !== 0) return;
 
-            e.preventDefault();
-        }
-
-        function handleMouseMove(e) {
-            if (!dragState.isDragging) return;
-
-            const deltaX = e.clientX - dragState.startX;
-            const deltaY = e.clientY - dragState.startY;
-
-            // Call Python to move the window
             if (typeof api !== 'undefined') {
-                api('move_overlay', deltaX, deltaY);
+                api('start_drag');
             }
-
-            dragState.startX = e.clientX;
-            dragState.startY = e.clientY;
-        }
-
-        function handleMouseUp(e) {
-            if (dragState.isDragging) {
-                dragState.isDragging = false;
-                // Save position when drag ends
-                if (typeof api !== 'undefined') {
-                    api('save_overlay_position');
-                }
-            }
+            
+            e.preventDefault();
         }
 
         // Initialize pin state from config
@@ -340,9 +321,7 @@
 
         // Event listeners
         els.pinButton.addEventListener('click', togglePin);
-        els.container.addEventListener('mousedown', handleMouseDown);
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
+        els.container.addEventListener('mousedown', handleOverlayDrag);
 
         // Initialize on load
         waitForApi().then(initPinState);

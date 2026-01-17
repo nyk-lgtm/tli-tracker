@@ -131,7 +131,7 @@ class ApiBridge(QObject):
         settings = json.loads(settings_json)
         return json.dumps(self.api.save_settings(settings), default=str)
     
-    @Slot(str, result=str)
+    @Slot(result=str)
     def default_settings(self) -> str:
         """Reset application settings to defaults."""
         return json.dumps(self.api.reset_settings(), default=str)
@@ -183,11 +183,16 @@ class ApiBridge(QObject):
     def toggle_overlay(self) -> str:
         """Toggle overlay window visibility."""
         return json.dumps(self.api.toggle_overlay(), default=str)
+    
+    @Slot(result=str)
+    def start_drag(self) -> str:
+        """Start a native system drag operation."""
+        return json.dumps(self.api.start_drag(), default=str)
 
     @Slot(int, int, result=str)
-    def move_overlay(self, delta_x: int, delta_y: int) -> str:
-        """Move overlay window by delta."""
-        return json.dumps(self.api.move_overlay(delta_x, delta_y), default=str)
+    # def move_overlay(self, delta_x: int, delta_y: int) -> str:
+    #     """Move overlay window by delta."""
+    #     return json.dumps(self.api.move_overlay(delta_x, delta_y), default=str)
 
     @Slot(result=str)
     def save_overlay_position(self) -> str:
