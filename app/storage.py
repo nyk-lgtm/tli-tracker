@@ -70,6 +70,7 @@ def save_json(filename: str, data: Any) -> bool:
 DEFAULT_CONFIG = {
     "display_mode": "value",
     "overlay_opacity": 0.9,
+    "overlay_pinned": False,
     "overlay_position": {"x": 100, "y": 100},
     "tax_enabled": False,
     "tax_rate": 0.125,  # 12.5% AH fee

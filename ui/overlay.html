@@ -36,38 +36,6 @@
             cursor: move;
         }
 
-        .pin-button {
-            padding: 4px;
-            background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.3s, background 0.2s, transform 0.2s;
-            opacity: 0.4;
-            transform: scale(0.9);
-        }
-
-        .pin-button.active {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .pin-button:hover {
-            opacity: 1;
-            background: rgba(99, 102, 241, 0.4);
-            border-color: rgba(99, 102, 241, 0.6);
-            transform: scale(1);
-        }
-
-        .pin-button img {
-            width: 16px;
-            height: 16px;
-            filter: brightness(0) invert(1);
-        }
-
         .stat {
             display: flex;
             align-items: baseline;
@@ -120,10 +88,6 @@
 </head>
 <body>
     <div class="overlay-container" id="overlay-container">
-        <button class="pin-button" id="pin-button" title="Toggle pin">
-            <img id="pin-icon" src="../assets/unpin24.ico" alt="Pin">
-        </button>
-
         <div class="in-map-dot" id="map-indicator"></div>
 
         <div class="stat">
@@ -172,8 +136,6 @@
         // DOM elements
         const els = {
             container: document.getElementById('overlay-container'),
-            pinButton: document.getElementById('pin-button'),
-            pinIcon: document.getElementById('pin-icon'),
             mapIndicator: document.getElementById('map-indicator'),
             mapTime: document.getElementById('map-time'),
             mapValue: document.getElementById('map-value'),
@@ -261,39 +223,16 @@
             return Math.round(value);
         }
 
-        // Pin/Unpin functionality
-        async function togglePin() {
-            state.pinned = !state.pinned;
-            updatePinUI();
-
-            if (state.pinned) {
-                if (typeof api !== 'undefined') {
-                    await api('set_overlay_click_through', true);
-                    await api('save_overlay_position');
-                }
-            } else {
-                if (typeof api !== 'undefined') {
-                    await api('set_overlay_click_through', false);
-                }
-            }
-        }
-
         function updatePinUI() {
             if (state.pinned) {
-                els.pinIcon.src = '../assets/unpin24.ico';
-                els.pinIcon.alt = 'Unpin';
                 els.container.classList.remove('draggable');
-                els.pinButton.classList.remove('active');
             } else {
-                els.pinIcon.src = '../assets/pin24.ico';
-                els.pinIcon.alt = 'Pin';
                 els.container.classList.add('draggable');
-                els.pinButton.classList.add('active');
             }
         }
 
         function handleOverlayDrag(e) {
-            if (state.pinned || e.target.closest('.pin-button')) {
+            if (state.pinned) {
                 return;
             }
 
@@ -321,7 +260,6 @@
         }
 
         // Event listeners
-        els.pinButton.addEventListener('click', togglePin);
         els.container.addEventListener('mousedown', handleOverlayDrag);
 
         // Initialize on load

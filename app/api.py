@@ -143,6 +143,10 @@ class Api:
 
     def save_settings(self, settings: dict) -> dict:
         """Save application settings."""
+        # Extract overlay_pinned and apply click-through immediately
+        overlay_pinned = settings.get("overlay_pinned", False)
+        self.set_overlay_click_through(overlay_pinned)
+
         success = save_config(settings)
         return {"status": "ok" if success else "error"}
     
@@ -150,7 +154,7 @@ class Api:
         """Reset application settings to defaults."""
         default_settings = {
             "display_mode": "value",
-            "overlay_opacity": 1,
+            "overlay_opacity": 0.9,
             "overlay_pinned": False,
             "overlay_position": {"x": 100, "y": 100},
             "tax_enabled": False,
