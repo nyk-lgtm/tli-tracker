@@ -35,7 +35,6 @@ const elements = {
     statRate: document.getElementById('stat-rate'),
     statMapCount: document.getElementById('stat-map-count'),
     dropsList: document.getElementById('drops-list'),
-    initStatus: document.getElementById('init-status'),
     btnInitialize: document.getElementById('btn-initialize'),
     btnReset: document.getElementById('btn-reset'),
     btnModeValue: document.getElementById('btn-mode-value'),
@@ -156,27 +155,20 @@ function renderUI() {
         elements.statMapCount.textContent = '0';
     }
 
-    // Update init status
+    // Update init status (this also re-renders drops)
     updateInitStatus();
-
-    // Render drops
-    renderDrops();
-    // applyMapValueVisibility();
 }
 
 function updateInitStatus() {
+    // Update button text based on initialization state
     if (state.initialized) {
-        if (state.inMap) {
-            elements.initStatus.textContent = '🟢 In map - tracking drops';
-            elements.initStatus.className = 'mt-3 text-center text-sm text-success';
-        } else {
-            elements.initStatus.textContent = '✓ Initialized - waiting for map';
-            elements.initStatus.className = 'mt-3 text-center text-sm text-gray-400';
-        }
+        elements.btnInitialize.textContent = 'Re-Initialize';
     } else {
-        elements.initStatus.textContent = 'Not initialized - Click "Initialize Bag" then sort your inventory';
-        elements.initStatus.className = 'mt-3 text-center text-sm text-warning';
+        elements.btnInitialize.textContent = 'Initialize Bag';
     }
+
+    // Re-render drops to update empty state
+    renderDrops();
 }
 
 // ============ Drop Rendering ============
@@ -191,11 +183,28 @@ function addDrop(dropData) {
 
 function renderDrops() {
     if (state.drops.length === 0) {
-        elements.dropsList.innerHTML = `
-            <div class="p-4 text-center text-gray-500">
-                No drops yet
-            </div>
-        `;
+        let emptyHtml = '';
+
+        if (!state.initialized) {
+            // Scenario: Not Initialized (Onboarding)
+            emptyHtml = `
+                <div class="flex flex-col items-center justify-center py-10 text-center space-y-2">
+                    <div class="text-lg font-semibold text-gray-300">Inventory Not Tracked</div>
+                    <p class="text-sm text-gray-500 max-w-xs">
+                        Click <span class="text-primary">Initialize Bag</span> and sort your inventory in-game to start tracking.
+                    </p>
+                </div>
+            `;
+        } else {
+            // Scenario: Initialized but empty (No drops)
+            emptyHtml = `
+                <div class="p-8 text-center text-gray-500">
+                    No drops detected in this session
+                </div>
+            `;
+        }
+
+        elements.dropsList.innerHTML = emptyHtml;
         return;
     }
 
@@ -274,7 +283,7 @@ function renderValueMode(drops) {
                     <span>${item.name}</span>
                     <span class="text-gray-400">x${Math.abs(item.quantity)}</span>
                 </div>
-                <div class="drop-item-value ${valueClass}">${valueText}</div>
+                <div class="stat-value ${valueClass}">${valueText}</div>
             </div>
         `;
     }).join('');
@@ -708,7 +717,9 @@ function init() {
 
     // Opacity slider
     elements.settingOpacity.addEventListener('input', (e) => {
-        elements.opacityValue.textContent = e.target.value + '%';
+        const val = e.target.value;
+        elements.opacityValue.textContent = val + '%';
+        api('set_overlay_opacity', val / 100);
     });
 
     // Close modals on backdrop click

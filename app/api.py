@@ -146,6 +146,9 @@ class Api:
         # Extract overlay_pinned and apply click-through immediately
         overlay_pinned = settings.get("overlay_pinned", False)
         self.set_overlay_click_through(overlay_pinned)
+        opacity = settings.get("overlay_opacity", 0.9)
+        if self._overlay_window:
+            self._overlay_window.setWindowOpacity(opacity)
 
         success = save_config(settings)
         return {"status": "ok" if success else "error"}

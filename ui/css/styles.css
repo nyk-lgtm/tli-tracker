@@ -1,5 +1,35 @@
 /* Custom styles for TLI Tracker */
 
+/* CSS Variables */
+:root {
+    --color-positive: #22d3ee;
+    --color-negative: #fb923c;
+    --glow-color: rgba(99, 102, 241, 0.25);
+}
+
+/* Background */
+body {
+    background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+    background-attachment: fixed;
+}
+
+/* Card Glow Effect */
+.card-glow {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    box-shadow: 0 0 0px var(--glow-color); /* No glow by default */
+    backdrop-filter: blur(8px);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.card-glow:hover {
+    box-shadow: 0 0 15px var(--glow-color); /* Soft outer glow on hover */
+}
+
+/* Text Colors */
+.text-success, .stat-value.positive { color: var(--color-positive) !important; }
+.text-danger, .stat-value.negative { color: var(--color-negative) !important; }
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
     width: 6px;
@@ -122,8 +152,8 @@
 }
 
 .session-item-value {
-    font-weight: 600;
-    color: #22c55e;
+    font-weight: 400;
+    color: #22d3ee;
 }
 
 /* Range slider styling */

@@ -14,9 +14,9 @@
                     colors: {
                         primary: '#6366f1',
                         secondary: '#8b5cf6',
-                        success: '#22c55e',
+                        success: '#22d3ee', // Cyan
                         warning: '#f59e0b',
-                        danger: '#ef4444',
+                        danger: '#fb923c',  // Orange
                         dark: {
                             bg: '#0f172a',
                             card: '#1e293b',
@@ -45,17 +45,17 @@
                     ⚙️
                 </button>
             </div>
-        </header>
 
-        <!-- Status Banner -->
-        <div id="status-banner" class="hidden fixed left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-2xl text-sm font-semibold transition-all border backdrop-blur-sm">
-            <span id="status-text"></span>
-        </div>
+            <!-- Status Banner -->
+            <div id="status-banner" class="hidden fixed rright-1/2 transform z-50 px-6 py-3 rounded-xl shadow-2xl text-sm font-semibold transition-all border backdrop-blur-sm">
+                <span id="status-text"></span>
+            </div>
+        </header>
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-3 gap-3 mb-6">
             <!-- Current Map & Session Mapping -->
-            <div class="bg-dark-card border border-dark-border rounded-xl p-4">
+            <div class="card-glow rounded-xl p-4">
                 <div class="text-xs text-gray-400 mb-1">Current Map</div>
                 <div id="stat-map-time" class="text-2xl font-bold">--:--</div>
                 <div id="stat-map-value" class="text-sm text-success mb-2">+0</div>
@@ -64,14 +64,14 @@
             </div>
 
             <!-- Session Total -->
-            <div class="bg-dark-card border border-dark-border rounded-xl p-4">
+            <div class="card-glow rounded-xl p-4">
                 <div class="text-xs text-gray-400 mb-1">Session Total</div>
                 <div id="stat-session-total" class="text-4xl font-bold">0:00</div>
                 <div id="stat-session-value" class="text-lg text-success">+0</div>
             </div>
 
             <!-- Rate -->
-            <div class="bg-dark-card border border-dark-border rounded-xl p-4">
+            <div class="card-glow rounded-xl p-4">
                 <div class="text-xs text-gray-400 mb-1">Rate</div>
                 <div id="stat-rate" class="text-4xl font-bold">0/hr</div>
                 <div id="stat-maps" class="text-sm text-gray-400"><span id="stat-map-count">0</span> maps</div>
@@ -92,7 +92,7 @@
         </div>
 
         <!-- Drops List -->
-        <div id="drops-container" class="bg-dark-card border border-dark-border rounded-xl overflow-hidden mb-2">
+        <div id="drops-container" class="card-glow rounded-xl overflow-hidden mb-2">
             <div id="drops-list" class="divide-y divide-dark-border max-h-64 overflow-y-auto">
                 <!-- Drops will be inserted here -->
                 <div class="p-4 text-center text-gray-500">
@@ -107,18 +107,14 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex gap-3">
-            <button id="btn-initialize" class="flex-1 py-3 bg-primary hover:bg-primary/80 rounded-xl font-medium transition">
+        <div class="flex items-center justify-end gap-3 mt-4">
+            <button id="btn-initialize" class="px-4 py-2 bg-primary hover:bg-primary/80 border border-primary/50 shadow-[0_0_10px_rgba(99,102,241,0.4)] rounded-lg font-medium text-sm transition text-white">
                 Initialize Bag
             </button>
-            <button id="btn-reset" class="px-4 py-3 bg-dark-card border border-dark-border hover:bg-danger/20 hover:border-danger rounded-xl transition">
-                Reset
-            </button>
-        </div>
 
-        <!-- Initialize Status -->
-        <div id="init-status" class="mt-3 text-center text-sm text-gray-400">
-            Not initialized - Click "Initialize Bag" then sort your inventory
+            <button id="btn-reset" class="px-4 py-2 bg-dark-card border border-dark-border hover:border-danger hover:text-danger rounded-lg text-sm transition">
+                Reset Session
+            </button>
         </div>
     </div>
 
