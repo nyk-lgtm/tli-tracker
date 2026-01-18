@@ -5,14 +5,16 @@ Provides MainWindow and OverlayWindow using QWebEngineView.
 """
 
 import json
-
 from pathlib import Path
+from typing import Optional
 
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebChannel import QWebChannel
+
+from app.dialogs import show_error, DialogResult
 
 
 class MainWindow(QMainWindow):
@@ -23,6 +25,7 @@ class MainWindow(QMainWindow):
         self.bridge = bridge
         self.api = api
         self.log_watcher = None
+        self._last_dialog_was_retry = False
 
         self.setWindowTitle("TLI Tracker")
         self.resize(500, 800)
@@ -45,12 +48,13 @@ class MainWindow(QMainWindow):
 
         # Load HTML
         html_path = self._get_ui_path("index.html")
-        self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
+        if html_path:
+            self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
 
         # Connect events
         self.web_view.loadFinished.connect(self.on_page_loaded)
 
-    def _get_ui_path(self, filename: str) -> Path:
+    def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
         import sys
         if getattr(sys, 'frozen', False):
@@ -62,7 +66,13 @@ class MainWindow(QMainWindow):
 
         ui_path = base_path / "ui" / filename
         if not ui_path.exists():
-            raise RuntimeError(f"UI not found: {ui_path}")
+            show_error(
+                "Installation Error",
+                f"UI file not found: {filename}",
+                f"Expected location: {ui_path}\n\n"
+                "The application may be corrupted. Please reinstall."
+            )
+            return None
         return ui_path.resolve()
 
     def on_page_loaded(self, success: bool) -> None:
@@ -75,33 +85,55 @@ class MainWindow(QMainWindow):
         self._start_log_watcher()
 
     def _start_log_watcher(self) -> None:
-        """Find game log and start watching."""
-        try:
-            from app.log_watcher import LogWatcher
+        """Find game log and start watching (with retry support)."""
+        from app.log_watcher import LogWatcher
 
+        # Retry loop for finding game
+        while True:
             log_path = self._find_game_log()
-            print(f"Found log file: {log_path}")
+            if log_path:
+                break
+            # _find_game_log shows dialog and returns None if not found
+            # If user didn't click Retry, exit the loop
+            if not self._last_dialog_was_retry:
+                self.bridge.emit_event("error", {"message": "Game not found"})
+                return
 
-            self.log_watcher = LogWatcher(log_path, self.api.tracker.process_log_chunk)
+        print(f"Found log file: {log_path}")
+        self.log_watcher = LogWatcher(log_path, self.api.tracker.process_log_chunk)
 
-            if self.log_watcher.start():
-                print("Log watcher started successfully")
-                self.bridge.emit_event("ready", {})
-            else:
-                self.bridge.emit_event("error", {"message": "Failed to start log watcher"})
+        if self.log_watcher.start():
+            print("Log watcher started successfully")
+            self.bridge.emit_event("ready", {})
+        else:
+            show_error(
+                "Log Watcher Error",
+                "Failed to start log file monitoring.",
+                "The game log file exists but could not be watched. "
+                "Try restarting the application."
+            )
+            self.bridge.emit_event("error", {"message": "Failed to start log watcher"})
 
-        except RuntimeError as e:
-            print(f"Error: {e}")
-            self.bridge.emit_event("error", {"message": str(e)})
+    def _find_game_log(self) -> Optional[str]:
+        """
+        Find the Torchlight Infinite log file.
 
-    def _find_game_log(self) -> str:
-        """Find the Torchlight Infinite log file."""
+        Returns:
+            Path to log file, or None if not found (error dialog shown)
+        """
+        self._last_dialog_was_retry = False
+
         try:
             import win32gui
             import win32process
             import psutil
         except ImportError:
-            raise RuntimeError("win32 modules required (install pywin32)")
+            show_error(
+                "Missing Dependencies",
+                "Required Windows modules are not installed.",
+                "Please reinstall the application or install pywin32."
+            )
+            return None
 
         # Find the game window
         hwnd = win32gui.FindWindow(None, "Torchlight: Infinite  ")
@@ -109,10 +141,14 @@ class MainWindow(QMainWindow):
             hwnd = win32gui.FindWindow(None, "Torchlight: Infinite")
 
         if not hwnd:
-            raise RuntimeError(
-                "Torchlight: Infinite not found. "
-                "Please start the game first."
+            result = show_error(
+                "Game Not Found",
+                "Torchlight: Infinite is not running.",
+                "Please start the game first, then click Retry.",
+                show_retry=True,
             )
+            self._last_dialog_was_retry = (result == DialogResult.RETRY)
+            return None
 
         # Get process ID from window handle
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -126,7 +162,15 @@ class MainWindow(QMainWindow):
         log_path = game_root / "TorchLight" / "Saved" / "Logs" / "UE_game.log"
 
         if not log_path.exists():
-            raise RuntimeError(f"Log file not found: {log_path}")
+            result = show_error(
+                "Log File Not Found",
+                "Could not find the game log file.",
+                f"Expected location: {log_path}\n\n"
+                "Make sure the game has fully loaded, then click Retry.",
+                show_retry=True,
+            )
+            self._last_dialog_was_retry = (result == DialogResult.RETRY)
+            return None
 
         return str(log_path)
 
@@ -175,11 +219,12 @@ class OverlayWindow(QMainWindow):
         self.web_view.page().setWebChannel(self.channel)
 
         html_path = self._get_ui_path("overlay.html")
-        self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
+        if html_path:
+            self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
 
         self.hide()
 
-    def _get_ui_path(self, filename: str) -> Path:
+    def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
         import sys
         if getattr(sys, 'frozen', False):
@@ -189,7 +234,13 @@ class OverlayWindow(QMainWindow):
 
         ui_path = base_path / "ui" / filename
         if not ui_path.exists():
-            raise RuntimeError(f"UI not found: {ui_path}")
+            show_error(
+                "Installation Error",
+                f"UI file not found: {filename}",
+                f"Expected location: {ui_path}\n\n"
+                "The application may be corrupted. Please reinstall."
+            )
+            return None
         return ui_path.resolve()
 
     def showEvent(self, event) -> None:
