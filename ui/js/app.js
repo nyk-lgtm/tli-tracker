@@ -541,7 +541,7 @@ async function loadHistory() {
             return;
         }
 
-        listEl.innerHTML = sessions.slice(0, 20).map(session => `
+        listEl.innerHTML = sessions.map(session => `
             <div class="session-item">
                 <div class="session-item-date">
                     ${formatDate(session.started_at)}
