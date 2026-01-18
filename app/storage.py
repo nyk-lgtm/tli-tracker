@@ -18,6 +18,9 @@ DATA_DIR = Path(__file__).parent.parent / "data"
 def ensure_data_dir() -> Path:
     """Ensure the data directory exists and return its path."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
+    # Create sessions subdirectory for individual session files
+    sessions_dir = DATA_DIR / "sessions"
+    sessions_dir.mkdir(exist_ok=True)
     return DATA_DIR
 
 

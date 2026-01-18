@@ -156,6 +156,21 @@ class Session:
             "maps": [m.to_dict() for m in self.maps]
         }
 
+    def to_summary_dict(self) -> dict:
+        """Convert to summary dictionary (excludes heavy map data)."""
+        return {
+            "id": self.id,
+            "started_at": self.started_at.isoformat(),
+            "ended_at": self.ended_at.isoformat() if self.ended_at else None,
+            "total_value": self.total_value,
+            "total_items": self.total_items,
+            "total_duration": self.total_duration,
+            "session_duration": self.session_duration,
+            "map_count": self.map_count,
+            "value_per_hour": self.value_per_hour,
+            "maps_per_hour": self.maps_per_hour,
+        }
+
 
 @dataclass
 class TrackerState:
