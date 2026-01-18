@@ -13,7 +13,7 @@ from .log_parser import LogParser
 from .bag_state import BagState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import get_item_name, load_items
+from .storage import get_item_name, load_items, load_config
 
 
 class Tracker:
@@ -214,11 +214,18 @@ class Tracker:
 
     def get_stats(self) -> dict:
         """Get current tracker statistics for UI."""
+        config = load_config()
+        use_real_time = config.get("use_real_time_stats", False)
+
         current_map = None
+        current_map_duration = 0
+        current_map_value = 0
         if self.state.current_map:
+            current_map_duration = self.state.current_map.duration_seconds
+            current_map_value = self.state.current_map.total_value
             current_map = {
-                "duration": self.state.current_map.duration_seconds,
-                "value": self.state.current_map.total_value,
+                "duration": current_map_duration,
+                "value": current_map_value,
                 "items": self.state.current_map.total_items,
             }
 
@@ -231,15 +238,28 @@ class Tracker:
                 # Add current map's drops (not yet in session)
                 session_drops.extend([self._drop_to_dict(d) for d in self.state.current_map.drops])
 
+            if use_real_time:
+                # Live rate calculation: include current map and use real-world time
+                total_value = self.state.current_session.total_value + current_map_value
+                duration_for_rate = self.state.current_session.session_duration
+                hours = duration_for_rate / 3600 if duration_for_rate > 0 else 0
+                value_per_hour = total_value / hours if hours > 0 else 0
+                maps_per_hour = self.state.current_session.map_count / hours if hours > 0 else 0
+            else:
+                # Original behavior: use Session properties (only updates on map exit)
+                total_value = self.state.current_session.total_value
+                value_per_hour = self.state.current_session.value_per_hour
+                maps_per_hour = self.state.current_session.maps_per_hour
+
             session = {
                 "id": self.state.current_session.id,
-                "duration_mapping": self.state.current_session.total_duration,
+                "duration_mapping": self.state.current_session.total_duration + current_map_duration,
                 "duration_total": self.state.current_session.session_duration,
-                "value": self.state.current_session.total_value,
+                "value": total_value,
                 "items": self.state.current_session.total_items,
                 "map_count": self.state.current_session.map_count,
-                "value_per_hour": self.state.current_session.value_per_hour,
-                "maps_per_hour": self.state.current_session.maps_per_hour,
+                "value_per_hour": value_per_hour,
+                "maps_per_hour": maps_per_hour,
                 "drops": session_drops
             }
 

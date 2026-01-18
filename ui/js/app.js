@@ -20,7 +20,8 @@ let settings = {
     tax_enabled: false,
     overlay_opacity: 0.9,
     show_map_value: false,
-    overlay_pinned: false
+    overlay_pinned: false,
+    use_real_time_stats: false
 };
 
 // DOM Elements
@@ -46,6 +47,7 @@ const elements = {
     historyModal: document.getElementById('history-modal'),
     settingTax: document.getElementById('setting-tax'),
     settingMapValue: document.getElementById('setting-map-value'),
+    settingRealTimeStats: document.getElementById('setting-real-time-stats'),
     settingOverlayPinned: document.getElementById('setting-overlay-pinned'),
     settingOpacity: document.getElementById('setting-opacity'),
     opacityValue: document.getElementById('opacity-value'),
@@ -468,11 +470,13 @@ async function loadSettings() {
         settings = await api('get_settings');
         elements.settingTax.checked = settings.tax_enabled || false;
         elements.settingMapValue.checked = settings.show_map_value || false;
+        elements.settingRealTimeStats.checked = settings.use_real_time_stats || false;
         elements.settingOverlayPinned.checked = settings.overlay_pinned || false;
         elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
         elements.opacityValue.textContent = elements.settingOpacity.value + '%';
         updateToggleVisual('setting-tax');
         updateToggleVisual('setting-map-value');
+        updateToggleVisual('setting-real-time-stats');
         updateToggleVisual('setting-overlay-pinned');
         applyMapValueVisibility();
     } catch (e) {
@@ -483,6 +487,7 @@ async function loadSettings() {
 async function saveSettings() {
     settings.tax_enabled = elements.settingTax.checked;
     settings.show_map_value = elements.settingMapValue.checked;
+    settings.use_real_time_stats = elements.settingRealTimeStats.checked;
     settings.overlay_pinned = elements.settingOverlayPinned.checked;
     settings.overlay_opacity = elements.settingOpacity.value / 100;
 
@@ -707,6 +712,9 @@ function init() {
     document.getElementById('setting-tax').addEventListener('change', () => updateToggleVisual('setting-tax'));
     document.getElementById('setting-map-value').addEventListener('change', () => {
         updateToggleVisual('setting-map-value');
+    });
+    document.getElementById('setting-real-time-stats').addEventListener('change', () => {
+        updateToggleVisual('setting-real-time-stats');
     });
     document.getElementById('setting-overlay-pinned').addEventListener('change', () => {
         updateToggleVisual('setting-overlay-pinned');

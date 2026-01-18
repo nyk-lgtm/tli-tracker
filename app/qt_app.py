@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 
 from app.api import Api
 from app.bridge import ApiBridge
@@ -30,6 +30,11 @@ class TLITrackerApp:
 
         # Create API instance
         self.api = Api()
+
+        # Create heartbeat timer for real-time UI updates
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.api.tracker._notify_state)
+        self.timer.start(1000)  # Update every 1 second
 
         # Create bridge for QWebChannel communication
         self.bridge = ApiBridge(self.api)
