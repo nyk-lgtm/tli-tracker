@@ -25,8 +25,8 @@ class MainWindow(QMainWindow):
         self.log_watcher = None
 
         self.setWindowTitle("TLI Tracker")
-        self.resize(500, 650)
-        self.setMinimumSize(400, 500)
+        self.resize(500, 800)
+        self.setMinimumSize(450, 600)
 
         # Create web view
         self.web_view = QWebEngineView()

@@ -287,7 +287,7 @@ function renderItemsMode(drops) {
 // ============ Event Handlers ============
 
 function onReady() {
-    showStatus('Connected to game', 'success');
+    showStatus('Connected to the game', 'success');
     setTimeout(() => hideStatus(), 3000);
 
     // Load initial state
@@ -519,10 +519,17 @@ function closeModal(name) {
 
 // ============ Status Banner ============
 
+let statusTimeout;
+
 function showStatus(message, type = 'info') {
-    elements.statusBanner.className = `mb-4 p-3 rounded-lg text-sm status-${type}`;
-    elements.statusText.textContent = message;
-    elements.statusBanner.classList.remove('hidden');
+    const el = elements.statusBanner;
+    const text = elements.statusText;
+
+    if (statusTimeout) clearTimeout(statusTimeout);
+    text.textContent = message;
+    el.classList.remove('hidden', 'status-info', 'status-success', 'status-warning', 'status-error');
+    el.classList.add(`status-${type}`);
+    statusTimeout = setTimeout(hideStatus, 2000);
 }
 
 function hideStatus() {
