@@ -146,13 +146,13 @@ function renderUI() {
         elements.statSessionMapping.textContent = formatTime(state.session.duration_mapping);
         elements.statSessionTotal.textContent = formatTime(state.session.duration_total);
         elements.statSessionValue.textContent = formatValue(state.session.value);
-        elements.statRate.textContent = formatRate(state.session.value_per_hour);
+        elements.statRate.innerHTML = formatRate(state.session.value_per_hour);
         elements.statMapCount.textContent = state.session.map_count;
     } else {
         elements.statSessionMapping.textContent = '0:00';
         elements.statSessionTotal.textContent = '0:00';
         elements.statSessionValue.textContent = '+0';
-        elements.statRate.textContent = '0/hr';
+        elements.statRate.innerHTML = formatRate(0);
         elements.statMapCount.textContent = '0';
     }
 
@@ -519,7 +519,10 @@ async function loadHistory() {
         // Update summary
         document.getElementById('history-total-value').textContent = formatValue(summary.total_value);
         document.getElementById('history-total-maps').textContent = summary.total_maps;
-        document.getElementById('history-avg-rate').textContent = formatRate(summary.average_value_per_hour);
+        const rateEl = document.getElementById('history-avg-rate');
+        if (rateEl) {
+            rateEl.innerHTML = formatRate(summary.average_value_per_hour);
+        }
 
         // Render sessions list
         const listEl = document.getElementById('history-list');
@@ -615,15 +618,19 @@ function formatValue(value) {
 }
 
 function formatRate(value) {
-    if (!value) return '0/hr';
+    let text = '0';
 
-    if (value >= 1000000) {
-        return (value / 1000000).toFixed(1) + 'M/hr';
-    } else if (value >= 1000) {
-        return (value / 1000).toFixed(1) + 'k/hr';
+    if (value) {
+        if (value >= 1000000) {
+            text = (value / 1000000).toFixed(1) + 'M';
+        } else if (value >= 1000) {
+            text = (value / 1000).toFixed(1) + 'k';
+        } else {
+            text = Math.round(value).toString();
+        }
     }
 
-    return Math.round(value) + '/hr';
+    return `${text}<span class="text-xs text-gray-400">/hr</span>`;
 }
 
 function formatDate(isoString) {
