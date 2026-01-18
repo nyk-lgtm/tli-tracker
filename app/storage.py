@@ -5,14 +5,36 @@ Handles reading/writing configuration, prices, sessions, and item data.
 """
 
 import json
+import sys
 import os
 from pathlib import Path
 from typing import Any, Optional
 from datetime import datetime
 
 
+def is_frozen():
+    """Check if running as a compiled EXE"""
+    return getattr(sys, 'frozen', False) or "__compiled__" in globals()
+
+def get_app_dir() -> Path:
+    """Returns the folder where the .exe is located (for saving data)"""
+    if is_frozen():
+        return Path(sys.executable).parent
+    return Path(__file__).parent.parent
+
+def get_resource_path(relative_path: str) -> Path:
+    """Returns the path to internal assets (read-only) inside the exe"""
+    if getattr(sys, 'frozen', False):
+        base_path = Path(sys._MEIPASS)
+    elif "__compiled__" in globals():
+        base_path = Path(os.path.dirname(__file__)).absolute().parent
+    else:
+        base_path = Path(__file__).parent.parent
+    return base_path / relative_path
+
 # Default data directory (relative to app)
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = get_app_dir() / "data"
+ITEMS_FILE = get_resource_path("data/item_ids.json") # Points to internal file
 
 
 def ensure_data_dir() -> Path:
@@ -115,16 +137,27 @@ def set_config_value(key: str, value: Any) -> bool:
 _item_cache: dict[str, str] | None = None
 
 
-def load_items() -> dict[str, str]:
-    """
-    Load the item database.
+# def load_items() -> dict[str, str]:
+#     """
+#     Load the item database.
 
-    Returns:
-        Dictionary of item_id -> item_name
-    """
+#     Returns:
+#         Dictionary of item_id -> item_name
+#     """
+#     global _item_cache
+#     if _item_cache is None:
+#         _item_cache = load_json("item_ids.json", {})
+#     return _item_cache
+
+def load_items() -> dict[str, str]:
     global _item_cache
     if _item_cache is None:
-        _item_cache = load_json("item_ids.json", {})
+        try:
+            # Load directly from the internal resource path
+            with open(ITEMS_FILE, 'r', encoding='utf-8') as f:
+                _item_cache = json.load(f)
+        except Exception:
+            _item_cache = {}
     return _item_cache
 
 

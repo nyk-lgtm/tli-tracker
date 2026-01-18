@@ -9,11 +9,13 @@ from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QIcon
 
+import app
 from app.api import Api
 from app.bridge import ApiBridge
 from app.windows import MainWindow, OverlayWindow
-from app.storage import load_config
+from app.storage import load_config#, get_resource_path
 
 
 class TLITrackerApp:
@@ -27,6 +29,8 @@ class TLITrackerApp:
 
         self.app = QApplication(sys.argv)
         self.app.setApplicationName("TLI Tracker")
+        # icon_path = get_resource_path("ui/assets/logo.ico")
+        self.app.setWindowIcon(QIcon("ui/assets/logo.ico"))
 
         # Create API instance
         self.api = Api()
