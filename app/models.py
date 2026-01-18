@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 from enum import Enum
+from .storage import load_config
 
 
 class DisplayMode(Enum):
@@ -122,13 +123,19 @@ class Session:
     @property
     def value_per_hour(self) -> float:
         """Value earned per hour."""
-        hours = self.total_duration / 3600
+        config = load_config()
+        use_real_time = config.get("use_real_time_stats", False)
+        duration = self.session_duration if use_real_time else self.total_duration
+        hours = duration / 3600
         return self.total_value / hours if hours > 0 else 0
 
     @property
     def maps_per_hour(self) -> float:
         """Maps completed per hour."""
-        hours = self.total_duration / 3600
+        config = load_config()
+        use_real_time = config.get("use_real_time_stats", False)
+        duration = self.session_duration if use_real_time else self.total_duration
+        hours = duration / 3600
         return self.map_count / hours if hours > 0 else 0
 
     @property

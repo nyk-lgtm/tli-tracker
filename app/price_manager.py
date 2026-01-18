@@ -34,7 +34,7 @@ class PriceManager:
         """Load prices from disk."""
         self._prices = load_json(self.FILENAME, {})
         # Ensure fixed prices are set
-        current_time = datetime.datetime.now().isoformat()
+        current_time = datetime.now().isoformat()
         for item_id, price_value in self.FIXED_PRICES.items():
             self._prices[item_id] = {
                 "price": price_value,
@@ -100,14 +100,16 @@ class PriceManager:
         """
         Update price from an auction house search result.
 
-        Calculates the average of the provided prices and stores it.
+        Uses MAD (Median Absolute Deviation) method to remove outlier values
+        (like price fixing at 9999 or accidental 1 gold listings).
+        This method is more robust than IQR when outliers comprise >25% of data.
 
         Args:
             item_id: The item's ConfigBaseId
             prices: List of prices from the search results
 
         Returns:
-            The calculated average price
+            The calculated average price after removing outliers
         """
         if item_id in self.FIXED_PRICES:
             return self.FIXED_PRICES[item_id]
@@ -115,7 +117,62 @@ class PriceManager:
         if not prices:
             return 0.0
 
-        avg_price = sum(prices) / len(prices)
+        # For small datasets, use median (safest for low volume)
+        if len(prices) < 5:
+            sorted_prices = sorted(prices)
+            n = len(sorted_prices)
+            median_idx = n // 2
+            if n % 2 == 0:
+                avg_price = (sorted_prices[median_idx - 1] + sorted_prices[median_idx]) / 2
+            else:
+                avg_price = sorted_prices[median_idx]
+            self.set_price(item_id, avg_price)
+            return avg_price
+
+        # MAD-based outlier detection for larger datasets
+        sorted_prices = sorted(prices)
+        n = len(sorted_prices)
+
+        # Calculate median
+        median_idx = n // 2
+        if n % 2 == 0:
+            median = (sorted_prices[median_idx - 1] + sorted_prices[median_idx]) / 2
+        else:
+            median = sorted_prices[median_idx]
+
+        # Calculate absolute deviations from median
+        deviations = [abs(p - median) for p in sorted_prices]
+        sorted_deviations = sorted(deviations)
+
+        # Calculate MAD (median of absolute deviations)
+        mad_idx = len(sorted_deviations) // 2
+        if len(sorted_deviations) % 2 == 0:
+            mad = (sorted_deviations[mad_idx - 1] + sorted_deviations[mad_idx]) / 2
+        else:
+            mad = sorted_deviations[mad_idx]
+
+        # Handle case where MAD is 0 (>50% of values are identical)
+        if mad == 0:
+            # Use 5% of median as minimum threshold
+            threshold = median * 0.05 if median > 0 else 0.01
+            filtered_prices = [p for p in sorted_prices if abs(p - median) <= threshold]
+        else:
+            # Calculate modified Z-scores and filter outliers
+            # Modified Z-score = 0.6745 * (x - median) / MAD
+            # Filter out items where |Z-score| > 3.5
+            filtered_prices = []
+            for p in sorted_prices:
+                modified_z = 0.6745 * abs(p - median) / mad
+                if modified_z <= 3.5:
+                    filtered_prices.append(p)
+
+        # Calculate average of filtered prices
+        if filtered_prices:
+            avg_price = sum(filtered_prices) / len(filtered_prices)
+        else:
+            # Fallback to median if all prices were filtered (shouldn't happen)
+            avg_price = median
+
         self.set_price(item_id, avg_price)
         return avg_price
 

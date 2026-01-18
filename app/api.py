@@ -163,6 +163,7 @@ class Api:
             "tax_enabled": False,
             "tax_rate": 0.125,
             "show_map_value": False,
+            "use_real_time_stats": False,
         }
         success = save_config(default_settings)
 
