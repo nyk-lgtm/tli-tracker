@@ -85,11 +85,11 @@ class Tracker:
         # Extract price data from AH searches
         price_events = self.parser.parse_price_search(text)
         for event in price_events:
-            self.prices.update_from_search(event.item_id, event.prices)
+            final_price = self.prices.update_from_search(event.item_id, event.prices)
             self._backfill_prices(event.item_id)
             self._notify("price_update", {
                 "item_id": event.item_id,
-                "price": event.average_price
+                "price": final_price
             })
 
     def _on_map_enter(self) -> None:

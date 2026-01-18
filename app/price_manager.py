@@ -24,6 +24,7 @@ class PriceManager:
     """
 
     FILENAME = "prices.json"
+    FIXED_PRICES = {"100300": 1.0} # FE price should always be 1.0
 
     def __init__(self):
         self._prices: dict[str, dict] = {}
@@ -32,6 +33,13 @@ class PriceManager:
     def _load(self) -> None:
         """Load prices from disk."""
         self._prices = load_json(self.FILENAME, {})
+        # Ensure fixed prices are set
+        current_time = datetime.datetime.now().isoformat()
+        for item_id, price_value in self.FIXED_PRICES.items():
+            self._prices[item_id] = {
+                "price": price_value,
+                "updated_at": current_time
+            }
 
     def _save(self) -> None:
         """Save prices to disk."""
@@ -79,6 +87,9 @@ class PriceManager:
             item_id: The item's ConfigBaseId
             price: The price value
         """
+        if item_id in self.FIXED_PRICES:
+            return
+
         self._prices[item_id] = {
             "price": round(price, 4),
             "updated_at": datetime.now().isoformat()
@@ -98,6 +109,9 @@ class PriceManager:
         Returns:
             The calculated average price
         """
+        if item_id in self.FIXED_PRICES:
+            return self.FIXED_PRICES[item_id]
+
         if not prices:
             return 0.0
 

@@ -47,8 +47,8 @@ class LogParser:
 
     PATTERN_SCENE_CHANGE = re.compile(
         r"PageApplyBase@ _UpdateGameEnd:.*?"
-        r"LastSceneName = World'/Game/Art/Maps/([^']+)'.*?"
-        r"NextSceneName = World'/Game/Art/Maps/([^']+)'",
+        r"LastSceneName = World'/Game/Art/(?:Maps|Season/S13/Maps)/([^']+)'.*?"
+        r"NextSceneName = World'/Game/Art/(?:Maps|Season/S13/Maps)/([^']+)'",
         re.DOTALL
     )
 
