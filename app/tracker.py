@@ -86,6 +86,7 @@ class Tracker:
         price_events = self.parser.parse_price_search(text)
         for event in price_events:
             self.prices.update_from_search(event.item_id, event.prices)
+            self._backfill_prices(event.item_id)
             self._notify("price_update", {
                 "item_id": event.item_id,
                 "price": event.average_price
@@ -162,6 +163,40 @@ class Tracker:
                 "price_status": self.prices.get_price_status(item_id)
             })
 
+        self._notify_state()
+
+    def _backfill_prices(self, item_id: str) -> None:
+        """
+        Update the value of all existing drops for this item in the current session.
+
+        Called when a new price is discovered via AH search.
+
+        Args:
+            item_id: The item whose price was just updated
+        """
+        # Get the updated price with tax
+        price = self.prices.get_price_with_tax(item_id)
+        if price is None:
+            # No price available, nothing to backfill
+            return
+
+        # Update current map drops
+        if self.state.current_map:
+            for drop in self.state.current_map.drops:
+                if drop.item_id == item_id:
+                    drop.value = price * drop.quantity
+
+        # Update session history drops
+        if self.state.current_session:
+            for map_run in self.state.current_session.maps:
+                for drop in map_run.drops:
+                    if drop.item_id == item_id:
+                        drop.value = price * drop.quantity
+
+            # Persist the updated session to disk
+            self.sessions.save_session(self.state.current_session)
+
+        # Notify UI that state has changed
         self._notify_state()
 
     def _notify(self, event_type: str, data: Any) -> None:
