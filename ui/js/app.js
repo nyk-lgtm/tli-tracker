@@ -12,7 +12,8 @@ let state = {
     displayMode: 'value',
     currentMap: null,
     session: null,
-    drops: []
+    drops: [],
+    prices: {}
 };
 
 let settings = {
@@ -86,7 +87,12 @@ window.onPythonEvent = function(eventType, data) {
             onInitialized(data.item_count);
             break;
         case 'price_update':
-            // Could show a notification
+            if (data.item_id && data.price !== undefined) {
+                const cleanId = String(data.item_id).trim();
+                state.prices[cleanId] = data.price;
+                console.log(`Updated price for [${cleanId}]: ${data.price}`);
+                renderDrops();
+            }
             break;
         case 'session_reset':
             state.drops = [];
@@ -193,14 +199,11 @@ function renderDrops() {
         return;
     }
 
-    // Sort by most recent first (already should be, but ensure)
     const drops = [...state.drops].slice(0, 50); // Limit to 50 most recent
 
     if (state.displayMode === 'items') {
-        // Group by item and show quantities
         renderItemsMode(drops);
     } else {
-        // Show individual drops with values
         renderValueMode(drops);
     }
 }
@@ -209,24 +212,54 @@ function renderValueMode(drops) {
     // Aggregate by item
     const itemTotals = {};
     drops.forEach(drop => {
-        if (!itemTotals[drop.item_id]) {
-            itemTotals[drop.item_id] = {
+        const id = String(drop.item_id).trim();
+
+        if (!itemTotals[id]) {
+            itemTotals[id] = {
+                id: id,
                 name: drop.item_name,
                 quantity: 0,
                 value: 0,
                 price_status: drop.price_status
             };
         }
-        itemTotals[drop.item_id].quantity += drop.quantity;
+        itemTotals[id].quantity += drop.quantity;
         if (drop.value !== null) {
-            itemTotals[drop.item_id].value += drop.value;
+            itemTotals[id].value += drop.value;
         }
     });
 
-    // Sort by total quantity (highest first) and take top 5
+    Object.values(itemTotals).forEach(item => {
+        const currentPrice = state.prices[item.id];
+        if (currentPrice !== undefined) {
+            item.value = item.quantity * currentPrice;
+        }
+    });
+
+    // Sort by total quantity (highest first)
+    // const sorted = Object.entries(itemTotals)
+    //     .sort((a, b) => Math.abs(b[1].quantity) - Math.abs(a[1].quantity));
     const sorted = Object.entries(itemTotals)
-        .sort((a, b) => Math.abs(b[1].quantity) - Math.abs(a[1].quantity))
-        .slice(0, 5);
+        .sort((a, b) => {
+            const itemA = a[1];
+            const itemB = b[1];
+
+            // Check if items have a valid price (value > 0)
+            const hasPriceA = Math.abs(itemA.value) > 0;
+            const hasPriceB = Math.abs(itemB.value) > 0;
+
+            if (hasPriceA && !hasPriceB) return -1; // A comes first
+            if (!hasPriceA && hasPriceB) return 1;  // B comes first
+
+            if (hasPriceA) {
+                // Both have prices: sort by Total Value (desc)
+                return Math.abs(itemB.value) - Math.abs(itemA.value);
+            } else {
+                // Neither has price: sort by Quantity (desc)
+                return Math.abs(itemB.quantity) - Math.abs(itemA.quantity);
+            }
+        });
+
 
     const html = sorted.map(([id, item]) => {
         const valueClass = item.value >= 0 ? 'positive' : 'negative';
@@ -263,10 +296,9 @@ function renderItemsMode(drops) {
         itemCounts[drop.item_id].quantity += drop.quantity;
     });
 
-    // Sort by quantity (highest first) and take top 5
+    // Sort by quantity (highest first)
     const sorted = Object.entries(itemCounts)
-        .sort((a, b) => b[1].quantity - a[1].quantity)
-        .slice(0, 5);
+        .sort((a, b) => b[1].quantity - a[1].quantity);
 
     const html = sorted.map(([id, item]) => {
         const valueClass = item.quantity >= 0 ? 'positive' : 'negative';
@@ -292,6 +324,20 @@ function onReady() {
 
     // Load initial state
     api('get_stats').then(updateState);
+
+    // Initial fetch of price database to populate cache
+    api('get_prices').then(data => {
+        if (data) {
+            Object.entries(data).forEach(([id, entry]) => {
+                if (entry && entry.price !== undefined) {
+                    const cleanId = String(id).trim();
+                    state.prices[cleanId] = entry.price;
+                }
+            });
+            // Re-render if drops are already loaded
+            if (state.drops.length > 0) renderDrops();
+        }
+    });
 }
 
 function onInitialized(itemCount) {
