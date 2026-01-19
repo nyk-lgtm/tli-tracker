@@ -8,6 +8,7 @@
 // Global state
 let state = {
     initialized: false,
+    awaitingInit: false,
     inMap: false,
     displayMode: 'value',
     currentMap: null,
@@ -108,6 +109,7 @@ window.onPythonEvent = function(eventType, data) {
 
 function updateState(data) {
     state.initialized = data.initialized;
+    state.awaitingInit = data.awaiting_init || false;
     state.inMap = data.in_map;
     state.displayMode = data.display_mode;
     state.currentMap = data.current_map;
@@ -164,11 +166,19 @@ function renderUI() {
 }
 
 function updateInitStatus() {
-    // Update button text based on initialization state
-    if (state.initialized) {
-        elements.btnInitialize.textContent = 'Re-Initialize';
+    if (state.awaitingInit) {
+        // Waiting for user to sort bag
+        elements.btnInitialize.textContent = 'Waiting...';
+        elements.btnInitialize.disabled = true;
+        elements.btnInitialize.classList.remove('hidden');
+    } else if (state.initialized) {
+        // Initialized - show re-sync option
+        elements.btnInitialize.textContent = 'Re-sync Bag';
+        elements.btnInitialize.disabled = false;
+        elements.btnInitialize.classList.remove('hidden');
     } else {
-        elements.btnInitialize.textContent = 'Initialize Bag';
+        // Not yet initialized - hide button
+        elements.btnInitialize.classList.add('hidden');
     }
 
     // Re-render drops to update empty state
@@ -189,7 +199,17 @@ function renderDrops() {
     if (state.drops.length === 0) {
         let emptyHtml = '';
 
-        if (!state.initialized) {
+        if (state.awaitingInit) {
+            // Scenario: Waiting for re-sync
+            emptyHtml = `
+                <div class="flex flex-col items-center justify-center py-10 text-center space-y-2">
+                    <div class="text-lg font-semibold text-gray-300">Waiting for Re-sync</div>
+                    <p class="text-sm text-gray-500 max-w-xs">
+                        Sort your inventory in-game to re-sync.
+                    </p>
+                </div>
+            `;
+        } else if (!state.initialized) {
             // Scenario: Not Initialized (Onboarding)
             emptyHtml = `
                 <div class="flex flex-col items-center justify-center py-10 text-center space-y-2">
@@ -376,12 +396,13 @@ async function initialize() {
     try {
         const result = await api('request_initialization');
         showStatus(result.message, 'info');
+        // State update from backend will keep button in "Waiting..." state
     } catch (e) {
         showStatus('Initialization failed', 'error');
+        // Reset button on error
+        elements.btnInitialize.disabled = false;
+        elements.btnInitialize.textContent = 'Re-sync Bag';
     }
-
-    elements.btnInitialize.disabled = false;
-    elements.btnInitialize.textContent = 'Initialize Bag';
 }
 
 async function resetSession() {
