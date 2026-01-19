@@ -5,8 +5,11 @@ Core API class used by both the QWebChannel bridge (PySide6)
 and directly by other Python components.
 """
 
+import csv
 import json
 from typing import Any, Optional
+
+from PySide6.QtWidgets import QFileDialog
 
 from .tracker import Tracker
 from .price_manager import PriceManager
@@ -107,6 +110,72 @@ class Api:
         """Delete a session by ID."""
         success = self.sessions.delete_session(session_id)
         return {"status": "ok" if success else "error"}
+
+    def export_session_csv(self, session_id: str) -> dict:
+        """
+        Export a session to CSV file with one row per drop.
+
+        Opens a native file save dialog and writes the CSV.
+        """
+        # Load full session data
+        session = self.sessions.get_session(session_id)
+        if not session:
+            return {"status": "error", "message": "Session not found"}
+
+        # Open file save dialog
+        file_path, _ = QFileDialog.getSaveFileName(
+            self._main_window,
+            "Export Session",
+            f"session_{session_id[:8]}.csv",
+            "CSV Files (*.csv)"
+        )
+
+        if not file_path:
+            return {"status": "cancelled"}
+
+        try:
+            session_start = session.get("started_at", "")
+            session_end = session.get("ended_at", "")
+
+            rows = []
+            for map_run in session.get("maps", []):
+                map_start = map_run.get("started_at", "")
+                map_end = map_run.get("ended_at", "")
+                map_duration = map_run.get("duration_seconds", 0)
+                is_league_zone = map_run.get("is_league_zone", False)
+
+                for drop in map_run.get("drops", []):
+                    item_id = drop.get("item_id", "")
+                    rows.append({
+                        "session_id": session_id,
+                        "session_start": session_start,
+                        "session_end": session_end,
+                        "map_start": map_start,
+                        "map_end": map_end,
+                        "map_duration_seconds": round(map_duration, 2),
+                        "is_league_zone": is_league_zone,
+                        "item_name": get_item_name(item_id),
+                        "item_id": item_id,
+                        "quantity": drop.get("quantity", 0),
+                        "value": drop.get("value", 0),
+                        "drop_timestamp": drop.get("timestamp", "")
+                    })
+
+            # Write CSV
+            fieldnames = [
+                "session_id", "session_start", "session_end",
+                "map_start", "map_end", "map_duration_seconds", "is_league_zone",
+                "item_name", "item_id", "quantity", "value", "drop_timestamp"
+            ]
+
+            with open(file_path, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                writer.writerows(rows)
+
+            return {"status": "ok", "path": file_path, "rows": len(rows)}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
 
     # === Price API ===
 

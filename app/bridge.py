@@ -85,6 +85,11 @@ class ApiBridge(QObject):
         """Delete a session by ID."""
         return json.dumps(self.api.delete_session(session_id), default=str)
 
+    @Slot(str, result=str)
+    def export_session_csv(self, session_id: str) -> str:
+        """Export a session to CSV file."""
+        return json.dumps(self.api.export_session_csv(session_id), default=str)
+
     # === Price API ===
 
     @Slot(result=str)
