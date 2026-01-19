@@ -55,6 +55,7 @@ class MapRun:
     started_at: datetime
     ended_at: Optional[datetime] = None
     drops: list[Drop] = field(default_factory=list)
+    is_league_zone: bool = False
 
     @property
     def duration_seconds(self) -> float:
@@ -81,7 +82,8 @@ class MapRun:
             "duration_seconds": self.duration_seconds,
             "total_value": self.total_value,
             "total_items": self.total_items,
-            "drops": [d.to_dict() for d in self.drops]
+            "drops": [d.to_dict() for d in self.drops],
+            "is_league_zone": self.is_league_zone
         }
 
 
@@ -117,8 +119,8 @@ class Session:
 
     @property
     def map_count(self) -> int:
-        """Number of completed maps."""
-        return len([m for m in self.maps if m.ended_at])
+        """Number of completed maps (excludes league zones)."""
+        return len([m for m in self.maps if m.ended_at and not m.is_league_zone])
 
     @property
     def value_per_hour(self) -> float:

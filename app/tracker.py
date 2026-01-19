@@ -70,9 +70,9 @@ class Tracker:
         map_event = self.parser.parse_map_change(text)
         if map_event:
             if map_event.entering:
-                self._on_map_enter()
+                self._on_map_enter(is_league_zone=map_event.is_league_zone)
             else:
-                self._on_map_exit()
+                self._on_map_exit(is_league_zone=map_event.is_league_zone)
 
         # Process bag modifications (drops/consumption)
         if self.state.is_initialized:
@@ -92,7 +92,7 @@ class Tracker:
                 "price": final_price
             })
 
-    def _on_map_enter(self) -> None:
+    def _on_map_enter(self, is_league_zone: bool = False) -> None:
         """Handle entering a map."""
         self.state.is_in_map = True
 
@@ -100,7 +100,10 @@ class Tracker:
         self.bag.reset_baseline()
 
         # Start new map run
-        self.state.current_map = MapRun(started_at=datetime.now())
+        self.state.current_map = MapRun(
+            started_at=datetime.now(),
+            is_league_zone=is_league_zone
+        )
 
         # Ensure we have a session
         if not self.state.current_session:
@@ -109,7 +112,7 @@ class Tracker:
         self._notify("map_enter", {})
         self._notify_state()
 
-    def _on_map_exit(self) -> None:
+    def _on_map_exit(self, is_league_zone: bool = False) -> None:
         """Handle exiting a map."""
         if self.state.current_map:
             self.state.current_map.ended_at = datetime.now()

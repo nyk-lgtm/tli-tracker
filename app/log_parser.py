@@ -18,6 +18,7 @@ class BagModifyEvent:
 @dataclass
 class MapChangeEvent:
     entering: bool
+    is_league_zone: bool = False
 
 
 @dataclass
@@ -47,8 +48,14 @@ class LogParser:
 
     PATTERN_SCENE_CHANGE = re.compile(
         r"PageApplyBase@ _UpdateGameEnd:.*?"
-        r"LastSceneName = World'/Game/Art/(?:Maps|Season/S13/Maps)/([^']+)'.*?"
-        r"NextSceneName = World'/Game/Art/(?:Maps|Season/S13/Maps)/([^']+)'",
+        r"LastSceneName = World'/Game/Art/(?:Maps|Season/S\d+/Maps)/([^']+)'.*?"
+        r"NextSceneName = World'/Game/Art/(?:Maps|Season/S\d+/Maps)/([^']+)'",
+        re.DOTALL
+    )
+
+    PATTERN_LEAGUE_ZONE = re.compile(
+        r"PageApplyBase@ _UpdateGameEnd:.*?"
+        r"NextSceneName = World'/Game/Art/(?:Maps/S2|Season/S9/Maps|Season/S13/Maps)/",
         re.DOTALL
     )
 
@@ -102,6 +109,9 @@ class LogParser:
         return events
 
     def parse_map_change(self, text: str) -> Optional[MapChangeEvent]:
+        # Check if this is a league mechanic zone (S2, S9, S13)
+        is_league_zone = bool(self.PATTERN_LEAGUE_ZONE.search(text))
+
         match = self.PATTERN_SCENE_CHANGE.search(text)
         if not match:
             return None
@@ -109,10 +119,10 @@ class LogParser:
         last_scene, next_scene = match.group(1), match.group(2)
 
         if self.REFUGE_SCENE in last_scene and self.REFUGE_SCENE not in next_scene:
-            return MapChangeEvent(entering=True)
+            return MapChangeEvent(entering=True, is_league_zone=is_league_zone)
 
         if self.REFUGE_SCENE not in last_scene and self.REFUGE_SCENE in next_scene:
-            return MapChangeEvent(entering=False)
+            return MapChangeEvent(entering=False, is_league_zone=is_league_zone)
 
         return None
 
