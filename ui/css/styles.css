@@ -1,277 +1,693 @@
-/* Custom styles for TLI Tracker */
+/* TLI Tracker - Refined Design System */
 
-/* CSS Variables */
+/* ============================================
+   CSS Variables
+   ============================================ */
 :root {
-    --color-positive: #22d3ee;
-    --color-negative: #fb923c;
-    --glow-color: rgba(99, 102, 241, 0.25);
+    /* Colors - Teal/Slate palette */
+    --color-primary: #0d9488;
+    --color-primary-light: #14b8a6;
+    --color-primary-glow: rgba(13, 148, 136, 0.4);
+    --color-secondary: #64748b;
+    --color-success: #22d3ee;
+    --color-success-glow: rgba(34, 211, 238, 0.3);
+    --color-warning: #f59e0b;
+    --color-danger: #f87171;
+    --color-accent: #38bdf8;
+
+    /* Dark theme */
+    --color-bg: #0c1220;
+    --color-bg-elevated: #111827;
+    --color-card: #151e2c;
+    --color-card-hover: #1a2535;
+    --color-border: #2a3441;
+    --color-border-subtle: #1f2937;
+
+    /* Text */
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-text-dim: #64748b;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 20px var(--color-primary-glow);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
 }
 
-/* Background */
+/* ============================================
+   Base & Background
+   ============================================ */
 body {
-    background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+    background:
+        radial-gradient(ellipse at top left, #1a2744 0%, var(--color-bg) 50%),
+        var(--color-bg);
     background-attachment: fixed;
 }
 
-/* Card Glow Effect */
-.card-glow {
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    box-shadow: 0 0 0px var(--glow-color); /* No glow by default */
-    backdrop-filter: blur(8px);
-    transition: box-shadow 0.3s ease-in-out;
+/* ============================================
+   Typography
+   ============================================ */
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-feature-settings: 'tnum' on, 'lnum' on;
 }
 
-.card-glow:hover {
-    box-shadow: 0 0 15px var(--glow-color); /* Soft outer glow on hover */
+/* ============================================
+   Buttons
+   ============================================ */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    border: 1px solid var(--color-primary-light);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: 0 0 0 0 var(--color-primary-glow);
 }
 
-/* Text Colors */
-.text-success, .stat-value.positive { color: var(--color-positive) !important; }
-.text-danger, .stat-value.negative { color: var(--color-negative) !important; }
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-    width: 6px;
+.btn-primary:hover {
+    background: var(--color-primary-light);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
 }
 
-::-webkit-scrollbar-track {
-    background: #1e293b;
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
 }
 
-::-webkit-scrollbar-thumb {
-    background: #475569;
-    border-radius: 3px;
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition-base);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
+.btn-secondary:hover {
+    background: var(--color-card-hover);
+    border-color: var(--color-text-dim);
+    color: var(--color-text);
 }
 
-/* Status banner variants */
-.status-info {
-    background-color: #1e40af;
-    border: 1px solid #3b82f6;
+.btn-secondary:active {
+    transform: scale(0.98);
 }
 
-.status-success {
-    background-color: #166534;
-    border: 1px solid #22c55e;
+.btn-secondary.btn-icon {
+    padding: 0.375rem 0.5rem;
 }
 
-.status-warning {
-    background-color: #854d0e;
-    border: 1px solid #f59e0b;
+.btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition-base);
 }
 
-.status-error {
-    background-color: #991b1b;
-    border: 1px solid #ef4444;
+.btn-ghost:hover {
+    background: var(--color-card);
+    border-color: var(--color-text-dim);
+    color: var(--color-text);
 }
 
-/* Drop item styling */
+/* Destructive action button - shows danger color on hover */
+.btn-destructive:hover {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+/* Active state for toggle buttons (e.g., overlay on/off) */
+.btn-secondary.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.btn-secondary.active:hover {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary-light);
+}
+
+/* ============================================
+   Stat Cards
+   ============================================ */
+.stat-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.stat-card:hover {
+    border-color: rgba(13, 148, 136, 0.3);
+    box-shadow: 0 0 20px rgba(13, 148, 136, 0.1);
+}
+
+.stat-card-featured {
+    border-color: rgba(13, 148, 136, 0.4);
+    background: linear-gradient(135deg, var(--color-card) 0%, rgba(13, 148, 136, 0.08) 100%);
+}
+
+.stat-card-featured:hover {
+    border-color: rgba(13, 148, 136, 0.6);
+    box-shadow: 0 0 30px rgba(13, 148, 136, 0.15);
+}
+
+.stat-label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+    margin-bottom: 0.25rem;
+}
+
+.stat-value-xl {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-text);
+}
+
+.stat-value-lg {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-text);
+}
+
+.stat-value-md {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.stat-value-sm {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* ============================================
+   Toggle Group (Value/Items)
+   ============================================ */
+.toggle-group {
+    display: flex;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 0.1875rem;
+    gap: 0.125rem;
+}
+
+.toggle-btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-dim);
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.toggle-btn:hover:not(.active) {
+    color: var(--color-text-muted);
+}
+
+.toggle-btn.active {
+    background: var(--color-primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   Drops List
+   ============================================ */
+.drops-container {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.drops-list {
+    max-height: 16rem;
+    overflow-y: auto;
+}
+
 .drop-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
-    transition: background-color 0.15s;
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    transition: background-color var(--transition-fast);
+}
+
+.drop-item:last-child {
+    border-bottom: none;
 }
 
 .drop-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 .drop-item-name {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .drop-item-quantity {
+    font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
 }
 
-.drop-item-value {
-    font-weight: 600;
+/* Animated drop entry */
+.drop-item.new {
+    animation: dropSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.drop-item-value.positive {
-    color: #22c55e;
+@keyframes dropSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-.drop-item-value.negative {
-    color: #ef4444;
+/* Value display with glow for high values */
+.stat-value.positive {
+    color: var(--color-success);
 }
 
-/* Price status indicators */
+.stat-value.negative {
+    color: var(--color-danger);
+}
+
+.stat-value.high-value {
+    text-shadow: 0 0 10px var(--color-success-glow);
+}
+
+/* Empty state */
+.empty-state {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--color-text-dim);
+    font-size: 0.875rem;
+}
+
+/* ============================================
+   Price Status Indicators
+   ============================================ */
 .price-status {
     display: inline-block;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    margin-right: 6px;
+    flex-shrink: 0;
 }
 
-.price-status.fresh {
-    background-color: #22c55e;
+.price-status.fresh { background-color: #22c55e; }
+.price-status.stale { background-color: #f59e0b; }
+.price-status.old { background-color: #ef4444; }
+.price-status.unknown { background-color: #4b5563; }
+
+/* ============================================
+   Modals
+   ============================================ */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    animation: fadeIn 0.15s ease;
 }
 
-.price-status.stale {
-    background-color: #f59e0b;
+.modal-content {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    max-width: calc(100% - 2rem);
+    animation: modalSlideIn 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.price-status.old {
-    background-color: #ef4444;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.price-status.unknown {
-    background-color: #6b7280;
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-/* Session history item */
-.session-item {
-    background-color: #0f172a;
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.modal-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.modal-close {
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    color: var(--color-text-dim);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+/* ============================================
+   Settings
+   ============================================ */
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.setting-row-vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.setting-label {
+    font-size: 0.875rem;
+    color: var(--color-text);
+}
+
+.setting-hint {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    margin-top: 0.125rem;
+}
+
+/* Toggle Switch */
+.toggle {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.toggle-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 1;
+    margin: 0;
+}
+
+.toggle-track {
+    width: 2.5rem;
+    height: 1.375rem;
+    background: var(--color-border);
+    border-radius: 999px;
+    transition: background-color var(--transition-base);
+    position: relative;
+    pointer-events: none; /* Allow clicks to pass through to checkbox */
+}
+
+.toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 1.125rem;
+    height: 1.125rem;
+    background: white;
+    border-radius: 50%;
+    transition: transform var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Checked state - CSS pseudo-selector */
+.toggle-checkbox:checked + .toggle-track {
+    background: var(--color-primary);
+}
+
+.toggle-checkbox:checked + .toggle-track::after {
+    transform: translateX(1.125rem);
+}
+
+/* Checked state - JS class fallback (for programmatic updates) */
+.toggle-track.checked {
+    background: var(--color-primary);
+}
+
+.toggle-track.checked::after {
+    transform: translateX(1.125rem);
+}
+
+.toggle-checkbox:focus-visible + .toggle-track {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* Range Slider */
+.range-slider {
+    width: 100%;
+    height: 6px;
+    background: var(--color-border);
+    border-radius: 3px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px var(--color-primary-glow);
+}
+
+.range-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* ============================================
+   History
+   ============================================ */
+.history-stat-card {
+    background: var(--color-bg);
     border-radius: 0.5rem;
     padding: 0.75rem;
+    text-align: center;
+}
+
+.session-item {
+    background: var(--color-bg);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
     display: grid;
     grid-template-columns: 1fr auto auto;
     gap: 1rem;
     align-items: center;
+    transition: background-color var(--transition-fast);
+}
+
+.session-item:hover {
+    background: var(--color-card-hover);
 }
 
 .session-item-date {
     font-size: 0.875rem;
+    color: var(--color-text);
 }
 
 .session-item-stats {
     display: flex;
     gap: 1rem;
-    font-size: 0.875rem;
-    color: #9ca3af;
+    font-size: 0.8125rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--color-text-dim);
 }
 
 .session-item-value {
-    font-weight: 400;
-    color: #22d3ee;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--color-success);
 }
 
-/* Range slider styling */
-input[type="range"] {
-    appearance: none;
-    -webkit-appearance: none;
+/* ============================================
+   Status Banner
+   ============================================ */
+.status-info {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);
+    border-color: #3b82f6;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #6366f1;
-    cursor: pointer;
-    margin-top: -4px;
+.status-success {
+    background: linear-gradient(135deg, #134e4a 0%, #166534 100%);
+    border-color: #22c55e;
 }
 
-input[type="range"]::-webkit-slider-runnable-track {
-    height: 8px;
-    background: #334155;
-    border-radius: 4px;
+.status-warning {
+    background: linear-gradient(135deg, #78350f 0%, #854d0e 100%);
+    border-color: #f59e0b;
 }
 
-/* Animation for new drops */
-@keyframes dropFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.status-error {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    border-color: #ef4444;
 }
 
-.drop-item.new {
-    animation: dropFadeIn 0.3s ease-out;
+/* ============================================
+   Scrollbar
+   ============================================ */
+::-webkit-scrollbar {
+    width: 6px;
 }
 
-/* Pulse animation for in-map indicator */
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-.in-map-indicator {
-    animation: pulse 2s infinite;
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
 }
 
-/* Button active states */
-button:active {
-    transform: scale(0.98);
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-dim);
 }
 
-/* Modal backdrop blur */
-.modal-backdrop {
-    backdrop-filter: blur(4px);
-}
-
-/* Focus styles */
+/* ============================================
+   Focus States
+   ============================================ */
 button:focus-visible,
 input:focus-visible {
-    outline: 2px solid #6366f1;
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+}
+
+/* ============================================
+   Utility Classes (Color)
+   ============================================ */
+
+/* Background colors */
+.bg-dark-bg { background-color: var(--color-bg); }
+.bg-dark-card { background-color: var(--color-card); }
+.bg-dark-hover { background-color: var(--color-card-hover); }
+.bg-primary { background-color: var(--color-primary); }
+
+/* Border colors */
+.border-dark-border { border-color: var(--color-border); }
+.border-primary { border-color: var(--color-primary); }
+
+/* Text colors */
+.text-success { color: var(--color-success) !important; }
+.text-danger { color: var(--color-danger) !important; }
+
+/* Animation utilities */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
 }
 
 /* Prevent text selection on UI elements */
 .no-select {
     user-select: none;
-}
-
-/* Toggle switches */
-.toggle-checkbox {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    z-index: 10;
-    cursor: pointer;
-    margin: 0;
-}
-
-.toggle-label {
-    width: 2.75rem;
-    height: 1.5rem;
-    background-color: #334155;
-    border-radius: 9999px;
-    position: relative;
-    cursor: pointer;
-    transform: translateZ(0); 
-    transition: background-color 0.2s ease-in-out;
-}
-
-.toggle-label::after {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 1.25rem;
-    height: 1.25rem;
-    background-color: white;
-    border-radius: 50%;
-    transition: transform 0.2s ease-in-out;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-/* Checked State */
-.toggle-label.checked {
-    background-color: #6366f1;
-}
-
-.toggle-label.checked::after {
-    transform: translateX(1.25rem);
 }

@@ -139,7 +139,7 @@ function renderUI() {
             elements.statMapValue.classList.add('text-danger');
         }
     } else {
-        elements.statMapTime.textContent = '--:--';
+        elements.statMapTime.textContent = '-:-';
         elements.statMapValue.textContent = '+0';
         // Reset to default color
         elements.statMapValue.classList.remove('text-danger');
@@ -202,9 +202,9 @@ function renderDrops() {
         if (state.awaitingInit) {
             // Scenario: Waiting for re-sync
             emptyHtml = `
-                <div class="flex flex-col items-center justify-center py-10 text-center space-y-2">
-                    <div class="text-lg font-semibold text-gray-300">Waiting for Re-sync</div>
-                    <p class="text-sm text-gray-500 max-w-xs">
+                <div class="empty-state py-10">
+                    <div class="text-base font-semibold text-gray-300 mb-2">Waiting for Re-sync</div>
+                    <p class="text-sm text-gray-500">
                         Sort your inventory in-game to re-sync.
                     </p>
                 </div>
@@ -212,9 +212,9 @@ function renderDrops() {
         } else if (!state.initialized) {
             // Scenario: Not Initialized (Onboarding)
             emptyHtml = `
-                <div class="flex flex-col items-center justify-center py-10 text-center space-y-2">
-                    <div class="text-lg font-semibold text-gray-300">Inventory Not Tracked</div>
-                    <p class="text-sm text-gray-500 max-w-xs">
+                <div class="empty-state py-10">
+                    <div class="text-base font-semibold text-gray-300 mb-2">Inventory Not Tracked</div>
+                    <p class="text-sm text-gray-500">
                         Sort your inventory in-game to start tracking.
                     </p>
                 </div>
@@ -222,7 +222,7 @@ function renderDrops() {
         } else {
             // Scenario: Initialized but empty (No drops)
             emptyHtml = `
-                <div class="p-8 text-center text-gray-500">
+                <div class="empty-state">
                     No drops detected in this session
                 </div>
             `;
@@ -296,6 +296,7 @@ function renderValueMode(drops) {
 
     const html = sorted.map(([id, item]) => {
         const valueClass = item.value >= 0 ? 'positive' : 'negative';
+        const highValueClass = Math.abs(item.value) >= 10000 ? 'high-value' : '';
         const valueText = item.value !== 0
             ? formatValue(item.value)
             : '(no price)';
@@ -305,14 +306,14 @@ function renderValueMode(drops) {
                 <div class="drop-item-name">
                     <span class="price-status ${item.price_status || 'unknown'}"></span>
                     <span>${item.name}</span>
-                    <span class="text-gray-400">x${Math.abs(item.quantity)}</span>
+                    <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
                 </div>
-                <div class="stat-value ${valueClass}">${valueText}</div>
+                <div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>
             </div>
         `;
     }).join('');
 
-    elements.dropsList.innerHTML = html || '<div class="p-4 text-center text-gray-500">No drops yet</div>';
+    elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
 }
 
 function renderItemsMode(drops) {
@@ -341,12 +342,12 @@ function renderItemsMode(drops) {
                     <span class="price-status ${item.price_status || 'unknown'}"></span>
                     <span>${item.name}</span>
                 </div>
-                <div class="drop-item-quantity ${valueClass}">x${item.quantity}</div>
+                <div class="drop-item-quantity font-mono ${valueClass}">×${item.quantity}</div>
             </div>
         `;
     }).join('');
 
-    elements.dropsList.innerHTML = html || '<div class="p-4 text-center text-gray-500">No drops yet</div>';
+    elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
 }
 
 // ============ Event Handlers ============
@@ -430,11 +431,11 @@ function setDisplayMode(mode) {
 
     // Update button styles
     if (mode === 'value') {
-        elements.btnModeValue.className = 'px-3 py-1 text-sm rounded-md bg-primary text-white transition';
-        elements.btnModeItems.className = 'px-3 py-1 text-sm rounded-md text-gray-400 hover:text-white transition';
+        elements.btnModeValue.classList.add('active');
+        elements.btnModeItems.classList.remove('active');
     } else {
-        elements.btnModeItems.className = 'px-3 py-1 text-sm rounded-md bg-primary text-white transition';
-        elements.btnModeValue.className = 'px-3 py-1 text-sm rounded-md text-gray-400 hover:text-white transition';
+        elements.btnModeItems.classList.add('active');
+        elements.btnModeValue.classList.remove('active');
     }
 
     api('set_display_mode', mode);
@@ -463,10 +464,10 @@ async function toggleOverlay() {
 function updateOverlayButton() {
     if (overlayVisible) {
         elements.btnOverlay.textContent = 'Hide Overlay';
-        elements.btnOverlay.classList.add('bg-primary', 'border-primary');
+        elements.btnOverlay.classList.add('active');
     } else {
         elements.btnOverlay.textContent = 'Overlay';
-        elements.btnOverlay.classList.remove('bg-primary', 'border-primary');
+        elements.btnOverlay.classList.remove('active');
     }
 }
 

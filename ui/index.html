@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TLI Tracker</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,43 +15,36 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#6366f1',
-                        secondary: '#8b5cf6',
-                        success: '#22d3ee', // Cyan
-                        warning: '#f59e0b',
-                        danger: '#fb923c',  // Orange
-                        dark: {
-                            bg: '#0f172a',
-                            card: '#1e293b',
-                            border: '#334155'
-                        }
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
                     }
+                    // Colors defined in CSS variables (styles.css)
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="dark bg-dark-bg text-gray-100 min-h-screen">
+<body class="dark bg-dark-bg text-gray-100 min-h-screen font-sans antialiased">
     <div id="app" class="p-4 max-w-2xl mx-auto">
         <!-- Header -->
         <header class="flex items-center justify-between mb-6">
             <img src="assets/logo.webp" alt="TLI Tracker" class="h-10 object-contain">
             <div class="flex gap-2">
-                <button id="btn-overlay" class="px-3 py-1.5 bg-dark-card border border-dark-border rounded-lg text-sm hover:bg-dark-border transition">
+                <button id="btn-overlay" class="btn-secondary">
                     Overlay
                 </button>
-                <button id="btn-history" class="px-3 py-1.5 bg-dark-card border border-dark-border rounded-lg text-sm hover:bg-dark-border transition">
+                <button id="btn-history" class="btn-secondary">
                     History
                 </button>
-                <button id="btn-settings" class="px-3 py-1.5 bg-dark-card border border-dark-border rounded-lg text-sm hover:bg-dark-border transition">
-                    ⚙️
+                <button id="btn-settings" class="btn-secondary btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 </button>
             </div>
 
             <!-- Status Banner -->
-            <div id="status-banner" class="hidden fixed rright-1/2 transform z-50 px-6 py-3 rounded-xl shadow-2xl text-sm font-semibold transition-all border backdrop-blur-sm">
+            <div id="status-banner" class="hidden fixed top-4 z-50 px-6 py-3 rounded-xl shadow-2xl text-sm font-medium transition-all duration-300 border backdrop-blur-md">
                 <span id="status-text"></span>
             </div>
         </header>
@@ -55,144 +52,142 @@
         <!-- Stats Cards -->
         <div class="grid grid-cols-3 gap-3 mb-6">
             <!-- Current Map & Session Mapping -->
-            <div class="card-glow rounded-xl p-4">
-                <div class="text-xs text-gray-400 mb-1">Current Map</div>
-                <div id="stat-map-time" class="text-2xl font-bold">--:--</div>
-                <div id="stat-map-value" class="text-sm text-success mb-2">+0</div>
-                <div class="text-xs text-gray-400 mb-1">Total in Map</div>
-                <div id="stat-session-mapping" class="text-lg font-bold">0:00</div>
+            <div class="stat-card">
+                <div class="stat-label">Current Map</div>
+                <div id="stat-map-time" class="stat-value-lg font-mono">-:-</div>
+                <div id="stat-map-value" class="stat-value-sm text-success font-mono">+0</div>
+                <div class="stat-label mt-3">Total in Map</div>
+                <div id="stat-session-mapping" class="stat-value-md font-mono">0:00</div>
             </div>
 
             <!-- Session Total -->
-            <div class="card-glow rounded-xl p-4">
-                <div class="text-xs text-gray-400 mb-1">Session Total</div>
-                <div id="stat-session-total" class="text-4xl font-bold">0:00</div>
-                <div id="stat-session-value" class="text-lg text-success">+0</div>
+            <div class="stat-card">
+                <div class="stat-label">Session Total</div>
+                <div id="stat-session-total" class="stat-value-xl font-mono">0:00</div>
+                <div id="stat-session-value" class="stat-value-md text-success font-mono">+0</div>
             </div>
 
             <!-- Rate -->
-            <div class="card-glow rounded-xl p-4">
-                <div class="text-xs text-gray-400 mb-1">Rate</div>
-                <div id="stat-rate" class="text-4xl font-bold">0/hr</div>
-                <div id="stat-maps" class="text-sm text-gray-400"><span id="stat-map-count">0</span> maps</div>
+            <div class="stat-card">
+                <div class="stat-label">Rate</div>
+                <div id="stat-rate" class="stat-value-xl font-mono">0<span class="text-sm text-gray-500">/hr</span></div>
+                <div class="stat-value-sm text-gray-400"><span id="stat-map-count" class="font-mono">0</span> maps</div>
             </div>
         </div>
 
         <!-- Mode Toggle -->
         <div class="flex items-center justify-between mb-3">
-            <h2 class="text-lg font-semibold">Drops</h2>
-            <div class="flex bg-dark-card rounded-lg p-1">
-                <button id="btn-mode-value" class="px-3 py-1 text-sm rounded-md bg-primary text-white transition">
+            <h2 class="text-base font-semibold text-gray-200">Drops</h2>
+            <div class="toggle-group">
+                <button id="btn-mode-value" class="toggle-btn active">
                     Value
                 </button>
-                <button id="btn-mode-items" class="px-3 py-1 text-sm rounded-md text-gray-400 hover:text-white transition">
+                <button id="btn-mode-items" class="toggle-btn">
                     Items
                 </button>
             </div>
         </div>
 
         <!-- Drops List -->
-        <div id="drops-container" class="card-glow rounded-xl overflow-hidden mb-2">
-            <div id="drops-list" class="divide-y divide-dark-border max-h-64 overflow-y-auto">
+        <div id="drops-container" class="drops-container">
+            <div id="drops-list" class="drops-list">
                 <!-- Drops will be inserted here -->
-                <div class="p-4 text-center text-gray-500">
+                <div class="empty-state">
                     No drops yet
                 </div>
             </div>
         </div>
 
         <!-- Info Note -->
-        <div class="mb-6 text-xs text-center text-gray-500">
+        <div class="mb-6 text-xs text-center text-gray-600">
             Gear drops not tracked
         </div>
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-end gap-3 mt-4">
-            <button id="btn-initialize" class="hidden px-4 py-2 bg-primary hover:bg-primary/80 border border-primary/50 shadow-[0_0_10px_rgba(99,102,241,0.4)] rounded-lg font-medium text-sm transition text-white">
+            <button id="btn-initialize" class="hidden btn-primary">
                 Re-sync Bag
             </button>
 
-            <button id="btn-reset" class="px-4 py-2 bg-dark-card border border-dark-border hover:border-danger hover:text-danger rounded-lg text-sm transition">
+            <button id="btn-reset" class="btn-ghost btn-destructive">
                 Reset Session
             </button>
         </div>
     </div>
 
     <!-- Settings Modal -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-96 max-w-full mx-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Settings</h3>
-                <button id="btn-close-settings" class="text-gray-400 hover:text-white">✕</button>
+    <div id="settings-modal" class="modal-backdrop hidden">
+        <div class="modal-content w-96">
+            <div class="modal-header">
+                <h3 class="modal-title">Settings</h3>
+                <button id="btn-close-settings" class="modal-close">&times;</button>
             </div>
 
             <div class="space-y-4">
                 <!-- Tax Toggle -->
-                <div class="flex items-center justify-between">
-                    <span>Include AH Tax (12.5%)</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                <div class="setting-row">
+                    <span class="setting-label">Include AH Tax (12.5%)</span>
+                    <label class="toggle">
                         <input type="checkbox" id="setting-tax" class="toggle-checkbox">
-                        <div class="toggle-label"></div>
+                        <div class="toggle-track"></div>
                     </label>
                 </div>
 
                 <!-- Show Map Value Toggle -->
-                <div class="flex items-center justify-between">
-                    <span>Show Current Map Value</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                <div class="setting-row">
+                    <span class="setting-label">Show Current Map Value</span>
+                    <label class="toggle">
                         <input type="checkbox" id="setting-map-value" class="toggle-checkbox">
-                        <div class="toggle-label"></div>
+                        <div class="toggle-track"></div>
                     </label>
                 </div>
 
                 <!-- Real Time Stats Toggle -->
-                <div class="flex items-center justify-between">
+                <div class="setting-row">
                     <div>
-                        <span>Real Time Rate</span>
-                        <div class="text-xs text-gray-500">Rate decays while AFK</div>
+                        <span class="setting-label">Real Time FE Rate</span>
                     </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                    <label class="toggle">
                         <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox">
-                        <div class="toggle-label"></div>
+                        <div class="toggle-track"></div>
                     </label>
                 </div>
 
                 <!-- Pin Overlay Toggle -->
-                <div class="flex items-center justify-between">
-                    <span>Pin Overlay (Click-through)</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
+                <div class="setting-row">
+                    <span class="setting-label">Pin Overlay (Click-through)</span>
+                    <label class="toggle">
                         <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox">
-                        <div class="toggle-label"></div>
+                        <div class="toggle-track"></div>
                     </label>
                 </div>
 
                 <!-- Overlay Opacity -->
-                <div>
-                    <div class="flex justify-between mb-1">
-                        <span>Overlay Opacity</span>
-                        <span id="opacity-value">90%</span>
+                <div class="setting-row-vertical">
+                    <div class="flex justify-between mb-2">
+                        <span class="setting-label">Overlay Opacity</span>
+                        <span id="opacity-value" class="font-mono text-sm text-gray-400">90%</span>
                     </div>
-                    <input type="range" id="setting-opacity" min="20" max="100" value="90"
-                           class="w-full h-2 bg-dark-border rounded-lg appearance-none cursor-pointer">
+                    <input type="range" id="setting-opacity" min="20" max="100" value="90" class="range-slider">
                 </div>
 
                 <!-- Check for Updates -->
-                <div class="flex items-center justify-between pt-2 border-t border-dark-border">
+                <div class="setting-row pt-4 border-t border-dark-border">
                     <div>
-                        <span>Check for Updates</span>
-                        <div id="version-display" class="text-xs text-gray-500">v--</div>
+                        <span class="setting-label">Check for Updates</span>
+                        <div id="version-display" class="setting-hint font-mono">v--</div>
                     </div>
-                    <button id="btn-check-updates" class="px-3 py-1.5 bg-dark-bg border border-dark-border rounded-lg text-sm hover:border-primary transition">
+                    <button id="btn-check-updates" class="btn-secondary text-xs">
                         Check Now
                     </button>
                 </div>
             </div>
 
-            <div class="mt-6 flex gap-3">
-                <button id="btn-reset-defaults" class="px-4 py-2 bg-dark-bg border border-dark-border hover:border-danger hover:text-danger rounded-lg transition text-sm">
+            <div class="modal-footer">
+                <button id="btn-reset-defaults" class="btn-ghost btn-destructive">
                     Default Settings
                 </button>
-                <button id="btn-save-settings" class="flex-1 py-2 bg-primary hover:bg-primary/80 rounded-lg transition font-medium">
+                <button id="btn-save-settings" class="btn-primary flex-1">
                     Save Settings
                 </button>
             </div>
@@ -200,15 +195,15 @@
     </div>
 
     <!-- Confirmation Dialog -->
-    <div id="confirm-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-80 max-w-full mx-4">
-            <h3 id="confirm-title" class="text-lg font-semibold mb-2">Confirm</h3>
+    <div id="confirm-modal" class="modal-backdrop hidden">
+        <div class="modal-content w-80">
+            <h3 id="confirm-title" class="modal-title mb-2">Confirm</h3>
             <p id="confirm-message" class="text-gray-400 text-sm mb-6 whitespace-pre-line"></p>
             <div class="flex gap-3">
-                <button id="btn-confirm-cancel" class="flex-1 px-4 py-2 bg-dark-bg border border-dark-border hover:border-gray-500 rounded-lg transition text-sm">
+                <button id="btn-confirm-cancel" class="btn-ghost flex-1">
                     Cancel
                 </button>
-                <button id="btn-confirm-ok" class="flex-1 px-4 py-2 bg-primary hover:bg-primary/80 rounded-lg transition font-medium text-sm">
+                <button id="btn-confirm-ok" class="btn-primary flex-1">
                     Confirm
                 </button>
             </div>
@@ -216,32 +211,32 @@
     </div>
 
     <!-- History Modal -->
-    <div id="history-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-[500px] max-w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">Session History</h3>
-                <button id="btn-close-history" class="text-gray-400 hover:text-white">✕</button>
+    <div id="history-modal" class="modal-backdrop hidden">
+        <div class="modal-content w-[500px] max-h-[80vh] overflow-hidden flex flex-col">
+            <div class="modal-header">
+                <h3 class="modal-title">Session History</h3>
+                <button id="btn-close-history" class="modal-close">&times;</button>
             </div>
 
             <!-- Summary Stats -->
-            <div class="grid grid-cols-3 gap-2 mb-4 text-center">
-                <div class="bg-dark-bg rounded-lg p-2">
-                    <div class="text-xs text-gray-400">Total Value</div>
-                    <div id="history-total-value" class="font-bold text-success">0</div>
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="history-stat-card">
+                    <div class="text-xs text-gray-500 mb-1">Total Value</div>
+                    <div id="history-total-value" class="font-mono font-semibold text-success">0</div>
                 </div>
-                <div class="bg-dark-bg rounded-lg p-2">
-                    <div class="text-xs text-gray-400">Total Maps</div>
-                    <div id="history-total-maps" class="font-bold">0</div>
+                <div class="history-stat-card">
+                    <div class="text-xs text-gray-500 mb-1">Total Maps</div>
+                    <div id="history-total-maps" class="font-mono font-semibold">0</div>
                 </div>
-                <div class="bg-dark-bg rounded-lg p-2">
-                    <div class="text-xs text-gray-400">Avg/Hour</div>
-                    <div id="history-avg-rate" class="font-bold">0</div>
+                <div class="history-stat-card">
+                    <div class="text-xs text-gray-500 mb-1">Avg/Hour</div>
+                    <div id="history-avg-rate" class="font-mono font-semibold">0</div>
                 </div>
             </div>
 
             <!-- Sessions List -->
             <div id="history-list" class="flex-1 overflow-y-auto space-y-2">
-                <div class="text-center text-gray-500 py-4">No sessions yet</div>
+                <div class="empty-state py-8">No sessions yet</div>
             </div>
         </div>
     </div>
