@@ -26,6 +26,7 @@ class DialogResult(Enum):
     OK = "ok"
     RETRY = "retry"
     CANCEL = "cancel"
+    EXIT = "exit"
 
 
 # App color scheme
@@ -164,15 +165,22 @@ class StyledDialog(QDialog):
         button_layout.addStretch()
 
         if show_retry:
-            retry_btn = QPushButton("Retry")
-            retry_btn.clicked.connect(self._on_retry)
-            button_layout.addWidget(retry_btn)
+            # Exit as secondary, Retry as primary
+            exit_btn = QPushButton("Exit")
+            exit_btn.clicked.connect(self._on_exit)
+            button_layout.addWidget(exit_btn)
 
-        ok_btn = QPushButton("OK")
-        ok_btn.setObjectName("primary")
-        ok_btn.clicked.connect(self._on_ok)
-        ok_btn.setDefault(True)
-        button_layout.addWidget(ok_btn)
+            retry_btn = QPushButton("Retry")
+            retry_btn.setObjectName("primary")
+            retry_btn.clicked.connect(self._on_retry)
+            retry_btn.setDefault(True)
+            button_layout.addWidget(retry_btn)
+        else:
+            ok_btn = QPushButton("OK")
+            ok_btn.setObjectName("primary")
+            ok_btn.clicked.connect(self._on_ok)
+            ok_btn.setDefault(True)
+            button_layout.addWidget(ok_btn)
 
         layout.addLayout(button_layout)
 
@@ -182,6 +190,10 @@ class StyledDialog(QDialog):
 
     def _on_retry(self):
         self.result_action = DialogResult.RETRY
+        self.accept()
+
+    def _on_exit(self):
+        self.result_action = DialogResult.EXIT
         self.accept()
 
     def mousePressEvent(self, event):

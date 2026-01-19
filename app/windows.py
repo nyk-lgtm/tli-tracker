@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         self.api = api
         self.log_watcher = None
         self._last_dialog_was_retry = False
+        self._last_dialog_was_exit = False
 
         self.setWindowTitle("TLI Tracker")
         self.resize(500, 800)
@@ -87,6 +88,7 @@ class MainWindow(QMainWindow):
     def _start_log_watcher(self) -> None:
         """Find game log and start watching (with retry support)."""
         from app.log_watcher import LogWatcher
+        from PySide6.QtWidgets import QApplication
 
         # Retry loop for finding game
         while True:
@@ -94,6 +96,10 @@ class MainWindow(QMainWindow):
             if log_path:
                 break
             # _find_game_log shows dialog and returns None if not found
+            # If user clicked Exit, close the app
+            if self._last_dialog_was_exit:
+                QApplication.quit()
+                return
             # If user didn't click Retry, exit the loop
             if not self._last_dialog_was_retry:
                 self.bridge.emit_event("error", {"message": "Game not found"})
@@ -122,6 +128,7 @@ class MainWindow(QMainWindow):
             Path to log file, or None if not found (error dialog shown)
         """
         self._last_dialog_was_retry = False
+        self._last_dialog_was_exit = False
 
         try:
             import win32gui
@@ -148,6 +155,7 @@ class MainWindow(QMainWindow):
                 show_retry=True,
             )
             self._last_dialog_was_retry = (result == DialogResult.RETRY)
+            self._last_dialog_was_exit = (result == DialogResult.EXIT)
             return None
 
         # Get process ID from window handle
@@ -170,6 +178,7 @@ class MainWindow(QMainWindow):
                 show_retry=True,
             )
             self._last_dialog_was_retry = (result == DialogResult.RETRY)
+            self._last_dialog_was_exit = (result == DialogResult.EXIT)
             return None
 
         return str(log_path)
