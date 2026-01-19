@@ -24,7 +24,7 @@ class PriceManager:
     """
 
     FILENAME = "prices.json"
-    FIXED_PRICES = {"100300": 1.0} # FE price should always be 1.0
+    FIXED_PRICES = {"100300": 1.0}  # FE price should always be 1.0
 
     def __init__(self):
         self._prices: dict[str, dict] = {}
@@ -36,10 +36,7 @@ class PriceManager:
         # Ensure fixed prices are set
         current_time = datetime.now().isoformat()
         for item_id, price_value in self.FIXED_PRICES.items():
-            self._prices[item_id] = {
-                "price": price_value,
-                "updated_at": current_time
-            }
+            self._prices[item_id] = {"price": price_value, "updated_at": current_time}
 
     def _save(self) -> None:
         """Save prices to disk."""
@@ -92,7 +89,7 @@ class PriceManager:
 
         self._prices[item_id] = {
             "price": round(price, 4),
-            "updated_at": datetime.now().isoformat()
+            "updated_at": datetime.now().isoformat(),
         }
         self._save()
 
@@ -123,7 +120,9 @@ class PriceManager:
             n = len(sorted_prices)
             median_idx = n // 2
             if n % 2 == 0:
-                avg_price = (sorted_prices[median_idx - 1] + sorted_prices[median_idx]) / 2
+                avg_price = (
+                    sorted_prices[median_idx - 1] + sorted_prices[median_idx]
+                ) / 2
             else:
                 avg_price = sorted_prices[median_idx]
             self.set_price(item_id, avg_price)

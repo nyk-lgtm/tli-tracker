@@ -5,7 +5,6 @@ Tracks the player's inventory state and detects changes
 (items gained or consumed) between snapshots.
 """
 
-from typing import Optional
 from .log_parser import BagModifyEvent
 
 
@@ -68,7 +67,7 @@ class BagState:
         self.baseline.clear()
 
         for slot_key, quantity in self.slots.items():
-            item_id = slot_key.split(':')[2]
+            item_id = slot_key.split(":")[2]
             self.baseline[item_id] = self.baseline.get(item_id, 0) + quantity
 
     def process_modifications(self, mods: list[BagModifyEvent]) -> dict[str, int]:
@@ -92,7 +91,7 @@ class BagState:
         # Calculate current totals by item
         current_totals: dict[str, int] = {}
         for slot_key, quantity in self.slots.items():
-            item_id = slot_key.split(':')[2]
+            item_id = slot_key.split(":")[2]
             current_totals[item_id] = current_totals.get(item_id, 0) + quantity
 
         # Compare to baseline and find changes
@@ -123,7 +122,7 @@ class BagState:
         """Get current totals for all items."""
         totals: dict[str, int] = {}
         for slot_key, quantity in self.slots.items():
-            item_id = slot_key.split(':')[2]
+            item_id = slot_key.split(":")[2]
             totals[item_id] = totals.get(item_id, 0) + quantity
         return totals
 

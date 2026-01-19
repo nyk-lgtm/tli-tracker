@@ -4,7 +4,6 @@ Qt window classes for TLI Tracker.
 Provides MainWindow and OverlayWindow using QWebEngineView.
 """
 
-import json
 from pathlib import Path
 from typing import Optional
 
@@ -38,8 +37,12 @@ class MainWindow(QMainWindow):
 
         # Enable settings for loading external resources (Tailwind CDN)
         settings = self.web_view.page().settings()
-        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
+        )
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True
+        )
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
 
         # Setup QWebChannel bridge
@@ -58,7 +61,8 @@ class MainWindow(QMainWindow):
     def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
         import sys
-        if getattr(sys, 'frozen', False):
+
+        if getattr(sys, "frozen", False):
             # Running as compiled exe
             base_path = Path(sys.executable).parent
         else:
@@ -71,7 +75,7 @@ class MainWindow(QMainWindow):
                 "Installation Error",
                 f"UI file not found: {filename}",
                 f"Expected location: {ui_path}\n\n"
-                "The application may be corrupted. Please reinstall."
+                "The application may be corrupted. Please reinstall.",
             )
             return None
         return ui_path.resolve()
@@ -116,7 +120,7 @@ class MainWindow(QMainWindow):
                 "Log Watcher Error",
                 "Failed to start log file monitoring.",
                 "The game log file exists but could not be watched. "
-                "Try restarting the application."
+                "Try restarting the application.",
             )
             self.bridge.emit_event("error", {"message": "Failed to start log watcher"})
 
@@ -138,7 +142,7 @@ class MainWindow(QMainWindow):
             show_error(
                 "Missing Dependencies",
                 "Required Windows modules are not installed.",
-                "Please reinstall the application or install pywin32."
+                "Please reinstall the application or install pywin32.",
             )
             return None
 
@@ -154,8 +158,8 @@ class MainWindow(QMainWindow):
                 "Please start the game first, then click Retry.",
                 show_retry=True,
             )
-            self._last_dialog_was_retry = (result == DialogResult.RETRY)
-            self._last_dialog_was_exit = (result == DialogResult.EXIT)
+            self._last_dialog_was_retry = result == DialogResult.RETRY
+            self._last_dialog_was_exit = result == DialogResult.EXIT
             return None
 
         # Get process ID from window handle
@@ -177,8 +181,8 @@ class MainWindow(QMainWindow):
                 "Make sure the game has fully loaded, then click Retry.",
                 show_retry=True,
             )
-            self._last_dialog_was_retry = (result == DialogResult.RETRY)
-            self._last_dialog_was_exit = (result == DialogResult.EXIT)
+            self._last_dialog_was_retry = result == DialogResult.RETRY
+            self._last_dialog_was_exit = result == DialogResult.EXIT
             return None
 
         return str(log_path)
@@ -206,9 +210,9 @@ class OverlayWindow(QMainWindow):
 
         # Overlay window flags
         self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint |
-            Qt.WindowType.WindowStaysOnTopHint |
-            Qt.WindowType.Tool
+            Qt.WindowType.FramelessWindowHint
+            | Qt.WindowType.WindowStaysOnTopHint
+            | Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
@@ -219,8 +223,12 @@ class OverlayWindow(QMainWindow):
 
         # Enable settings for loading external resources (Tailwind CDN)
         settings = self.web_view.page().settings()
-        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True)
-        settings.setAttribute(QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True)
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
+        )
+        settings.setAttribute(
+            QWebEngineSettings.WebAttribute.LocalContentCanAccessFileUrls, True
+        )
         settings.setAttribute(QWebEngineSettings.WebAttribute.JavascriptEnabled, True)
 
         self.channel = QWebChannel()
@@ -236,7 +244,8 @@ class OverlayWindow(QMainWindow):
     def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
         import sys
-        if getattr(sys, 'frozen', False):
+
+        if getattr(sys, "frozen", False):
             base_path = Path(sys.executable).parent
         else:
             base_path = Path(__file__).parent.parent
@@ -247,7 +256,7 @@ class OverlayWindow(QMainWindow):
                 "Installation Error",
                 f"UI file not found: {filename}",
                 f"Expected location: {ui_path}\n\n"
-                "The application may be corrupted. Please reinstall."
+                "The application may be corrupted. Please reinstall.",
             )
             return None
         return ui_path.resolve()
@@ -264,6 +273,7 @@ class OverlayWindow(QMainWindow):
         """Apply click-through using Win32 API."""
         try:
             from app.overlay import set_click_through
+
             hwnd = int(self.winId())
             set_click_through(hwnd, enabled)
         except Exception as e:

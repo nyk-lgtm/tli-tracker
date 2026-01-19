@@ -8,13 +8,14 @@ import json
 import sys
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from datetime import datetime
 
 
 def is_frozen():
     """Check if running as a compiled EXE"""
-    return getattr(sys, 'frozen', False) or "__compiled__" in globals()
+    return getattr(sys, "frozen", False) or "__compiled__" in globals()
+
 
 def get_app_dir() -> Path:
     """Returns the folder where the .exe is located (for saving data)"""
@@ -22,9 +23,10 @@ def get_app_dir() -> Path:
         return Path(sys.executable).parent
     return Path(__file__).parent.parent
 
+
 def get_resource_path(relative_path: str) -> Path:
     """Returns the path to internal assets (read-only) inside the exe"""
-    if getattr(sys, 'frozen', False):
+    if getattr(sys, "frozen", False):
         base_path = Path(sys._MEIPASS)
     elif "__compiled__" in globals():
         base_path = Path(os.path.dirname(__file__)).absolute().parent
@@ -32,9 +34,10 @@ def get_resource_path(relative_path: str) -> Path:
         base_path = Path(__file__).parent.parent
     return base_path / relative_path
 
+
 # Default data directory (relative to app)
 DATA_DIR = get_app_dir() / "data"
-ITEMS_FILE = get_resource_path("data/item_ids.json") # Points to internal file
+ITEMS_FILE = get_resource_path("data/item_ids.json")  # Points to internal file
 
 
 def ensure_data_dir() -> Path:
@@ -63,7 +66,7 @@ def load_json(filename: str, default: Any = None) -> Any:
         return default if default is not None else {}
 
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             return json.load(f)
     except (json.JSONDecodeError, IOError):
         return default if default is not None else {}
@@ -83,7 +86,7 @@ def save_json(filename: str, data: Any) -> bool:
     filepath = ensure_data_dir() / filename
 
     try:
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False, default=str)
         return True
     except IOError:
@@ -103,7 +106,7 @@ DEFAULT_CONFIG = {
     "use_real_time_stats": True,
     "chart_pulse_enabled": False,
     "chart_efficiency_enabled": False,
-    "chart_donut_enabled": False
+    "chart_donut_enabled": False,
 }
 
 
@@ -154,12 +157,13 @@ def set_config_value(key: str, value: Any) -> bool:
 # Cache for item names to avoid repeated file reads
 _item_cache: dict[str, str] | None = None
 
+
 def load_items() -> dict[str, str]:
     global _item_cache
     if _item_cache is None:
         try:
             # Load directly from the internal resource path
-            with open(ITEMS_FILE, 'r', encoding='utf-8') as f:
+            with open(ITEMS_FILE, "r", encoding="utf-8") as f:
                 _item_cache = json.load(f)
         except Exception:
             _item_cache = {}
@@ -183,6 +187,7 @@ def get_item_name(item_id: str) -> str:
 
 
 # === Datetime Helpers ===
+
 
 def datetime_to_str(dt: datetime) -> str:
     """Convert datetime to ISO format string."""

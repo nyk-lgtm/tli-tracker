@@ -42,7 +42,7 @@ class LogFileHandler(FileSystemEventHandler):
         """Read and process new content from the log file."""
         with self._lock:
             try:
-                with open(self.log_path, 'r', encoding='utf-8', errors='ignore') as f:
+                with open(self.log_path, "r", encoding="utf-8", errors="ignore") as f:
                     # Seek to last known position
                     f.seek(self.file_position)
 
@@ -110,7 +110,7 @@ class LogWatcher:
             self.observer.schedule(
                 self.handler,
                 str(self.log_path.parent),  # Watch the directory
-                recursive=False
+                recursive=False,
             )
             self.observer.start()
             self._running = True
@@ -143,7 +143,7 @@ class LogWatcher:
         Useful for initialization or catching up.
         """
         try:
-            with open(self.log_path, 'r', encoding='utf-8', errors='ignore') as f:
+            with open(self.log_path, "r", encoding="utf-8", errors="ignore") as f:
                 return f.read()
         except (IOError, OSError):
             return ""

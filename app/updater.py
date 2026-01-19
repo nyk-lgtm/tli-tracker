@@ -19,6 +19,7 @@ from .version import VERSION, GITHUB_OWNER, GITHUB_REPO
 @dataclass
 class UpdateInfo:
     """Information about an available update."""
+
     version: str
     download_url: str
     release_notes: str
@@ -27,7 +28,9 @@ class UpdateInfo:
 class Updater:
     """Handles checking for and applying updates from GitHub releases."""
 
-    GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/releases/latest"
+    GITHUB_API_URL = (
+        f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/releases/latest"
+    )
     INSTALLER_NAME = "TLITracker_Setup.exe"
 
     def __init__(self):
@@ -46,7 +49,7 @@ class Updater:
         try:
             request = Request(
                 self.GITHUB_API_URL,
-                headers={"Accept": "application/vnd.github.v3+json"}
+                headers={"Accept": "application/vnd.github.v3+json"},
             )
             with urlopen(request, timeout=10) as response:
                 data = json.loads(response.read().decode("utf-8"))
@@ -74,7 +77,7 @@ class Updater:
             update_info = UpdateInfo(
                 version=latest_version,
                 download_url=download_url,
-                release_notes=release_notes
+                release_notes=release_notes,
             )
 
             return True, update_info, None
@@ -93,7 +96,7 @@ class Updater:
     def download_update(
         self,
         info: UpdateInfo,
-        progress_callback: Optional[Callable[[int, int], None]] = None
+        progress_callback: Optional[Callable[[int, int], None]] = None,
     ) -> Tuple[Optional[str], Optional[str]]:
         """
         Download the update installer to a temp directory.
@@ -159,8 +162,9 @@ class Updater:
             # Launch installer detached from current process
             subprocess.Popen(
                 [path],
-                creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
-                close_fds=True
+                creationflags=subprocess.DETACHED_PROCESS
+                | subprocess.CREATE_NEW_PROCESS_GROUP,
+                close_fds=True,
             )
 
             return True, None

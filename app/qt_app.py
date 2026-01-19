@@ -5,13 +5,11 @@ Main entry point using PySide6 + QWebEngineView.
 """
 
 import sys
-from pathlib import Path
 
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
 
-import app
 from app.api import Api
 from app.bridge import ApiBridge
 from app.windows import MainWindow, OverlayWindow
@@ -83,5 +81,5 @@ def main():
     sys.exit(app.run())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

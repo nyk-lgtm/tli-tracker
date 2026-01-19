@@ -11,13 +11,15 @@ from .storage import load_config
 
 class DisplayMode(Enum):
     """Display mode for the UI."""
-    VALUE = "value"      # Show gold values
-    ITEMS = "items"      # Show item quantities
+
+    VALUE = "value"  # Show gold values
+    ITEMS = "items"  # Show item quantities
 
 
 @dataclass
 class Item:
     """Game item definition."""
+
     id: str
     name: str
     type: str  # "Currency", "Compass", "Ashes", etc.
@@ -26,6 +28,7 @@ class Item:
 @dataclass
 class Price:
     """Price entry for an item."""
+
     item_id: str
     value: float
     updated_at: datetime
@@ -34,6 +37,7 @@ class Price:
 @dataclass
 class Drop:
     """A single drop/consumption event."""
+
     item_id: str
     quantity: int  # positive = gained, negative = consumed
     timestamp: datetime
@@ -45,13 +49,14 @@ class Drop:
             "item_id": self.item_id,
             "quantity": self.quantity,
             "timestamp": self.timestamp.isoformat(),
-            "value": self.value
+            "value": self.value,
         }
 
 
 @dataclass
 class MapRun:
     """A single map run."""
+
     started_at: datetime
     ended_at: Optional[datetime] = None
     drops: list[Drop] = field(default_factory=list)
@@ -83,13 +88,14 @@ class MapRun:
             "total_value": self.total_value,
             "total_items": self.total_items,
             "drops": [d.to_dict() for d in self.drops],
-            "is_league_zone": self.is_league_zone
+            "is_league_zone": self.is_league_zone,
         }
 
 
 @dataclass
 class Session:
     """A farming session containing multiple map runs."""
+
     id: str
     started_at: datetime
     ended_at: Optional[datetime] = None
@@ -162,7 +168,7 @@ class Session:
             "map_count": self.map_count,
             "value_per_hour": self.value_per_hour,
             "maps_per_hour": self.maps_per_hour,
-            "maps": [m.to_dict() for m in self.maps]
+            "maps": [m.to_dict() for m in self.maps],
         }
 
     def to_summary_dict(self) -> dict:
@@ -184,6 +190,7 @@ class Session:
 @dataclass
 class TrackerState:
     """Current state of the tracker."""
+
     is_initialized: bool = False
     is_in_map: bool = False
     current_map: Optional[MapRun] = None

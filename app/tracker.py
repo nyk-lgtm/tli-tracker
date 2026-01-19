@@ -5,15 +5,14 @@ Coordinates log parsing, bag state, price lookups, and session management.
 """
 
 from datetime import datetime
-from typing import Callable, Optional, Any
-import uuid
+from typing import Callable, Any
 
-from .models import TrackerState, MapRun, Session, Drop, DisplayMode
+from .models import TrackerState, MapRun, Drop, DisplayMode
 from .log_parser import LogParser
 from .bag_state import BagState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import get_item_name, load_items, load_config
+from .storage import get_item_name, load_config
 
 
 class Tracker:
@@ -31,7 +30,7 @@ class Tracker:
         self,
         price_manager: PriceManager,
         session_manager: SessionManager,
-        on_update: Callable[[str, Any], None]
+        on_update: Callable[[str, Any], None],
     ):
         """
         Initialize the tracker.
@@ -87,10 +86,9 @@ class Tracker:
         for event in price_events:
             final_price = self.prices.update_from_search(event.item_id, event.prices)
             self._backfill_prices(event.item_id)
-            self._notify("price_update", {
-                "item_id": event.item_id,
-                "price": final_price
-            })
+            self._notify(
+                "price_update", {"item_id": event.item_id, "price": final_price}
+            )
 
     def _on_map_enter(self, is_league_zone: bool = False) -> None:
         """Handle entering a map."""
@@ -101,8 +99,7 @@ class Tracker:
 
         # Start new map run
         self.state.current_map = MapRun(
-            started_at=datetime.now(),
-            is_league_zone=is_league_zone
+            started_at=datetime.now(), is_league_zone=is_league_zone
         )
 
         # Ensure we have a session
@@ -151,20 +148,23 @@ class Tracker:
                 item_id=item_id,
                 quantity=quantity,
                 timestamp=datetime.now(),
-                value=value
+                value=value,
             )
 
             # Add to current map
             self.state.current_map.drops.append(drop)
 
             # Notify UI of new drop
-            self._notify("drop", {
-                "item_id": item_id,
-                "item_name": item_name,
-                "quantity": quantity,
-                "value": value,
-                "price_status": self.prices.get_price_status(item_id)
-            })
+            self._notify(
+                "drop",
+                {
+                    "item_id": item_id,
+                    "item_name": item_name,
+                    "quantity": quantity,
+                    "value": value,
+                    "price_status": self.prices.get_price_status(item_id),
+                },
+            )
 
         self._notify_state()
 
@@ -236,10 +236,14 @@ class Tracker:
         session_drops = []
         if self.state.current_session:
             # Get all drops from the session (completed maps + current map)
-            session_drops = [self._drop_to_dict(d) for d in self.state.current_session.all_drops]
+            session_drops = [
+                self._drop_to_dict(d) for d in self.state.current_session.all_drops
+            ]
             if self.state.current_map:
                 # Add current map's drops (not yet in session)
-                session_drops.extend([self._drop_to_dict(d) for d in self.state.current_map.drops])
+                session_drops.extend(
+                    [self._drop_to_dict(d) for d in self.state.current_map.drops]
+                )
 
             if use_real_time:
                 # Live rate calculation: include current map and use real-world time
@@ -247,7 +251,9 @@ class Tracker:
                 duration_for_rate = self.state.current_session.session_duration
                 hours = duration_for_rate / 3600 if duration_for_rate > 0 else 0
                 value_per_hour = total_value / hours if hours > 0 else 0
-                maps_per_hour = self.state.current_session.map_count / hours if hours > 0 else 0
+                maps_per_hour = (
+                    self.state.current_session.map_count / hours if hours > 0 else 0
+                )
             else:
                 # Original behavior: use Session properties (only updates on map exit)
                 total_value = self.state.current_session.total_value
@@ -256,7 +262,8 @@ class Tracker:
 
             session = {
                 "id": self.state.current_session.id,
-                "duration_mapping": self.state.current_session.total_duration + current_map_duration,
+                "duration_mapping": self.state.current_session.total_duration
+                + current_map_duration,
                 "duration_total": self.state.current_session.session_duration,
                 "value": total_value,
                 "items": self.state.current_session.total_items,
@@ -268,11 +275,11 @@ class Tracker:
                     {
                         "index": i,
                         "total_value": m.total_value,
-                        "duration_seconds": m.duration_seconds
+                        "duration_seconds": m.duration_seconds,
                     }
                     for i, m in enumerate(self.state.current_session.maps)
                     if m.ended_at and not m.is_league_zone
-                ]
+                ],
             }
 
         return {
@@ -281,7 +288,7 @@ class Tracker:
             "in_map": self.state.is_in_map,
             "display_mode": self.state.display_mode.value,
             "current_map": current_map,
-            "session": session
+            "session": session,
         }
 
     def _drop_to_dict(self, drop: Drop) -> dict:
@@ -291,7 +298,7 @@ class Tracker:
             "item_name": get_item_name(drop.item_id),
             "quantity": drop.quantity,
             "value": drop.value,
-            "timestamp": drop.timestamp.isoformat()
+            "timestamp": drop.timestamp.isoformat(),
         }
 
     def request_initialization(self) -> dict:
@@ -304,10 +311,7 @@ class Tracker:
         self.bag.clear()
         self.state.is_initialized = False
 
-        return {
-            "status": "waiting",
-            "message": "Sort your bag in-game to initialize"
-        }
+        return {"status": "waiting", "message": "Sort your bag in-game to initialize"}
 
     def set_display_mode(self, mode: str) -> None:
         """Set the display mode (value or items)."""

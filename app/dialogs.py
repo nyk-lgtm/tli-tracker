@@ -23,6 +23,7 @@ from PySide6.QtGui import QPainter, QBrush, QColor, QPainterPath, QPen
 
 class DialogResult(Enum):
     """Result of a dialog interaction."""
+
     OK = "ok"
     RETRY = "retry"
     CANCEL = "cancel"
@@ -45,26 +46,26 @@ COLORS = {
 
 STYLESHEET = f"""
     QDialog {{
-        background-color: {COLORS['card']};
-        border: 1px solid {COLORS['border']};
+        background-color: {COLORS["card"]};
+        border: 1px solid {COLORS["border"]};
         border-radius: 12px;
     }}
     QLabel {{
-        color: {COLORS['text']};
+        color: {COLORS["text"]};
         background: transparent;
     }}
     QLabel#title {{
         font-size: 16px;
         font-weight: bold;
-        color: {COLORS['text']};
+        color: {COLORS["text"]};
     }}
     QLabel#message {{
         font-size: 13px;
-        color: {COLORS['text']};
+        color: {COLORS["text"]};
     }}
     QLabel#detail {{
         font-size: 12px;
-        color: {COLORS['text_muted']};
+        color: {COLORS["text_muted"]};
     }}
     QLabel#icon {{
         font-size: 28px;
@@ -74,22 +75,22 @@ STYLESHEET = f"""
         border-radius: 8px;
         font-size: 13px;
         font-weight: 500;
-        border: 1px solid {COLORS['border']};
-        background-color: {COLORS['bg']};
-        color: {COLORS['text']};
+        border: 1px solid {COLORS["border"]};
+        background-color: {COLORS["bg"]};
+        color: {COLORS["text"]};
     }}
     QPushButton:hover {{
-        border-color: {COLORS['primary']};
-        background-color: {COLORS['border']};
+        border-color: {COLORS["primary"]};
+        background-color: {COLORS["border"]};
     }}
     QPushButton#primary {{
-        background-color: {COLORS['primary']};
-        border-color: {COLORS['primary']};
+        background-color: {COLORS["primary"]};
+        border-color: {COLORS["primary"]};
         color: white;
     }}
     QPushButton#primary:hover {{
-        background-color: {COLORS['primary_hover']};
-        border-color: {COLORS['primary_hover']};
+        background-color: {COLORS["primary_hover"]};
+        border-color: {COLORS["primary_hover"]};
     }}
 """
 
@@ -111,10 +112,7 @@ class StyledDialog(QDialog):
 
         self.setWindowTitle(title)
         self.setFixedWidth(450)  # Extra width for shadow margins
-        self.setWindowFlags(
-            Qt.WindowType.Dialog |
-            Qt.WindowType.FramelessWindowHint
-        )
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet(STYLESHEET)
 
@@ -201,12 +199,14 @@ class StyledDialog(QDialog):
     def mousePressEvent(self, event):
         """Allow dragging the dialog."""
         if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            self._drag_pos = (
+                event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            )
             event.accept()
 
     def mouseMoveEvent(self, event):
         """Handle dialog dragging."""
-        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_pos'):
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, "_drag_pos"):
             self.move(event.globalPosition().toPoint() - self._drag_pos)
             event.accept()
 
@@ -319,10 +319,7 @@ class UpdateAvailableDialog(QDialog):
 
         self.setWindowTitle("Update Available")
         self.setFixedWidth(500)
-        self.setWindowFlags(
-            Qt.WindowType.Dialog |
-            Qt.WindowType.FramelessWindowHint
-        )
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet(STYLESHEET)
 
@@ -369,10 +366,10 @@ class UpdateAvailableDialog(QDialog):
         notes_text.setMaximumHeight(120)
         notes_text.setStyleSheet(f"""
             QTextEdit {{
-                background-color: {COLORS['bg']};
-                border: 1px solid {COLORS['border']};
+                background-color: {COLORS["bg"]};
+                border: 1px solid {COLORS["border"]};
                 border-radius: 8px;
-                color: {COLORS['text_muted']};
+                color: {COLORS["text_muted"]};
                 padding: 8px;
                 font-size: 12px;
             }}
@@ -408,11 +405,13 @@ class UpdateAvailableDialog(QDialog):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            self._drag_pos = (
+                event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            )
             event.accept()
 
     def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_pos'):
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, "_drag_pos"):
             self.move(event.globalPosition().toPoint() - self._drag_pos)
             event.accept()
 
@@ -445,10 +444,7 @@ class DownloadProgressDialog(QDialog):
 
         self.setWindowTitle("Downloading Update")
         self.setFixedWidth(450)
-        self.setWindowFlags(
-            Qt.WindowType.Dialog |
-            Qt.WindowType.FramelessWindowHint
-        )
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet(STYLESHEET)
 
@@ -489,15 +485,15 @@ class DownloadProgressDialog(QDialog):
         self.progress_bar.setValue(0)
         self.progress_bar.setStyleSheet(f"""
             QProgressBar {{
-                background-color: {COLORS['bg']};
-                border: 1px solid {COLORS['border']};
+                background-color: {COLORS["bg"]};
+                border: 1px solid {COLORS["border"]};
                 border-radius: 8px;
                 height: 20px;
                 text-align: center;
-                color: {COLORS['text']};
+                color: {COLORS["text"]};
             }}
             QProgressBar::chunk {{
-                background-color: {COLORS['primary']};
+                background-color: {COLORS["primary"]};
                 border-radius: 7px;
             }}
         """)
@@ -530,7 +526,9 @@ class DownloadProgressDialog(QDialog):
             # Format sizes
             downloaded_mb = downloaded / (1024 * 1024)
             total_mb = total / (1024 * 1024)
-            self.progress_label.setText(f"{downloaded_mb:.1f} MB / {total_mb:.1f} MB ({percent}%)")
+            self.progress_label.setText(
+                f"{downloaded_mb:.1f} MB / {total_mb:.1f} MB ({percent}%)"
+            )
         else:
             self.progress_label.setText(f"{downloaded / 1024:.0f} KB downloaded")
 
@@ -549,11 +547,13 @@ class DownloadProgressDialog(QDialog):
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            self._drag_pos = (
+                event.globalPosition().toPoint() - self.frameGeometry().topLeft()
+            )
             event.accept()
 
     def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_pos'):
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, "_drag_pos"):
             self.move(event.globalPosition().toPoint() - self._drag_pos)
             event.accept()
 

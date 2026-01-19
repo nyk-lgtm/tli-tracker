@@ -9,9 +9,8 @@ from datetime import datetime
 from typing import Optional
 import uuid
 import json
-from pathlib import Path
 
-from .models import Session, MapRun, Drop
+from .models import Session
 from .storage import load_json, save_json, DATA_DIR
 
 
@@ -38,7 +37,7 @@ class SessionManager:
     def _save(self) -> None:
         """Save sessions to disk."""
         # Prune old sessions
-        self._sessions = self._sessions[:self.MAX_SESSIONS]
+        self._sessions = self._sessions[: self.MAX_SESSIONS]
         save_json(self.FILENAME, {"sessions": self._sessions})
 
     def create_session(self) -> Session:
@@ -48,10 +47,7 @@ class SessionManager:
         Returns:
             A new Session instance
         """
-        return Session(
-            id=str(uuid.uuid4()),
-            started_at=datetime.now()
-        )
+        return Session(id=str(uuid.uuid4()), started_at=datetime.now())
 
     def save_session(self, session: Session) -> None:
         """
@@ -62,7 +58,7 @@ class SessionManager:
         """
         # Save full session data to individual file
         session_file = DATA_DIR / "sessions" / f"{session.id}.json"
-        with open(session_file, 'w', encoding='utf-8') as f:
+        with open(session_file, "w", encoding="utf-8") as f:
             json.dump(session.to_dict(), f, indent=2, ensure_ascii=False, default=str)
 
         # Generate summary (excludes heavy map data)
@@ -87,7 +83,7 @@ class SessionManager:
             return None
 
         try:
-            with open(session_file, 'r', encoding='utf-8') as f:
+            with open(session_file, "r", encoding="utf-8") as f:
                 return json.load(f)
         except (json.JSONDecodeError, IOError):
             return None

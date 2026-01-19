@@ -10,10 +10,11 @@ from typing import Optional
 
 # Only import win32 modules on Windows
 HAS_WIN32 = False
-if sys.platform == 'win32':
+if sys.platform == "win32":
     try:
         import win32gui
         import win32con
+
         HAS_WIN32 = True
     except ImportError:
         print("Warning: win32 modules not available, overlay features disabled")
@@ -77,12 +78,7 @@ def set_overlay_opacity(hwnd: int, opacity: float) -> bool:
         alpha = int(opacity * 255)
         alpha = max(0, min(255, alpha))
 
-        win32gui.SetLayeredWindowAttributes(
-            hwnd,
-            0,
-            alpha,
-            win32con.LWA_ALPHA
-        )
+        win32gui.SetLayeredWindowAttributes(hwnd, 0, alpha, win32con.LWA_ALPHA)
         return True
 
     except Exception as e:
@@ -104,8 +100,11 @@ def ensure_topmost(hwnd: int) -> bool:
         win32gui.SetWindowPos(
             hwnd,
             win32con.HWND_TOPMOST,
-            0, 0, 0, 0,
-            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE
+            0,
+            0,
+            0,
+            0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE,
         )
         return True
     except Exception as e:
@@ -157,8 +156,11 @@ def remove_overlay(hwnd: int) -> bool:
         win32gui.SetWindowPos(
             hwnd,
             win32con.HWND_NOTOPMOST,
-            0, 0, 0, 0,
-            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE
+            0,
+            0,
+            0,
+            0,
+            win32con.SWP_NOMOVE | win32con.SWP_NOSIZE,
         )
 
         return True
@@ -187,11 +189,7 @@ def set_window_position(hwnd: int, x: int, y: int) -> bool:
 
     try:
         win32gui.SetWindowPos(
-            hwnd,
-            0,
-            x, y,
-            0, 0,
-            win32con.SWP_NOSIZE | win32con.SWP_NOZORDER
+            hwnd, 0, x, y, 0, 0, win32con.SWP_NOSIZE | win32con.SWP_NOZORDER
         )
         return True
     except Exception:

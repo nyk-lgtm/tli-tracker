@@ -6,7 +6,6 @@ and directly by other Python components.
 """
 
 import csv
-import json
 from typing import Any, Optional
 
 from PySide6.QtWidgets import QFileDialog
@@ -43,11 +42,7 @@ class Api:
         self.updater = Updater()
 
         # Initialize tracker with update callback
-        self.tracker = Tracker(
-            self.prices,
-            self.sessions,
-            on_update=self._push_to_ui
-        )
+        self.tracker = Tracker(self.prices, self.sessions, on_update=self._push_to_ui)
 
     def _push_to_ui(self, event_type: str, data: Any) -> None:
         """
@@ -127,7 +122,7 @@ class Api:
             self._main_window,
             "Export Session",
             f"session_{session_id[:8]}.csv",
-            "CSV Files (*.csv)"
+            "CSV Files (*.csv)",
         )
 
         if not file_path:
@@ -146,29 +141,40 @@ class Api:
 
                 for drop in map_run.get("drops", []):
                     item_id = drop.get("item_id", "")
-                    rows.append({
-                        "session_id": session_id,
-                        "session_start": session_start,
-                        "session_end": session_end,
-                        "map_start": map_start,
-                        "map_end": map_end,
-                        "map_duration_seconds": round(map_duration, 2),
-                        "is_league_zone": is_league_zone,
-                        "item_name": get_item_name(item_id),
-                        "item_id": item_id,
-                        "quantity": drop.get("quantity", 0),
-                        "value": drop.get("value", 0),
-                        "drop_timestamp": drop.get("timestamp", "")
-                    })
+                    rows.append(
+                        {
+                            "session_id": session_id,
+                            "session_start": session_start,
+                            "session_end": session_end,
+                            "map_start": map_start,
+                            "map_end": map_end,
+                            "map_duration_seconds": round(map_duration, 2),
+                            "is_league_zone": is_league_zone,
+                            "item_name": get_item_name(item_id),
+                            "item_id": item_id,
+                            "quantity": drop.get("quantity", 0),
+                            "value": drop.get("value", 0),
+                            "drop_timestamp": drop.get("timestamp", ""),
+                        }
+                    )
 
             # Write CSV
             fieldnames = [
-                "session_id", "session_start", "session_end",
-                "map_start", "map_end", "map_duration_seconds", "is_league_zone",
-                "item_name", "item_id", "quantity", "value", "drop_timestamp"
+                "session_id",
+                "session_start",
+                "session_end",
+                "map_start",
+                "map_end",
+                "map_duration_seconds",
+                "is_league_zone",
+                "item_name",
+                "item_id",
+                "quantity",
+                "value",
+                "drop_timestamp",
             ]
 
-            with open(file_path, 'w', newline='', encoding='utf-8') as f:
+            with open(file_path, "w", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()
                 writer.writerows(rows)
@@ -224,7 +230,7 @@ class Api:
 
         success = save_config(settings)
         return {"status": "ok" if success else "error"}
-    
+
     def reset_settings(self) -> dict:
         """Reset application settings to defaults."""
         default_settings = {
@@ -401,9 +407,9 @@ class Api:
 
         try:
             self._overlay_window.windowHandle().startSystemMove()
-            
+
             self.save_overlay_position()
-            
+
             return {"status": "ok"}
         except Exception as e:
             print(f"Drag error: {e}")
@@ -500,11 +506,7 @@ class Api:
         """
         from .updater import UpdateInfo
 
-        info = UpdateInfo(
-            version=version,
-            download_url=download_url,
-            release_notes=""
-        )
+        info = UpdateInfo(version=version, download_url=download_url, release_notes="")
 
         path, error = self.updater.download_update(info)
 
