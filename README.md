@@ -69,10 +69,6 @@ Settings can be adjusted through the overlay UI or by editing `data/config.json`
       - if u see "(no price)" on the app the item's value is considered to be 0 for the purpose of calcs .. just price check the item or ignore
 3. Looks up prices u saved and calculates total values for the dropped items during a session
 
-## Known Limitations
-- Requires Torchlight Infinite to write logs in English locale
-- Price data depends on in-game trading house searches
-
 ## Thanks
 
 - Torchlight Infinite community database (https://tlidb.com/) for item names and ids
