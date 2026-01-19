@@ -2,7 +2,7 @@
 Version information for TLI Tracker.
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 VERSION = __version__
 
 # GitHub repository info for auto-updates
