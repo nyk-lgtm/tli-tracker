@@ -116,7 +116,7 @@ export function renderDrops() {
                 <div class="empty-state py-10">
                     <div class="text-base font-semibold text-gray-300 mb-2">Inventory Not Tracked</div>
                     <p class="text-sm text-gray-500">
-                        Sort your inventory in-game to start tracking.
+                        In-game: Settings -> Enable Log<br>Then sort your inventory to start tracking.
                     </p>
                 </div>
             `;

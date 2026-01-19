@@ -1,6 +1,12 @@
 # TLI Tracker
 
+🚨 ALERT 🚨 idk if tos 🚨 gl 👍
+
 A real-time drop tracker and overlay for tli that monitors ur loot and displays farm stats
+
+![Main Window](ui/assets/docs/main_window.png)
+dw about the flame sand FE value
+![Overlay](ui/assets/docs/overlay.png)
 
 ## Installation
 
@@ -36,6 +42,7 @@ If ur looking at this section u could've probably made this urself but here:
 - **Market Value** - Can show the value of your drops based on current market prices
 - **In-Game Overlay** - Transparent overlay that displays session stats while you play
 - **Session Management** - Tracks multiple farming sessions with stats and history
+- **CSV Export** - Export session data to CSV for external analysis (one row per drop)
 
 ## Usage
 
