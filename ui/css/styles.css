@@ -642,6 +642,12 @@ body {
     border-color: #ef4444;
 }
 
+/* Inline update status in settings modal */
+#update-row.hidden,
+#update-status.hidden {
+    display: none;
+}
+
 /* ============================================
    Scrollbar
    ============================================ */

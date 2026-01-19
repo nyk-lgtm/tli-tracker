@@ -55,7 +55,9 @@ const elements = {
     btnSaveSettings: document.getElementById('btn-save-settings'),
     btnResetSettings: document.getElementById('btn-reset-defaults'),
     versionDisplay: document.getElementById('version-display'),
-    btnCheckUpdates: document.getElementById('btn-check-updates')
+    btnCheckUpdates: document.getElementById('btn-check-updates'),
+    updateStatus: document.getElementById('update-status'),
+    updateRow: document.getElementById('update-row')
 };
 
 // Note: api() and waitForApi() are provided by qt_bridge.js
@@ -566,6 +568,25 @@ async function loadVersion() {
     }
 }
 
+function showUpdateStatus(message, type = 'info') {
+    const el = elements.updateStatus;
+    const row = elements.updateRow;
+    if (!el) return;
+    el.textContent = message;
+    el.classList.remove('hidden', 'status-info', 'status-success', 'status-error');
+    el.classList.add(`status-${type}`);
+    if (row) row.classList.add('hidden');
+}
+
+function hideUpdateStatus() {
+    const el = elements.updateStatus;
+    const row = elements.updateRow;
+    if (!el) return;
+    el.classList.add('hidden');
+    el.classList.remove('status-info', 'status-success', 'status-error');
+    if (row) row.classList.remove('hidden');
+}
+
 async function checkForUpdates() {
     const btn = elements.btnCheckUpdates;
     if (!btn) return;
@@ -573,22 +594,24 @@ async function checkForUpdates() {
     const originalText = btn.textContent;
     btn.textContent = 'Checking...';
     btn.disabled = true;
+    hideUpdateStatus();
 
     try {
         const result = await api('check_for_update');
 
         if (result.status === 'error') {
-            showStatus(`Update check failed: ${result.error}`, 'error');
+            showUpdateStatus(`Update check failed: ${result.error}`, 'error');
             return;
         }
 
         if (!result.update_available) {
-            showStatus("You're running the latest version!", 'success');
-            setTimeout(() => hideStatus(), 3000);
+            showUpdateStatus("You're running the latest version!", 'success');
+            setTimeout(() => hideUpdateStatus(), 3000);
             return;
         }
 
         // Update available - show confirmation
+        hideUpdateStatus();
         const confirmed = await showConfirmDialog(
             'Update Available',
             `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
@@ -599,31 +622,38 @@ async function checkForUpdates() {
         if (!confirmed) return;
 
         // Start download
-        showStatus('Downloading update...', 'info');
+        showUpdateStatus('Downloading update...', 'info');
 
         const downloadResult = await api('download_update', result.download_url, result.new_version);
 
         if (downloadResult.status === 'error') {
-            showStatus(`Download failed: ${downloadResult.error}`, 'error');
+            showUpdateStatus(`Download failed: ${downloadResult.error}`, 'error');
             return;
         }
 
         // Launch installer
-        showStatus('Launching installer...', 'info');
+        showUpdateStatus('Launching installer...', 'info');
 
         const launchResult = await api('launch_installer', downloadResult.download_path);
 
         if (launchResult.status === 'error') {
-            showStatus(`Failed to launch installer: ${launchResult.error}`, 'error');
+            showUpdateStatus(`Failed to launch installer: ${launchResult.error}`, 'error');
             return;
         }
 
         // App will quit after launching installer
-        showStatus('Update starting, closing app...', 'success');
+        showUpdateStatus('Update starting, closing app...', 'success');
+
+        // Give user a moment to see the message, then quit
+        setTimeout(() => {
+            window.qt.quit_app();
+        }, 1000);
+
+        return; // Skip the finally block's button reset
 
     } catch (e) {
         console.error('Update check failed:', e);
-        showStatus('Update check failed', 'error');
+        showUpdateStatus('Update check failed', 'error');
     } finally {
         btn.textContent = originalText;
         btn.disabled = false;

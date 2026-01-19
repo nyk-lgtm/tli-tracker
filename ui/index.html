@@ -155,7 +155,7 @@
 
                 <!-- Pin Overlay Toggle -->
                 <div class="setting-row">
-                    <span class="setting-label">Pin Overlay (Click-through)</span>
+                    <span class="setting-label">Pin Overlay</span>
                     <label class="toggle">
                         <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox">
                         <div class="toggle-track"></div>
@@ -172,14 +172,17 @@
                 </div>
 
                 <!-- Check for Updates -->
-                <div class="setting-row pt-4 border-t border-dark-border">
-                    <div>
-                        <span class="setting-label">Check for Updates</span>
-                        <div id="version-display" class="setting-hint font-mono">v--</div>
+                <div class="pt-4 border-t border-dark-border">
+                    <div id="update-row" class="setting-row">
+                        <div>
+                            <span class="setting-label">Check for Updates</span>
+                            <div id="version-display" class="setting-hint font-mono text-[10px]">v--</div>
+                        </div>
+                        <button id="btn-check-updates" class="btn-secondary text-xs">
+                            Check Now
+                        </button>
                     </div>
-                    <button id="btn-check-updates" class="btn-secondary text-xs">
-                        Check Now
-                    </button>
+                    <div id="update-status" class="hidden flex items-center text-xs px-3 py-2 rounded-lg border shadow-lg min-h-[38px]"></div>
                 </div>
             </div>
 

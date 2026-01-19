@@ -8,6 +8,7 @@ import json
 from typing import Any
 
 from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtWidgets import QApplication
 
 
 class ApiBridge(QObject):
@@ -222,3 +223,8 @@ class ApiBridge(QObject):
     def launch_installer(self, download_path: str) -> str:
         """Launch the downloaded installer."""
         return json.dumps(self.api.launch_installer(download_path), default=str)
+
+    @Slot()
+    def quit_app(self) -> None:
+        """Quit the application."""
+        QApplication.quit()
