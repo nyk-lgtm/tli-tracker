@@ -199,6 +199,22 @@
         </div>
     </div>
 
+    <!-- Confirmation Dialog -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-80 max-w-full mx-4">
+            <h3 id="confirm-title" class="text-lg font-semibold mb-2">Confirm</h3>
+            <p id="confirm-message" class="text-gray-400 text-sm mb-6 whitespace-pre-line"></p>
+            <div class="flex gap-3">
+                <button id="btn-confirm-cancel" class="flex-1 px-4 py-2 bg-dark-bg border border-dark-border hover:border-gray-500 rounded-lg transition text-sm">
+                    Cancel
+                </button>
+                <button id="btn-confirm-ok" class="flex-1 px-4 py-2 bg-primary hover:bg-primary/80 rounded-lg transition font-medium text-sm">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- History Modal -->
     <div id="history-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <div class="bg-dark-card border border-dark-border rounded-xl p-6 w-[500px] max-w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">

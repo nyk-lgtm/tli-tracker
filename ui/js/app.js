@@ -195,7 +195,7 @@ function renderDrops() {
                 <div class="flex flex-col items-center justify-center py-10 text-center space-y-2">
                     <div class="text-lg font-semibold text-gray-300">Inventory Not Tracked</div>
                     <p class="text-sm text-gray-500 max-w-xs">
-                        Click <span class="text-primary">Initialize Bag</span> and sort your inventory in-game to start tracking.
+                        Sort your inventory in-game to start tracking.
                     </p>
                 </div>
             `;
@@ -385,7 +385,13 @@ async function initialize() {
 }
 
 async function resetSession() {
-    if (!confirm('Reset current session?')) return;
+    const confirmed = await showConfirmDialog(
+        'Reset Session',
+        'The current session will be saved to history and a new session will start.',
+        'Reset',
+        'Cancel'
+    );
+    if (!confirmed) return;
 
     try {
         await api('reset_session');
@@ -561,11 +567,11 @@ async function checkForUpdates() {
         }
 
         // Update available - show confirmation
-        const confirmed = confirm(
-            `A new version is available!\n\n` +
-            `Current: v${result.current_version}\n` +
-            `New: v${result.new_version}\n\n` +
-            `Would you like to download and install the update?`
+        const confirmed = await showConfirmDialog(
+            'Update Available',
+            `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
+            'Update',
+            'Later'
         );
 
         if (!confirmed) return;
@@ -657,6 +663,53 @@ function openModal(name) {
 function closeModal(name) {
     const modal = document.getElementById(`${name}-modal`);
     if (modal) modal.classList.add('hidden');
+}
+
+// ============ Confirmation Dialog ============
+
+function showConfirmDialog(title, message, confirmText = 'Confirm', cancelText = 'Cancel') {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        const titleEl = document.getElementById('confirm-title');
+        const messageEl = document.getElementById('confirm-message');
+        const btnOk = document.getElementById('btn-confirm-ok');
+        const btnCancel = document.getElementById('btn-confirm-cancel');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        btnOk.textContent = confirmText;
+        btnCancel.textContent = cancelText;
+
+        modal.classList.remove('hidden');
+
+        const cleanup = () => {
+            modal.classList.add('hidden');
+            btnOk.removeEventListener('click', onConfirm);
+            btnCancel.removeEventListener('click', onCancel);
+            modal.removeEventListener('click', onBackdrop);
+        };
+
+        const onConfirm = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        const onCancel = () => {
+            cleanup();
+            resolve(false);
+        };
+
+        const onBackdrop = (e) => {
+            if (e.target === modal) {
+                cleanup();
+                resolve(false);
+            }
+        };
+
+        btnOk.addEventListener('click', onConfirm);
+        btnCancel.addEventListener('click', onCancel);
+        modal.addEventListener('click', onBackdrop);
+    });
 }
 
 // ============ Status Banner ============
