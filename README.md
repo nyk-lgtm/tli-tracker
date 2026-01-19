@@ -72,3 +72,4 @@ Settings can be adjusted through the overlay UI or by editing `data/config.json`
 ## Thanks
 
 - Torchlight Infinite community database (https://tlidb.com/) for item names and ids
+- Anthropic, Opus and Claude Code

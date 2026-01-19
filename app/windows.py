@@ -202,7 +202,7 @@ class OverlayWindow(QMainWindow):
         self._click_through_enabled = True
 
         self.setWindowTitle("TLI Overlay")
-        self.resize(400, 50)
+        self.resize(330, 50)
 
         # Overlay window flags
         self.setWindowFlags(
