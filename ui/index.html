@@ -117,72 +117,130 @@
 
     <!-- Settings Modal -->
     <div id="settings-modal" class="modal-backdrop hidden">
-        <div class="modal-content w-96">
+        <div class="modal-content w-[440px]">
             <div class="modal-header">
                 <h3 class="modal-title">Settings</h3>
                 <button id="btn-close-settings" class="modal-close">&times;</button>
             </div>
 
-            <div class="space-y-4">
-                <!-- Tax Toggle -->
-                <div class="setting-row">
-                    <span class="setting-label">Include AH Tax (12.5%)</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="setting-tax" class="toggle-checkbox">
-                        <div class="toggle-track"></div>
-                    </label>
+            <div class="settings-layout">
+                <!-- Sidebar Tabs -->
+                <div class="settings-sidebar">
+                    <button class="settings-tab active" data-tab="general">General</button>
+                    <button class="settings-tab" data-tab="overlay">Overlay</button>
                 </div>
 
-                <!-- Show Map Value Toggle -->
-                <div class="setting-row">
-                    <span class="setting-label">Show Current Map Value</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="setting-map-value" class="toggle-checkbox">
-                        <div class="toggle-track"></div>
-                    </label>
-                </div>
+                <!-- Tab Content -->
+                <div class="settings-content">
+                    <!-- General Tab -->
+                    <div id="tab-general" class="settings-panel active">
+                        <div class="space-y-4">
+                            <!-- Tax Toggle -->
+                            <div class="setting-row">
+                                <span class="setting-label">Include AH Tax (12.5%)</span>
+                                <label class="toggle">
+                                    <input type="checkbox" id="setting-tax" class="toggle-checkbox">
+                                    <div class="toggle-track"></div>
+                                </label>
+                            </div>
 
-                <!-- Real Time Stats Toggle -->
-                <div class="setting-row">
-                    <div>
-                        <span class="setting-label">Real Time FE Rate</span>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox">
-                        <div class="toggle-track"></div>
-                    </label>
-                </div>
+                            <!-- Real Time Stats Toggle -->
+                            <div class="setting-row">
+                                <span class="setting-label">Real Time FE Rate</span>
+                                <label class="toggle">
+                                    <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox">
+                                    <div class="toggle-track"></div>
+                                </label>
+                            </div>
 
-                <!-- Pin Overlay Toggle -->
-                <div class="setting-row">
-                    <span class="setting-label">Pin Overlay</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox">
-                        <div class="toggle-track"></div>
-                    </label>
-                </div>
-
-                <!-- Overlay Opacity -->
-                <div class="setting-row-vertical">
-                    <div class="flex justify-between mb-2">
-                        <span class="setting-label">Overlay Opacity</span>
-                        <span id="opacity-value" class="font-mono text-sm text-gray-400">90%</span>
-                    </div>
-                    <input type="range" id="setting-opacity" min="20" max="100" value="90" class="range-slider">
-                </div>
-
-                <!-- Check for Updates -->
-                <div class="pt-4 border-t border-dark-border">
-                    <div id="update-row" class="setting-row">
-                        <div>
-                            <span class="setting-label">Check for Updates</span>
-                            <div id="version-display" class="setting-hint font-mono text-[10px]">v--</div>
+                            <!-- Check for Updates -->
+                            <div class="pt-4 border-t border-dark-border">
+                                <div id="update-row" class="setting-row">
+                                    <div>
+                                        <span class="setting-label">Check for Updates</span>
+                                        <div id="version-display" class="setting-hint font-mono text-[10px]">v--</div>
+                                    </div>
+                                    <button id="btn-check-updates" class="btn-secondary text-xs">
+                                        Check Now
+                                    </button>
+                                </div>
+                                <div id="update-status" class="hidden flex items-center text-xs px-3 py-2 rounded-lg border shadow-lg min-h-[38px]"></div>
+                            </div>
                         </div>
-                        <button id="btn-check-updates" class="btn-secondary text-xs">
-                            Check Now
-                        </button>
                     </div>
-                    <div id="update-status" class="hidden flex items-center text-xs px-3 py-2 rounded-lg border shadow-lg min-h-[38px]"></div>
+
+                    <!-- Overlay Tab -->
+                    <div id="tab-overlay" class="settings-panel">
+                        <div class="space-y-4">
+                            <!-- Pin Overlay Toggle -->
+                            <div class="setting-row">
+                                <span class="setting-label">Pin Overlay</span>
+                                <label class="toggle">
+                                    <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox">
+                                    <div class="toggle-track"></div>
+                                </label>
+                            </div>
+
+                            <!-- Overlay Opacity -->
+                            <div class="setting-row-vertical">
+                                <div class="flex justify-between mb-2">
+                                    <span class="setting-label">Overlay Opacity</span>
+                                    <span id="opacity-value" class="font-mono text-sm text-gray-400">90%</span>
+                                </div>
+                                <input type="range" id="setting-opacity" min="20" max="100" value="90" class="range-slider">
+                            </div>
+
+                            <!-- Show Map Value Toggle -->
+                            <div class="setting-row">
+                                <span class="setting-label">Show Current Map Value</span>
+                                <label class="toggle">
+                                    <input type="checkbox" id="setting-map-value" class="toggle-checkbox">
+                                    <div class="toggle-track"></div>
+                                </label>
+                            </div>
+
+                            <!-- Charts Section -->
+                            <div class="pt-4 border-t border-dark-border">
+                                <div class="text-xs text-gray-500 uppercase tracking-wide mb-3">Charts</div>
+
+                                <!-- Pulse Chart Toggle -->
+                                <div class="setting-row mb-3">
+                                    <div>
+                                        <span class="setting-label">Pulse Chart</span>
+                                        <div class="setting-hint">Value per map bars</div>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" id="setting-chart-pulse" class="toggle-checkbox">
+                                        <div class="toggle-track"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Efficiency Chart Toggle -->
+                                <div class="setting-row mb-3">
+                                    <div>
+                                        <span class="setting-label">Efficiency Trend</span>
+                                        <div class="setting-hint">Value/hr over time</div>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" id="setting-chart-efficiency" class="toggle-checkbox">
+                                        <div class="toggle-track"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Donut Chart Toggle -->
+                                <div class="setting-row">
+                                    <div>
+                                        <span class="setting-label">Loot Distribution</span>
+                                        <div class="setting-hint">Item breakdown donut</div>
+                                    </div>
+                                    <label class="toggle">
+                                        <input type="checkbox" id="setting-chart-donut" class="toggle-checkbox">
+                                        <div class="toggle-track"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

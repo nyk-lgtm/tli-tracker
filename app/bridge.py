@@ -200,6 +200,11 @@ class ApiBridge(QObject):
         """Save current overlay position to config."""
         return json.dumps(self.api.save_overlay_position(), default=str)
 
+    @Slot(int, int, result=str)
+    def resize_overlay(self, width: int, height: int) -> str:
+        """Resize the overlay window."""
+        return json.dumps(self.api.resize_overlay(width, height), default=str)
+
     # === Utility ===
 
     @Slot(result=str)

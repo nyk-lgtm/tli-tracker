@@ -37,6 +37,14 @@ export function initElements() {
         versionDisplay: document.getElementById('version-display'),
         btnCheckUpdates: document.getElementById('btn-check-updates'),
         updateStatus: document.getElementById('update-status'),
-        updateRow: document.getElementById('update-row')
+        updateRow: document.getElementById('update-row'),
+        // Settings tabs
+        settingsTabs: document.querySelectorAll('.settings-tab'),
+        tabGeneral: document.getElementById('tab-general'),
+        tabOverlay: document.getElementById('tab-overlay'),
+        // Chart settings
+        settingChartPulse: document.getElementById('setting-chart-pulse'),
+        settingChartEfficiency: document.getElementById('setting-chart-efficiency'),
+        settingChartDonut: document.getElementById('setting-chart-donut')
     };
 }

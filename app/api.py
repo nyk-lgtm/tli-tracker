@@ -424,6 +424,17 @@ class Api:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
+    def resize_overlay(self, width: int, height: int) -> dict:
+        """Resize the overlay window."""
+        if not self._overlay_window:
+            return {"status": "error", "message": "No overlay window"}
+
+        try:
+            self._overlay_window.resize(width, height)
+            return {"status": "ok", "width": width, "height": height}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
     # === Utility ===
 
     def ping(self) -> dict:

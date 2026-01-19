@@ -9,7 +9,7 @@ import { state } from './state.js';
 import { elements, initElements } from './elements.js';
 import { showStatus, hideStatus, formatTime } from './utils.js';
 import { openModal, closeModal, showConfirmDialog, setModalCallbacks } from './modals.js';
-import { loadSettings, saveSettings, resetDefaults, updateToggleVisual } from './settings.js';
+import { loadSettings, saveSettings, resetDefaults, updateToggleVisual, initSettingsTabs } from './settings.js';
 import { loadHistory } from './history.js';
 import { loadVersion, checkForUpdates } from './updates.js';
 import { updateState, renderUI, renderDrops, addDrop } from './renderers.js';
@@ -240,6 +240,12 @@ function init() {
     document.getElementById('setting-overlay-pinned').addEventListener('change', () => {
         updateToggleVisual('setting-overlay-pinned');
     });
+    // Chart toggles
+    document.getElementById('setting-chart-pulse').addEventListener('change', () => updateToggleVisual('setting-chart-pulse'));
+    document.getElementById('setting-chart-efficiency').addEventListener('change', () => updateToggleVisual('setting-chart-efficiency'));
+    document.getElementById('setting-chart-donut').addEventListener('change', () => updateToggleVisual('setting-chart-donut'));
+    // Initialize settings tabs
+    initSettingsTabs();
 
     // History modal
     document.getElementById('btn-close-history').addEventListener('click', () => closeModal('history'));

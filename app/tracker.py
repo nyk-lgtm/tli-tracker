@@ -263,7 +263,16 @@ class Tracker:
                 "map_count": self.state.current_session.map_count,
                 "value_per_hour": value_per_hour,
                 "maps_per_hour": maps_per_hour,
-                "drops": session_drops
+                "drops": session_drops,
+                "maps": [
+                    {
+                        "index": i,
+                        "total_value": m.total_value,
+                        "duration_seconds": m.duration_seconds
+                    }
+                    for i, m in enumerate(self.state.current_session.maps)
+                    if m.ended_at and not m.is_league_zone
+                ]
             }
 
         return {

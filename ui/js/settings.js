@@ -6,6 +6,38 @@ import { elements } from './elements.js';
 import { settings, updateSettings } from './state.js';
 import { showStatus, hideStatus } from './utils.js';
 
+// ============ Settings Tabs ============
+
+export function initSettingsTabs() {
+    elements.settingsTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabName = tab.dataset.tab;
+            switchSettingsTab(tabName);
+        });
+    });
+}
+
+export function switchSettingsTab(tabName) {
+    // Update tab buttons
+    elements.settingsTabs.forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+
+    // Update tab panels
+    const panels = document.querySelectorAll('.settings-panel');
+    panels.forEach(panel => {
+        if (panel.id === `tab-${tabName}`) {
+            panel.classList.add('active');
+        } else {
+            panel.classList.remove('active');
+        }
+    });
+}
+
 // ============ Settings ============
 
 export function applyMapValueVisibility() {
@@ -40,10 +72,18 @@ export async function loadSettings() {
         elements.settingOverlayPinned.checked = settings.overlay_pinned || false;
         elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
         elements.opacityValue.textContent = elements.settingOpacity.value + '%';
+        // Chart settings
+        elements.settingChartPulse.checked = settings.chart_pulse_enabled || false;
+        elements.settingChartEfficiency.checked = settings.chart_efficiency_enabled || false;
+        elements.settingChartDonut.checked = settings.chart_donut_enabled || false;
+        // Update toggle visuals
         updateToggleVisual('setting-tax');
         updateToggleVisual('setting-map-value');
         updateToggleVisual('setting-real-time-stats');
         updateToggleVisual('setting-overlay-pinned');
+        updateToggleVisual('setting-chart-pulse');
+        updateToggleVisual('setting-chart-efficiency');
+        updateToggleVisual('setting-chart-donut');
         applyMapValueVisibility();
     } catch (e) {
         console.error('Failed to load settings:', e);
@@ -56,6 +96,10 @@ export async function saveSettings() {
     settings.use_real_time_stats = elements.settingRealTimeStats.checked;
     settings.overlay_pinned = elements.settingOverlayPinned.checked;
     settings.overlay_opacity = elements.settingOpacity.value / 100;
+    // Chart settings
+    settings.chart_pulse_enabled = elements.settingChartPulse.checked;
+    settings.chart_efficiency_enabled = elements.settingChartEfficiency.checked;
+    settings.chart_donut_enabled = elements.settingChartDonut.checked;
 
     try {
         await api('save_settings', settings);

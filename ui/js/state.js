@@ -18,7 +18,10 @@ export const settings = {
     overlay_opacity: 0.9,
     show_map_value: false,
     overlay_pinned: false,
-    use_real_time_stats: false
+    use_real_time_stats: false,
+    chart_pulse_enabled: false,
+    chart_efficiency_enabled: false,
+    chart_donut_enabled: false
 };
 
 // Allow settings to be replaced entirely (for loadSettings)
