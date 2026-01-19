@@ -100,16 +100,31 @@ DEFAULT_CONFIG = {
     "tax_enabled": False,
     "tax_rate": 0.125,  # 12.5% AH fee
     "show_map_value": False,  # Show current map value
+    "use_real_time_stats": True
 }
 
 
 def load_config() -> dict:
-    """Load application configuration."""
-    config = load_json("config.json", DEFAULT_CONFIG.copy())
-    # Ensure all default keys exist
+    """
+    Load application configuration.
+
+    Automatically migrates config by:
+    - Adding new keys from DEFAULT_CONFIG
+    - Saving back if any changes were made
+    """
+    config = load_json("config.json", {})
+    changed = False
+
+    # Add missing keys from defaults
     for key, value in DEFAULT_CONFIG.items():
         if key not in config:
             config[key] = value
+            changed = True
+
+    # Save migrated config
+    if changed:
+        save_config(config)
+
     return config
 
 
@@ -135,19 +150,6 @@ def set_config_value(key: str, value: Any) -> bool:
 
 # Cache for item names to avoid repeated file reads
 _item_cache: dict[str, str] | None = None
-
-
-# def load_items() -> dict[str, str]:
-#     """
-#     Load the item database.
-
-#     Returns:
-#         Dictionary of item_id -> item_name
-#     """
-#     global _item_cache
-#     if _item_cache is None:
-#         _item_cache = load_json("item_ids.json", {})
-#     return _item_cache
 
 def load_items() -> dict[str, str]:
     global _item_cache
