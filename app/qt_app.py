@@ -15,7 +15,8 @@ import app
 from app.api import Api
 from app.bridge import ApiBridge
 from app.windows import MainWindow, OverlayWindow
-from app.storage import load_config#, get_resource_path
+from app.storage import load_config
+from app.version import VERSION
 
 
 class TLITrackerApp:
@@ -71,7 +72,7 @@ class TLITrackerApp:
 
     def run(self) -> int:
         """Run the application event loop."""
-        print("TLI Tracker v2 starting...")
+        print(f"TLI Tracker v{VERSION} starting...")
         self.main_window.show()
         return self.app.exec()
 

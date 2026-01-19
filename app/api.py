@@ -13,6 +13,8 @@ from .price_manager import PriceManager
 from .session_manager import SessionManager
 from .storage import load_config, save_config, load_items, get_item_name
 from .overlay import set_click_through
+from .updater import Updater
+from .version import VERSION
 
 
 class Api:
@@ -35,6 +37,7 @@ class Api:
         # Initialize managers
         self.prices = PriceManager()
         self.sessions = SessionManager()
+        self.updater = Updater()
 
         # Initialize tracker with update callback
         self.tracker = Tracker(
@@ -357,3 +360,94 @@ class Api:
     def ping(self) -> dict:
         """Simple ping to verify the API is working."""
         return {"status": "ok", "message": "pong"}
+
+    # === Update API ===
+
+    def get_version(self) -> str:
+        """Get current application version."""
+        return VERSION
+
+    def check_for_update(self) -> dict:
+        """
+        Check GitHub for a newer version.
+
+        Returns dict with:
+        - status: "ok" | "error"
+        - update_available: bool
+        - current_version: str
+        - new_version: str (if available)
+        - release_notes: str (if available)
+        - download_url: str (if available)
+        - error: str (if error)
+        """
+        available, info, error = self.updater.check_for_update()
+
+        if error:
+            return {
+                "status": "error",
+                "error": error,
+                "current_version": VERSION,
+            }
+
+        if not available:
+            return {
+                "status": "ok",
+                "update_available": False,
+                "current_version": VERSION,
+            }
+
+        return {
+            "status": "ok",
+            "update_available": True,
+            "current_version": VERSION,
+            "new_version": info.version,
+            "release_notes": info.release_notes,
+            "download_url": info.download_url,
+        }
+
+    def download_update(self, download_url: str, version: str) -> dict:
+        """
+        Download update installer.
+
+        Args:
+            download_url: URL to download the installer from
+            version: Version string for the update
+
+        Returns dict with:
+        - status: "ok" | "error"
+        - download_path: str (if successful)
+        - error: str (if error)
+        """
+        from .updater import UpdateInfo
+
+        info = UpdateInfo(
+            version=version,
+            download_url=download_url,
+            release_notes=""
+        )
+
+        path, error = self.updater.download_update(info)
+
+        if error:
+            return {"status": "error", "error": error}
+
+        return {"status": "ok", "download_path": path}
+
+    def launch_installer(self, download_path: str) -> dict:
+        """
+        Launch the downloaded installer and quit the app.
+
+        Args:
+            download_path: Path to the downloaded installer
+
+        Returns dict with:
+        - status: "ok" | "error"
+        - error: str (if error)
+        """
+        success, error = self.updater.launch_installer(download_path)
+
+        if not success:
+            return {"status": "error", "error": error}
+
+        # Signal app to quit (handled by the caller)
+        return {"status": "ok", "should_quit": True}

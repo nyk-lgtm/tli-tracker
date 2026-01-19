@@ -52,7 +52,9 @@ const elements = {
     settingOpacity: document.getElementById('setting-opacity'),
     opacityValue: document.getElementById('opacity-value'),
     btnSaveSettings: document.getElementById('btn-save-settings'),
-    btnResetSettings: document.getElementById('btn-reset-defaults')
+    btnResetSettings: document.getElementById('btn-reset-defaults'),
+    versionDisplay: document.getElementById('version-display'),
+    btnCheckUpdates: document.getElementById('btn-check-updates')
 };
 
 // Note: api() and waitForApi() are provided by qt_bridge.js
@@ -508,10 +510,10 @@ async function saveSettings() {
 async function resetDefaults() {
     try {
         const result = await api('default_settings');
-        
+
         if (result.status === 'ok') {
             await loadSettings();
-            
+
             showStatus('Settings reset to defaults', 'success');
             setTimeout(() => hideStatus(), 2000);
         } else {
@@ -520,6 +522,83 @@ async function resetDefaults() {
     } catch (e) {
         console.error('Reset defaults failed:', e);
         showStatus('Failed to reset settings', 'error');
+    }
+}
+
+// ============ Updates ============
+
+async function loadVersion() {
+    try {
+        const version = await api('get_version');
+        if (version && elements.versionDisplay) {
+            elements.versionDisplay.textContent = `v${version}`;
+        }
+    } catch (e) {
+        console.error('Failed to load version:', e);
+    }
+}
+
+async function checkForUpdates() {
+    const btn = elements.btnCheckUpdates;
+    if (!btn) return;
+
+    const originalText = btn.textContent;
+    btn.textContent = 'Checking...';
+    btn.disabled = true;
+
+    try {
+        const result = await api('check_for_update');
+
+        if (result.status === 'error') {
+            showStatus(`Update check failed: ${result.error}`, 'error');
+            return;
+        }
+
+        if (!result.update_available) {
+            showStatus("You're running the latest version!", 'success');
+            setTimeout(() => hideStatus(), 3000);
+            return;
+        }
+
+        // Update available - show confirmation
+        const confirmed = confirm(
+            `A new version is available!\n\n` +
+            `Current: v${result.current_version}\n` +
+            `New: v${result.new_version}\n\n` +
+            `Would you like to download and install the update?`
+        );
+
+        if (!confirmed) return;
+
+        // Start download
+        showStatus('Downloading update...', 'info');
+
+        const downloadResult = await api('download_update', result.download_url, result.new_version);
+
+        if (downloadResult.status === 'error') {
+            showStatus(`Download failed: ${downloadResult.error}`, 'error');
+            return;
+        }
+
+        // Launch installer
+        showStatus('Launching installer...', 'info');
+
+        const launchResult = await api('launch_installer', downloadResult.download_path);
+
+        if (launchResult.status === 'error') {
+            showStatus(`Failed to launch installer: ${launchResult.error}`, 'error');
+            return;
+        }
+
+        // App will quit after launching installer
+        showStatus('Update starting, closing app...', 'success');
+
+    } catch (e) {
+        console.error('Update check failed:', e);
+        showStatus('Update check failed', 'error');
+    } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
     }
 }
 
@@ -723,6 +802,11 @@ function init() {
     // History modal
     document.getElementById('btn-close-history').addEventListener('click', () => closeModal('history'));
 
+    // Update check button
+    if (elements.btnCheckUpdates) {
+        elements.btnCheckUpdates.addEventListener('click', checkForUpdates);
+    }
+
     // Opacity slider
     elements.settingOpacity.addEventListener('input', (e) => {
         const val = e.target.value;
@@ -741,6 +825,9 @@ function init() {
 
     // Load settings
     loadSettings();
+
+    // Load version display
+    loadVersion();
 
     // Start timer loop
     startTimerLoop();
