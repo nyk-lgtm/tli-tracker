@@ -28,3 +28,6 @@ Thumbs.db
 temp_docs/
 data/
 scripts/
+
+# Build/Installer output
+installer/
