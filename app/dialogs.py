@@ -29,13 +29,14 @@ class DialogResult(Enum):
     EXIT = "exit"
 
 
-# App color scheme
+# App color scheme (must match CSS variables in styles.css)
 COLORS = {
-    "bg": "#0f172a",
-    "card": "#1e293b",
-    "border": "#334155",
-    "primary": "#6366f1",
-    "danger": "#fb923c",
+    "bg": "#0c1220",
+    "card": "#151e2c",
+    "border": "#2a3441",
+    "primary": "#0d9488",
+    "primary_hover": "#14b8a6",
+    "danger": "#f87171",
     "warning": "#f59e0b",
     "success": "#22d3ee",
     "text": "#f1f5f9",
@@ -87,7 +88,8 @@ STYLESHEET = f"""
         color: white;
     }}
     QPushButton#primary:hover {{
-        background-color: #5558e3;
+        background-color: {COLORS['primary_hover']};
+        border-color: {COLORS['primary_hover']};
     }}
 """
 

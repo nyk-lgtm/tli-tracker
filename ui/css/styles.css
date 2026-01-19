@@ -117,6 +117,18 @@ body {
     padding: 0.375rem 0.5rem;
 }
 
+/* Icon styling for external SVGs */
+.icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+}
+
+.btn-secondary:hover .icon {
+    opacity: 1;
+}
+
 .btn-ghost {
     display: inline-flex;
     align-items: center;
