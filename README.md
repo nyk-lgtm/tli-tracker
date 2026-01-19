@@ -4,9 +4,16 @@
 
 A real-time drop tracker and overlay for tli that monitors ur loot and displays farm stats
 
-![Main Window](ui/assets/docs/main_window.png)
-dw about the flame sand FE value
-![Overlay](ui/assets/docs/overlay.png)
+<table>
+  <tr>
+    <td><img src="ui/assets/docs/main_window.png" alt="Main Window"></td>
+    <td><img src="ui/assets/docs/overlay.png" alt="Overlay"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>dw about the flame sand FE value</em></td>
+    <td align="center"><em>Overlay</em></td>
+  </tr>
+</table>
 
 ## Installation
 
