@@ -31,3 +31,4 @@ scripts/
 
 # Build/Installer output
 installer/
+.claude/
