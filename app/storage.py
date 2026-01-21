@@ -154,11 +154,14 @@ def set_config_value(key: str, value: Any) -> bool:
 
 # === Items Database ===
 
-# Cache for item names to avoid repeated file reads
-_item_cache: dict[str, str] | None = None
+# Item data structure: {"name": str, "type": str}
+ItemData = dict[str, str]
+
+# Cache for items to avoid repeated file reads
+_item_cache: dict[str, ItemData] | None = None
 
 
-def load_items() -> dict[str, str]:
+def load_items() -> dict[str, ItemData]:
     global _item_cache
     if _item_cache is None:
         try:
@@ -170,7 +173,7 @@ def load_items() -> dict[str, str]:
     return _item_cache
 
 
-def reload_items() -> dict[str, str]:
+def reload_items() -> dict[str, ItemData]:
     """Force reload the item database (clears cache)."""
     global _item_cache
     _item_cache = None
@@ -180,10 +183,19 @@ def reload_items() -> dict[str, str]:
 def get_item_name(item_id: str) -> str:
     """Get item name by ID, or return 'Unknown (ID)' if not found."""
     items = load_items()
-    name = items.get(str(item_id))
-    if name:
-        return name
+    item = items.get(str(item_id))
+    if item:
+        return item["name"]
     return f"Unknown ({item_id})"
+
+
+def get_item_type(item_id: str) -> str | None:
+    """Get item type/category by ID, or return None if not found."""
+    items = load_items()
+    item = items.get(str(item_id))
+    if item:
+        return item.get("type")
+    return None
 
 
 # === Datetime Helpers ===
