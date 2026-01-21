@@ -212,12 +212,13 @@ waitForApi().then(loadSettings);
 
 // Timer loop for smooth updates (stats + all charts)
 setInterval(() => {
-    if (state.inMap && state.currentMap) {
-        state.currentMap.duration += 1;
+    const { mapTicked, sessionTicked } = TLI.tickTimers(state);
+
+    if (mapTicked) {
         els.mapTime.textContent = TLI.formatTime(state.currentMap.duration);
     }
-    if (state.session) {
-        state.session.duration_total += 1;
+
+    if (sessionTicked) {
         renderCharts();
     }
 }, 1000);

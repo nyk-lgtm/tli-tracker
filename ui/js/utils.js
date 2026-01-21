@@ -10,6 +10,7 @@ import { elements } from './elements.js';
 export const formatTime = window.TLI.formatTime;
 export const formatValue = window.TLI.formatValue;
 export const formatCompact = window.TLI.formatCompact;
+export const tickTimers = window.TLI.tickTimers;
 
 export function formatRate(value) {
     return `${formatCompact(value)}<span class="text-xs text-gray-400">/hr</span>`;

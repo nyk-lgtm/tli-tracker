@@ -56,3 +56,24 @@ TLI.formatCompact = function(value) {
     if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
     return Math.round(value).toString();
 };
+
+/**
+ * Tick timers by 1 second. Mutates state objects in place.
+ * @param {Object} state - State object with inMap, currentMap, session
+ * @returns {Object} What was ticked: { mapTicked: boolean, sessionTicked: boolean }
+ */
+TLI.tickTimers = function(state) {
+    const result = { mapTicked: false, sessionTicked: false };
+
+    if (state.inMap && state.currentMap) {
+        state.currentMap.duration += 1;
+        result.mapTicked = true;
+    }
+
+    if (state.session) {
+        state.session.duration_total += 1;
+        result.sessionTicked = true;
+    }
+
+    return result;
+};

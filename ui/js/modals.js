@@ -2,24 +2,12 @@
  * Modal and dialog handling
  */
 
-// Callbacks for modal open events (set by app.js to avoid circular deps)
-let onSettingsOpen = null;
-let onHistoryOpen = null;
-
-export function setModalCallbacks(callbacks) {
-    onSettingsOpen = callbacks.onSettingsOpen;
-    onHistoryOpen = callbacks.onHistoryOpen;
-}
-
 // ============ Modals ============
 
 export function openModal(name) {
     const modal = document.getElementById(`${name}-modal`);
     if (modal) {
         modal.classList.remove('hidden');
-
-        if (name === 'settings' && onSettingsOpen) onSettingsOpen();
-        if (name === 'history' && onHistoryOpen) onHistoryOpen();
     }
 }
 

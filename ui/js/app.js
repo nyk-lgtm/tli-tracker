@@ -7,8 +7,8 @@
 
 import { state } from './state.js';
 import { elements, initElements } from './elements.js';
-import { showStatus, hideStatus, formatTime } from './utils.js';
-import { openModal, closeModal, showConfirmDialog, setModalCallbacks } from './modals.js';
+import { showStatus, hideStatus, formatTime, tickTimers } from './utils.js';
+import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, saveSettings, resetDefaults, updateToggleVisual, initSettingsTabs } from './settings.js';
 import { loadHistory } from './history.js';
 import { loadVersion, checkForUpdates } from './updates.js';
@@ -188,19 +188,14 @@ function startTimerLoop() {
     if (timerInterval) return;
 
     timerInterval = setInterval(() => {
-        if (state.inMap && state.currentMap) {
-            // Increment current map duration
-            state.currentMap.duration += 1;
+        const { mapTicked, sessionTicked } = tickTimers(state);
+
+        if (mapTicked) {
             elements.statMapTime.textContent = formatTime(state.currentMap.duration);
         }
 
-        if (state.session) {
-            // Always increment session total (stopwatch)
-            state.session.duration_total += 1;
+        if (sessionTicked) {
             elements.statSessionTotal.textContent = formatTime(state.session.duration_total);
-
-            // Session mapping is updated from backend on zone changes only
-            // (don't increment locally to avoid sync issues)
         }
     }, 1000);
 }
@@ -211,44 +206,30 @@ function init() {
     // Initialize DOM element references
     initElements();
 
-    // Set up modal callbacks (to avoid circular dependencies)
-    setModalCallbacks({
-        onSettingsOpen: loadSettings,
-        onHistoryOpen: loadHistory
-    });
-
     // Bind event listeners
     elements.btnInitialize.addEventListener('click', initialize);
     elements.btnReset.addEventListener('click', resetSession);
     elements.btnModeValue.addEventListener('click', () => setDisplayMode('value'));
     elements.btnModeItems.addEventListener('click', () => setDisplayMode('items'));
-    elements.btnSettings.addEventListener('click', () => openModal('settings'));
-    elements.btnHistory.addEventListener('click', () => openModal('history'));
+    elements.btnSettings.addEventListener('click', () => { openModal('settings'); loadSettings(); });
+    elements.btnHistory.addEventListener('click', () => { openModal('history'); loadHistory(); });
     elements.btnOverlay.addEventListener('click', toggleOverlay);
     elements.btnResetSettings.addEventListener('click', resetDefaults);
 
     // Settings modal
-    document.getElementById('btn-close-settings').addEventListener('click', () => closeModal('settings'));
-    document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
-    document.getElementById('setting-tax').addEventListener('change', () => updateToggleVisual('setting-tax'));
-    document.getElementById('setting-map-value').addEventListener('change', () => {
-        updateToggleVisual('setting-map-value');
-    });
-    document.getElementById('setting-real-time-stats').addEventListener('change', () => {
-        updateToggleVisual('setting-real-time-stats');
-    });
-    document.getElementById('setting-overlay-pinned').addEventListener('change', () => {
-        updateToggleVisual('setting-overlay-pinned');
-    });
-    // Chart toggles
-    document.getElementById('setting-chart-pulse').addEventListener('change', () => updateToggleVisual('setting-chart-pulse'));
-    document.getElementById('setting-chart-efficiency').addEventListener('change', () => updateToggleVisual('setting-chart-efficiency'));
-    document.getElementById('setting-chart-donut').addEventListener('change', () => updateToggleVisual('setting-chart-donut'));
-    // Initialize settings tabs
+    elements.btnCloseSettings.addEventListener('click', () => closeModal('settings'));
+    elements.btnSaveSettings.addEventListener('click', saveSettings);
+    elements.settingTax.addEventListener('change', () => updateToggleVisual('setting-tax'));
+    elements.settingMapValue.addEventListener('change', () => updateToggleVisual('setting-map-value'));
+    elements.settingRealTimeStats.addEventListener('change', () => updateToggleVisual('setting-real-time-stats'));
+    elements.settingOverlayPinned.addEventListener('change', () => updateToggleVisual('setting-overlay-pinned'));
+    elements.settingChartPulse.addEventListener('change', () => updateToggleVisual('setting-chart-pulse'));
+    elements.settingChartEfficiency.addEventListener('change', () => updateToggleVisual('setting-chart-efficiency'));
+    elements.settingChartDonut.addEventListener('change', () => updateToggleVisual('setting-chart-donut'));
     initSettingsTabs();
 
     // History modal
-    document.getElementById('btn-close-history').addEventListener('click', () => closeModal('history'));
+    elements.btnCloseHistory.addEventListener('click', () => closeModal('history'));
 
     // Update check button
     if (elements.btnCheckUpdates) {
