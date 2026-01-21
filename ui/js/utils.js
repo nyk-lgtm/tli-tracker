@@ -5,36 +5,11 @@
 import { elements } from './elements.js';
 
 // ============ Formatting Utilities ============
+// Re-export from shared-utils.js (window.TLI namespace)
 
-export function formatTime(seconds) {
-    if (!seconds || seconds < 0) return '0:00';
-
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-
-    if (mins >= 60) {
-        const hrs = Math.floor(mins / 60);
-        const remainMins = mins % 60;
-        return `${hrs}h ${remainMins}m`;
-    }
-
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-}
-
-export function formatValue(value) {
-    if (value === null || value === undefined) return '+0';
-
-    const prefix = value >= 0 ? '+' : '';
-    const absValue = Math.abs(value);
-
-    if (absValue >= 1000000) {
-        return prefix + (value / 1000000).toFixed(1) + 'M';
-    } else if (absValue >= 1000) {
-        return prefix + (value / 1000).toFixed(1) + 'k';
-    }
-
-    return prefix + Math.round(value);
-}
+export const formatTime = window.TLI.formatTime;
+export const formatValue = window.TLI.formatValue;
+export const formatCompact = window.TLI.formatCompact;
 
 export function formatRate(value) {
     let text = '0';

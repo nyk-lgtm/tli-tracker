@@ -175,6 +175,7 @@
         </div>
     </div>
 
+    <script src="js/shared-utils.js"></script>
     <script src="js/qwebchannel.js"></script>
     <script src="js/qt_bridge.js"></script>
     <script>
@@ -242,8 +243,8 @@
 
             // Map time
             if (state.currentMap) {
-                els.mapTime.textContent = formatTime(state.currentMap.duration);
-                els.mapValue.textContent = formatValue(state.currentMap.value);
+                els.mapTime.textContent = TLI.formatTime(state.currentMap.duration);
+                els.mapValue.textContent = TLI.formatValue(state.currentMap.value);
                 els.mapValue.className = state.currentMap.value >= 0
                     ? 'stat-value positive'
                     : 'stat-value negative';
@@ -255,7 +256,7 @@
 
             // Session stats
             if (state.session) {
-                els.rate.textContent = formatCompactRate(state.session.value_per_hour);
+                els.rate.textContent = TLI.formatCompact(state.session.value_per_hour);
                 els.mapCount.textContent = state.session.map_count;
             } else {
                 els.rate.textContent = '0';
@@ -270,13 +271,6 @@
         }
 
         // ============ Chart Rendering ============
-
-        function formatCompact(value) {
-            if (!value) return '0';
-            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
-            if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
-            return Math.round(value).toString();
-        }
 
         function renderPulseChart(container, maps, currentMap) {
             if (!container) return;
@@ -298,7 +292,7 @@
                 const heightPercent = (value / maxValue) * 100;
                 const minHeight = value > 0 ? Math.max(heightPercent, 5) : 2;
                 const liveClass = map.isLive ? ' pulse-bar-live' : '';
-                return `<div class="pulse-bar${liveClass}" style="height: ${minHeight}%" data-value="${formatCompact(value)}"></div>`;
+                return `<div class="pulse-bar${liveClass}" style="height: ${minHeight}%" data-value="${TLI.formatCompact(value)}"></div>`;
             }).join('');
             container.innerHTML = `<div class="pulse-chart">${barsHTML}</div>`;
         }
@@ -399,7 +393,7 @@
             container.innerHTML = `
                 <div class="donut-chart">
                     <div class="donut-ring" style="background: conic-gradient(${gradientStops})">
-                        <div class="donut-center">${formatCompact(total)}</div>
+                        <div class="donut-center">${TLI.formatCompact(total)}</div>
                     </div>
                     <div class="donut-legend">${legendHTML}</div>
                 </div>
@@ -476,31 +470,6 @@
             }
         }
 
-        // ============ Utility Functions ============
-
-        function formatTime(seconds) {
-            if (!seconds || seconds < 0) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function formatValue(value) {
-            if (value === null || value === undefined) return '+0';
-            const prefix = value >= 0 ? '+' : '';
-            const absValue = Math.abs(value);
-            if (absValue >= 1000000) return prefix + (value / 1000000).toFixed(1) + 'M';
-            if (absValue >= 1000) return prefix + (value / 1000).toFixed(1) + 'k';
-            return prefix + Math.round(value);
-        }
-
-        function formatCompactRate(value) {
-            if (!value) return '0';
-            if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
-            if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
-            return Math.round(value);
-        }
-
         function updatePinUI() {
             if (state.pinned) {
                 els.wrapper.classList.remove('draggable');
@@ -546,7 +515,7 @@
         setInterval(() => {
             if (state.inMap && state.currentMap) {
                 state.currentMap.duration += 1;
-                els.mapTime.textContent = formatTime(state.currentMap.duration);
+                els.mapTime.textContent = TLI.formatTime(state.currentMap.duration);
             }
             if (state.session) {
                 state.session.duration_total += 1;

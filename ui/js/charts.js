@@ -9,15 +9,8 @@ const CHART_COLORS = [
     '#a78bfa', '#f472b6', '#fb7185', '#f59e0b', '#64748b'
 ];
 
-/**
- * Format large numbers compactly (e.g., 1.2M, 45k)
- */
-function formatCompact(value) {
-    if (!value) return '0';
-    if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
-    if (value >= 1000) return (value / 1000).toFixed(1) + 'k';
-    return Math.round(value).toString();
-}
+// Use shared formatCompact from window.TLI namespace
+const formatCompact = window.TLI.formatCompact;
 
 /**
  * Render Pulse Chart (bar chart showing value per map)
