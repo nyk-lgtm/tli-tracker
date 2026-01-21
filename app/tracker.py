@@ -261,6 +261,10 @@ class Tracker:
                 value_per_hour = self.state.current_session.value_per_hour
                 maps_per_hour = self.state.current_session.maps_per_hour
 
+            # Calculate value per map
+            map_count = self.state.current_session.map_count
+            value_per_map = total_value / map_count if map_count > 0 else 0
+
             session = {
                 "id": self.state.current_session.id,
                 "duration_mapping": self.state.current_session.total_duration
@@ -270,6 +274,7 @@ class Tracker:
                 "items": self.state.current_session.total_items,
                 "map_count": self.state.current_session.map_count,
                 "value_per_hour": value_per_hour,
+                "value_per_map": value_per_map,
                 "maps_per_hour": maps_per_hour,
                 "drops": session_drops,
                 "maps": [

@@ -3,6 +3,7 @@
  */
 
 import { elements } from './elements.js';
+import { settings } from './state.js';
 import { formatValue, formatTime, formatRate, formatDate } from './utils.js';
 
 // ============ History ============
@@ -15,7 +16,10 @@ export async function loadHistory() {
         // Update summary
         elements.historyTotalValue.textContent = formatValue(summary.total_value);
         elements.historyTotalMaps.textContent = summary.total_maps;
-        elements.historyAvgRate.innerHTML = formatRate(summary.average_value_per_hour);
+        const avgEfficiency = settings.efficiency_per_map
+            ? summary.average_value_per_map
+            : summary.average_value_per_hour;
+        elements.historyAvgRate.innerHTML = formatRate(avgEfficiency, settings.efficiency_per_map);
 
         if (sessions.length === 0) {
             elements.historyList.innerHTML = '<div class="text-center text-gray-500 py-4">No sessions yet</div>';

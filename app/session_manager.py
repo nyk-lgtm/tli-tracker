@@ -139,6 +139,7 @@ class SessionManager:
             "total_time_hours": round(hours, 2),
             "total_items": total_items,
             "average_value_per_hour": round(total_value / hours, 2) if hours > 0 else 0,
+            "average_value_per_map": round(total_value / total_maps, 2) if total_maps > 0 else 0,
             "average_maps_per_hour": round(total_maps / hours, 2) if hours > 0 else 0,
         }
 

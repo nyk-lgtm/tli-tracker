@@ -2,7 +2,7 @@
  * UI rendering functions for drops and stats
  */
 
-import { state } from './state.js';
+import { state, settings } from './state.js';
 import { elements } from './elements.js';
 import { formatTime, formatValue, formatRate } from './utils.js';
 
@@ -52,13 +52,16 @@ export function renderUI() {
         elements.statSessionMapping.textContent = formatTime(state.session.duration_mapping);
         elements.statSessionTotal.textContent = formatTime(state.session.duration_total);
         elements.statSessionValue.textContent = formatValue(state.session.value);
-        elements.statRate.innerHTML = formatRate(state.session.value_per_hour);
+        const efficiencyValue = settings.efficiency_per_map
+            ? state.session.value_per_map
+            : state.session.value_per_hour;
+        elements.statRate.innerHTML = formatRate(efficiencyValue, settings.efficiency_per_map);
         elements.statMapCount.textContent = state.session.map_count;
     } else {
         elements.statSessionMapping.textContent = '0:00';
         elements.statSessionTotal.textContent = '0:00';
         elements.statSessionValue.textContent = '+0';
-        elements.statRate.innerHTML = formatRate(0);
+        elements.statRate.innerHTML = formatRate(0, settings.efficiency_per_map);
         elements.statMapCount.textContent = '0';
     }
 

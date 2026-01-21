@@ -12,8 +12,9 @@ export const formatValue = window.TLI.formatValue;
 export const formatCompact = window.TLI.formatCompact;
 export const tickTimers = window.TLI.tickTimers;
 
-export function formatRate(value) {
-    return `${formatCompact(value)}<span class="text-xs text-gray-400">/hr</span>`;
+export function formatRate(value, perMap = false) {
+    const suffix = perMap ? '/map' : '/hr';
+    return `${formatCompact(value)}<span class="text-xs text-gray-400">${suffix}</span>`;
 }
 
 export function formatDate(isoString) {

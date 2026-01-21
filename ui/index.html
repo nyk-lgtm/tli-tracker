@@ -67,9 +67,9 @@
                 <div id="stat-session-value" class="stat-value-md text-success font-mono">+0</div>
             </div>
 
-            <!-- Rate -->
+            <!-- Efficiency -->
             <div class="stat-card">
-                <div class="stat-label">Rate</div>
+                <div class="stat-label">Efficiency</div>
                 <div id="stat-rate" class="stat-value-xl font-mono">0<span class="text-sm text-gray-500">/hr</span></div>
                 <div class="stat-value-sm text-gray-400"><span id="stat-map-count" class="font-mono">0</span> maps</div>
             </div>
@@ -149,6 +149,18 @@
                                 <span class="setting-label">Real Time FE Rate</span>
                                 <label class="toggle">
                                     <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox" data-setting="use_real_time_stats">
+                                    <div class="toggle-track"></div>
+                                </label>
+                            </div>
+
+                            <!-- Efficiency per Map Toggle -->
+                            <div class="setting-row">
+                                <div>
+                                    <span class="setting-label">Efficiency per Map</span>
+                                    <div class="setting-hint">Default: per hour</div>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="setting-efficiency-per-map" class="toggle-checkbox" data-setting="efficiency_per_map">
                                     <div class="toggle-track"></div>
                                 </label>
                             </div>

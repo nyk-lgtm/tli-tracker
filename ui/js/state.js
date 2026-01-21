@@ -19,6 +19,7 @@ export const settings = {
     show_map_value: false,
     overlay_pinned: false,
     use_real_time_stats: false,
+    efficiency_per_map: false,
     chart_pulse_enabled: false,
     chart_efficiency_enabled: false,
     chart_donut_enabled: false

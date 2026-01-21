@@ -16,6 +16,7 @@ const state = {
     session: null,
     pinned: false,
     showMapValue: true,
+    efficiencyPerMap: false,
     chartPulseEnabled: false,
     chartEfficiencyEnabled: false,
     chartDonutEnabled: false
@@ -29,6 +30,7 @@ const els = {
     mapTime: document.getElementById('map-time'),
     mapValue: document.getElementById('map-value'),
     rate: document.getElementById('rate'),
+    rateSuffix: document.getElementById('rate-suffix'),
     mapCount: document.getElementById('map-count'),
     chartsContainer: document.getElementById('charts-container'),
     chartPulse: document.getElementById('chart-pulse-content'),
@@ -84,12 +86,18 @@ function render() {
 
     // Session stats
     if (state.session) {
-        els.rate.textContent = TLI.formatCompact(state.session.value_per_hour);
+        const efficiencyValue = state.efficiencyPerMap
+            ? state.session.value_per_map
+            : state.session.value_per_hour;
+        els.rate.textContent = TLI.formatCompact(efficiencyValue);
         els.mapCount.textContent = state.session.map_count;
     } else {
         els.rate.textContent = '0';
         els.mapCount.textContent = '0';
     }
+
+    // Update rate suffix
+    els.rateSuffix.textContent = state.efficiencyPerMap ? '/map' : '/hr';
 
     // Map value visibility
     const mapValueContainer = els.mapValue.closest('.stat');
@@ -196,6 +204,7 @@ async function loadSettings() {
             const settings = await api('get_settings');
             state.pinned = settings.overlay_pinned !== undefined ? settings.overlay_pinned : false;
             state.showMapValue = settings.show_map_value !== undefined ? settings.show_map_value : true;
+            state.efficiencyPerMap = settings.efficiency_per_map || false;
             state.chartPulseEnabled = settings.chart_pulse_enabled || false;
             state.chartEfficiencyEnabled = settings.chart_efficiency_enabled || false;
             state.chartDonutEnabled = settings.chart_donut_enabled || false;
