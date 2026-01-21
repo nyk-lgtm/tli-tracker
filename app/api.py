@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QFileDialog
 from .tracker import Tracker
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import load_config, save_config, load_items, get_item_name
+from .storage import load_config, save_config, load_items, get_item_name, get_item_type
 from .overlay import set_click_through
 from .updater import Updater
 from .version import VERSION
@@ -151,6 +151,7 @@ class Api:
                             "map_duration_seconds": round(map_duration, 2),
                             "is_league_zone": is_league_zone,
                             "item_name": get_item_name(item_id),
+                            "item_type": get_item_type(item_id) or "Other",
                             "item_id": item_id,
                             "quantity": drop.get("quantity", 0),
                             "value": drop.get("value", 0),
@@ -168,6 +169,7 @@ class Api:
                 "map_duration_seconds",
                 "is_league_zone",
                 "item_name",
+                "item_type",
                 "item_id",
                 "quantity",
                 "value",
