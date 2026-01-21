@@ -11,7 +11,7 @@ A real-time drop tracker and overlay for tli that monitors ur loot and displays 
   </tr>
   <tr>
     <td align="center"><em>dw about the flame sand FE value</em></td>
-    <td align="center"><em>Overlay</em></td>
+    <td align="center"><em>Customizable Overlay</em></td>
   </tr>
 </table>
 
@@ -73,7 +73,7 @@ If ur looking at this section u could've probably made this urself but here:
 
 ## Configuration
 
-Settings can be adjusted through the overlay UI or by editing `data/config.json`:
+Settings can be adjusted through the overlay UI or by editing `data/config.json`.
 
 ## How It Works
 
