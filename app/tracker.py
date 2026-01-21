@@ -114,6 +114,11 @@ class Tracker:
         if self.state.current_map:
             self.state.current_map.ended_at = datetime.now()
 
+            # Capture investment setting at map completion (for non-league zones)
+            if not is_league_zone:
+                config = load_config()
+                self.state.current_map.investment = config.get("investment_per_map", 0)
+
             # Add to session
             if self.state.current_session:
                 self.state.current_session.maps.append(self.state.current_map)
@@ -219,17 +224,18 @@ class Tracker:
     def get_stats(self) -> dict:
         """Get current tracker statistics for UI."""
         config = load_config()
-        use_real_time = config.get("use_real_time_stats", False)
+        investment = config.get("investment_per_map", 0)
 
         current_map = None
         current_map_duration = 0
-        current_map_value = 0
+        current_map_net_value = 0
         if self.state.current_map:
             current_map_duration = self.state.current_map.duration_seconds
-            current_map_value = self.state.current_map.total_value
+            # Current map: use config investment (not yet captured to map)
+            current_map_net_value = self.state.current_map.total_value - investment
             current_map = {
                 "duration": current_map_duration,
-                "value": current_map_value,
+                "value": current_map_net_value,
                 "items": self.state.current_map.total_items,
             }
 
@@ -246,33 +252,25 @@ class Tracker:
                     [self._drop_to_dict(d) for d in self.state.current_map.drops]
                 )
 
-            if use_real_time:
-                # Live rate calculation: include current map and use real-world time
-                total_value = self.state.current_session.total_value + current_map_value
-                duration_for_rate = self.state.current_session.session_duration
-                hours = duration_for_rate / 3600 if duration_for_rate > 0 else 0
-                value_per_hour = total_value / hours if hours > 0 else 0
-                maps_per_hour = (
-                    self.state.current_session.map_count / hours if hours > 0 else 0
-                )
-            else:
-                # Original behavior: use Session properties (only updates on map exit)
-                total_value = self.state.current_session.total_value
-                value_per_hour = self.state.current_session.value_per_hour
-                maps_per_hour = self.state.current_session.maps_per_hour
-
-            # Calculate value per map
+            # Calculate totals: session.net_value has stored investments, add current map
+            total_net_value = (
+                self.state.current_session.net_value + current_map_net_value
+            )
+            duration = self.state.current_session.session_duration
+            hours = duration / 3600 if duration > 0 else 0
+            value_per_hour = total_net_value / hours if hours > 0 else 0
             map_count = self.state.current_session.map_count
-            value_per_map = total_value / map_count if map_count > 0 else 0
+            maps_per_hour = map_count / hours if hours > 0 else 0
+            value_per_map = total_net_value / map_count if map_count > 0 else 0
 
             session = {
                 "id": self.state.current_session.id,
                 "duration_mapping": self.state.current_session.total_duration
                 + current_map_duration,
-                "duration_total": self.state.current_session.session_duration,
-                "value": total_value,
+                "duration_total": duration,
+                "value": total_net_value,
                 "items": self.state.current_session.total_items,
-                "map_count": self.state.current_session.map_count,
+                "map_count": map_count,
                 "value_per_hour": value_per_hour,
                 "value_per_map": value_per_map,
                 "maps_per_hour": maps_per_hour,
@@ -280,8 +278,11 @@ class Tracker:
                 "maps": [
                     {
                         "index": i,
-                        "total_value": m.total_value,
+                        "total_value": m.net_value,
                         "duration_seconds": m.duration_seconds,
+                        "ended_at_offset": (
+                            m.ended_at - self.state.current_session.started_at
+                        ).total_seconds(),
                     }
                     for i, m in enumerate(self.state.current_session.maps)
                     if m.ended_at and not m.is_league_zone

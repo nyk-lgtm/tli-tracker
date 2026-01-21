@@ -18,8 +18,8 @@ export const settings = {
     overlay_opacity: 0.9,
     show_map_value: false,
     overlay_pinned: false,
-    use_real_time_stats: false,
     efficiency_per_map: false,
+    investment_per_map: 0,
     chart_pulse_enabled: false,
     chart_efficiency_enabled: false,
     chart_donut_enabled: false

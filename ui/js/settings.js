@@ -83,6 +83,7 @@ export async function loadSettings() {
         // Load non-toggle settings
         elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
         elements.opacityValue.textContent = elements.settingOpacity.value + '%';
+        elements.settingInvestment.value = settings.investment_per_map || 0;
 
         updateAllToggleVisuals();
         applyMapValueVisibility();
@@ -100,6 +101,7 @@ export async function saveSettings() {
 
     // Save non-toggle settings
     settings.overlay_opacity = elements.settingOpacity.value / 100;
+    settings.investment_per_map = parseInt(elements.settingInvestment.value) || 0;
 
     try {
         await api('save_settings', settings);

@@ -124,9 +124,10 @@ class SessionManager:
         total_items = 0
 
         for session in self._sessions:
-            total_value += session.get("total_value", 0)
+            # Use net_value if available (new format), fallback to total_value (old format)
+            total_value += session.get("net_value", session.get("total_value", 0))
             total_maps += session.get("map_count", 0)
-            total_time += session.get("total_duration", 0)
+            total_time += session.get("session_duration", 0)
             total_items += session.get("total_items", 0)
 
         hours = total_time / 3600 if total_time > 0 else 0
@@ -139,7 +140,9 @@ class SessionManager:
             "total_time_hours": round(hours, 2),
             "total_items": total_items,
             "average_value_per_hour": round(total_value / hours, 2) if hours > 0 else 0,
-            "average_value_per_map": round(total_value / total_maps, 2) if total_maps > 0 else 0,
+            "average_value_per_map": round(total_value / total_maps, 2)
+            if total_maps > 0
+            else 0,
             "average_maps_per_hour": round(total_maps / hours, 2) if hours > 0 else 0,
         }
 

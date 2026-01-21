@@ -6,9 +6,6 @@
 window.TLI = window.TLI || {};
 TLI.charts = {};
 
-// Counter for unique gradient IDs
-let gradientIdCounter = 0;
-
 // Chart color palette
 TLI.charts.COLORS = [
     '#0d9488', '#22d3ee', '#38bdf8', '#818cf8',
@@ -54,44 +51,69 @@ TLI.charts.renderPulse = function(container, maps, currentMap) {
 };
 
 /**
- * Render Efficiency Trend Chart (line chart showing cumulative value/hour)
+ * Render Efficiency Trend Chart (line chart showing value/hour over time)
+ * Shows a rolling 1-hour window with wall-clock time on x-axis
  * @param {HTMLElement} container - The container element
- * @param {Array} maps - Array of map objects with total_value and duration_seconds
+ * @param {Array} maps - Array of map objects with total_value and ended_at_offset
  * @param {number} sessionDuration - Total session duration in seconds
  * @param {number} currentValue - Current total value including current map
  */
 TLI.charts.renderEfficiency = function(container, maps, sessionDuration, currentValue) {
     if (!container) return;
 
-    // Calculate cumulative efficiency at each map completion
+    const WINDOW_SECONDS = 3600; // 1 hour rolling window
+
+    // Calculate time window (full session if < 1 hour)
+    const windowEnd = sessionDuration;
+    const windowStart = Math.max(0, windowEnd - WINDOW_SECONDS);
+    const windowSize = windowEnd - windowStart;
+
+    if (windowSize <= 0) {
+        container.innerHTML = '<div class="efficiency-empty">Need more data</div>';
+        return;
+    }
+
+    // Build points using wall-clock time (ended_at_offset)
     const points = [];
     let cumulativeValue = 0;
-    let cumulativeTime = 0;
+    let lastRateBeforeWindow = 0;
 
     for (const map of maps) {
         cumulativeValue += map.total_value || 0;
-        cumulativeTime += map.duration_seconds || 0;
+        const mapEndTime = map.ended_at_offset || 0;
+        const rate = mapEndTime > 0 ? (cumulativeValue / mapEndTime) * 3600 : 0;
 
-        if (cumulativeTime > 0) {
-            const rate = (cumulativeValue / cumulativeTime) * 3600;
-            points.push({ time: cumulativeTime, rate });
+        if (mapEndTime < windowStart) {
+            // Track the rate just before window starts (for left edge)
+            lastRateBeforeWindow = rate;
+        } else if (mapEndTime <= windowEnd) {
+            // Point is within window
+            points.push({ time: mapEndTime, rate });
         }
     }
 
-    // Add current point based on session duration
-    if (sessionDuration > 0 && currentValue > 0) {
+    // If there were maps before the window, add a starting point at window edge
+    if (windowStart > 0 && lastRateBeforeWindow !== 0 && (points.length === 0 || points[0].time > windowStart)) {
+        points.unshift({ time: windowStart, rate: lastRateBeforeWindow });
+    }
+
+    // Add current point at session duration (right edge)
+    if (sessionDuration > 0) {
         const currentRate = (currentValue / sessionDuration) * 3600;
         points.push({ time: sessionDuration, rate: currentRate, current: true });
     }
 
+    // Need at least 2 points to draw a line
     if (points.length < 2) {
         container.innerHTML = '<div class="efficiency-empty">Need more data</div>';
         return;
     }
 
-    // Find bounds
-    const maxRate = Math.max(...points.map(p => p.rate));
-    const maxTime = points[points.length - 1].time;
+    // Find bounds (handle negative values)
+    const rates = points.map(p => p.rate);
+    const minRate = Math.min(...rates, 0);
+    const maxRate = Math.max(...rates, 0);
+    const rateRange = maxRate - minRate || 1;
 
     // Calculate SVG path
     const width = 200;
@@ -100,8 +122,9 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
     const chartWidth = width - padding * 2;
     const chartHeight = height - padding * 2;
 
-    const getX = (time) => padding + (time / maxTime) * chartWidth;
-    const getY = (rate) => height - padding - (rate / maxRate) * chartHeight;
+    // X-axis spans the time window (windowStart to windowEnd)
+    const getX = (time) => padding + ((time - windowStart) / windowSize) * chartWidth;
+    const getY = (rate) => height - padding - ((rate - minRate) / rateRange) * chartHeight;
 
     // Build line path
     const linePath = points.map((p, i) => {
@@ -111,13 +134,14 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
     }).join(' ');
 
     // Build area path (fill under line)
-    const areaPath = linePath + ` L ${getX(maxTime)} ${height - padding} L ${padding} ${height - padding} Z`;
+    const areaPath = linePath + ` L ${getX(windowEnd)} ${height - padding} L ${getX(points[0].time)} ${height - padding} Z`;
 
     // Current rate display
     const currentRate = points[points.length - 1]?.rate || 0;
 
     // Unique gradient ID to avoid collisions when multiple charts exist
-    const gradientId = `efficiency-gradient-${++gradientIdCounter}`;
+    // Use container ID for stable gradient ID (avoids orphaned gradients)
+    const gradientId = `efficiency-gradient-${container.id || 'default'}`;
 
     container.innerHTML = `
         <div class="efficiency-chart">
@@ -130,7 +154,7 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
                 </defs>
                 <path class="efficiency-area" d="${areaPath}" fill="url(#${gradientId})"/>
                 <path class="efficiency-line" d="${linePath}"/>
-                <circle class="efficiency-dot" cx="${getX(maxTime)}" cy="${getY(currentRate)}" r="3"/>
+                <circle class="efficiency-dot" cx="${getX(windowEnd)}" cy="${getY(currentRate)}" r="3"/>
             </svg>
         </div>
     `;

@@ -64,7 +64,7 @@
             <div class="stat-card">
                 <div class="stat-label">Session Total</div>
                 <div id="stat-session-total" class="stat-value-xl font-mono">0:00</div>
-                <div id="stat-session-value" class="stat-value-md text-success font-mono">+0</div>
+                <div id="stat-session-value" class="stat-value-md font-mono">+0</div>
             </div>
 
             <!-- Efficiency -->
@@ -148,10 +148,7 @@
                             <!-- Check for Updates -->
                             <div class="pt-4 border-t border-dark-border">
                                 <div id="update-row" class="setting-row">
-                                    <div>
-                                        <span class="setting-label">Check for Updates</span>
-                                        <div id="version-display" class="setting-hint font-mono text-[10px]">v--</div>
-                                    </div>
+                                    <span id="check-updates-label" class="setting-label" data-tooltip="Loading version...">Check for Updates</span>
                                     <button id="btn-check-updates" class="btn-secondary text-xs">
                                         Check Now
                                     </button>
@@ -164,6 +161,15 @@
                     <!-- Calcs Tab -->
                     <div id="tab-calcs" class="settings-panel">
                         <div class="space-y-4">
+                            <!-- Investment per Map -->
+                            <div class="setting-row">
+                                <span class="setting-label" data-tooltip="Deducted from income">Investment per Map</span>
+                                <div class="number-input-wrapper">
+                                    <input type="number" id="setting-investment" class="number-input" min="0" step="1" value="0">
+                                    <span class="number-input-unit">FE</span>
+                                </div>
+                            </div>
+                            <hr>
                             <!-- Tax Toggle -->
                             <div class="setting-row">
                                 <span class="setting-label">Include AH Tax (12.5%)</span>
@@ -173,21 +179,9 @@
                                 </label>
                             </div>
 
-                            <!-- Real Time Stats Toggle -->
-                            <div class="setting-row">
-                                <span class="setting-label">Real Time FE Rate</span>
-                                <label class="toggle">
-                                    <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox" data-setting="use_real_time_stats">
-                                    <div class="toggle-track"></div>
-                                </label>
-                            </div>
-
                             <!-- Efficiency per Map Toggle -->
                             <div class="setting-row">
-                                <div>
-                                    <span class="setting-label">Efficiency per Map</span>
-                                    <div class="setting-hint">Default: per hour</div>
-                                </div>
+                                <span class="setting-label" data-tooltip="Default: per hour">Efficiency per Map</span>
                                 <label class="toggle">
                                     <input type="checkbox" id="setting-efficiency-per-map" class="toggle-checkbox" data-setting="efficiency_per_map">
                                     <div class="toggle-track"></div>
@@ -223,10 +217,7 @@
 
                                 <!-- Pulse Chart Toggle -->
                                 <div class="setting-row mb-3">
-                                    <div>
-                                        <span class="setting-label">Pulse Chart</span>
-                                        <div class="setting-hint">Value per map bars</div>
-                                    </div>
+                                    <span class="setting-label" data-tooltip="FE per map histogram">Pulse Chart</span>
                                     <label class="toggle">
                                         <input type="checkbox" id="setting-chart-pulse" class="toggle-checkbox" data-setting="chart_pulse_enabled">
                                         <div class="toggle-track"></div>
@@ -235,10 +226,7 @@
 
                                 <!-- Efficiency Chart Toggle -->
                                 <div class="setting-row mb-3">
-                                    <div>
-                                        <span class="setting-label">Efficiency Trend</span>
-                                        <div class="setting-hint">Value/hr over time</div>
-                                    </div>
+                                    <span class="setting-label" data-tooltip="FE/hr over time">Efficiency Trend</span>
                                     <label class="toggle">
                                         <input type="checkbox" id="setting-chart-efficiency" class="toggle-checkbox" data-setting="chart_efficiency_enabled">
                                         <div class="toggle-track"></div>
@@ -247,10 +235,7 @@
 
                                 <!-- Donut Chart Toggle -->
                                 <div class="setting-row">
-                                    <div>
-                                        <span class="setting-label">Loot Distribution</span>
-                                        <div class="setting-hint">Item breakdown donut</div>
-                                    </div>
+                                    <span class="setting-label" data-tooltip="FE per item category">Loot Distribution</span>
                                     <label class="toggle">
                                         <input type="checkbox" id="setting-chart-donut" class="toggle-checkbox" data-setting="chart_donut_enabled">
                                         <div class="toggle-track"></div>

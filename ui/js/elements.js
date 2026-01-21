@@ -35,9 +35,10 @@ export function initElements() {
         // Settings (non-toggle)
         settingOpacity: document.getElementById('setting-opacity'),
         opacityValue: document.getElementById('opacity-value'),
+        settingInvestment: document.getElementById('setting-investment'),
         btnSaveSettings: document.getElementById('btn-save-settings'),
         btnResetSettings: document.getElementById('btn-reset-defaults'),
-        versionDisplay: document.getElementById('version-display'),
+        checkUpdatesLabel: document.getElementById('check-updates-label'),
         btnCheckUpdates: document.getElementById('btn-check-updates'),
         updateStatus: document.getElementById('update-status'),
         updateRow: document.getElementById('update-row'),

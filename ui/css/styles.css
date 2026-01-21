@@ -50,6 +50,12 @@ body {
     background-attachment: fixed;
 }
 
+hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 1rem 0;
+}
+
 /* ============================================
    Typography
    ============================================ */
@@ -525,6 +531,40 @@ body {
 .setting-label {
     font-size: 0.875rem;
     color: var(--color-text);
+    position: relative;
+    cursor: help;
+}
+
+.setting-label[data-tooltip] {
+    text-decoration: underline dotted;
+    text-decoration-color: var(--color-text-dim);
+    text-underline-offset: 3px;
+}
+
+.setting-label[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 8px);
+    background: var(--color-card);
+    color: var(--color-text-dim);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+.setting-label[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    bottom: calc(100% + 2px);
+    border: 6px solid transparent;
+    border-top-color: var(--color-card);
+    z-index: 1001;
 }
 
 .setting-hint {
@@ -629,6 +669,42 @@ body {
     border: none;
     border-radius: 50%;
     cursor: pointer;
+}
+
+/* Number Input */
+.number-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.number-input {
+    width: 80px;
+    padding: 0.375rem 0.5rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    color: var(--color-text);
+    font-size: 0.875rem;
+    text-align: right;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.number-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-glow);
+}
+
+.number-input::-webkit-inner-spin-button,
+.number-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.number-input-unit {
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
 }
 
 /* ============================================

@@ -10,8 +10,8 @@ import { showConfirmDialog } from './modals.js';
 export async function loadVersion() {
     try {
         const version = await api('get_version');
-        if (version && elements.versionDisplay) {
-            elements.versionDisplay.textContent = `v${version}`;
+        if (version && elements.checkUpdatesLabel) {
+            elements.checkUpdatesLabel.dataset.tooltip = `Current: v${version}`;
         }
     } catch (e) {
         console.error('Failed to load version:', e);

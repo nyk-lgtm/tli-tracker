@@ -103,8 +103,8 @@ DEFAULT_CONFIG = {
     "tax_enabled": False,
     "tax_rate": 0.125,  # 12.5% AH fee
     "show_map_value": False,  # Show current map value
-    "use_real_time_stats": True,
     "efficiency_per_map": False,  # False = FE/hr, True = FE/map
+    "investment_per_map": 0,  # FE cost per map (deducted from values)
     "chart_pulse_enabled": False,
     "chart_efficiency_enabled": False,
     "chart_donut_enabled": False,

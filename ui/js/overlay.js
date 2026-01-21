@@ -108,10 +108,19 @@ function render() {
 
 // ============ Chart Layout ============
 
+// Track current layout to avoid unnecessary updates
+let currentLayoutKey = '';
+
 function updateChartsLayout() {
     const pulseEnabled = state.chartPulseEnabled;
     const efficiencyEnabled = state.chartEfficiencyEnabled;
     const donutEnabled = state.chartDonutEnabled;
+
+    // Create a key representing current layout state
+    const layoutKey = `${pulseEnabled}-${efficiencyEnabled}-${donutEnabled}`;
+    if (layoutKey === currentLayoutKey) return; // No change
+    currentLayoutKey = layoutKey;
+
     const smallChartsCount = (pulseEnabled ? 1 : 0) + (efficiencyEnabled ? 1 : 0);
 
     els.chartsContainer.classList.remove(
@@ -140,20 +149,18 @@ function updateChartsLayout() {
         rows = 1;
     }
 
-    // Calculate required height and resize window
+    // Calculate required height and resize
     let totalHeight = STATS_BAR_HEIGHT;
     if (rows > 0) {
         totalHeight += rows * CHART_ROW_HEIGHT;
     }
 
-    // Resize overlay window via Python API
     if (typeof api !== 'undefined') {
         api('resize_overlay', OVERLAY_WIDTH, totalHeight);
     }
 }
 
 function renderCharts() {
-    updateChartsLayout();
 
     const session = state.session;
     const maps = session?.maps || [];
@@ -209,6 +216,7 @@ async function loadSettings() {
             state.chartEfficiencyEnabled = settings.chart_efficiency_enabled || false;
             state.chartDonutEnabled = settings.chart_donut_enabled || false;
             updatePinUI();
+            updateChartsLayout();
             render();
             renderCharts();
         } catch (e) {

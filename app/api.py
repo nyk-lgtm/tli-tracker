@@ -138,6 +138,7 @@ class Api:
                 map_end = map_run.get("ended_at", "")
                 map_duration = map_run.get("duration_seconds", 0)
                 is_league_zone = map_run.get("is_league_zone", False)
+                investment = map_run.get("investment", 0)
 
                 for drop in map_run.get("drops", []):
                     item_id = drop.get("item_id", "")
@@ -150,6 +151,7 @@ class Api:
                             "map_end": map_end,
                             "map_duration_seconds": round(map_duration, 2),
                             "is_league_zone": is_league_zone,
+                            "investment": investment,
                             "item_name": get_item_name(item_id),
                             "item_type": get_item_type(item_id) or "Other",
                             "item_id": item_id,
@@ -168,6 +170,7 @@ class Api:
                 "map_end",
                 "map_duration_seconds",
                 "is_league_zone",
+                "investment",
                 "item_name",
                 "item_type",
                 "item_id",
@@ -243,7 +246,11 @@ class Api:
             "tax_enabled": False,
             "tax_rate": 0.125,
             "show_map_value": False,
-            "use_real_time_stats": False,
+            "efficiency_per_map": False,
+            "investment_per_map": 0,
+            "chart_pulse_enabled": False,
+            "chart_efficiency_enabled": False,
+            "chart_donut_enabled": False,
         }
         success = save_config(default_settings)
 

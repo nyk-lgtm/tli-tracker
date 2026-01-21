@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 from enum import Enum
-from .storage import load_config
 
 
 class DisplayMode(Enum):
@@ -61,6 +60,7 @@ class MapRun:
     ended_at: Optional[datetime] = None
     drops: list[Drop] = field(default_factory=list)
     is_league_zone: bool = False
+    investment: float = 0  # FE cost for this map (captured at map end)
 
     @property
     def duration_seconds(self) -> float:
@@ -79,6 +79,11 @@ class MapRun:
         """Count of items gained (positive quantities only)."""
         return sum(d.quantity for d in self.drops if d.quantity > 0)
 
+    @property
+    def net_value(self) -> float:
+        """Total value minus investment."""
+        return self.total_value - self.investment
+
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization."""
         return {
@@ -86,6 +91,8 @@ class MapRun:
             "ended_at": self.ended_at.isoformat() if self.ended_at else None,
             "duration_seconds": self.duration_seconds,
             "total_value": self.total_value,
+            "investment": self.investment,
+            "net_value": self.net_value,
             "total_items": self.total_items,
             "drops": [d.to_dict() for d in self.drops],
             "is_league_zone": self.is_league_zone,
@@ -103,8 +110,18 @@ class Session:
 
     @property
     def total_value(self) -> float:
-        """Sum of value from all maps."""
+        """Sum of gross value from all maps (before investment)."""
         return sum(m.total_value for m in self.maps)
+
+    @property
+    def total_investment(self) -> float:
+        """Sum of investment from all maps."""
+        return sum(m.investment for m in self.maps)
+
+    @property
+    def net_value(self) -> float:
+        """Total value minus total investment."""
+        return self.total_value - self.total_investment
 
     @property
     def total_items(self) -> int:
@@ -130,20 +147,14 @@ class Session:
 
     @property
     def value_per_hour(self) -> float:
-        """Value earned per hour."""
-        config = load_config()
-        use_real_time = config.get("use_real_time_stats", False)
-        duration = self.session_duration if use_real_time else self.total_duration
-        hours = duration / 3600
-        return self.total_value / hours if hours > 0 else 0
+        """Net value earned per hour (real-time)."""
+        hours = self.session_duration / 3600
+        return self.net_value / hours if hours > 0 else 0
 
     @property
     def maps_per_hour(self) -> float:
-        """Maps completed per hour."""
-        config = load_config()
-        use_real_time = config.get("use_real_time_stats", False)
-        duration = self.session_duration if use_real_time else self.total_duration
-        hours = duration / 3600
+        """Maps completed per hour (real-time)."""
+        hours = self.session_duration / 3600
         return self.map_count / hours if hours > 0 else 0
 
     @property
@@ -162,6 +173,8 @@ class Session:
             "started_at": self.started_at.isoformat(),
             "ended_at": self.ended_at.isoformat() if self.ended_at else None,
             "total_value": self.total_value,
+            "total_investment": self.total_investment,
+            "net_value": self.net_value,
             "total_items": self.total_items,
             "total_duration": self.total_duration,
             "session_duration": self.session_duration,
@@ -178,6 +191,8 @@ class Session:
             "started_at": self.started_at.isoformat(),
             "ended_at": self.ended_at.isoformat() if self.ended_at else None,
             "total_value": self.total_value,
+            "total_investment": self.total_investment,
+            "net_value": self.net_value,
             "total_items": self.total_items,
             "total_duration": self.total_duration,
             "session_duration": self.session_duration,
