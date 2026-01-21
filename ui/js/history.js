@@ -2,6 +2,7 @@
  * Session history functionality
  */
 
+import { elements } from './elements.js';
 import { formatValue, formatTime, formatRate, formatDate } from './utils.js';
 
 // ============ History ============
@@ -12,22 +13,16 @@ export async function loadHistory() {
         const summary = await api('get_session_summary');
 
         // Update summary
-        document.getElementById('history-total-value').textContent = formatValue(summary.total_value);
-        document.getElementById('history-total-maps').textContent = summary.total_maps;
-        const rateEl = document.getElementById('history-avg-rate');
-        if (rateEl) {
-            rateEl.innerHTML = formatRate(summary.average_value_per_hour);
-        }
-
-        // Render sessions list
-        const listEl = document.getElementById('history-list');
+        elements.historyTotalValue.textContent = formatValue(summary.total_value);
+        elements.historyTotalMaps.textContent = summary.total_maps;
+        elements.historyAvgRate.innerHTML = formatRate(summary.average_value_per_hour);
 
         if (sessions.length === 0) {
-            listEl.innerHTML = '<div class="text-center text-gray-500 py-4">No sessions yet</div>';
+            elements.historyList.innerHTML = '<div class="text-center text-gray-500 py-4">No sessions yet</div>';
             return;
         }
 
-        listEl.innerHTML = sessions.map(session => `
+        elements.historyList.innerHTML = sessions.map(session => `
             <div class="session-item">
                 <div class="session-item-date">
                     ${formatDate(session.started_at)}
@@ -48,7 +43,7 @@ export async function loadHistory() {
         `).join('');
 
         // Add click handlers for export buttons
-        listEl.querySelectorAll('.session-export-btn').forEach(btn => {
+        elements.historyList.querySelectorAll('.session-export-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const sessionId = btn.dataset.sessionId;

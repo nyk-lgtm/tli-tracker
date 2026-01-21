@@ -139,7 +139,7 @@
                             <div class="setting-row">
                                 <span class="setting-label">Include AH Tax (12.5%)</span>
                                 <label class="toggle">
-                                    <input type="checkbox" id="setting-tax" class="toggle-checkbox">
+                                    <input type="checkbox" id="setting-tax" class="toggle-checkbox" data-setting="tax_enabled">
                                     <div class="toggle-track"></div>
                                 </label>
                             </div>
@@ -148,7 +148,16 @@
                             <div class="setting-row">
                                 <span class="setting-label">Real Time FE Rate</span>
                                 <label class="toggle">
-                                    <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox">
+                                    <input type="checkbox" id="setting-real-time-stats" class="toggle-checkbox" data-setting="use_real_time_stats">
+                                    <div class="toggle-track"></div>
+                                </label>
+                            </div>
+
+                            <!-- Show Map Value Toggle -->
+                            <div class="setting-row">
+                                <span class="setting-label">Show Current Map Value</span>
+                                <label class="toggle">
+                                    <input type="checkbox" id="setting-map-value" class="toggle-checkbox" data-setting="show_map_value">
                                     <div class="toggle-track"></div>
                                 </label>
                             </div>
@@ -176,7 +185,7 @@
                             <div class="setting-row">
                                 <span class="setting-label">Pin Overlay</span>
                                 <label class="toggle">
-                                    <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox">
+                                    <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox" data-setting="overlay_pinned">
                                     <div class="toggle-track"></div>
                                 </label>
                             </div>
@@ -190,15 +199,6 @@
                                 <input type="range" id="setting-opacity" min="20" max="100" value="90" class="range-slider">
                             </div>
 
-                            <!-- Show Map Value Toggle -->
-                            <div class="setting-row">
-                                <span class="setting-label">Show Current Map Value</span>
-                                <label class="toggle">
-                                    <input type="checkbox" id="setting-map-value" class="toggle-checkbox">
-                                    <div class="toggle-track"></div>
-                                </label>
-                            </div>
-
                             <!-- Charts Section -->
                             <div class="pt-4 border-t border-dark-border">
                                 <div class="text-xs text-gray-500 uppercase tracking-wide mb-3">Charts</div>
@@ -210,7 +210,7 @@
                                         <div class="setting-hint">Value per map bars</div>
                                     </div>
                                     <label class="toggle">
-                                        <input type="checkbox" id="setting-chart-pulse" class="toggle-checkbox">
+                                        <input type="checkbox" id="setting-chart-pulse" class="toggle-checkbox" data-setting="chart_pulse_enabled">
                                         <div class="toggle-track"></div>
                                     </label>
                                 </div>
@@ -222,7 +222,7 @@
                                         <div class="setting-hint">Value/hr over time</div>
                                     </div>
                                     <label class="toggle">
-                                        <input type="checkbox" id="setting-chart-efficiency" class="toggle-checkbox">
+                                        <input type="checkbox" id="setting-chart-efficiency" class="toggle-checkbox" data-setting="chart_efficiency_enabled">
                                         <div class="toggle-track"></div>
                                     </label>
                                 </div>
@@ -234,7 +234,7 @@
                                         <div class="setting-hint">Item breakdown donut</div>
                                     </div>
                                     <label class="toggle">
-                                        <input type="checkbox" id="setting-chart-donut" class="toggle-checkbox">
+                                        <input type="checkbox" id="setting-chart-donut" class="toggle-checkbox" data-setting="chart_donut_enabled">
                                         <div class="toggle-track"></div>
                                     </label>
                                 </div>
@@ -302,6 +302,8 @@
         </div>
     </div>
 
+    <script src="js/shared-utils.js"></script>
+    <script src="js/shared-charts.js"></script>
     <script src="js/qwebchannel.js"></script>
     <script src="js/qt_bridge.js"></script>
     <script type="module" src="js/app.js"></script>

@@ -5,6 +5,10 @@
 import { elements } from './elements.js';
 import { settings, updateSettings } from './state.js';
 import { showStatus, hideStatus } from './utils.js';
+import { closeModal } from './modals.js';
+
+// Query all toggles with data-setting attribute
+const getToggles = () => document.querySelectorAll('.toggle-checkbox[data-setting]');
 
 // ============ Settings Tabs ============
 
@@ -50,40 +54,37 @@ export function applyMapValueVisibility() {
     }
 }
 
-export function updateToggleVisual(checkboxId) {
-    const checkbox = document.getElementById(checkboxId);
-    if (!checkbox) return;
-
+function updateToggleVisual(checkbox) {
     const label = checkbox.nextElementSibling;
-    if (checkbox.checked) {
-        label.classList.add('checked');
-    } else {
-        label.classList.remove('checked');
-    }
+    label.classList.toggle('checked', checkbox.checked);
+}
+
+function updateAllToggleVisuals() {
+    getToggles().forEach(toggle => updateToggleVisual(toggle));
+}
+
+export function initToggleListeners() {
+    getToggles().forEach(toggle => {
+        toggle.addEventListener('change', () => updateToggleVisual(toggle));
+    });
 }
 
 export async function loadSettings() {
     try {
         const newSettings = await api('get_settings');
         updateSettings(newSettings);
-        elements.settingTax.checked = settings.tax_enabled || false;
-        elements.settingMapValue.checked = settings.show_map_value || false;
-        elements.settingRealTimeStats.checked = settings.use_real_time_stats || false;
-        elements.settingOverlayPinned.checked = settings.overlay_pinned || false;
+
+        // Load all toggles from settings
+        getToggles().forEach(toggle => {
+            const key = toggle.dataset.setting;
+            toggle.checked = settings[key] || false;
+        });
+
+        // Load non-toggle settings
         elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
         elements.opacityValue.textContent = elements.settingOpacity.value + '%';
-        // Chart settings
-        elements.settingChartPulse.checked = settings.chart_pulse_enabled || false;
-        elements.settingChartEfficiency.checked = settings.chart_efficiency_enabled || false;
-        elements.settingChartDonut.checked = settings.chart_donut_enabled || false;
-        // Update toggle visuals
-        updateToggleVisual('setting-tax');
-        updateToggleVisual('setting-map-value');
-        updateToggleVisual('setting-real-time-stats');
-        updateToggleVisual('setting-overlay-pinned');
-        updateToggleVisual('setting-chart-pulse');
-        updateToggleVisual('setting-chart-efficiency');
-        updateToggleVisual('setting-chart-donut');
+
+        updateAllToggleVisuals();
         applyMapValueVisibility();
     } catch (e) {
         console.error('Failed to load settings:', e);
@@ -91,15 +92,14 @@ export async function loadSettings() {
 }
 
 export async function saveSettings() {
-    settings.tax_enabled = elements.settingTax.checked;
-    settings.show_map_value = elements.settingMapValue.checked;
-    settings.use_real_time_stats = elements.settingRealTimeStats.checked;
-    settings.overlay_pinned = elements.settingOverlayPinned.checked;
+    // Save all toggles to settings
+    getToggles().forEach(toggle => {
+        const key = toggle.dataset.setting;
+        settings[key] = toggle.checked;
+    });
+
+    // Save non-toggle settings
     settings.overlay_opacity = elements.settingOpacity.value / 100;
-    // Chart settings
-    settings.chart_pulse_enabled = elements.settingChartPulse.checked;
-    settings.chart_efficiency_enabled = elements.settingChartEfficiency.checked;
-    settings.chart_donut_enabled = elements.settingChartDonut.checked;
 
     try {
         await api('save_settings', settings);
@@ -107,9 +107,7 @@ export async function saveSettings() {
         bc.postMessage('update');
         bc.close();
         applyMapValueVisibility();
-        // Close modal directly to avoid circular dependency
-        const modal = document.getElementById('settings-modal');
-        if (modal) modal.classList.add('hidden');
+        closeModal('settings');
         showStatus('Settings saved', 'success');
         setTimeout(() => hideStatus(), 2000);
     } catch (e) {
