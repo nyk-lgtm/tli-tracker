@@ -6,6 +6,9 @@
 window.TLI = window.TLI || {};
 TLI.charts = {};
 
+// Counter for unique gradient IDs
+let gradientIdCounter = 0;
+
 // Chart color palette
 TLI.charts.COLORS = [
     '#0d9488', '#22d3ee', '#38bdf8', '#818cf8',
@@ -113,16 +116,19 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
     // Current rate display
     const currentRate = points[points.length - 1]?.rate || 0;
 
+    // Unique gradient ID to avoid collisions when multiple charts exist
+    const gradientId = `efficiency-gradient-${++gradientIdCounter}`;
+
     container.innerHTML = `
         <div class="efficiency-chart">
             <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
                 <defs>
-                    <linearGradient id="efficiency-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" stop-color="#14b8a6" stop-opacity="0.4"/>
                         <stop offset="100%" stop-color="#14b8a6" stop-opacity="0"/>
                     </linearGradient>
                 </defs>
-                <path class="efficiency-area" d="${areaPath}"/>
+                <path class="efficiency-area" d="${areaPath}" fill="url(#${gradientId})"/>
                 <path class="efficiency-line" d="${linePath}"/>
                 <circle class="efficiency-dot" cx="${getX(maxTime)}" cy="${getY(currentRate)}" r="3"/>
             </svg>
@@ -158,14 +164,14 @@ TLI.charts.renderDonut = function(container, drops) {
         .sort((a, b) => b[1] - a[1]);
 
     const topItems = sortedItems.slice(0, 4);
-    const otherValue = sortedItems.slice(4).reduce((sum, [_, v]) => sum + v, 0);
+    const otherValue = sortedItems.slice(4).reduce((sum, item) => sum + item[1], 0);
 
     if (otherValue > 0) {
         topItems.push(['Other', otherValue]);
     }
 
     // Calculate total for percentages
-    const total = topItems.reduce((sum, [_, v]) => sum + v, 0);
+    const total = topItems.reduce((sum, item) => sum + item[1], 0);
 
     if (total === 0) {
         container.innerHTML = '<div class="donut-empty">No valued drops</div>';

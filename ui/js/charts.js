@@ -46,7 +46,7 @@ export function updateChartsLayout(container, settings) {
 /**
  * Render all enabled charts
  * @param {Object} elements - DOM element references
- * @param {Object} state - Current state with session data
+ * @param {Object} state - Current state with session and currentMap data
  * @param {Object} settings - Chart settings
  */
 export function renderCharts(elements, state, settings) {
@@ -59,10 +59,11 @@ export function renderCharts(elements, state, settings) {
     const drops = session?.drops || [];
     const sessionDuration = session?.duration_total || 0;
     const currentValue = session?.value || 0;
+    const currentMap = state.currentMap;
 
     // Render enabled charts
     if (settings.chart_pulse_enabled && elements.chartPulse) {
-        renderPulseChart(elements.chartPulse, maps);
+        renderPulseChart(elements.chartPulse, maps, currentMap);
     }
 
     if (settings.chart_efficiency_enabled && elements.chartEfficiency) {

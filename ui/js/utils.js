@@ -12,19 +12,7 @@ export const formatValue = window.TLI.formatValue;
 export const formatCompact = window.TLI.formatCompact;
 
 export function formatRate(value) {
-    let text = '0';
-
-    if (value) {
-        if (value >= 1000000) {
-            text = (value / 1000000).toFixed(1) + 'M';
-        } else if (value >= 1000) {
-            text = (value / 1000).toFixed(1) + 'k';
-        } else {
-            text = Math.round(value).toString();
-        }
-    }
-
-    return `${text}<span class="text-xs text-gray-400">/hr</span>`;
+    return `${formatCompact(value)}<span class="text-xs text-gray-400">/hr</span>`;
 }
 
 export function formatDate(isoString) {

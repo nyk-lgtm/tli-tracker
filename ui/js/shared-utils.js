@@ -31,7 +31,7 @@ TLI.formatTime = function(seconds) {
  * @returns {string} Formatted value with sign prefix
  */
 TLI.formatValue = function(value) {
-    if (value === null || value === undefined) return '+0';
+    if (value === null || value === undefined || Number.isNaN(value)) return '+0';
 
     const prefix = value >= 0 ? '+' : '';
     const absValue = Math.abs(value);
