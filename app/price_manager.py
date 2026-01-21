@@ -202,15 +202,15 @@ class PriceManager:
         Get the freshness status of a price.
 
         Returns:
-            "fresh" (< 3 min), "stale" (< 15 min), "old" (>= 15 min), or "unknown"
+            "fresh" (< 1 hr), "stale" (1-5 hr), "old" (> 5 hr), or "unknown"
         """
         age = self.get_price_age(item_id)
         if age is None:
             return "unknown"
 
-        if age < 180:  # 3 minutes
+        if age < 3600:  # 1 hour
             return "fresh"
-        elif age < 900:  # 15 minutes
+        elif age < 18000:  # 5 hours
             return "stale"
         else:
             return "old"

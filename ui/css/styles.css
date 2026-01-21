@@ -365,10 +365,10 @@ body {
     flex-shrink: 0;
 }
 
-.price-status.fresh { background-color: #22c55e; }
-.price-status.stale { background-color: #f59e0b; }
-.price-status.old { background-color: #ef4444; }
-.price-status.unknown { background-color: #4b5563; }
+.price-status.fresh { background-color: var(--color-success); }
+.price-status.stale { background-color: var(--color-warning); }
+.price-status.old { background-color: var(--color-danger); }
+.price-status.unknown { background-color: var(--color-text-dim); }
 
 /* ============================================
    Modals

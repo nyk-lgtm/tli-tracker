@@ -299,6 +299,7 @@ class Tracker:
             "quantity": drop.quantity,
             "value": drop.value,
             "timestamp": drop.timestamp.isoformat(),
+            "price_status": self.prices.get_price_status(drop.item_id),
         }
 
     def request_initialization(self) -> dict:
