@@ -28,10 +28,11 @@ export function initElements() {
         btnCloseSettings: document.getElementById('btn-close-settings'),
         historyModal: document.getElementById('history-modal'),
         btnCloseHistory: document.getElementById('btn-close-history'),
-        settingTax: document.getElementById('setting-tax'),
-        settingMapValue: document.getElementById('setting-map-value'),
-        settingRealTimeStats: document.getElementById('setting-real-time-stats'),
-        settingOverlayPinned: document.getElementById('setting-overlay-pinned'),
+        historyTotalValue: document.getElementById('history-total-value'),
+        historyTotalMaps: document.getElementById('history-total-maps'),
+        historyAvgRate: document.getElementById('history-avg-rate'),
+        historyList: document.getElementById('history-list'),
+        // Settings (non-toggle)
         settingOpacity: document.getElementById('setting-opacity'),
         opacityValue: document.getElementById('opacity-value'),
         btnSaveSettings: document.getElementById('btn-save-settings'),
@@ -43,10 +44,6 @@ export function initElements() {
         // Settings tabs
         settingsTabs: document.querySelectorAll('.settings-tab'),
         tabGeneral: document.getElementById('tab-general'),
-        tabOverlay: document.getElementById('tab-overlay'),
-        // Chart settings
-        settingChartPulse: document.getElementById('setting-chart-pulse'),
-        settingChartEfficiency: document.getElementById('setting-chart-efficiency'),
-        settingChartDonut: document.getElementById('setting-chart-donut')
+        tabOverlay: document.getElementById('tab-overlay')
     };
 }

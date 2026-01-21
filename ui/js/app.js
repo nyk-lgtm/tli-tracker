@@ -9,7 +9,7 @@ import { state } from './state.js';
 import { elements, initElements } from './elements.js';
 import { showStatus, hideStatus, formatTime, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
-import { loadSettings, saveSettings, resetDefaults, updateToggleVisual, initSettingsTabs } from './settings.js';
+import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs } from './settings.js';
 import { loadHistory } from './history.js';
 import { loadVersion, checkForUpdates } from './updates.js';
 import { updateState, renderUI, renderDrops, addDrop } from './renderers.js';
@@ -219,13 +219,7 @@ function init() {
     // Settings modal
     elements.btnCloseSettings.addEventListener('click', () => closeModal('settings'));
     elements.btnSaveSettings.addEventListener('click', saveSettings);
-    elements.settingTax.addEventListener('change', () => updateToggleVisual('setting-tax'));
-    elements.settingMapValue.addEventListener('change', () => updateToggleVisual('setting-map-value'));
-    elements.settingRealTimeStats.addEventListener('change', () => updateToggleVisual('setting-real-time-stats'));
-    elements.settingOverlayPinned.addEventListener('change', () => updateToggleVisual('setting-overlay-pinned'));
-    elements.settingChartPulse.addEventListener('change', () => updateToggleVisual('setting-chart-pulse'));
-    elements.settingChartEfficiency.addEventListener('change', () => updateToggleVisual('setting-chart-efficiency'));
-    elements.settingChartDonut.addEventListener('change', () => updateToggleVisual('setting-chart-donut'));
+    initToggleListeners();
     initSettingsTabs();
 
     // History modal
