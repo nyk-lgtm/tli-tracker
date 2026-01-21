@@ -154,14 +154,18 @@ function renderCharts() {
     const currentValue = session?.value || 0;
     const currentMap = state.currentMap;
 
-    if (state.chartPulseEnabled) {
-        TLI.charts.renderPulse(els.chartPulse, maps, currentMap);
-    }
-    if (state.chartEfficiencyEnabled) {
-        TLI.charts.renderEfficiency(els.chartEfficiency, maps, sessionDuration, currentValue);
-    }
-    if (state.chartDonutEnabled) {
-        TLI.charts.renderDonut(els.chartDonut, drops);
+    try {
+        if (state.chartPulseEnabled) {
+            TLI.charts.renderPulse(els.chartPulse, maps, currentMap);
+        }
+        if (state.chartEfficiencyEnabled) {
+            TLI.charts.renderEfficiency(els.chartEfficiency, maps, sessionDuration, currentValue);
+        }
+        if (state.chartDonutEnabled) {
+            TLI.charts.renderDonut(els.chartDonut, drops);
+        }
+    } catch (e) {
+        console.error('Chart render error:', e);
     }
 }
 
