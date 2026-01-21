@@ -12,7 +12,7 @@ from .log_parser import LogParser
 from .bag_state import BagState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import get_item_name, load_config
+from .storage import get_item_name, get_item_type, load_config
 
 
 class Tracker:
@@ -160,6 +160,7 @@ class Tracker:
                 {
                     "item_id": item_id,
                     "item_name": item_name,
+                    "item_type": get_item_type(item_id),
                     "quantity": quantity,
                     "value": value,
                     "price_status": self.prices.get_price_status(item_id),
@@ -292,10 +293,11 @@ class Tracker:
         }
 
     def _drop_to_dict(self, drop: Drop) -> dict:
-        """Convert a Drop to a dictionary with item name."""
+        """Convert a Drop to a dictionary with item name and type."""
         return {
             "item_id": drop.item_id,
             "item_name": get_item_name(drop.item_id),
+            "item_type": get_item_type(drop.item_id),
             "quantity": drop.quantity,
             "value": drop.value,
             "timestamp": drop.timestamp.isoformat(),

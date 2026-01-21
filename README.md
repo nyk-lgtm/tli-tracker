@@ -15,6 +15,10 @@ A real-time drop tracker and overlay for tli that monitors ur loot and displays 
   </tr>
 </table>
 
+also this is an unsigned app
+if u trust me u install via .exe provided in releases tab and exclude root install folder in windows defender to bypass warnings, if u don't i hope ur not scared of snakes 🐍
+cuz u'll have to run the app urself via python in order for windows to stop complaining
+
 ## Installation
 
 ### Requirements

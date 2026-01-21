@@ -137,9 +137,9 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
 };
 
 /**
- * Render Donut Chart (loot distribution by item)
+ * Render Donut Chart (loot distribution by category)
  * @param {HTMLElement} container - The container element
- * @param {Array} drops - Array of drop objects with item_name and value
+ * @param {Array} drops - Array of drop objects with item_type and value
  */
 TLI.charts.renderDonut = function(container, drops) {
     if (!container) return;
@@ -149,22 +149,22 @@ TLI.charts.renderDonut = function(container, drops) {
         return;
     }
 
-    // Aggregate drops by item name
-    const itemTotals = {};
+    // Aggregate drops by item category/type
+    const categoryTotals = {};
     for (const drop of drops) {
-        const name = drop.item_name || 'Unknown';
+        const category = drop.item_type || 'Other';
         const value = drop.value || 0;
         if (value > 0) {
-            itemTotals[name] = (itemTotals[name] || 0) + value;
+            categoryTotals[category] = (categoryTotals[category] || 0) + value;
         }
     }
 
-    // Sort by value - top 4 items + "Other" for everything else (5 groups max)
-    const sortedItems = Object.entries(itemTotals)
+    // Sort by value - top 4 categories + "Other" for everything else (5 groups max)
+    const sortedCategories = Object.entries(categoryTotals)
         .sort((a, b) => b[1] - a[1]);
 
-    const topItems = sortedItems.slice(0, 4);
-    const otherValue = sortedItems.slice(4).reduce((sum, item) => sum + item[1], 0);
+    const topItems = sortedCategories.slice(0, 4);
+    const otherValue = sortedCategories.slice(4).reduce((sum, item) => sum + item[1], 0);
 
     if (otherValue > 0) {
         topItems.push(['Other', otherValue]);
