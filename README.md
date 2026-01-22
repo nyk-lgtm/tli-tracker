@@ -11,12 +11,15 @@ A real-time drop tracker and overlay for tli that monitors ur loot and displays 
 
 <table>
   <tr>
-    <td><img src="ui/assets/docs/main_window.png" alt="Main Window"></td>
+    <td rowspan="2"><img src="ui/assets/docs/main_window.png" alt="Main Window"></td>
     <td><img src="ui/assets/docs/overlay.png" alt="Overlay"></td>
   </tr>
   <tr>
-    <td align="center"><em>dw about the flame sand FE value</em></td>
-    <td align="center"><em>Customizable Overlay</em></td>
+    <td><img src="ui/assets/docs/history.png" alt="History"></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Main Window</em></td>
+    <td align="center"><em>Customizable Overlay & Session History</em></td>
   </tr>
 </table>
 
