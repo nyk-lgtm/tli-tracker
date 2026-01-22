@@ -42,6 +42,10 @@ class LogFileHandler(FileSystemEventHandler):
         """Read and process new content from the log file."""
         with self._lock:
             try:
+                current_size = self.log_path.stat().st_size
+                if current_size < self.file_position:
+                    self.file_position = 0
+
                 with open(self.log_path, "r", encoding="utf-8", errors="ignore") as f:
                     # Seek to last known position
                     f.seek(self.file_position)
