@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="css/charts.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --bg-opacity: 0.9;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -28,8 +32,8 @@
         }
 
         .overlay-wrapper {
-            background: rgb(12, 18, 32);
-            border: 1px solid rgba(13, 148, 136, 0.6);
+            background: rgb(12 18 32 / var(--bg-opacity));
+            border: 1px solid rgb(13 148 136 / calc(var(--bg-opacity) * 0.67));
             border-radius: 8px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);

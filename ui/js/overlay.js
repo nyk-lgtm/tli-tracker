@@ -209,6 +209,11 @@ async function loadSettings() {
     if (typeof api !== 'undefined') {
         try {
             const settings = await api('get_settings');
+
+            // Apply background opacity via CSS variable
+            const opacity = settings.overlay_opacity ?? 0.9;
+            document.documentElement.style.setProperty('--bg-opacity', opacity);
+
             state.pinned = settings.overlay_pinned !== undefined ? settings.overlay_pinned : false;
             state.showMapValue = settings.show_map_value !== undefined ? settings.show_map_value : true;
             state.efficiencyPerMap = settings.efficiency_per_map || false;

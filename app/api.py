@@ -229,9 +229,6 @@ class Api:
         # Extract overlay_pinned and apply click-through immediately
         overlay_pinned = settings.get("overlay_pinned", False)
         self.set_overlay_click_through(overlay_pinned)
-        opacity = settings.get("overlay_opacity", 0.9)
-        if self._overlay_window:
-            self._overlay_window.setWindowOpacity(opacity)
 
         success = save_config(settings)
         return {"status": "ok" if success else "error"}
@@ -255,7 +252,6 @@ class Api:
         success = save_config(default_settings)
 
         if self._overlay_window:
-            self.set_overlay_opacity(default_settings["overlay_opacity"])
             self.set_overlay_click_through(False)
             self._push_to_ui("settings_reset", {})
 
@@ -281,9 +277,6 @@ class Api:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            # Set opacity using Qt's native method
-            self._overlay_window.setWindowOpacity(opacity)
-
             # Enable click-through
             hwnd = int(self._overlay_window.winId())
             set_click_through(hwnd, True)
@@ -293,18 +286,15 @@ class Api:
             return {"status": "error", "message": str(e)}
 
     def set_overlay_opacity(self, opacity: float) -> dict:
-        """Set overlay window opacity."""
-        if not self._overlay_window:
-            return {"status": "error", "message": "No overlay window"}
-
+        """Set overlay window opacity (via CSS background, not Qt window)."""
         try:
-            # Use Qt's native opacity control
-            self._overlay_window.setWindowOpacity(opacity)
-
             # Save to settings
             config = load_config()
             config["overlay_opacity"] = opacity
             save_config(config)
+
+            # Push settings update to overlay so it applies CSS opacity
+            self._push_to_ui("settings_update", {})
 
             return {"status": "ok", "opacity": opacity}
         except Exception as e:
@@ -349,11 +339,6 @@ class Api:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            # Load and apply opacity
-            config = load_config()
-            opacity = config.get("overlay_opacity", 0.9)
-            self._overlay_window.setWindowOpacity(opacity)
-
             # Show the window
             self._overlay_window.show()
             self._overlay_visible = True
@@ -389,11 +374,6 @@ class Api:
                 self._overlay_visible = False
                 return {"status": "ok", "visible": False}
             else:
-                # Load and apply opacity
-                config = load_config()
-                opacity = config.get("overlay_opacity", 0.9)
-                self._overlay_window.setWindowOpacity(opacity)
-
                 # Show the window
                 self._overlay_window.show()
                 self._overlay_visible = True
