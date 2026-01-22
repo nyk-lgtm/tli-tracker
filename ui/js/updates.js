@@ -3,7 +3,7 @@
  */
 
 import { elements } from './elements.js';
-import { showConfirmDialog } from './modals.js';
+import { showConfirmDialog, showConfirmLoading, hideConfirmLoading, updateConfirmLoading } from './modals.js';
 import { showStatus, hideStatus } from './utils.js';
 
 // ============ Updates ============
@@ -38,6 +38,62 @@ export function hideUpdateStatus() {
     if (row) row.classList.remove('hidden');
 }
 
+/**
+ * Shared download and install logic
+ * @param {object} result - The update check result with download_url and new_version
+ * @param {function} onError - Callback for error display (message, type)
+ */
+async function downloadAndInstall(result, onError) {
+    // Start download - show loading in dialog
+    showConfirmLoading('Downloading update...');
+
+    // Let the browser render the spinner before starting download
+    await new Promise(r => setTimeout(r, 50));
+
+    const downloadResult = await api('download_update', result.download_url, result.new_version);
+
+    if (downloadResult.status === 'error') {
+        hideConfirmLoading();
+        onError(`Download failed: ${downloadResult.error}`);
+        return false;
+    }
+
+    // Launch installer
+    updateConfirmLoading('Launching installer...');
+
+    const launchResult = await api('launch_installer', downloadResult.download_path);
+
+    if (launchResult.status === 'error') {
+        hideConfirmLoading();
+        onError(`Failed to launch installer: ${launchResult.error}`);
+        return false;
+    }
+
+    // App will quit after launching installer
+    updateConfirmLoading('Closing app...');
+
+    setTimeout(() => {
+        window.bridge.quit_app();
+    }, 1000);
+
+    return true;
+}
+
+/**
+ * Show update confirmation dialog
+ * @param {object} result - The update check result
+ * @returns {Promise<boolean>} - Whether user confirmed
+ */
+async function showUpdateDialog(result) {
+    return showConfirmDialog(
+        'Update Available',
+        `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
+        'Update',
+        'Later',
+        { showLoadingOnConfirm: true }
+    );
+}
+
 export async function checkForUpdates() {
     const btn = elements.btnCheckUpdates;
     if (!btn) return;
@@ -63,47 +119,16 @@ export async function checkForUpdates() {
 
         // Update available - show confirmation
         hideUpdateStatus();
-        const confirmed = await showConfirmDialog(
-            'Update Available',
-            `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
-            'Update',
-            'Later'
-        );
+        const confirmed = await showUpdateDialog(result);
 
         if (!confirmed) return;
 
-        // Start download
-        showUpdateStatus('Downloading update...', 'info');
-
-        const downloadResult = await api('download_update', result.download_url, result.new_version);
-
-        if (downloadResult.status === 'error') {
-            showUpdateStatus(`Download failed: ${downloadResult.error}`, 'error');
-            return;
-        }
-
-        // Launch installer
-        showUpdateStatus('Launching installer...', 'info');
-
-        const launchResult = await api('launch_installer', downloadResult.download_path);
-
-        if (launchResult.status === 'error') {
-            showUpdateStatus(`Failed to launch installer: ${launchResult.error}`, 'error');
-            return;
-        }
-
-        // App will quit after launching installer
-        showUpdateStatus('Update starting, closing app...', 'success');
-
-        // Give user a moment to see the message, then quit
-        setTimeout(() => {
-            window.qt.quit_app();
-        }, 1000);
-
-        return; // Skip the finally block's button reset
+        const success = await downloadAndInstall(result, (msg) => showUpdateStatus(msg, 'error'));
+        if (success) return; // Skip the finally block's button reset
 
     } catch (e) {
         console.error('Update check failed:', e);
+        hideConfirmLoading();
         showUpdateStatus('Update check failed', 'error');
     } finally {
         btn.textContent = originalText;
@@ -132,46 +157,17 @@ export async function checkForUpdatesOnStartup() {
         showStatus(`Update available: v${result.new_version}`, 'info');
 
         // Show confirmation dialog
-        const confirmed = await showConfirmDialog(
-            'Update Available',
-            `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
-            'Update',
-            'Later'
-        );
+        const confirmed = await showUpdateDialog(result);
 
         hideStatus();
 
         if (!confirmed) return;
 
-        // Start download
-        showStatus('Downloading update...', 'info');
-
-        const downloadResult = await api('download_update', result.download_url, result.new_version);
-
-        if (downloadResult.status === 'error') {
-            showStatus(`Download failed: ${downloadResult.error}`, 'error', 5000);
-            return;
-        }
-
-        // Launch installer
-        showStatus('Launching installer...', 'info');
-
-        const launchResult = await api('launch_installer', downloadResult.download_path);
-
-        if (launchResult.status === 'error') {
-            showStatus(`Failed to launch installer: ${launchResult.error}`, 'error', 5000);
-            return;
-        }
-
-        // App will quit after launching installer
-        showStatus('Update starting, closing app...', 'success');
-
-        setTimeout(() => {
-            window.qt.quit_app();
-        }, 1000);
+        await downloadAndInstall(result, (msg) => showStatus(msg, 'error', 5000));
 
     } catch (e) {
         console.error('Startup update check failed:', e);
+        hideConfirmLoading();
         showStatus('Update check failed', 'error', 5000);
     }
 }
