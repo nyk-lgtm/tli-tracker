@@ -70,6 +70,10 @@ class BagState:
             item_id = slot_key.split(":")[2]
             self.baseline[item_id] = self.baseline.get(item_id, 0) + quantity
 
+    def get_baseline_copy(self) -> dict[str, int]:
+        """Get a copy of current baseline for comparison."""
+        return self.baseline.copy()
+
     def process_modifications(self, mods: list[BagModifyEvent]) -> dict[str, int]:
         """
         Process bag modifications and return net changes by item.

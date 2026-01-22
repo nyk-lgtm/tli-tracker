@@ -56,14 +56,42 @@ class Tracker:
 
         This is the main entry point called by the LogWatcher.
         """
-        # Check for initialization data (bag sort)
-        if self._awaiting_init or not self.state.is_initialized:
-            init_items = self.parser.parse_bag_init(text)
-            if len(init_items) >= self.MIN_INIT_ITEMS:
+        skip_modfy = False
+
+        # ALWAYS check for bag sorts (InitBagData)
+        init_items = self.parser.parse_bag_init(text)
+        if len(init_items) >= self.MIN_INIT_ITEMS:
+            if self.state.is_initialized:
+                # Already initialized - this is a mid-session sort
+                # Save baseline before reinitializing to detect actual changes
+                old_baseline = self.bag.get_baseline_copy()
+                count = self.bag.initialize(init_items)
+
+                # Calculate net changes from baseline comparison
+                changes = {}
+                for item_id, new_qty in self.bag.baseline.items():
+                    old_qty = old_baseline.get(item_id, 0)
+                    diff = new_qty - old_qty
+                    if diff != 0:
+                        changes[item_id] = diff
+
+                # Check for items that disappeared
+                for item_id, old_qty in old_baseline.items():
+                    if item_id not in self.bag.baseline:
+                        changes[item_id] = -old_qty
+
+                if changes:
+                    self._process_drops(changes)
+
+                # Skip Modfy processing in same chunk to prevent double-count
+                skip_modfy = True
+            else:
+                # First initialization
                 count = self.bag.initialize(init_items)
                 self.state.is_initialized = True
-                self._awaiting_init = False
-                self._notify("initialized", {"item_count": count})
+
+            self._awaiting_init = False
+            self._notify("initialized", {"item_count": count})
 
         # Check for map changes
         map_event = self.parser.parse_map_change(text)
@@ -74,7 +102,7 @@ class Tracker:
                 self._on_map_exit(is_league_zone=map_event.is_league_zone)
 
         # Process bag modifications (drops/consumption)
-        if self.state.is_initialized:
+        if self.state.is_initialized and not skip_modfy:
             mods = self.parser.parse_bag_modifications(text)
             if mods:
                 changes = self.bag.process_modifications(mods)
