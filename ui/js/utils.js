@@ -41,18 +41,41 @@ export function formatDate(isoString) {
 // ============ Status Banner ============
 
 let statusTimeout;
+let hideTimeout;
 
-export function showStatus(message, type = 'info') {
+export function showStatus(message, type = 'info', duration = 0) {
     const el = elements.statusBanner;
     const text = elements.statusText;
 
+    // Clear any pending timeouts
     if (statusTimeout) clearTimeout(statusTimeout);
+    if (hideTimeout) clearTimeout(hideTimeout);
+
+    // Set content and type
     text.textContent = message;
-    el.classList.remove('hidden', 'status-info', 'status-success', 'status-warning', 'status-error');
+    el.classList.remove('hidden', 'show', 'status-info', 'status-success', 'status-warning', 'status-error');
     el.classList.add(`status-${type}`);
-    statusTimeout = setTimeout(hideStatus, 2000);
+
+    // Trigger reflow to restart animation, then show
+    void el.offsetWidth;
+    el.classList.add('show');
+
+    // Auto-hide after duration (if specified)
+    if (duration > 0) {
+        statusTimeout = setTimeout(hideStatus, duration);
+    }
 }
 
 export function hideStatus() {
-    elements.statusBanner.classList.add('hidden');
+    const el = elements.statusBanner;
+
+    if (hideTimeout) clearTimeout(hideTimeout);
+
+    // Animate out
+    el.classList.remove('show');
+
+    // Hide after animation completes
+    hideTimeout = setTimeout(() => {
+        el.classList.add('hidden');
+    }, 300);
 }

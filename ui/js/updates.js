@@ -4,6 +4,7 @@
 
 import { elements } from './elements.js';
 import { showConfirmDialog } from './modals.js';
+import { showStatus, hideStatus } from './utils.js';
 
 // ============ Updates ============
 
@@ -107,5 +108,70 @@ export async function checkForUpdates() {
     } finally {
         btn.textContent = originalText;
         btn.disabled = false;
+    }
+}
+
+/**
+ * Silent startup check - only shows notification if update available
+ */
+export async function checkForUpdatesOnStartup() {
+    try {
+        const result = await api('check_for_update');
+
+        if (result.status === 'error') {
+            showStatus(`Update check failed: ${result.error}`, 'error', 5000);
+            return;
+        }
+
+        if (!result.update_available) {
+            showStatus("You're running the latest version!", 'success', 3000);
+            return;
+        }
+
+        // Update available - show in main status banner
+        showStatus(`Update available: v${result.new_version}`, 'info');
+
+        // Show confirmation dialog
+        const confirmed = await showConfirmDialog(
+            'Update Available',
+            `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
+            'Update',
+            'Later'
+        );
+
+        hideStatus();
+
+        if (!confirmed) return;
+
+        // Start download
+        showStatus('Downloading update...', 'info');
+
+        const downloadResult = await api('download_update', result.download_url, result.new_version);
+
+        if (downloadResult.status === 'error') {
+            showStatus(`Download failed: ${downloadResult.error}`, 'error', 5000);
+            return;
+        }
+
+        // Launch installer
+        showStatus('Launching installer...', 'info');
+
+        const launchResult = await api('launch_installer', downloadResult.download_path);
+
+        if (launchResult.status === 'error') {
+            showStatus(`Failed to launch installer: ${launchResult.error}`, 'error', 5000);
+            return;
+        }
+
+        // App will quit after launching installer
+        showStatus('Update starting, closing app...', 'success');
+
+        setTimeout(() => {
+            window.qt.quit_app();
+        }, 1000);
+
+    } catch (e) {
+        console.error('Startup update check failed:', e);
+        showStatus('Update check failed', 'error', 5000);
     }
 }

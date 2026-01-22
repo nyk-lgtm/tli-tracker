@@ -11,7 +11,7 @@ import { showStatus, hideStatus, formatTime, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs } from './settings.js';
 import { loadHistory } from './history.js';
-import { loadVersion, checkForUpdates } from './updates.js';
+import { loadVersion, checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
 import { updateState, renderUI, renderDrops, addDrop } from './renderers.js';
 
 // ============ Event Handlers from Python ============
@@ -62,8 +62,7 @@ window.onPythonEvent = function(eventType, data) {
 // ============ Event Handlers ============
 
 function onReady() {
-    showStatus('Connected to the game', 'success');
-    setTimeout(() => hideStatus(), 3000);
+    showStatus('Connected to the game', 'success', 3000);
 
     // Load initial state
     api('get_stats').then(updateState);
@@ -84,8 +83,7 @@ function onReady() {
 }
 
 function onInitialized(itemCount) {
-    showStatus(`Initialized with ${itemCount} items`, 'success');
-    setTimeout(() => hideStatus(), 3000);
+    showStatus(`Initialized with ${itemCount} items`, 'success', 3000);
 }
 
 function onMapEnter() {
@@ -128,10 +126,9 @@ async function resetSession() {
         await api('reset_session');
         state.drops = [];
         renderDrops();
-        showStatus('Session reset', 'success');
-        setTimeout(() => hideStatus(), 2000);
+        showStatus('Session reset', 'success', 2000);
     } catch (e) {
-        showStatus('Reset failed', 'error');
+        showStatus('Reset failed', 'error', 3000);
     }
 }
 
@@ -160,13 +157,11 @@ async function toggleOverlay() {
             overlayVisible = result.visible;
             updateOverlayButton();
         } else {
-            showStatus('Failed to toggle overlay', 'error');
-            setTimeout(() => hideStatus(), 2000);
+            showStatus('Failed to toggle overlay', 'error', 2000);
         }
     } catch (e) {
         console.error('Overlay toggle failed:', e);
-        showStatus('Overlay not available', 'error');
-        setTimeout(() => hideStatus(), 2000);
+        showStatus('Overlay not available', 'error', 2000);
     }
 }
 
@@ -257,6 +252,9 @@ function init() {
 
     // Initial UI render
     renderUI();
+
+    // Auto-check for updates on startup (delay to avoid overwriting "Connected" message)
+    setTimeout(() => checkForUpdatesOnStartup(), 4000);
 
     console.log('TLI Tracker UI initialized');
 }
