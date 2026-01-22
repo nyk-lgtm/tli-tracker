@@ -12,10 +12,10 @@ A real-time drop tracker and overlay for tli that monitors ur loot and displays 
 <table>
   <tr>
     <td rowspan="2"><img src="ui/assets/docs/main_window.png" alt="Main Window"></td>
-    <td><img src="ui/assets/docs/overlay.png" alt="Overlay"></td>
+    <td align="center" valign="middle"><img src="ui/assets/docs/overlay.png" alt="Overlay"></td>
   </tr>
   <tr>
-    <td><img src="ui/assets/docs/history.png" alt="History"></td>
+    <td align="center" valign="middle"><img src="ui/assets/docs/history.png" alt="History"></td>
   </tr>
   <tr>
     <td align="center"><em>Main Window</em></td>
@@ -43,7 +43,6 @@ cuz u'll have to run the app urself via python in order for windows to stop comp
 
 ### Option 2: From Source
 
-If ur looking at this section u could've probably made this urself but here:
 1. Clone the repo
 2. Install Python 3.11 or higher
 3. Install dependencies:
@@ -61,7 +60,7 @@ If ur looking at this section u could've probably made this urself but here:
 - **Market Value** - Can show the value of your drops based on current market prices
 - **In-Game Overlay** - Transparent overlay that displays session stats while you play
 - **Session Management** - Tracks multiple farming sessions with stats and history
-- **CSV Export** - Export session data to CSV for external analysis (one row per drop)
+- **CSV Export** - Export session data to CSV for external analysis
 
 ## Usage
 
@@ -69,15 +68,15 @@ If ur looking at this section u could've probably made this urself but here:
 
 2. **Configure Log Path** - On first run, the app will attempt to locate ur game logs automatically. If it doesn't, good luck I haven't gotten there yet.
 
-3. **Start Farming** - The app automatically detects when u enter and exit maps
+3. **Start Farming** - The app automatically detects when u enter and exit maps or pick up items
 
 4. **Stats** - Stats shown:
    - Current session value (session is started when u first enter a map)
    - Map run count (during session)
-   - FE per hour (if any)
+   - FE per hour (if any) or per map (based on user settings)
    - Summed drop list (during session)
 
-5. **Manage Sessions** - Create new and view past sessions
+5. **Manage Sessions** - Create new and view/export past sessions
 
 ## Configuration
 
