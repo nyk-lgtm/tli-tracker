@@ -271,20 +271,6 @@ class Api:
 
     # === Overlay API ===
 
-    def enable_overlay(self, opacity: float = 0.9) -> dict:
-        """Enable overlay mode on the overlay window."""
-        if not self._overlay_window:
-            return {"status": "error", "message": "No overlay window"}
-
-        try:
-            # Enable click-through
-            hwnd = int(self._overlay_window.winId())
-            set_click_through(hwnd, True)
-
-            return {"status": "ok"}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
-
     def set_overlay_opacity(self, opacity: float) -> dict:
         """Set overlay window opacity (via CSS background, not Qt window)."""
         try:

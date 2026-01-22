@@ -156,11 +156,6 @@ class ApiBridge(QObject):
     # === Overlay API ===
 
     @Slot(float, result=str)
-    def enable_overlay(self, opacity: float) -> str:
-        """Enable overlay mode on the overlay window."""
-        return json.dumps(self.api.enable_overlay(opacity), default=str)
-
-    @Slot(float, result=str)
     def set_overlay_opacity(self, opacity: float) -> str:
         """Set overlay window opacity."""
         return json.dumps(self.api.set_overlay_opacity(opacity), default=str)
