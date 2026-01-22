@@ -1,6 +1,11 @@
 # TLI Tracker
 
-🚨 ALERT 🚨 idk if tos 🚨 gl 👍
+🚨 ALERT 🚨 idk if tos 🚨
+
+However, this app doesn't read or write any data outside of ur machine.
+Only time it connects to the internet is to check for updates on this page.
+
+gl 👍
 
 A real-time drop tracker and overlay for tli that monitors ur loot and displays farm stats
 
