@@ -69,7 +69,12 @@
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #64748b;
+    /* Lighten from gray to white as opacity decreases */
+    color: rgb(
+        calc(100 + 155 * (1 - var(--bg-opacity))),
+        calc(116 + 139 * (1 - var(--bg-opacity))),
+        calc(139 + 116 * (1 - var(--bg-opacity)))
+    );
     margin-bottom: 8px;
 }
 
