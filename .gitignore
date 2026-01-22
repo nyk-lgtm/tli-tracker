@@ -27,7 +27,6 @@ Thumbs.db
 # Project specific
 temp_docs/
 data/
-scripts/
 
 # Build/Installer output
 installer/
