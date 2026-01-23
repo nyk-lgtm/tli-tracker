@@ -108,6 +108,8 @@ DEFAULT_CONFIG = {
     "chart_pulse_enabled": False,
     "chart_efficiency_enabled": False,
     "chart_donut_enabled": False,
+    # Widget-based overlay system (Phase 1+)
+    "use_widget_overlay": False,  # Feature flag for new overlay system
 }
 
 
