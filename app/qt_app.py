@@ -58,7 +58,13 @@ class TLITrackerApp:
         """Restore overlay window position and pin state from config."""
         config = load_config()
 
-        # Restore position
+        # Widget overlay doesn't use legacy position/pin settings
+        if config.get("use_widget_overlay", False):
+            # Widget overlay: always click-through (edit mode toggles this)
+            self.overlay_window.set_click_through(True)
+            return
+
+        # Legacy overlay: restore position and pin state
         position = config.get("overlay_position")
         if position:
             x, y = position.get("x", 100), position.get("y", 100)

@@ -7,13 +7,15 @@ Provides MainWindow and OverlayWindow using QWebEngineView.
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import Qt, QUrl
+from PySide6.QtCore import Qt, QUrl, QTimer
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebChannel import QWebChannel
 
 from app.dialogs import show_error, DialogResult
+from app.storage import load_config
+from app.monitor_utils import get_game_monitor, get_primary_monitor
 
 
 class MainWindow(QMainWindow):
@@ -205,8 +207,12 @@ class OverlayWindow(QMainWindow):
         self.bridge = bridge
         self._click_through_enabled = True
 
+        # Check feature flag for widget-based overlay
+        config = load_config()
+        self._use_widget_overlay = config.get("use_widget_overlay", False)
+        self._current_monitor = None  # Track current monitor geometry
+
         self.setWindowTitle("TLI Overlay")
-        self.resize(330, 50)
 
         # Overlay window flags
         self.setWindowFlags(
@@ -215,6 +221,14 @@ class OverlayWindow(QMainWindow):
             | Qt.WindowType.Tool
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        # Size depends on overlay mode
+        if self._use_widget_overlay:
+            # Widget overlay: full-screen canvas on game monitor
+            self._update_to_game_monitor()
+        else:
+            # Legacy overlay: fixed size bar
+            self.resize(330, 50)
 
         # Create web view
         self.web_view = QWebEngineView()
@@ -235,11 +249,61 @@ class OverlayWindow(QMainWindow):
         self.channel.registerObject("api", bridge)
         self.web_view.page().setWebChannel(self.channel)
 
-        html_path = self._get_ui_path("overlay.html")
+        # Load appropriate overlay HTML
+        if self._use_widget_overlay:
+            html_path = self._get_ui_path("overlay_v2.html")
+        else:
+            html_path = self._get_ui_path("overlay.html")
+
         if html_path:
             self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
 
+        # Start monitor polling timer for widget overlay
+        if self._use_widget_overlay:
+            self._monitor_timer = QTimer()
+            self._monitor_timer.timeout.connect(self._check_monitor_change)
+            self._monitor_timer.start(5000)  # Check every 5 seconds
+
         self.hide()
+
+    def _update_to_game_monitor(self) -> bool:
+        """
+        Update overlay to cover the game's monitor.
+
+        Returns:
+            True if monitor was found and overlay updated.
+        """
+        monitor = get_game_monitor()
+        if not monitor:
+            # Fallback to primary monitor
+            monitor = get_primary_monitor()
+
+        if not monitor:
+            print("Could not detect any monitor")
+            return False
+
+        # Check if monitor changed
+        if monitor == self._current_monitor:
+            return False
+
+        self._current_monitor = monitor
+        self.setGeometry(
+            monitor["x"],
+            monitor["y"],
+            monitor["width"],
+            monitor["height"],
+        )
+        print(
+            f"[Overlay] Sized to monitor: {monitor['width']}x{monitor['height']} "
+            f"at ({monitor['x']}, {monitor['y']})"
+        )
+        return True
+
+    def _check_monitor_change(self) -> None:
+        """Check if game moved to different monitor and update overlay."""
+        if not self._use_widget_overlay:
+            return
+        self._update_to_game_monitor()
 
     def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
