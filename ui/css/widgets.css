@@ -142,3 +142,120 @@
 .widget-resize-handle.s { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
 .widget-resize-handle.w { top: 50%; left: -4px; transform: translateY(-50%); cursor: w-resize; }
 .widget-resize-handle.e { top: 50%; right: -4px; transform: translateY(-50%); cursor: e-resize; }
+
+/* ========================================
+   Widget Content
+   ======================================== */
+
+.widget-content {
+    width: 100%;
+    height: 100%;
+    background: rgb(12 18 32 / var(--bg-opacity, 0.9));
+    border: 1px solid rgb(13 148 136 / calc(var(--bg-opacity, 0.9) * 0.67));
+    border-radius: 8px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    overflow: hidden;
+}
+
+.widget-unknown,
+.chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* ========================================
+   Stats Bar Widget
+   ======================================== */
+
+.stats-bar-content {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 0.8fr;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+}
+
+.stats-bar-content .stat-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 12px;
+}
+
+.stats-bar-content .stat-section {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 12px;
+}
+
+.stats-bar-content .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.stats-bar-content .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: #f1f5f9;
+    font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
+.stats-bar-content .stat-label {
+    font-size: 12px;
+    color: rgb(
+        calc(100 + 155 * (1 - var(--bg-opacity, 0.9))),
+        calc(116 + 139 * (1 - var(--bg-opacity, 0.9))),
+        calc(139 + 116 * (1 - var(--bg-opacity, 0.9)))
+    );
+    font-weight: 500;
+}
+
+.stats-bar-content .stat-value.positive {
+    color: #22d3ee;
+}
+
+.stats-bar-content .stat-value.negative {
+    color: #f87171;
+}
+
+.stats-bar-content .divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(42, 52, 65, 0.8);
+    justify-self: center;
+}
+
+.stats-bar-content .in-map-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0d9488;
+    box-shadow: 0 0 8px rgba(13, 148, 136, 0.6);
+    animation: pulse 2s infinite;
+}
+
+.stats-bar-content .in-map-dot.inactive {
+    background: #4b5563;
+    box-shadow: none;
+    animation: none;
+}
+
+/* ========================================
+   Chart Widgets
+   ======================================== */
+
+.widget[data-type="pulse_chart"] .widget-content,
+.widget[data-type="efficiency_chart"] .widget-content,
+.widget[data-type="donut_chart"] .widget-content {
+    padding: 8px;
+}

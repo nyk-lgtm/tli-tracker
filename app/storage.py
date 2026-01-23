@@ -110,6 +110,8 @@ DEFAULT_CONFIG = {
     "chart_donut_enabled": False,
     # Widget-based overlay system (Phase 1+)
     "use_widget_overlay": False,  # Feature flag for new overlay system
+    "overlay_edit_mode_hotkey": "F9",  # Hotkey to toggle edit mode
+    "widgets": [],  # Widget instances (populated on first load if empty)
 }
 
 
@@ -119,6 +121,7 @@ def load_config() -> dict:
 
     Automatically migrates config by:
     - Adding new keys from DEFAULT_CONFIG
+    - Populating widgets array with defaults if empty
     - Saving back if any changes were made
     """
     config = load_json("config.json", {})
@@ -129,6 +132,13 @@ def load_config() -> dict:
         if key not in config:
             config[key] = value
             changed = True
+
+    # Populate widgets with defaults if empty
+    if not config.get("widgets"):
+        from app.widget_registry import get_default_widgets
+
+        config["widgets"] = get_default_widgets()
+        changed = True
 
     # Save migrated config
     if changed:

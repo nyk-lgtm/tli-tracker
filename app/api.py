@@ -292,14 +292,21 @@ class Api:
             return {"status": "error", "message": "No overlay window"}
 
         try:
+            config = load_config()
+
+            # Widget overlay: always keep click-through enabled (edit mode handles toggling)
+            if config.get("use_widget_overlay", False):
+                enabled = True
+
             hwnd = int(self._overlay_window.winId())
             success = set_click_through(hwnd, enabled)
             self._overlay_window.set_click_through(enabled)
 
             # Save pin state to config (pinned = click-through enabled)
-            config = load_config()
-            config["overlay_pinned"] = enabled
-            save_config(config)
+            # Only save for legacy overlay
+            if not config.get("use_widget_overlay", False):
+                config["overlay_pinned"] = enabled
+                save_config(config)
 
             return {"status": "ok" if success else "error"}
         except Exception as e:
