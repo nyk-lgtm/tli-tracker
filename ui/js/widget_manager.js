@@ -224,10 +224,26 @@ const WidgetManager = {
         const { session, currentMap } = this.state;
         const maps = session?.maps || [];
 
+        // Create chart structure with title
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-widget-inner';
+
+        const title = document.createElement('div');
+        title.className = 'chart-title';
+        title.textContent = 'Value/Map';
+        chartContainer.appendChild(title);
+
+        const chartContent = document.createElement('div');
+        chartContent.className = 'chart-content';
+        chartContainer.appendChild(chartContent);
+
+        container.innerHTML = '';
+        container.appendChild(chartContainer);
+
         if (typeof TLI !== 'undefined' && TLI.charts) {
-            TLI.charts.renderPulse(container, maps, currentMap);
+            TLI.charts.renderPulse(chartContent, maps, currentMap);
         } else {
-            container.innerHTML = '<div class="chart-loading">Loading...</div>';
+            chartContent.innerHTML = '<div class="chart-loading">Loading...</div>';
         }
     },
 
@@ -240,10 +256,26 @@ const WidgetManager = {
         const sessionDuration = session?.duration_total || 0;
         const currentValue = session?.value || 0;
 
+        // Create chart structure with title
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-widget-inner';
+
+        const title = document.createElement('div');
+        title.className = 'chart-title';
+        title.textContent = 'Efficiency';
+        chartContainer.appendChild(title);
+
+        const chartContent = document.createElement('div');
+        chartContent.className = 'chart-content';
+        chartContainer.appendChild(chartContent);
+
+        container.innerHTML = '';
+        container.appendChild(chartContainer);
+
         if (typeof TLI !== 'undefined' && TLI.charts) {
-            TLI.charts.renderEfficiency(container, maps, sessionDuration, currentValue);
+            TLI.charts.renderEfficiency(chartContent, maps, sessionDuration, currentValue);
         } else {
-            container.innerHTML = '<div class="chart-loading">Loading...</div>';
+            chartContent.innerHTML = '<div class="chart-loading">Loading...</div>';
         }
     },
 
@@ -254,10 +286,26 @@ const WidgetManager = {
         const { session } = this.state;
         const drops = session?.drops || [];
 
+        // Create chart structure with title
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-widget-inner';
+
+        const title = document.createElement('div');
+        title.className = 'chart-title';
+        title.textContent = 'Loot Distribution';
+        chartContainer.appendChild(title);
+
+        const chartContent = document.createElement('div');
+        chartContent.className = 'chart-content';
+        chartContainer.appendChild(chartContent);
+
+        container.innerHTML = '';
+        container.appendChild(chartContainer);
+
         if (typeof TLI !== 'undefined' && TLI.charts) {
-            TLI.charts.renderDonut(container, drops);
+            TLI.charts.renderDonut(chartContent, drops);
         } else {
-            container.innerHTML = '<div class="chart-loading">Loading...</div>';
+            chartContent.innerHTML = '<div class="chart-loading">Loading...</div>';
         }
     },
 

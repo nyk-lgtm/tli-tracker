@@ -257,5 +257,26 @@
 .widget[data-type="pulse_chart"] .widget-content,
 .widget[data-type="efficiency_chart"] .widget-content,
 .widget[data-type="donut_chart"] .widget-content {
-    padding: 8px;
+    padding: 10px;
+}
+
+.chart-widget-inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-widget-inner .chart-content {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Adjust chart heights to fill container */
+.chart-widget-inner .pulse-chart,
+.chart-widget-inner .efficiency-chart {
+    height: 100%;
+}
+
+.chart-widget-inner .donut-chart {
+    height: 100%;
 }
