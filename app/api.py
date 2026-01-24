@@ -447,6 +447,20 @@ class Api:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
+    def update_edit_mode_hotkey(self, hotkey: str) -> dict:
+        """Update the edit mode hotkey at runtime."""
+        if not self._qt_app:
+            return {"status": "error", "message": "No Qt app reference"}
+
+        try:
+            success = self._qt_app.update_edit_mode_hotkey(hotkey)
+            if success:
+                return {"status": "ok", "hotkey": hotkey}
+            else:
+                return {"status": "error", "message": "Failed to update hotkey"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
     # === Utility ===
 
     def ping(self) -> dict:

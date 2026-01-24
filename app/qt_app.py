@@ -51,6 +51,7 @@ class TLITrackerApp:
         self.api._main_window = self.main_window
         self.api._overlay_window = self.overlay_window
         self.api._bridge = self.bridge
+        self.api._qt_app = self  # For hotkey updates
 
         # Load saved overlay position
         self._restore_overlay_position()
@@ -85,15 +86,24 @@ class TLITrackerApp:
         if not config.get("use_widget_overlay", False):
             return
 
-        # Register F9 for edit mode toggle
-        hotkey = config.get("overlay_edit_mode_hotkey", "F9")
-        hotkey_manager.register(hotkey, self._toggle_edit_mode)
+        # Register edit mode toggle hotkey
+        hotkey = config.get("overlay_edit_mode_hotkey", "Ctrl+F9")
+        self._edit_mode_hotkey_id = hotkey_manager.register(
+            hotkey, self._toggle_edit_mode
+        )
 
         # Register ESC for exiting edit mode
         hotkey_manager.register("ESC", self._exit_edit_mode)
 
         # Start polling
         hotkey_manager.start()
+
+    def update_edit_mode_hotkey(self, new_hotkey: str) -> bool:
+        """Update the edit mode hotkey at runtime."""
+        if not hasattr(self, "_edit_mode_hotkey_id") or not self._edit_mode_hotkey_id:
+            return False
+
+        return hotkey_manager.update_hotkey(self._edit_mode_hotkey_id, new_hotkey)
 
     def _toggle_edit_mode(self) -> None:
         """Toggle overlay edit mode."""

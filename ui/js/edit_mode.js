@@ -186,6 +186,25 @@ const EditMode = {
         const handleType = Array.from(handle.classList)
             .find(c => ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'].includes(c));
 
+        // Find widgets that share edges with this one
+        const linkedWidgets = SnapEngine.findLinkedWidgets(widget, handleType);
+
+        // Store start rects for all linked widgets
+        const linkedData = linkedWidgets.map(({ widget: linkedWidget, sharedEdge, linkedEdge }) => {
+            const linkedRect = linkedWidget.getBoundingClientRect();
+            return {
+                widget: linkedWidget,
+                sharedEdge,
+                linkedEdge,
+                startRect: {
+                    left: linkedRect.left,
+                    top: linkedRect.top,
+                    width: linkedRect.width,
+                    height: linkedRect.height,
+                },
+            };
+        });
+
         this.resizing = {
             widget,
             handle: handleType,
@@ -197,6 +216,7 @@ const EditMode = {
                 width: rect.width,
                 height: rect.height,
             },
+            linkedWidgets: linkedData,
         };
         widget.classList.add('resizing');
     },
@@ -207,7 +227,7 @@ const EditMode = {
     updateResize(e) {
         if (!this.resizing) return;
 
-        const { widget, handle, startX, startY, startRect } = this.resizing;
+        const { widget, handle, startX, startY, startRect, linkedWidgets } = this.resizing;
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
 
@@ -224,22 +244,86 @@ const EditMode = {
         const maxW = typeDef.maxSize?.width || 800;
         const maxH = typeDef.maxSize?.height || 600;
 
-        // Adjust based on handle
+        // Calculate constrained delta considering linked widgets
+        let constrainedDeltaX = deltaX;
+        let constrainedDeltaY = deltaY;
+
+        // Check linked widget constraints
+        for (const linked of linkedWidgets || []) {
+            const linkedType = linked.widget.dataset.type;
+            const linkedTypeDef = WidgetManager.WIDGET_TYPES[linkedType] || {};
+            const linkedMinW = linkedTypeDef.minSize?.width || 100;
+            const linkedMinH = linkedTypeDef.minSize?.height || 50;
+            const linkedMaxW = linkedTypeDef.maxSize?.width || 800;
+            const linkedMaxH = linkedTypeDef.maxSize?.height || 600;
+
+            // Constrain based on which edge is linked
+            if (linked.linkedEdge === 'left') {
+                // We're pushing into their left edge - they shrink
+                const maxShrink = linked.startRect.width - linkedMinW;
+                const maxGrow = linkedMaxW - linked.startRect.width;
+                if (deltaX > 0) constrainedDeltaX = Math.min(constrainedDeltaX, maxShrink);
+                if (deltaX < 0) constrainedDeltaX = Math.max(constrainedDeltaX, -maxGrow);
+            }
+            if (linked.linkedEdge === 'right') {
+                // We're pulling their right edge - they shrink
+                const maxShrink = linked.startRect.width - linkedMinW;
+                const maxGrow = linkedMaxW - linked.startRect.width;
+                if (deltaX < 0) constrainedDeltaX = Math.max(constrainedDeltaX, -maxShrink);
+                if (deltaX > 0) constrainedDeltaX = Math.min(constrainedDeltaX, maxGrow);
+            }
+            if (linked.linkedEdge === 'top') {
+                // We're pushing into their top edge - they shrink
+                const maxShrink = linked.startRect.height - linkedMinH;
+                const maxGrow = linkedMaxH - linked.startRect.height;
+                if (deltaY > 0) constrainedDeltaY = Math.min(constrainedDeltaY, maxShrink);
+                if (deltaY < 0) constrainedDeltaY = Math.max(constrainedDeltaY, -maxGrow);
+            }
+            if (linked.linkedEdge === 'bottom') {
+                // We're pulling their bottom edge - they shrink
+                const maxShrink = linked.startRect.height - linkedMinH;
+                const maxGrow = linkedMaxH - linked.startRect.height;
+                if (deltaY < 0) constrainedDeltaY = Math.max(constrainedDeltaY, -maxShrink);
+                if (deltaY > 0) constrainedDeltaY = Math.min(constrainedDeltaY, maxGrow);
+            }
+        }
+
+        // Adjust main widget based on handle (using constrained deltas)
         if (handle.includes('e')) {
-            newWidth = Math.max(minW, Math.min(maxW, startRect.width + deltaX));
+            newWidth = Math.max(minW, Math.min(maxW, startRect.width + constrainedDeltaX));
         }
         if (handle.includes('w')) {
-            const widthDelta = Math.max(minW, Math.min(maxW, startRect.width - deltaX)) - startRect.width;
+            const widthDelta = Math.max(minW, Math.min(maxW, startRect.width - constrainedDeltaX)) - startRect.width;
             newWidth = startRect.width + widthDelta;
             newLeft = startRect.left - widthDelta;
         }
         if (handle.includes('s')) {
-            newHeight = Math.max(minH, Math.min(maxH, startRect.height + deltaY));
+            newHeight = Math.max(minH, Math.min(maxH, startRect.height + constrainedDeltaY));
         }
         if (handle.includes('n')) {
-            const heightDelta = Math.max(minH, Math.min(maxH, startRect.height - deltaY)) - startRect.height;
+            const heightDelta = Math.max(minH, Math.min(maxH, startRect.height - constrainedDeltaY)) - startRect.height;
             newHeight = startRect.height + heightDelta;
             newTop = startRect.top - heightDelta;
+        }
+
+        // Calculate proposed rect for snapping (only if no linked widgets)
+        if (!linkedWidgets || linkedWidgets.length === 0) {
+            const proposedRect = {
+                x: newLeft,
+                y: newTop,
+                width: newWidth,
+                height: newHeight,
+            };
+
+            // Apply snapping based on which edges are being resized
+            const snapped = SnapEngine.calculateSnapForResize(widget, proposedRect, handle);
+            SnapEngine.renderGuides(snapped.guides);
+
+            // Apply snapped dimensions (respecting min/max constraints)
+            newLeft = snapped.x;
+            newTop = snapped.y;
+            newWidth = Math.max(minW, Math.min(maxW, snapped.width));
+            newHeight = Math.max(minH, Math.min(maxH, snapped.height));
         }
 
         // Clamp to canvas bounds
@@ -254,6 +338,47 @@ const EditMode = {
         widget.style.top = `${bounds.y}px`;
         widget.style.width = `${bounds.width}px`;
         widget.style.height = `${bounds.height}px`;
+
+        // Update linked widgets
+        for (const linked of linkedWidgets || []) {
+            const linkedWidget = linked.widget;
+            let linkedLeft = linked.startRect.left;
+            let linkedTop = linked.startRect.top;
+            let linkedWidth = linked.startRect.width;
+            let linkedHeight = linked.startRect.height;
+
+            // Calculate actual delta that was applied to main widget
+            const actualDeltaX = (parseFloat(widget.style.left) - startRect.left) || 0;
+            const actualDeltaY = (parseFloat(widget.style.top) - startRect.top) || 0;
+            const actualWidthDelta = parseFloat(widget.style.width) - startRect.width;
+            const actualHeightDelta = parseFloat(widget.style.height) - startRect.height;
+
+            // Adjust linked widget based on which edge is shared
+            if (linked.linkedEdge === 'left' && handle.includes('e')) {
+                // Main widget's right edge pushed into linked widget's left edge
+                linkedLeft = linked.startRect.left + actualWidthDelta;
+                linkedWidth = linked.startRect.width - actualWidthDelta;
+            }
+            if (linked.linkedEdge === 'right' && handle.includes('w')) {
+                // Main widget's left edge pulled linked widget's right edge
+                linkedWidth = linked.startRect.width + actualDeltaX;
+            }
+            if (linked.linkedEdge === 'top' && handle.includes('s')) {
+                // Main widget's bottom edge pushed into linked widget's top edge
+                linkedTop = linked.startRect.top + actualHeightDelta;
+                linkedHeight = linked.startRect.height - actualHeightDelta;
+            }
+            if (linked.linkedEdge === 'bottom' && handle.includes('n')) {
+                // Main widget's top edge pulled linked widget's bottom edge
+                linkedHeight = linked.startRect.height + actualDeltaY;
+            }
+
+            // Apply to linked widget
+            linkedWidget.style.left = `${linkedLeft}px`;
+            linkedWidget.style.top = `${linkedTop}px`;
+            linkedWidget.style.width = `${linkedWidth}px`;
+            linkedWidget.style.height = `${linkedHeight}px`;
+        }
     },
 
     /**
@@ -264,6 +389,9 @@ const EditMode = {
 
         this.resizing.widget.classList.remove('resizing');
         this.resizing = null;
+
+        // Clear snap guides
+        SnapEngine.clearGuides();
     },
 
     /**

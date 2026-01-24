@@ -78,23 +78,19 @@ export function initToggleListeners() {
     });
 }
 
+// Valid keys for hotkey capture (F-keys, letters, numbers, special keys)
+const VALID_HOTKEYS = [
+    'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+    'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'Escape', 'Insert', 'Delete', 'Home', 'End', 'PageUp', 'PageDown',
+];
+
 /**
- * Initialize widget overlay UI (Edit Layout button, opacity slider)
+ * Initialize widget overlay UI (opacity slider, hotkey selectors)
  */
 export function initWidgetOverlayListeners() {
-    // Edit Layout button
-    if (elements.btnEditLayout) {
-        elements.btnEditLayout.addEventListener('click', async () => {
-            try {
-                await api('set_overlay_edit_mode', true);
-                closeModal('settings');
-            } catch (e) {
-                console.error('Failed to enter edit mode:', e);
-                showStatus('Failed to enter edit mode', 'error');
-            }
-        });
-    }
-
     // Widget opacity slider
     if (elements.settingWidgetOpacity) {
         elements.settingWidgetOpacity.addEventListener('input', (e) => {
@@ -105,6 +101,74 @@ export function initWidgetOverlayListeners() {
             api('set_overlay_opacity', val / 100);
         });
     }
+
+    // Hotkey modifier dropdown - update hint when changed
+    if (elements.settingHotkeyModifier) {
+        elements.settingHotkeyModifier.addEventListener('change', updateHotkeyHint);
+    }
+
+    // Hotkey key capture input
+    if (elements.settingHotkeyKey) {
+        const input = elements.settingHotkeyKey;
+
+        input.addEventListener('focus', () => {
+            input.classList.add('listening');
+            input.value = '';
+            input.placeholder = 'Press key...';
+        });
+
+        input.addEventListener('blur', () => {
+            input.classList.remove('listening');
+            // If no valid key was captured, restore previous value
+            if (!input.value || !VALID_HOTKEYS.includes(input.value)) {
+                const hotkey = parseHotkey(settings.overlay_edit_mode_hotkey || 'Ctrl+F9');
+                input.value = hotkey.key;
+            }
+            input.placeholder = '';
+        });
+
+        input.addEventListener('keydown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Normalize key (uppercase for letters)
+            let key = e.key;
+            if (key.length === 1) {
+                key = key.toUpperCase();
+            }
+
+            // Check if it's a valid key
+            if (VALID_HOTKEYS.includes(key)) {
+                input.value = key;
+                input.classList.remove('listening');
+                input.blur();
+                updateHotkeyHint();
+            }
+        });
+    }
+}
+
+/**
+ * Update the hotkey hint display based on current dropdown values
+ */
+function updateHotkeyHint() {
+    if (elements.editHotkeyHint && elements.settingHotkeyModifier && elements.settingHotkeyKey) {
+        const modifier = elements.settingHotkeyModifier.value;
+        const key = elements.settingHotkeyKey.value;
+        elements.editHotkeyHint.textContent = `${modifier}+${key}`;
+    }
+}
+
+/**
+ * Parse hotkey string into modifier and key parts
+ */
+function parseHotkey(hotkeyStr) {
+    const parts = hotkeyStr.split('+');
+    if (parts.length === 2) {
+        return { modifier: parts[0], key: parts[1] };
+    }
+    // Default
+    return { modifier: 'Ctrl', key: 'F9' };
 }
 
 export async function loadSettings() {
@@ -152,6 +216,14 @@ export async function loadSettings() {
             elements.widgetOpacityValue.textContent = elements.settingWidgetOpacity.value + '%';
         }
 
+        // Hotkey settings
+        if (elements.settingHotkeyModifier && elements.settingHotkeyKey) {
+            const hotkey = parseHotkey(newSettings.overlay_edit_mode_hotkey || 'Ctrl+F9');
+            elements.settingHotkeyModifier.value = hotkey.modifier;
+            elements.settingHotkeyKey.value = hotkey.key;  // Works for both select and input
+            updateHotkeyHint();
+        }
+
         updateAllToggleVisuals();
         applyMapValueVisibility();
     } catch (e) {
@@ -185,6 +257,21 @@ export async function saveSettings() {
                 widget.enabled = toggle.checked;
             }
         });
+    }
+
+    // Save hotkey configuration and update at runtime
+    if (elements.settingHotkeyModifier && elements.settingHotkeyKey) {
+        const modifier = elements.settingHotkeyModifier.value;
+        const key = elements.settingHotkeyKey.value;
+        const newHotkey = `${modifier}+${key}`;
+        settings.overlay_edit_mode_hotkey = newHotkey;
+
+        // Update hotkey at runtime (no restart needed)
+        try {
+            await api('update_edit_mode_hotkey', newHotkey);
+        } catch (e) {
+            console.warn('Failed to update hotkey at runtime:', e);
+        }
     }
 
     try {
