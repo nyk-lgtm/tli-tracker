@@ -246,7 +246,7 @@ export async function saveSettings() {
     } else {
         settings.overlay_opacity = elements.settingOpacity.value / 100;
     }
-    settings.investment_per_map = parseInt(elements.settingInvestment.value) || 0;
+    settings.investment_per_map = parseFloat(elements.settingInvestment.value) || 0;
 
     // Save widget enabled states if in widget mode
     if (useWidgetOverlay && settings.widgets) {
