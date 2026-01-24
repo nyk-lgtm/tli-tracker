@@ -110,7 +110,7 @@ DEFAULT_CONFIG = {
     "chart_donut_enabled": False,
     # Widget-based overlay system (Phase 1+)
     "use_widget_overlay": False,  # Feature flag for new overlay system
-    "overlay_edit_mode_hotkey": "F9",  # Hotkey to toggle edit mode
+    "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode
     "widgets": [],  # Widget instances (populated on first load if empty)
 }
 

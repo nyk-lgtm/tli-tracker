@@ -15,6 +15,7 @@ from app.bridge import ApiBridge
 from app.windows import MainWindow, OverlayWindow
 from app.storage import load_config
 from app.version import VERSION
+from app.hotkey import hotkey_manager
 
 
 class TLITrackerApp:
@@ -54,6 +55,9 @@ class TLITrackerApp:
         # Load saved overlay position
         self._restore_overlay_position()
 
+        # Set up global hotkeys for widget overlay
+        self._setup_hotkeys()
+
     def _restore_overlay_position(self) -> None:
         """Restore overlay window position and pin state from config."""
         config = load_config()
@@ -74,11 +78,42 @@ class TLITrackerApp:
         pinned = config.get("overlay_pinned", False)
         self.overlay_window.set_click_through(pinned)
 
+    def _setup_hotkeys(self) -> None:
+        """Set up global hotkeys for widget overlay."""
+        config = load_config()
+
+        if not config.get("use_widget_overlay", False):
+            return
+
+        # Register F9 for edit mode toggle
+        hotkey = config.get("overlay_edit_mode_hotkey", "F9")
+        hotkey_manager.register(hotkey, self._toggle_edit_mode)
+
+        # Register ESC for exiting edit mode
+        hotkey_manager.register("ESC", self._exit_edit_mode)
+
+        # Start polling
+        hotkey_manager.start()
+
+    def _toggle_edit_mode(self) -> None:
+        """Toggle overlay edit mode."""
+        if self.overlay_window.isVisible():
+            self.overlay_window.toggle_edit_mode()
+
+    def _exit_edit_mode(self) -> None:
+        """Exit overlay edit mode (ESC key)."""
+        if self.overlay_window.is_edit_mode():
+            self.overlay_window.set_edit_mode(False)
+
     def run(self) -> int:
         """Run the application event loop."""
         print(f"TLI Tracker v{VERSION} starting...")
         self.main_window.show()
         return self.app.exec()
+
+    def cleanup(self) -> None:
+        """Clean up resources."""
+        hotkey_manager.stop()
 
 
 def main():
