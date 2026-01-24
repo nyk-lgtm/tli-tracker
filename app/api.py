@@ -436,6 +436,17 @@ class Api:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
+    def set_overlay_edit_mode(self, enabled: bool) -> dict:
+        """Enable or disable overlay edit mode."""
+        if not self._overlay_window:
+            return {"status": "error", "message": "No overlay window"}
+
+        try:
+            self._overlay_window.set_edit_mode(enabled)
+            return {"status": "ok", "enabled": enabled}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
     # === Utility ===
 
     def ping(self) -> dict:

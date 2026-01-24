@@ -205,6 +205,11 @@ class ApiBridge(QObject):
         """Save widget layout to config."""
         return json.dumps(self.api.save_widget_layout(layout_json), default=str)
 
+    @Slot(bool, result=str)
+    def set_overlay_edit_mode(self, enabled: bool) -> str:
+        """Enable or disable overlay edit mode."""
+        return json.dumps(self.api.set_overlay_edit_mode(enabled), default=str)
+
     # === Utility ===
 
     @Slot(result=str)

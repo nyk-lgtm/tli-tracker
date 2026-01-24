@@ -9,7 +9,7 @@ import { state } from './state.js';
 import { elements, initElements } from './elements.js';
 import { showStatus, hideStatus, formatTime, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
-import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs } from './settings.js';
+import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners } from './settings.js';
 import { loadHistory } from './history.js';
 import { loadVersion, checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
 import { updateState, renderUI, renderDrops, addDrop } from './renderers.js';
@@ -216,6 +216,7 @@ function init() {
     elements.btnSaveSettings.addEventListener('click', saveSettings);
     initToggleListeners();
     initSettingsTabs();
+    initWidgetOverlayListeners();
 
     // History modal
     elements.btnCloseHistory.addEventListener('click', () => closeModal('history'));

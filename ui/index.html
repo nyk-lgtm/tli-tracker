@@ -193,53 +193,117 @@
                     <!-- Overlay Tab -->
                     <div id="tab-overlay" class="settings-panel">
                         <div class="space-y-4">
-                            <!-- Pin Overlay Toggle -->
-                            <div class="setting-row">
-                                <span class="setting-label">Pin Overlay</span>
-                                <label class="toggle">
-                                    <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox" data-setting="overlay_pinned">
-                                    <div class="toggle-track"></div>
-                                </label>
+                            <!-- Widget Overlay Settings (shown when use_widget_overlay is enabled) -->
+                            <div id="widget-overlay-settings" class="hidden">
+                                <!-- Overlay Opacity -->
+                                <div class="setting-row-vertical mb-4">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="setting-label">Overlay Opacity</span>
+                                        <span id="widget-opacity-value" class="font-mono text-sm text-gray-400">90%</span>
+                                    </div>
+                                    <input type="range" id="setting-widget-opacity" min="0" max="100" value="90" class="range-slider">
+                                </div>
+
+                                <!-- Widgets Section -->
+                                <div class="pt-4 border-t border-dark-border">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide mb-3">Widgets</div>
+
+                                    <!-- Stats Bar Widget -->
+                                    <div class="setting-row mb-3">
+                                        <span class="setting-label">Stats Bar</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="widget-stats-bar" class="toggle-checkbox widget-toggle" data-widget-id="widget-stats-bar">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
+
+                                    <!-- Pulse Chart Widget -->
+                                    <div class="setting-row mb-3">
+                                        <span class="setting-label" data-tooltip="FE per map histogram">Value/Map Chart</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="widget-pulse-chart" class="toggle-checkbox widget-toggle" data-widget-id="widget-pulse-chart">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
+
+                                    <!-- Efficiency Chart Widget -->
+                                    <div class="setting-row mb-3">
+                                        <span class="setting-label" data-tooltip="FE/hr over time">Efficiency Chart</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="widget-efficiency-chart" class="toggle-checkbox widget-toggle" data-widget-id="widget-efficiency-chart">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
+
+                                    <!-- Donut Chart Widget -->
+                                    <div class="setting-row mb-3">
+                                        <span class="setting-label" data-tooltip="FE per item category">Loot Distribution</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="widget-donut-chart" class="toggle-checkbox widget-toggle" data-widget-id="widget-donut-chart">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Edit Layout Button -->
+                                <div class="pt-4 border-t border-dark-border">
+                                    <button id="btn-edit-layout" class="btn-secondary w-full">
+                                        Edit Layout
+                                    </button>
+                                    <p class="text-xs text-gray-500 mt-2 text-center">Or press Ctrl+F9 with overlay visible</p>
+                                </div>
                             </div>
 
-                            <!-- Overlay Opacity -->
-                            <div class="setting-row-vertical">
-                                <div class="flex justify-between mb-2">
-                                    <span class="setting-label">Overlay Opacity</span>
-                                    <span id="opacity-value" class="font-mono text-sm text-gray-400">90%</span>
-                                </div>
-                                <input type="range" id="setting-opacity" min="0" max="100" value="90" class="range-slider">
-                            </div>
-
-                            <!-- Charts Section -->
-                            <div class="pt-4 border-t border-dark-border">
-                                <div class="text-xs text-gray-500 uppercase tracking-wide mb-3">Charts</div>
-
-                                <!-- Pulse Chart Toggle -->
-                                <div class="setting-row mb-3">
-                                    <span class="setting-label" data-tooltip="FE per map histogram">Pulse Chart</span>
-                                    <label class="toggle">
-                                        <input type="checkbox" id="setting-chart-pulse" class="toggle-checkbox" data-setting="chart_pulse_enabled">
-                                        <div class="toggle-track"></div>
-                                    </label>
-                                </div>
-
-                                <!-- Efficiency Chart Toggle -->
-                                <div class="setting-row mb-3">
-                                    <span class="setting-label" data-tooltip="FE/hr over time">Efficiency Trend</span>
-                                    <label class="toggle">
-                                        <input type="checkbox" id="setting-chart-efficiency" class="toggle-checkbox" data-setting="chart_efficiency_enabled">
-                                        <div class="toggle-track"></div>
-                                    </label>
-                                </div>
-
-                                <!-- Donut Chart Toggle -->
+                            <!-- Legacy Overlay Settings (shown when use_widget_overlay is disabled) -->
+                            <div id="legacy-overlay-settings">
+                                <!-- Pin Overlay Toggle -->
                                 <div class="setting-row">
-                                    <span class="setting-label" data-tooltip="FE per item category">Loot Distribution</span>
+                                    <span class="setting-label">Pin Overlay</span>
                                     <label class="toggle">
-                                        <input type="checkbox" id="setting-chart-donut" class="toggle-checkbox" data-setting="chart_donut_enabled">
+                                        <input type="checkbox" id="setting-overlay-pinned" class="toggle-checkbox" data-setting="overlay_pinned">
                                         <div class="toggle-track"></div>
                                     </label>
+                                </div>
+
+                                <!-- Overlay Opacity -->
+                                <div class="setting-row-vertical">
+                                    <div class="flex justify-between mb-2">
+                                        <span class="setting-label">Overlay Opacity</span>
+                                        <span id="opacity-value" class="font-mono text-sm text-gray-400">90%</span>
+                                    </div>
+                                    <input type="range" id="setting-opacity" min="0" max="100" value="90" class="range-slider">
+                                </div>
+
+                                <!-- Charts Section -->
+                                <div class="pt-4 border-t border-dark-border">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide mb-3">Charts</div>
+
+                                    <!-- Pulse Chart Toggle -->
+                                    <div class="setting-row mb-3">
+                                        <span class="setting-label" data-tooltip="FE per map histogram">Pulse Chart</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="setting-chart-pulse" class="toggle-checkbox" data-setting="chart_pulse_enabled">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
+
+                                    <!-- Efficiency Chart Toggle -->
+                                    <div class="setting-row mb-3">
+                                        <span class="setting-label" data-tooltip="FE/hr over time">Efficiency Trend</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="setting-chart-efficiency" class="toggle-checkbox" data-setting="chart_efficiency_enabled">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
+
+                                    <!-- Donut Chart Toggle -->
+                                    <div class="setting-row">
+                                        <span class="setting-label" data-tooltip="FE per item category">Loot Distribution</span>
+                                        <label class="toggle">
+                                            <input type="checkbox" id="setting-chart-donut" class="toggle-checkbox" data-setting="chart_donut_enabled">
+                                            <div class="toggle-track"></div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
