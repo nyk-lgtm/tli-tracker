@@ -267,21 +267,25 @@ const WidgetManager = {
         const { session, currentMap } = this.state;
         const maps = session?.maps || [];
 
-        // Create chart structure with title
-        const chartContainer = document.createElement('div');
-        chartContainer.className = 'chart-widget-inner';
+        // Reuse existing structure if present, otherwise create it
+        let chartContainer = container.querySelector('.chart-widget-inner');
+        let chartContent = container.querySelector('.chart-content');
 
-        const title = document.createElement('div');
-        title.className = 'chart-title';
-        title.textContent = 'Value/Map';
-        chartContainer.appendChild(title);
+        if (!chartContainer) {
+            chartContainer = document.createElement('div');
+            chartContainer.className = 'chart-widget-inner';
 
-        const chartContent = document.createElement('div');
-        chartContent.className = 'chart-content';
-        chartContainer.appendChild(chartContent);
+            const title = document.createElement('div');
+            title.className = 'chart-title';
+            title.textContent = 'Value/Map';
+            chartContainer.appendChild(title);
 
-        container.innerHTML = '';
-        container.appendChild(chartContainer);
+            chartContent = document.createElement('div');
+            chartContent.className = 'chart-content';
+            chartContainer.appendChild(chartContent);
+
+            container.replaceChildren(chartContainer);
+        }
 
         if (typeof TLI !== 'undefined' && TLI.charts) {
             TLI.charts.renderPulse(chartContent, maps, currentMap);
@@ -299,21 +303,25 @@ const WidgetManager = {
         const sessionDuration = session?.duration_total || 0;
         const currentValue = session?.value || 0;
 
-        // Create chart structure with title
-        const chartContainer = document.createElement('div');
-        chartContainer.className = 'chart-widget-inner';
+        // Reuse existing structure if present, otherwise create it
+        let chartContainer = container.querySelector('.chart-widget-inner');
+        let chartContent = container.querySelector('.chart-content');
 
-        const title = document.createElement('div');
-        title.className = 'chart-title';
-        title.textContent = 'Efficiency';
-        chartContainer.appendChild(title);
+        if (!chartContainer) {
+            chartContainer = document.createElement('div');
+            chartContainer.className = 'chart-widget-inner';
 
-        const chartContent = document.createElement('div');
-        chartContent.className = 'chart-content';
-        chartContainer.appendChild(chartContent);
+            const title = document.createElement('div');
+            title.className = 'chart-title';
+            title.textContent = 'Efficiency';
+            chartContainer.appendChild(title);
 
-        container.innerHTML = '';
-        container.appendChild(chartContainer);
+            chartContent = document.createElement('div');
+            chartContent.className = 'chart-content';
+            chartContainer.appendChild(chartContent);
+
+            container.replaceChildren(chartContainer);
+        }
 
         if (typeof TLI !== 'undefined' && TLI.charts) {
             TLI.charts.renderEfficiency(chartContent, maps, sessionDuration, currentValue);
@@ -329,21 +337,25 @@ const WidgetManager = {
         const { session } = this.state;
         const drops = session?.drops || [];
 
-        // Create chart structure with title
-        const chartContainer = document.createElement('div');
-        chartContainer.className = 'chart-widget-inner';
+        // Reuse existing structure if present, otherwise create it
+        let chartContainer = container.querySelector('.chart-widget-inner');
+        let chartContent = container.querySelector('.chart-content');
 
-        const title = document.createElement('div');
-        title.className = 'chart-title';
-        title.textContent = 'Loot Distribution';
-        chartContainer.appendChild(title);
+        if (!chartContainer) {
+            chartContainer = document.createElement('div');
+            chartContainer.className = 'chart-widget-inner';
 
-        const chartContent = document.createElement('div');
-        chartContent.className = 'chart-content';
-        chartContainer.appendChild(chartContent);
+            const title = document.createElement('div');
+            title.className = 'chart-title';
+            title.textContent = 'Loot Distribution';
+            chartContainer.appendChild(title);
 
-        container.innerHTML = '';
-        container.appendChild(chartContainer);
+            chartContent = document.createElement('div');
+            chartContent.className = 'chart-content';
+            chartContainer.appendChild(chartContent);
+
+            container.replaceChildren(chartContainer);
+        }
 
         if (typeof TLI !== 'undefined' && TLI.charts) {
             TLI.charts.renderDonut(chartContent, drops);
@@ -392,10 +404,35 @@ const WidgetManager = {
             if (typeof TLI !== 'undefined') {
                 const { mapTicked, sessionTicked } = TLI.tickTimers(this.state);
                 if (mapTicked || sessionTicked) {
-                    this.updateAllWidgets();
+                    // Only update time-sensitive widgets (stats bar, efficiency chart)
+                    // Pulse and donut charts only change when data arrives, not on timer
+                    this.updateTimerWidgets();
                 }
             }
         }, 1000);
+    },
+
+    /**
+     * Update only time-sensitive widgets (called by timer loop)
+     */
+    updateTimerWidgets() {
+        for (const widget of this.widgets) {
+            if (!widget.enabled) continue;
+
+            const el = document.getElementById(widget.id);
+            if (!el) continue;
+
+            const content = el.querySelector('.widget-content');
+            if (!content) continue;
+
+            // Only update stats bar and efficiency chart on timer tick
+            if (widget.type === 'stats_bar') {
+                this.updateStatsBar(content);
+            } else if (widget.type === 'efficiency_chart') {
+                this.renderWidgetContent(widget, content);
+            }
+            // Skip pulse_chart and donut_chart - they only change on data updates
+        }
     },
 
     /**
