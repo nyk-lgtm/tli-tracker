@@ -210,6 +210,11 @@ class ApiBridge(QObject):
         """Enable or disable overlay edit mode."""
         return json.dumps(self.api.set_overlay_edit_mode(enabled), default=str)
 
+    @Slot(str, result=str)
+    def update_edit_mode_hotkey(self, hotkey: str) -> str:
+        """Update the edit mode hotkey at runtime."""
+        return json.dumps(self.api.update_edit_mode_hotkey(hotkey), default=str)
+
     # === Utility ===
 
     @Slot(result=str)

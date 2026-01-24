@@ -51,7 +51,9 @@ export function initElements() {
         legacyOverlaySettings: document.getElementById('legacy-overlay-settings'),
         settingWidgetOpacity: document.getElementById('setting-widget-opacity'),
         widgetOpacityValue: document.getElementById('widget-opacity-value'),
-        btnEditLayout: document.getElementById('btn-edit-layout'),
+        editHotkeyHint: document.getElementById('edit-hotkey-hint'),
+        settingHotkeyModifier: document.getElementById('setting-hotkey-modifier'),
+        settingHotkeyKey: document.getElementById('setting-hotkey-key'),  // Now an input, not select
         // Widget toggles (queried dynamically via .widget-toggle class)
     };
 }

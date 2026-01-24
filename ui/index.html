@@ -245,12 +245,19 @@
                                     </div>
                                 </div>
 
-                                <!-- Edit Layout Button -->
+                                <!-- Edit Mode Hotkey -->
                                 <div class="pt-4 border-t border-dark-border">
-                                    <button id="btn-edit-layout" class="btn-secondary w-full">
-                                        Edit Layout
-                                    </button>
-                                    <p class="text-xs text-gray-500 mt-2 text-center">Or press Ctrl+F9 with overlay visible</p>
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide mb-3">Edit Mode Hotkey</div>
+                                    <div class="flex gap-2 items-center justify-center mb-2">
+                                        <select id="setting-hotkey-modifier" class="select-input">
+                                            <option value="Ctrl">Ctrl</option>
+                                            <option value="Alt">Alt</option>
+                                            <option value="Shift">Shift</option>
+                                        </select>
+                                        <span class="text-gray-500">+</span>
+                                        <input type="text" id="setting-hotkey-key" class="key-capture-input" readonly value="F9" placeholder="Press key">
+                                    </div>
+                                    <p class="text-xs text-gray-500 text-center">Press <span id="edit-hotkey-hint" class="text-gray-400">Ctrl+F9</span> with overlay visible</p>
                                 </div>
                             </div>
 
