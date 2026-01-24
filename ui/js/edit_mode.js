@@ -6,7 +6,8 @@
 
 const EditMode = {
     enabled: false,
-    dragging: null,  // { widget, startX, startY, startLeft, startTop }
+    selected: new Set(),  // Set of selected widget elements
+    dragging: null,  // { primary, startX, startY, widgetStarts }
     resizing: null,  // { widget, handle, startX, startY, startRect }
 
     /**
@@ -53,6 +54,9 @@ const EditMode = {
             overlay?.classList.add('hidden');
             canvas?.classList.remove('edit-mode');
 
+            // Clear selection when exiting edit mode
+            this.clearSelection();
+
             // Remove editing class from all widgets
             document.querySelectorAll('.widget').forEach(w => {
                 w.classList.remove('editing');
@@ -83,11 +87,29 @@ const EditMode = {
             }
         }
 
-        // Check if clicking a widget (for dragging)
         const widget = target.closest('.widget');
-        if (widget && widget.classList.contains('editing')) {
-            this.startDrag(widget, e);
-            e.preventDefault();
+
+        // Click on empty canvas - deselect all
+        if (!widget) {
+            this.clearSelection();
+            return;
+        }
+
+        // Check if clicking a widget (for dragging/selection)
+        if (widget.classList.contains('editing')) {
+            if (e.ctrlKey) {
+                // Ctrl+click: toggle selection
+                this.toggleSelection(widget);
+                e.preventDefault();
+            } else {
+                // Regular click: select and drag
+                if (!this.selected.has(widget)) {
+                    this.clearSelection();
+                    this.addToSelection(widget);
+                }
+                this.startDrag(widget, e);
+                e.preventDefault();
+            }
         }
     },
 
@@ -114,17 +136,70 @@ const EditMode = {
     },
 
     /**
+     * Add widget to selection
+     */
+    addToSelection(widget) {
+        this.selected.add(widget);
+        widget.classList.add('selected');
+    },
+
+    /**
+     * Remove widget from selection
+     */
+    removeFromSelection(widget) {
+        this.selected.delete(widget);
+        widget.classList.remove('selected');
+    },
+
+    /**
+     * Toggle widget selection
+     */
+    toggleSelection(widget) {
+        if (this.selected.has(widget)) {
+            this.removeFromSelection(widget);
+        } else {
+            this.addToSelection(widget);
+        }
+    },
+
+    /**
+     * Clear all selections
+     */
+    clearSelection() {
+        for (const widget of this.selected) {
+            widget.classList.remove('selected');
+        }
+        this.selected.clear();
+    },
+
+    /**
      * Start dragging a widget
      */
     startDrag(widget, e) {
-        const rect = widget.getBoundingClientRect();
+        // Ensure dragged widget is in selection
+        if (!this.selected.has(widget)) {
+            this.clearSelection();
+            this.addToSelection(widget);
+        }
+
+        // Capture start positions for ALL selected widgets
+        const widgetStarts = [];
+        for (const w of this.selected) {
+            const rect = w.getBoundingClientRect();
+            widgetStarts.push({
+                widget: w,
+                startLeft: rect.left,
+                startTop: rect.top,
+            });
+        }
+
         this.dragging = {
-            widget,
+            primary: widget,  // The widget user clicked on
             startX: e.clientX,
             startY: e.clientY,
-            startLeft: rect.left,
-            startTop: rect.top,
+            widgetStarts,  // All selected widgets with their start positions
         };
+
         widget.classList.add('dragging');
     },
 
@@ -134,35 +209,45 @@ const EditMode = {
     updateDrag(e) {
         if (!this.dragging) return;
 
-        const { widget, startX, startY, startLeft, startTop } = this.dragging;
+        const { primary, startX, startY, widgetStarts } = this.dragging;
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
 
-        let newLeft = startLeft + deltaX;
-        let newTop = startTop + deltaY;
+        // Find primary widget's start position
+        const primaryStart = widgetStarts.find(ws => ws.widget === primary);
 
-        // Calculate proposed position
+        // Calculate proposed position for PRIMARY widget only
         const proposedRect = {
-            x: newLeft,
-            y: newTop,
-            width: widget.offsetWidth,
-            height: widget.offsetHeight,
+            x: primaryStart.startLeft + deltaX,
+            y: primaryStart.startTop + deltaY,
+            width: primary.offsetWidth,
+            height: primary.offsetHeight,
         };
 
-        // Apply snapping
-        const snapped = SnapEngine.calculateSnap(widget, proposedRect);
+        // Apply snapping to PRIMARY widget only, excluding all selected widgets
+        const snapped = SnapEngine.calculateSnap(primary, proposedRect, this.selected);
         SnapEngine.renderGuides(snapped.guides);
 
-        // Clamp to canvas bounds
-        const bounds = CanvasManager.clampToBounds({
-            x: snapped.x,
-            y: snapped.y,
-            width: widget.offsetWidth,
-            height: widget.offsetHeight,
-        });
+        // Calculate actual delta after snapping
+        const snappedDeltaX = snapped.x - primaryStart.startLeft;
+        const snappedDeltaY = snapped.y - primaryStart.startTop;
 
-        widget.style.left = `${bounds.x}px`;
-        widget.style.top = `${bounds.y}px`;
+        // Apply same delta to ALL selected widgets
+        for (const { widget, startLeft, startTop } of widgetStarts) {
+            const newLeft = startLeft + snappedDeltaX;
+            const newTop = startTop + snappedDeltaY;
+
+            // Clamp to canvas bounds
+            const bounds = CanvasManager.clampToBounds({
+                x: newLeft,
+                y: newTop,
+                width: widget.offsetWidth,
+                height: widget.offsetHeight,
+            });
+
+            widget.style.left = `${bounds.x}px`;
+            widget.style.top = `${bounds.y}px`;
+        }
     },
 
     /**
@@ -171,7 +256,7 @@ const EditMode = {
     endDrag() {
         if (!this.dragging) return;
 
-        this.dragging.widget.classList.remove('dragging');
+        this.dragging.primary.classList.remove('dragging');
         this.dragging = null;
 
         // Clear snap guides

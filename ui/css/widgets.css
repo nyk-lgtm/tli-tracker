@@ -138,6 +138,17 @@
     outline: 2px solid rgba(45, 212, 191, 0.9);
 }
 
+/* Widget selected (multi-select) */
+.widget.selected {
+    outline: 1px solid rgba(45, 212, 191, 0.8);
+    box-shadow: 0 0 12px rgba(45, 212, 191, 0.5);
+}
+
+/* Keep stronger outline when dragging selected widget */
+.widget.selected.dragging {
+    outline: 2px solid rgba(45, 212, 191, 0.9);
+}
+
 /* Resize handles (shown in edit mode) */
 .widget-resize-handle {
     position: absolute;

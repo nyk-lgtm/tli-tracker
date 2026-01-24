@@ -12,10 +12,11 @@ const SnapEngine = {
      * Calculate snap adjustment for a widget being dragged
      * @param {HTMLElement} widget - The widget being dragged
      * @param {DOMRect} proposedRect - The proposed position/size
+     * @param {Set|Array|HTMLElement} excludeWidgets - Widget(s) to exclude from snap targets
      * @returns {{x: number, y: number, guides: Array}} Adjusted position and guide lines
      */
-    calculateSnap(widget, proposedRect) {
-        const otherWidgets = this.getOtherWidgets(widget);
+    calculateSnap(widget, proposedRect, excludeWidgets = null) {
+        const otherWidgets = this.getOtherWidgets(excludeWidgets || widget);
 
         let snapX = null;
         let snapY = null;
@@ -206,12 +207,18 @@ const SnapEngine = {
     },
 
     /**
-     * Get all other visible widgets (excluding the one being dragged)
+     * Get all other visible widgets (excluding the specified widget(s))
+     * @param {HTMLElement|Array|Set} excludeWidgets - Widget(s) to exclude
      */
-    getOtherWidgets(excludeWidget) {
+    getOtherWidgets(excludeWidgets) {
+        // Accept single widget, array, or Set
+        const excluded = excludeWidgets instanceof Set
+            ? excludeWidgets
+            : (Array.isArray(excludeWidgets) ? new Set(excludeWidgets) : new Set([excludeWidgets]));
+
         const allWidgets = document.querySelectorAll('.widget');
         return Array.from(allWidgets).filter(w =>
-            w !== excludeWidget &&
+            !excluded.has(w) &&
             w.offsetParent !== null  // visible
         );
     },
