@@ -59,7 +59,7 @@ WIDGET_TYPES: dict[str, WidgetDefinition] = {
         "type": "pulse_chart",
         "label": "Value/Map Chart",
         "default_size": {"width": 160, "height": 120},
-        "min_size": {"width": 120, "height": 80},
+        "min_size": {"width": 150, "height": 80},  # 15 bars need ~132px + padding
         "max_size": {"width": 300, "height": 200},
         "default_position": {"x": 100, "y": 160},
     },
@@ -67,7 +67,7 @@ WIDGET_TYPES: dict[str, WidgetDefinition] = {
         "type": "efficiency_chart",
         "label": "Efficiency Chart",
         "default_size": {"width": 160, "height": 120},
-        "min_size": {"width": 120, "height": 80},
+        "min_size": {"width": 140, "height": 80},  # SVG stretches, needs decent width
         "max_size": {"width": 300, "height": 200},
         "default_position": {"x": 270, "y": 160},
     },
@@ -75,7 +75,7 @@ WIDGET_TYPES: dict[str, WidgetDefinition] = {
         "type": "donut_chart",
         "label": "Loot Distribution",
         "default_size": {"width": 280, "height": 120},
-        "min_size": {"width": 200, "height": 100},
+        "min_size": {"width": 220, "height": 100},  # 70px ring + legend needs horizontal space
         "max_size": {"width": 400, "height": 200},
         "default_position": {"x": 100, "y": 290},
     },
