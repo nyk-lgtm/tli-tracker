@@ -93,6 +93,14 @@ class Tracker:
             self._awaiting_init = False
             self._notify("initialized", {"item_count": count})
 
+        # Process bag modifications
+        if self.state.is_initialized and not skip_modfy:
+            mods = self.parser.parse_bag_modifications(text)
+            if mods:
+                changes = self.bag.process_modifications(mods)
+                if changes:
+                    self._process_drops(changes)
+
         # Check for map changes
         map_event = self.parser.parse_map_change(text)
         if map_event:
@@ -100,14 +108,6 @@ class Tracker:
                 self._on_map_enter(is_league_zone=map_event.is_league_zone)
             else:
                 self._on_map_exit(is_league_zone=map_event.is_league_zone)
-
-        # Process bag modifications (drops/consumption)
-        if self.state.is_initialized and not skip_modfy:
-            mods = self.parser.parse_bag_modifications(text)
-            if mods:
-                changes = self.bag.process_modifications(mods)
-                if changes:
-                    self._process_drops(changes)
 
         # Extract price data from AH searches
         price_events = self.parser.parse_price_search(text)
