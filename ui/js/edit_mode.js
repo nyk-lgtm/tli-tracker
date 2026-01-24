@@ -141,10 +141,22 @@ const EditMode = {
         let newLeft = startLeft + deltaX;
         let newTop = startTop + deltaY;
 
-        // Clamp to canvas bounds
-        const bounds = CanvasManager.clampToBounds({
+        // Calculate proposed position
+        const proposedRect = {
             x: newLeft,
             y: newTop,
+            width: widget.offsetWidth,
+            height: widget.offsetHeight,
+        };
+
+        // Apply snapping
+        const snapped = SnapEngine.calculateSnap(widget, proposedRect);
+        SnapEngine.renderGuides(snapped.guides);
+
+        // Clamp to canvas bounds
+        const bounds = CanvasManager.clampToBounds({
+            x: snapped.x,
+            y: snapped.y,
             width: widget.offsetWidth,
             height: widget.offsetHeight,
         });
@@ -161,6 +173,9 @@ const EditMode = {
 
         this.dragging.widget.classList.remove('dragging');
         this.dragging = null;
+
+        // Clear snap guides
+        SnapEngine.clearGuides();
     },
 
     /**
