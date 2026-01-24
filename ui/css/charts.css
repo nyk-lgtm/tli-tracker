@@ -83,31 +83,59 @@
    ============================================ */
 .pulse-chart {
     display: flex;
-    align-items: flex-end;
+    align-items: stretch;
     justify-content: flex-start;
     gap: 3px;
     height: 60px;
     padding: 0 2px;
+    position: relative;
 }
 
-.pulse-bar {
+/* Zero line (only shown when there are negative values) */
+.pulse-chart.has-negative::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--zero-line, 50%);
+    height: 1px;
+    background: rgba(100, 116, 139, 0.4);
+    z-index: 1;
+}
+
+.pulse-bar-wrapper {
     flex: 1;
     max-width: 20px;
     min-width: 6px;
+    position: relative;
+}
+
+.pulse-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
     background: linear-gradient(180deg, #14b8a6 0%, #0d9488 100%);
     border-radius: 2px 2px 0 0;
     transition: height 0.3s ease;
-    position: relative;
+}
+
+/* Positive bar positioning (grows up from bottom or from center) */
+.pulse-bar:not(.pulse-bar-negative) {
+    bottom: 0;
+}
+
+.pulse-chart.has-negative .pulse-bar:not(.pulse-bar-negative) {
+    bottom: var(--zero-line, 50%);
 }
 
 .pulse-bar:hover {
     background: linear-gradient(180deg, #22d3ee 0%, #14b8a6 100%);
 }
 
+/* Tooltip */
 .pulse-bar::after {
     content: attr(data-value);
     position: absolute;
-    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 8px;
@@ -115,7 +143,18 @@
     opacity: 0;
     transition: opacity 0.15s ease;
     white-space: nowrap;
-    padding-bottom: 2px;
+    padding: 2px 0;
+    z-index: 2;
+}
+
+/* Tooltip position for positive bars */
+.pulse-bar:not(.pulse-bar-negative)::after {
+    bottom: 100%;
+}
+
+/* Tooltip position for negative bars */
+.pulse-bar-negative::after {
+    top: 100%;
 }
 
 .pulse-bar:hover::after {
@@ -134,6 +173,34 @@
     }
     50% {
         box-shadow: 0 0 8px rgba(34, 211, 238, 0.7);
+    }
+}
+
+/* Negative value bar (red, grows downward from zero line) */
+.pulse-bar-negative {
+    top: calc(100% - var(--zero-line, 50%));
+    bottom: auto;
+    border-radius: 0 0 2px 2px;
+    background: linear-gradient(180deg, var(--color-danger-dark) 0%, var(--color-danger) 100%);
+}
+
+.pulse-bar-negative:hover {
+    background: linear-gradient(180deg, var(--color-danger-dark) 0%, var(--color-danger) 100%);
+    filter: brightness(1.15);
+}
+
+/* Negative live bar */
+.pulse-bar-live.pulse-bar-negative {
+    background: linear-gradient(180deg, var(--color-danger-dark) 0%, var(--color-danger) 100%);
+    animation: pulse-glow-negative 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-glow-negative {
+    0%, 100% {
+        box-shadow: 0 0 4px var(--color-danger-glow);
+    }
+    50% {
+        box-shadow: 0 0 8px var(--color-danger-glow);
     }
 }
 

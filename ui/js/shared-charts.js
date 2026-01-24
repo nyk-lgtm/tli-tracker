@@ -35,19 +35,36 @@ TLI.charts.renderPulse = function(container, maps, currentMap) {
         return;
     }
 
-    // Find max value for scaling
-    const maxValue = Math.max(...recentMaps.map(m => m.total_value || 0), 1);
+    // Check for negative values (rare)
+    const values = recentMaps.map(m => m.total_value || 0);
+    const maxPositive = Math.max(...values, 0);
+    const maxNegative = Math.abs(Math.min(...values, 0));
+    const hasNegative = maxNegative > 0;
 
-    // Build bars HTML
+    // Negatives are rare - give them a small fixed space (15%)
+    const negativeSpace = 15;
+    const positiveSpace = hasNegative ? 85 : 100;
+
+    // Build bars HTML (wrapped in wrapper divs for positioning)
     const barsHTML = recentMaps.map((map) => {
         const value = map.total_value || 0;
-        const heightPercent = (value / maxValue) * 100;
-        const minHeight = value > 0 ? Math.max(heightPercent, 5) : 2;
+        const absValue = Math.abs(value);
+        const isNegative = value < 0;
+
+        // Scale height relative to the space available for that direction
+        const maxForDirection = isNegative ? maxNegative : (maxPositive || 1);
+        const spaceForDirection = isNegative ? negativeSpace : positiveSpace;
+        const heightPercent = (absValue / maxForDirection) * spaceForDirection;
+        const minHeight = absValue > 0 ? Math.max(heightPercent, 2) : 1;
+
         const liveClass = map.isLive ? ' pulse-bar-live' : '';
-        return `<div class="pulse-bar${liveClass}" style="height: ${minHeight}%" data-value="${TLI.formatCompact(value)}"></div>`;
+        const negativeClass = isNegative ? ' pulse-bar-negative' : '';
+        return `<div class="pulse-bar-wrapper"><div class="pulse-bar${liveClass}${negativeClass}" style="height: ${minHeight}%" data-value="${TLI.formatCompact(value)}"></div></div>`;
     }).join('');
 
-    container.innerHTML = `<div class="pulse-chart">${barsHTML}</div>`;
+    const chartClass = hasNegative ? 'pulse-chart has-negative' : 'pulse-chart';
+    const chartStyle = hasNegative ? ` style="--zero-line: ${negativeSpace}%"` : '';
+    container.innerHTML = `<div class="${chartClass}"${chartStyle}>${barsHTML}</div>`;
 };
 
 /**
