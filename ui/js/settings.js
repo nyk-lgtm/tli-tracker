@@ -10,6 +10,9 @@ import { closeModal } from './modals.js';
 // Query all toggles with data-setting attribute
 const getToggles = () => document.querySelectorAll('.toggle-checkbox[data-setting]');
 
+// Query all widget toggles
+const getWidgetToggles = () => document.querySelectorAll('.toggle-checkbox.widget-toggle');
+
 // ============ Settings Tabs ============
 
 export function initSettingsTabs() {
@@ -61,12 +64,47 @@ function updateToggleVisual(checkbox) {
 
 function updateAllToggleVisuals() {
     getToggles().forEach(toggle => updateToggleVisual(toggle));
+    getWidgetToggles().forEach(toggle => updateToggleVisual(toggle));
 }
 
 export function initToggleListeners() {
     getToggles().forEach(toggle => {
         toggle.addEventListener('change', () => updateToggleVisual(toggle));
     });
+
+    // Widget toggles
+    getWidgetToggles().forEach(toggle => {
+        toggle.addEventListener('change', () => updateToggleVisual(toggle));
+    });
+}
+
+/**
+ * Initialize widget overlay UI (Edit Layout button, opacity slider)
+ */
+export function initWidgetOverlayListeners() {
+    // Edit Layout button
+    if (elements.btnEditLayout) {
+        elements.btnEditLayout.addEventListener('click', async () => {
+            try {
+                await api('set_overlay_edit_mode', true);
+                closeModal('settings');
+            } catch (e) {
+                console.error('Failed to enter edit mode:', e);
+                showStatus('Failed to enter edit mode', 'error');
+            }
+        });
+    }
+
+    // Widget opacity slider
+    if (elements.settingWidgetOpacity) {
+        elements.settingWidgetOpacity.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (elements.widgetOpacityValue) {
+                elements.widgetOpacityValue.textContent = val + '%';
+            }
+            api('set_overlay_opacity', val / 100);
+        });
+    }
 }
 
 export async function loadSettings() {
@@ -74,16 +112,45 @@ export async function loadSettings() {
         const newSettings = await api('get_settings');
         updateSettings(newSettings);
 
+        // Detect widget overlay mode
+        const useWidgetOverlay = newSettings.use_widget_overlay || false;
+
+        // Show/hide appropriate overlay settings section
+        if (elements.widgetOverlaySettings && elements.legacyOverlaySettings) {
+            if (useWidgetOverlay) {
+                elements.widgetOverlaySettings.classList.remove('hidden');
+                elements.legacyOverlaySettings.classList.add('hidden');
+            } else {
+                elements.widgetOverlaySettings.classList.add('hidden');
+                elements.legacyOverlaySettings.classList.remove('hidden');
+            }
+        }
+
         // Load all toggles from settings
         getToggles().forEach(toggle => {
             const key = toggle.dataset.setting;
             toggle.checked = settings[key] || false;
         });
 
+        // Load widget toggles from widgets array
+        if (useWidgetOverlay && newSettings.widgets) {
+            getWidgetToggles().forEach(toggle => {
+                const widgetId = toggle.dataset.widgetId;
+                const widget = newSettings.widgets.find(w => w.id === widgetId);
+                toggle.checked = widget ? widget.enabled : false;
+            });
+        }
+
         // Load non-toggle settings
         elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
         elements.opacityValue.textContent = elements.settingOpacity.value + '%';
         elements.settingInvestment.value = settings.investment_per_map || 0;
+
+        // Widget overlay opacity slider
+        if (elements.settingWidgetOpacity && elements.widgetOpacityValue) {
+            elements.settingWidgetOpacity.value = (settings.overlay_opacity || 0.9) * 100;
+            elements.widgetOpacityValue.textContent = elements.settingWidgetOpacity.value + '%';
+        }
 
         updateAllToggleVisuals();
         applyMapValueVisibility();
@@ -100,8 +167,25 @@ export async function saveSettings() {
     });
 
     // Save non-toggle settings
-    settings.overlay_opacity = elements.settingOpacity.value / 100;
+    // Use widget opacity slider if in widget mode, otherwise legacy slider
+    const useWidgetOverlay = settings.use_widget_overlay || false;
+    if (useWidgetOverlay && elements.settingWidgetOpacity) {
+        settings.overlay_opacity = elements.settingWidgetOpacity.value / 100;
+    } else {
+        settings.overlay_opacity = elements.settingOpacity.value / 100;
+    }
     settings.investment_per_map = parseInt(elements.settingInvestment.value) || 0;
+
+    // Save widget enabled states if in widget mode
+    if (useWidgetOverlay && settings.widgets) {
+        getWidgetToggles().forEach(toggle => {
+            const widgetId = toggle.dataset.widgetId;
+            const widget = settings.widgets.find(w => w.id === widgetId);
+            if (widget) {
+                widget.enabled = toggle.checked;
+            }
+        });
+    }
 
     try {
         await api('save_settings', settings);

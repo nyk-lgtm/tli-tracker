@@ -45,6 +45,13 @@ export function initElements() {
         // Settings tabs
         settingsTabs: document.querySelectorAll('.settings-tab'),
         tabGeneral: document.getElementById('tab-general'),
-        tabOverlay: document.getElementById('tab-overlay')
+        tabOverlay: document.getElementById('tab-overlay'),
+        // Widget overlay settings
+        widgetOverlaySettings: document.getElementById('widget-overlay-settings'),
+        legacyOverlaySettings: document.getElementById('legacy-overlay-settings'),
+        settingWidgetOpacity: document.getElementById('setting-widget-opacity'),
+        widgetOpacityValue: document.getElementById('widget-opacity-value'),
+        btnEditLayout: document.getElementById('btn-edit-layout'),
+        // Widget toggles (queried dynamically via .widget-toggle class)
     };
 }
