@@ -7,6 +7,7 @@
 
 const SnapEngine = {
     THRESHOLD: 8,  // Snap distance in pixels
+    GAP: 1,        // Gap between edge-to-edge snapped widgets
 
     /**
      * Calculate snap adjustment for a widget being dragged
@@ -46,27 +47,27 @@ const SnapEngine = {
 
             // Horizontal snapping (X axis)
             if (snapX === null) {
-                // Left edge to left edge
+                // Left edge to left edge (alignment, no gap)
                 if (Math.abs(proposed.left - target.left) < this.THRESHOLD) {
                     snapX = target.left;
                     guides.push({ type: 'vertical', x: target.left });
                 }
-                // Right edge to right edge
+                // Right edge to right edge (alignment, no gap)
                 else if (Math.abs(proposed.right - target.right) < this.THRESHOLD) {
                     snapX = target.right - proposed.width;
                     guides.push({ type: 'vertical', x: target.right });
                 }
-                // Left edge to right edge
-                else if (Math.abs(proposed.left - target.right) < this.THRESHOLD) {
-                    snapX = target.right;
+                // Left edge to right edge (docking, add gap)
+                else if (Math.abs(proposed.left - target.right - this.GAP) < this.THRESHOLD) {
+                    snapX = target.right + this.GAP;
                     guides.push({ type: 'vertical', x: target.right });
                 }
-                // Right edge to left edge
-                else if (Math.abs(proposed.right - target.left) < this.THRESHOLD) {
-                    snapX = target.left - proposed.width;
+                // Right edge to left edge (docking, add gap)
+                else if (Math.abs(proposed.right - target.left + this.GAP) < this.THRESHOLD) {
+                    snapX = target.left - proposed.width - this.GAP;
                     guides.push({ type: 'vertical', x: target.left });
                 }
-                // Center to center (horizontal)
+                // Center to center (horizontal, no gap)
                 else if (Math.abs(proposed.centerX - target.centerX) < this.THRESHOLD) {
                     snapX = target.centerX - proposed.width / 2;
                     guides.push({ type: 'vertical', x: target.centerX });
@@ -75,27 +76,27 @@ const SnapEngine = {
 
             // Vertical snapping (Y axis)
             if (snapY === null) {
-                // Top edge to top edge
+                // Top edge to top edge (alignment, no gap)
                 if (Math.abs(proposed.top - target.top) < this.THRESHOLD) {
                     snapY = target.top;
                     guides.push({ type: 'horizontal', y: target.top });
                 }
-                // Bottom edge to bottom edge
+                // Bottom edge to bottom edge (alignment, no gap)
                 else if (Math.abs(proposed.bottom - target.bottom) < this.THRESHOLD) {
                     snapY = target.bottom - proposed.height;
                     guides.push({ type: 'horizontal', y: target.bottom });
                 }
-                // Top edge to bottom edge
-                else if (Math.abs(proposed.top - target.bottom) < this.THRESHOLD) {
-                    snapY = target.bottom;
+                // Top edge to bottom edge (docking, add gap)
+                else if (Math.abs(proposed.top - target.bottom - this.GAP) < this.THRESHOLD) {
+                    snapY = target.bottom + this.GAP;
                     guides.push({ type: 'horizontal', y: target.bottom });
                 }
-                // Bottom edge to top edge
-                else if (Math.abs(proposed.bottom - target.top) < this.THRESHOLD) {
-                    snapY = target.top - proposed.height;
+                // Bottom edge to top edge (docking, add gap)
+                else if (Math.abs(proposed.bottom - target.top + this.GAP) < this.THRESHOLD) {
+                    snapY = target.top - proposed.height - this.GAP;
                     guides.push({ type: 'horizontal', y: target.top });
                 }
-                // Center to center (vertical)
+                // Center to center (vertical, no gap)
                 else if (Math.abs(proposed.centerY - target.centerY) < this.THRESHOLD) {
                     snapY = target.centerY - proposed.height / 2;
                     guides.push({ type: 'horizontal', y: target.centerY });
@@ -152,24 +153,30 @@ const SnapEngine = {
 
             // Snap right edge (when resizing east)
             if (resizingRight) {
+                // Align to right edge (no gap)
                 if (Math.abs(proposed.right - target.right) < this.THRESHOLD) {
                     width = target.right - x;
                     guides.push({ type: 'vertical', x: target.right });
-                } else if (Math.abs(proposed.right - target.left) < this.THRESHOLD) {
-                    width = target.left - x;
+                }
+                // Dock to left edge (add gap)
+                else if (Math.abs(proposed.right - target.left + this.GAP) < this.THRESHOLD) {
+                    width = target.left - x - this.GAP;
                     guides.push({ type: 'vertical', x: target.left });
                 }
             }
 
             // Snap left edge (when resizing west)
             if (resizingLeft) {
+                // Align to left edge (no gap)
                 if (Math.abs(proposed.left - target.left) < this.THRESHOLD) {
                     const newLeft = target.left;
                     width = width + (x - newLeft);
                     x = newLeft;
                     guides.push({ type: 'vertical', x: target.left });
-                } else if (Math.abs(proposed.left - target.right) < this.THRESHOLD) {
-                    const newLeft = target.right;
+                }
+                // Dock to right edge (add gap)
+                else if (Math.abs(proposed.left - target.right - this.GAP) < this.THRESHOLD) {
+                    const newLeft = target.right + this.GAP;
                     width = width + (x - newLeft);
                     x = newLeft;
                     guides.push({ type: 'vertical', x: target.right });
@@ -178,24 +185,30 @@ const SnapEngine = {
 
             // Snap bottom edge (when resizing south)
             if (resizingBottom) {
+                // Align to bottom edge (no gap)
                 if (Math.abs(proposed.bottom - target.bottom) < this.THRESHOLD) {
                     height = target.bottom - y;
                     guides.push({ type: 'horizontal', y: target.bottom });
-                } else if (Math.abs(proposed.bottom - target.top) < this.THRESHOLD) {
-                    height = target.top - y;
+                }
+                // Dock to top edge (add gap)
+                else if (Math.abs(proposed.bottom - target.top + this.GAP) < this.THRESHOLD) {
+                    height = target.top - y - this.GAP;
                     guides.push({ type: 'horizontal', y: target.top });
                 }
             }
 
             // Snap top edge (when resizing north)
             if (resizingTop) {
+                // Align to top edge (no gap)
                 if (Math.abs(proposed.top - target.top) < this.THRESHOLD) {
                     const newTop = target.top;
                     height = height + (y - newTop);
                     y = newTop;
                     guides.push({ type: 'horizontal', y: target.top });
-                } else if (Math.abs(proposed.top - target.bottom) < this.THRESHOLD) {
-                    const newTop = target.bottom;
+                }
+                // Dock to bottom edge (add gap)
+                else if (Math.abs(proposed.top - target.bottom - this.GAP) < this.THRESHOLD) {
+                    const newTop = target.bottom + this.GAP;
                     height = height + (y - newTop);
                     y = newTop;
                     guides.push({ type: 'horizontal', y: target.bottom });
@@ -227,10 +240,14 @@ const SnapEngine = {
      * Find widgets that share an edge with the given widget
      * @param {HTMLElement} widget - The widget being resized
      * @param {string} handle - The resize handle (e.g., 'e', 'w', 'n', 's', 'se')
-     * @param {number} threshold - Distance threshold for "shared" edge (default 4px)
+     * @param {number} threshold - Distance threshold for "linked" edge (default accounts for GAP + tolerance)
      * @returns {Array} Array of {widget, sharedEdge, linkedEdge} objects
      */
-    findLinkedWidgets(widget, handle, threshold = 4) {
+    findLinkedWidgets(widget, handle, threshold = null) {
+        // Default threshold accounts for the gap plus some tolerance
+        if (threshold === null) {
+            threshold = this.GAP + 3;
+        }
         const otherWidgets = this.getOtherWidgets(widget);
         const rect = widget.getBoundingClientRect();
         const linked = [];
