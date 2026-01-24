@@ -147,12 +147,11 @@ export function renderDrops() {
         return;
     }
 
-    const drops = [...state.drops].slice(0, 50); // Limit to 50 most recent
-
+    // Pass all drops - each render function will aggregate then limit to top 50 item types
     if (state.displayMode === 'items') {
-        renderItemsMode(drops);
+        renderItemsMode(state.drops);
     } else {
-        renderValueMode(drops);
+        renderValueMode(state.drops);
     }
 }
 
@@ -184,7 +183,7 @@ function renderValueMode(drops) {
         }
     });
 
-    // Sort by value/quantity
+    // Sort by value/quantity, then limit to top 50 item types
     const sorted = Object.entries(itemTotals)
         .sort((a, b) => {
             const itemA = a[1];
@@ -204,8 +203,8 @@ function renderValueMode(drops) {
                 // Neither has price: sort by Quantity (desc)
                 return Math.abs(itemB.quantity) - Math.abs(itemA.quantity);
             }
-        });
-
+        })
+        .slice(0, 50);
 
     const html = sorted.map(([id, item]) => {
         const valueClass = item.value >= 0 ? 'positive' : 'negative';
@@ -243,9 +242,10 @@ function renderItemsMode(drops) {
         itemCounts[drop.item_id].quantity += drop.quantity;
     });
 
-    // Sort by quantity (highest first)
+    // Sort by quantity (highest first), then limit to top 50 item types
     const sorted = Object.entries(itemCounts)
-        .sort((a, b) => b[1].quantity - a[1].quantity);
+        .sort((a, b) => b[1].quantity - a[1].quantity)
+        .slice(0, 50);
 
     const html = sorted.map(([id, item]) => {
         const valueClass = item.quantity >= 0 ? 'positive' : 'negative';
