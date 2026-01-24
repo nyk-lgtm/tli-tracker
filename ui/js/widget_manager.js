@@ -53,6 +53,7 @@ const WidgetManager = {
         opacity: 0.9,
         showMapValue: true,
         efficiencyPerMap: false,
+        editModeHotkey: 'Ctrl+F9',
     },
 
     /**
@@ -66,6 +67,9 @@ const WidgetManager = {
 
         // Render all enabled widgets
         this.renderAll();
+
+        // Update hotkey label
+        this.updateHotkeyLabel();
 
         // Start timer loop for live updates
         this.startTimerLoop();
@@ -88,6 +92,7 @@ const WidgetManager = {
             this.settings.opacity = settings.overlay_opacity ?? 0.9;
             this.settings.showMapValue = settings.show_map_value ?? true;
             this.settings.efficiencyPerMap = settings.efficiency_per_map ?? false;
+            this.settings.editModeHotkey = settings.overlay_edit_mode_hotkey ?? 'Ctrl+F9';
 
             // Apply opacity
             document.documentElement.style.setProperty('--bg-opacity', this.settings.opacity);
@@ -356,6 +361,17 @@ const WidgetManager = {
     async onSettingsUpdate() {
         await this.loadWidgets();
         this.renderAll();
+        this.updateHotkeyLabel();
+    },
+
+    /**
+     * Update the edit mode hotkey label
+     */
+    updateHotkeyLabel() {
+        const label = document.getElementById('edit-mode-hotkey');
+        if (label && this.settings.editModeHotkey) {
+            label.textContent = this.settings.editModeHotkey;
+        }
     },
 
     /**
