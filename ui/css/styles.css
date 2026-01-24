@@ -638,7 +638,8 @@ hr {
 
 /* Range Slider */
 .range-slider {
-    width: 100%;
+    width: calc(100% - 8px);
+    margin: 0 4px;
     height: 6px;
     background: var(--color-border);
     border-radius: 3px;
