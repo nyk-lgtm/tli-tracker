@@ -179,47 +179,85 @@ const WidgetManager = {
     },
 
     /**
-     * Render stats bar widget
+     * Render stats bar widget (initial DOM structure)
      */
     renderStatsBar(container) {
-        const { currentMap, session } = this.state;
-
-        const mapTime = currentMap ? TLI.formatTime(currentMap.duration) : '-:-';
-        const mapValue = currentMap ? TLI.formatValue(currentMap.value) : '+0';
-        const mapValueClass = (currentMap?.value ?? 0) >= 0 ? 'positive' : 'negative';
-
-        const rate = session
-            ? TLI.formatCompact(this.settings.efficiencyPerMap ? session.value_per_map : session.value_per_hour)
-            : '0';
-        const rateSuffix = this.settings.efficiencyPerMap ? '/map' : '/hr';
-        const mapCount = session?.map_count ?? 0;
-
-        const mapValueDisplay = this.settings.showMapValue ? 'flex' : 'none';
-        const indicatorClass = this.state.inMap ? 'in-map-dot' : 'in-map-dot inactive';
-
         container.innerHTML = `
             <div class="stats-bar-content">
                 <div class="stat-group">
-                    <div class="${indicatorClass}"></div>
+                    <div class="in-map-dot" data-el="indicator"></div>
                     <div class="stat">
-                        <span class="stat-value">${mapTime}</span>
+                        <span class="stat-value" data-el="map-time">-:-</span>
                     </div>
-                    <div class="stat" style="display: ${mapValueDisplay}">
-                        <span class="stat-value ${mapValueClass}">${mapValue}</span>
+                    <div class="stat" data-el="map-value-container">
+                        <span class="stat-value" data-el="map-value">+0</span>
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="stat-section">
-                    <span class="stat-value">${rate}</span>
-                    <span class="stat-label">${rateSuffix}</span>
+                    <span class="stat-value" data-el="rate">0</span>
+                    <span class="stat-label" data-el="rate-suffix">/hr</span>
                 </div>
                 <div class="divider"></div>
                 <div class="stat-section">
                     <span class="stat-label">#</span>
-                    <span class="stat-value">${mapCount}</span>
+                    <span class="stat-value" data-el="map-count">0</span>
                 </div>
             </div>
         `;
+        // Apply initial values
+        this.updateStatsBar(container);
+    },
+
+    /**
+     * Update stats bar values (targeted textContent updates)
+     */
+    updateStatsBar(container) {
+        const { currentMap, session } = this.state;
+
+        // Map time
+        const timeEl = container.querySelector('[data-el="map-time"]');
+        if (timeEl) {
+            timeEl.textContent = currentMap ? TLI.formatTime(currentMap.duration) : '-:-';
+        }
+
+        // Map value
+        const valueEl = container.querySelector('[data-el="map-value"]');
+        const valueContainer = container.querySelector('[data-el="map-value-container"]');
+        if (valueEl) {
+            const value = currentMap?.value ?? 0;
+            valueEl.textContent = currentMap ? TLI.formatValue(value) : '+0';
+            valueEl.classList.toggle('positive', value >= 0);
+            valueEl.classList.toggle('negative', value < 0);
+        }
+        if (valueContainer) {
+            valueContainer.style.display = this.settings.showMapValue ? 'flex' : 'none';
+        }
+
+        // In-map indicator
+        const indicator = container.querySelector('[data-el="indicator"]');
+        if (indicator) {
+            indicator.classList.toggle('inactive', !this.state.inMap);
+        }
+
+        // Rate
+        const rateEl = container.querySelector('[data-el="rate"]');
+        const rateSuffixEl = container.querySelector('[data-el="rate-suffix"]');
+        if (rateEl) {
+            const rate = session
+                ? TLI.formatCompact(this.settings.efficiencyPerMap ? session.value_per_map : session.value_per_hour)
+                : '0';
+            rateEl.textContent = rate;
+        }
+        if (rateSuffixEl) {
+            rateSuffixEl.textContent = this.settings.efficiencyPerMap ? '/map' : '/hr';
+        }
+
+        // Map count
+        const countEl = container.querySelector('[data-el="map-count"]');
+        if (countEl) {
+            countEl.textContent = session?.map_count ?? 0;
+        }
     },
 
     /**
@@ -337,7 +375,12 @@ const WidgetManager = {
             const content = el.querySelector('.widget-content');
             if (!content) continue;
 
-            this.renderWidgetContent(widget, content);
+            // Use targeted updates for stats bar, full re-render for charts
+            if (widget.type === 'stats_bar') {
+                this.updateStatsBar(content);
+            } else {
+                this.renderWidgetContent(widget, content);
+            }
         }
     },
 
