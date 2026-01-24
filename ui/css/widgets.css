@@ -111,10 +111,31 @@
     pointer-events: auto;
 }
 
+/* Canvas in edit mode - enable pointer events */
+#widget-canvas.edit-mode {
+    pointer-events: auto;
+}
+
+#widget-canvas.edit-mode .widget {
+    pointer-events: auto;
+}
+
 /* Widget in edit mode - show chrome */
 .widget.editing {
     outline: 1px dashed rgba(45, 212, 191, 0.6);
     cursor: move;
+}
+
+/* Widget being dragged */
+.widget.dragging {
+    opacity: 0.9;
+    outline: 2px solid rgba(45, 212, 191, 0.9);
+    z-index: 1000;
+}
+
+/* Widget being resized */
+.widget.resizing {
+    outline: 2px solid rgba(45, 212, 191, 0.9);
 }
 
 /* Resize handles (shown in edit mode) */

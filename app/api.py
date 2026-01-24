@@ -423,6 +423,19 @@ class Api:
         except Exception as e:
             return {"status": "error", "message": str(e)}
 
+    def save_widget_layout(self, layout_json: str) -> dict:
+        """Save widget layout to config."""
+        import json as json_module
+
+        try:
+            widgets = json_module.loads(layout_json)
+            config = load_config()
+            config["widgets"] = widgets
+            save_config(config)
+            return {"status": "ok"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
     # === Utility ===
 
     def ping(self) -> dict:

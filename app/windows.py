@@ -206,6 +206,7 @@ class OverlayWindow(QMainWindow):
         super().__init__()
         self.bridge = bridge
         self._click_through_enabled = True
+        self._edit_mode = False  # Edit mode state
 
         # Check feature flag for widget-based overlay
         config = load_config()
@@ -348,3 +349,35 @@ class OverlayWindow(QMainWindow):
         self._click_through_enabled = enabled
         if self.isVisible():
             self._apply_click_through(enabled)
+
+    def toggle_edit_mode(self) -> None:
+        """Toggle edit mode on/off."""
+        self.set_edit_mode(not self._edit_mode)
+
+    def set_edit_mode(self, enabled: bool) -> None:
+        """
+        Enable or disable edit mode.
+
+        In edit mode:
+        - Click-through is disabled (window is interactive)
+        - Widgets show resize handles and can be dragged
+        - Visual overlay indicates edit mode
+        """
+        if not self._use_widget_overlay:
+            return
+
+        if self._edit_mode == enabled:
+            return
+
+        self._edit_mode = enabled
+        print(f"[Overlay] Edit mode: {'enabled' if enabled else 'disabled'}")
+
+        # Toggle click-through (disabled in edit mode)
+        self._apply_click_through(not enabled)
+
+        # Notify JavaScript
+        self.bridge.emit_event("edit_mode", {"enabled": enabled})
+
+    def is_edit_mode(self) -> bool:
+        """Check if edit mode is active."""
+        return self._edit_mode
