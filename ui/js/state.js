@@ -17,12 +17,8 @@ export const settings = {
     tax_enabled: false,
     overlay_opacity: 0.9,
     show_map_value: false,
-    overlay_pinned: false,
     efficiency_per_map: false,
-    investment_per_map: 0,
-    chart_pulse_enabled: false,
-    chart_efficiency_enabled: false,
-    chart_donut_enabled: false
+    investment_per_map: 0
 };
 
 // Allow settings to be replaced entirely (for loadSettings)

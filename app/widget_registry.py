@@ -75,7 +75,10 @@ WIDGET_TYPES: dict[str, WidgetDefinition] = {
         "type": "donut_chart",
         "label": "Loot Distribution",
         "default_size": {"width": 280, "height": 120},
-        "min_size": {"width": 220, "height": 100},  # 70px ring + legend needs horizontal space
+        "min_size": {
+            "width": 220,
+            "height": 100,
+        },  # 70px ring + legend needs horizontal space
         "max_size": {"width": 400, "height": 200},
         "default_position": {"x": 100, "y": 290},
     },

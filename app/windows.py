@@ -14,7 +14,6 @@ from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebChannel import QWebChannel
 
 from app.dialogs import show_error, DialogResult
-from app.storage import load_config
 from app.monitor_utils import get_game_monitor, get_primary_monitor
 
 
@@ -207,10 +206,6 @@ class OverlayWindow(QMainWindow):
         self.bridge = bridge
         self._click_through_enabled = True
         self._edit_mode = False  # Edit mode state
-
-        # Check feature flag for widget-based overlay
-        config = load_config()
-        self._use_widget_overlay = config.get("use_widget_overlay", False)
         self._current_monitor = None  # Track current monitor geometry
 
         self.setWindowTitle("TLI Overlay")
@@ -223,13 +218,8 @@ class OverlayWindow(QMainWindow):
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
-        # Size depends on overlay mode
-        if self._use_widget_overlay:
-            # Widget overlay: full-screen canvas on game monitor
-            self._update_to_game_monitor()
-        else:
-            # Legacy overlay: fixed size bar
-            self.resize(330, 50)
+        # Widget overlay: full-screen canvas on game monitor
+        self._update_to_game_monitor()
 
         # Create web view
         self.web_view = QWebEngineView()
@@ -250,20 +240,15 @@ class OverlayWindow(QMainWindow):
         self.channel.registerObject("api", bridge)
         self.web_view.page().setWebChannel(self.channel)
 
-        # Load appropriate overlay HTML
-        if self._use_widget_overlay:
-            html_path = self._get_ui_path("overlay_v2.html")
-        else:
-            html_path = self._get_ui_path("overlay.html")
-
+        # Load overlay HTML
+        html_path = self._get_ui_path("overlay.html")
         if html_path:
             self.web_view.setUrl(QUrl.fromLocalFile(str(html_path)))
 
-        # Start monitor polling timer for widget overlay
-        if self._use_widget_overlay:
-            self._monitor_timer = QTimer()
-            self._monitor_timer.timeout.connect(self._check_monitor_change)
-            self._monitor_timer.start(5000)  # Check every 5 seconds
+        # Start monitor polling timer
+        self._monitor_timer = QTimer()
+        self._monitor_timer.timeout.connect(self._check_monitor_change)
+        self._monitor_timer.start(5000)  # Check every 5 seconds
 
         self.hide()
 
@@ -302,8 +287,6 @@ class OverlayWindow(QMainWindow):
 
     def _check_monitor_change(self) -> None:
         """Check if game moved to different monitor and update overlay."""
-        if not self._use_widget_overlay:
-            return
         self._update_to_game_monitor()
 
     def _get_ui_path(self, filename: str) -> Optional[Path]:
@@ -363,9 +346,6 @@ class OverlayWindow(QMainWindow):
         - Widgets show resize handles and can be dragged
         - Visual overlay indicates edit mode
         """
-        if not self._use_widget_overlay:
-            return
-
         if self._edit_mode == enabled:
             return
 

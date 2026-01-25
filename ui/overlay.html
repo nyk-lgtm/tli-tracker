@@ -10,60 +10,31 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/overlay.css">
     <link rel="stylesheet" href="css/charts.css">
+    <link rel="stylesheet" href="css/widgets.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <div class="overlay-wrapper" id="overlay-wrapper">
-        <div class="overlay-container" id="overlay-container">
-            <!-- Left: indicator + time + map value -->
-            <div class="stat-group">
-                <div class="in-map-dot" id="map-indicator"></div>
-                <div class="stat">
-                    <span class="stat-value" id="map-time">-:-</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-value positive" id="map-value">+0</span>
-                </div>
-            </div>
+    <!-- Full-screen widget canvas -->
+    <div id="widget-canvas">
+        <!-- Widgets will be injected here by widget_manager.js -->
 
-            <div class="divider"></div>
-
-            <!-- Center: rate -->
-            <div class="stat-section">
-                <span class="stat-value" id="rate">0</span>
-                <span class="stat-label" id="rate-suffix">/hr</span>
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- Right: map count -->
-            <div class="stat-section">
-                <span class="stat-label">#</span>
-                <span class="stat-value" id="map-count">0</span>
-            </div>
+        <!-- Edit mode overlay (hidden by default) -->
+        <div id="edit-mode-overlay" class="edit-mode-overlay hidden">
+            <div class="edit-mode-border"></div>
+            <div class="edit-mode-label">EDIT | Ctrl+Click to multi-select | <span id="edit-mode-hotkey">Ctrl+F9</span> or Esc to exit</div>
         </div>
 
-        <!-- Charts Container -->
-        <div class="charts-container" id="charts-container">
-            <div class="chart-card chart-pulse hidden">
-                <div class="chart-title">Value/Map</div>
-                <div id="chart-pulse-content"></div>
-            </div>
-            <div class="chart-card chart-efficiency hidden">
-                <div class="chart-title">Efficiency</div>
-                <div id="chart-efficiency-content"></div>
-            </div>
-            <div class="chart-card chart-donut hidden">
-                <div class="chart-title">Loot Distribution</div>
-                <div id="chart-donut-content"></div>
-            </div>
-        </div>
+        <!-- Snap guides (rendered during drag) -->
+        <svg id="snap-guides" class="snap-guides"></svg>
     </div>
 
     <script src="js/shared-utils.js"></script>
     <script src="js/shared-charts.js"></script>
     <script src="js/qwebchannel.js"></script>
     <script src="js/qt_bridge.js"></script>
-    <script src="js/overlay.js"></script>
+    <script src="js/canvas_manager.js"></script>
+    <script src="js/widget_manager.js"></script>
+    <script src="js/snap_engine.js"></script>
+    <script src="js/edit_mode.js"></script>
 </body>
 </html>
