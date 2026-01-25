@@ -35,15 +35,15 @@ TLI.charts.renderPulse = function(container, maps, currentMap) {
         return;
     }
 
-    // Check for negative values (rare)
+    // Calculate unified scale for both positive and negative values
     const values = recentMaps.map(m => m.total_value || 0);
     const maxPositive = Math.max(...values, 0);
     const maxNegative = Math.abs(Math.min(...values, 0));
     const hasNegative = maxNegative > 0;
 
-    // Negatives are rare - give them a small fixed space (15%)
-    const negativeSpace = 15;
-    const positiveSpace = hasNegative ? 85 : 100;
+    // Total range for unified scaling (both directions use same scale)
+    const totalRange = (maxPositive + maxNegative) || 1;
+    const negativeSpace = hasNegative ? (maxNegative / totalRange) * 100 : 0;
 
     // Build bars HTML (wrapped in wrapper divs for positioning)
     const barsHTML = recentMaps.map((map) => {
@@ -51,10 +51,8 @@ TLI.charts.renderPulse = function(container, maps, currentMap) {
         const absValue = Math.abs(value);
         const isNegative = value < 0;
 
-        // Scale height relative to the space available for that direction
-        const maxForDirection = isNegative ? maxNegative : (maxPositive || 1);
-        const spaceForDirection = isNegative ? negativeSpace : positiveSpace;
-        const heightPercent = (absValue / maxForDirection) * spaceForDirection;
+        // Scale height relative to total range (unified scale)
+        const heightPercent = (absValue / totalRange) * 100;
         const minHeight = absValue > 0 ? Math.max(heightPercent, 2) : 1;
 
         const liveClass = map.isLive ? ' pulse-bar-live' : '';
