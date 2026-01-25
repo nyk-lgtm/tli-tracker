@@ -226,10 +226,6 @@ class Api:
 
     def save_settings(self, settings: dict) -> dict:
         """Save application settings."""
-        # Extract overlay_pinned and apply click-through immediately
-        overlay_pinned = settings.get("overlay_pinned", False)
-        self.set_overlay_click_through(overlay_pinned)
-
         success = save_config(settings)
         return {"status": "ok" if success else "error"}
 
@@ -238,21 +234,15 @@ class Api:
         default_settings = {
             "display_mode": "value",
             "overlay_opacity": 0.9,
-            "overlay_pinned": False,
-            "overlay_position": {"x": 100, "y": 100},
             "tax_enabled": False,
             "tax_rate": 0.125,
             "show_map_value": False,
             "efficiency_per_map": False,
             "investment_per_map": 0,
-            "chart_pulse_enabled": False,
-            "chart_efficiency_enabled": False,
-            "chart_donut_enabled": False,
         }
         success = save_config(default_settings)
 
         if self._overlay_window:
-            self.set_overlay_click_through(False)
             self._push_to_ui("settings_reset", {})
 
         return {"status": "ok" if success else "error"}
@@ -287,26 +277,14 @@ class Api:
             return {"status": "error", "message": str(e)}
 
     def set_overlay_click_through(self, enabled: bool) -> dict:
-        """Enable or disable click-through on overlay and save to config."""
+        """Enable or disable click-through on overlay."""
         if not self._overlay_window:
             return {"status": "error", "message": "No overlay window"}
 
         try:
-            config = load_config()
-
-            # Widget overlay: always keep click-through enabled (edit mode handles toggling)
-            if config.get("use_widget_overlay", False):
-                enabled = True
-
             hwnd = int(self._overlay_window.winId())
             success = set_click_through(hwnd, enabled)
             self._overlay_window.set_click_through(enabled)
-
-            # Save pin state to config (pinned = click-through enabled)
-            # Only save for legacy overlay
-            if not config.get("use_widget_overlay", False):
-                config["overlay_pinned"] = enabled
-                save_config(config)
 
             return {"status": "ok" if success else "error"}
         except Exception as e:
@@ -376,50 +354,6 @@ class Api:
                 self._push_to_ui("state", stats)
 
                 return {"status": "ok", "visible": True}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
-
-    def start_drag(self) -> dict:
-        """
-        Hand over window moving to the OS (Native Drag).
-        This blocks until the user releases the mouse button.
-        """
-        if not self._overlay_window:
-            return {"status": "error", "message": "No overlay window"}
-
-        try:
-            self._overlay_window.windowHandle().startSystemMove()
-
-            self.save_overlay_position()
-
-            return {"status": "ok"}
-        except Exception as e:
-            print(f"Drag error: {e}")
-            return {"status": "error", "message": str(e)}
-
-    def save_overlay_position(self) -> dict:
-        """Save current overlay position to config."""
-        if not self._overlay_window:
-            return {"status": "error", "message": "No overlay window"}
-
-        try:
-            pos = self._overlay_window.pos()
-            config = load_config()
-            config["overlay_position"] = {"x": pos.x(), "y": pos.y()}
-            save_config(config)
-
-            return {"status": "ok", "position": {"x": pos.x(), "y": pos.y()}}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
-
-    def resize_overlay(self, width: int, height: int) -> dict:
-        """Resize the overlay window."""
-        if not self._overlay_window:
-            return {"status": "error", "message": "No overlay window"}
-
-        try:
-            self._overlay_window.resize(width, height)
-            return {"status": "ok", "width": width, "height": height}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 

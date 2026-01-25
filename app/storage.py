@@ -98,18 +98,12 @@ def save_json(filename: str, data: Any) -> bool:
 DEFAULT_CONFIG = {
     "display_mode": "value",
     "overlay_opacity": 0.9,
-    "overlay_pinned": False,
-    "overlay_position": {"x": 100, "y": 100},
     "tax_enabled": False,
     "tax_rate": 0.125,  # 12.5% AH fee
     "show_map_value": False,  # Show current map value
     "efficiency_per_map": False,  # False = FE/hr, True = FE/map
     "investment_per_map": 0,  # FE cost per map (deducted from values)
-    "chart_pulse_enabled": False,
-    "chart_efficiency_enabled": False,
-    "chart_donut_enabled": False,
-    # Widget-based overlay system (Phase 1+)
-    "use_widget_overlay": False,  # Feature flag for new overlay system
+    # Widget-based overlay
     "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode
     "widgets": [],  # Widget instances (populated on first load if empty)
 }

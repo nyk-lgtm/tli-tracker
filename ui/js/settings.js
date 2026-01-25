@@ -176,20 +176,6 @@ export async function loadSettings() {
         const newSettings = await api('get_settings');
         updateSettings(newSettings);
 
-        // Detect widget overlay mode
-        const useWidgetOverlay = newSettings.use_widget_overlay || false;
-
-        // Show/hide appropriate overlay settings section
-        if (elements.widgetOverlaySettings && elements.legacyOverlaySettings) {
-            if (useWidgetOverlay) {
-                elements.widgetOverlaySettings.classList.remove('hidden');
-                elements.legacyOverlaySettings.classList.add('hidden');
-            } else {
-                elements.widgetOverlaySettings.classList.add('hidden');
-                elements.legacyOverlaySettings.classList.remove('hidden');
-            }
-        }
-
         // Load all toggles from settings
         getToggles().forEach(toggle => {
             const key = toggle.dataset.setting;
@@ -197,7 +183,7 @@ export async function loadSettings() {
         });
 
         // Load widget toggles from widgets array
-        if (useWidgetOverlay && newSettings.widgets) {
+        if (newSettings.widgets) {
             getWidgetToggles().forEach(toggle => {
                 const widgetId = toggle.dataset.widgetId;
                 const widget = newSettings.widgets.find(w => w.id === widgetId);
@@ -206,11 +192,9 @@ export async function loadSettings() {
         }
 
         // Load non-toggle settings
-        elements.settingOpacity.value = (settings.overlay_opacity || 0.9) * 100;
-        elements.opacityValue.textContent = elements.settingOpacity.value + '%';
         elements.settingInvestment.value = settings.investment_per_map || 0;
 
-        // Widget overlay opacity slider
+        // Overlay opacity slider
         if (elements.settingWidgetOpacity && elements.widgetOpacityValue) {
             elements.settingWidgetOpacity.value = (settings.overlay_opacity || 0.9) * 100;
             elements.widgetOpacityValue.textContent = elements.settingWidgetOpacity.value + '%';
@@ -220,7 +204,7 @@ export async function loadSettings() {
         if (elements.settingHotkeyModifier && elements.settingHotkeyKey) {
             const hotkey = parseHotkey(newSettings.overlay_edit_mode_hotkey || 'Ctrl+F9');
             elements.settingHotkeyModifier.value = hotkey.modifier;
-            elements.settingHotkeyKey.value = hotkey.key;  // Works for both select and input
+            elements.settingHotkeyKey.value = hotkey.key;
             updateHotkeyHint();
         }
 
@@ -239,17 +223,13 @@ export async function saveSettings() {
     });
 
     // Save non-toggle settings
-    // Use widget opacity slider if in widget mode, otherwise legacy slider
-    const useWidgetOverlay = settings.use_widget_overlay || false;
-    if (useWidgetOverlay && elements.settingWidgetOpacity) {
+    if (elements.settingWidgetOpacity) {
         settings.overlay_opacity = elements.settingWidgetOpacity.value / 100;
-    } else {
-        settings.overlay_opacity = elements.settingOpacity.value / 100;
     }
     settings.investment_per_map = parseFloat(elements.settingInvestment.value) || 0;
 
-    // Save widget enabled states if in widget mode
-    if (useWidgetOverlay && settings.widgets) {
+    // Save widget enabled states
+    if (settings.widgets) {
         getWidgetToggles().forEach(toggle => {
             const widgetId = toggle.dataset.widgetId;
             const widget = settings.widgets.find(w => w.id === widgetId);

@@ -33,8 +33,6 @@ export function initElements() {
         historyAvgRate: document.getElementById('history-avg-rate'),
         historyList: document.getElementById('history-list'),
         // Settings (non-toggle)
-        settingOpacity: document.getElementById('setting-opacity'),
-        opacityValue: document.getElementById('opacity-value'),
         settingInvestment: document.getElementById('setting-investment'),
         btnSaveSettings: document.getElementById('btn-save-settings'),
         btnResetSettings: document.getElementById('btn-reset-defaults'),
@@ -46,14 +44,12 @@ export function initElements() {
         settingsTabs: document.querySelectorAll('.settings-tab'),
         tabGeneral: document.getElementById('tab-general'),
         tabOverlay: document.getElementById('tab-overlay'),
-        // Widget overlay settings
-        widgetOverlaySettings: document.getElementById('widget-overlay-settings'),
-        legacyOverlaySettings: document.getElementById('legacy-overlay-settings'),
+        // Overlay settings
         settingWidgetOpacity: document.getElementById('setting-widget-opacity'),
         widgetOpacityValue: document.getElementById('widget-opacity-value'),
         editHotkeyHint: document.getElementById('edit-hotkey-hint'),
         settingHotkeyModifier: document.getElementById('setting-hotkey-modifier'),
-        settingHotkeyKey: document.getElementById('setting-hotkey-key'),  // Now an input, not select
+        settingHotkeyKey: document.getElementById('setting-hotkey-key'),
         // Widget toggles (queried dynamically via .widget-toggle class)
     };
 }

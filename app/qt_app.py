@@ -60,31 +60,13 @@ class TLITrackerApp:
         self._setup_hotkeys()
 
     def _restore_overlay_position(self) -> None:
-        """Restore overlay window position and pin state from config."""
-        config = load_config()
-
-        # Widget overlay doesn't use legacy position/pin settings
-        if config.get("use_widget_overlay", False):
-            # Widget overlay: always click-through (edit mode toggles this)
-            self.overlay_window.set_click_through(True)
-            return
-
-        # Legacy overlay: restore position and pin state
-        position = config.get("overlay_position")
-        if position:
-            x, y = position.get("x", 100), position.get("y", 100)
-            self.overlay_window.move(x, y)
-
-        # Restore pin state (default to unpinned so button is clickable)
-        pinned = config.get("overlay_pinned", False)
-        self.overlay_window.set_click_through(pinned)
+        """Initialize overlay click-through state."""
+        # Widget overlay: always click-through (edit mode toggles this)
+        self.overlay_window.set_click_through(True)
 
     def _setup_hotkeys(self) -> None:
         """Set up global hotkeys for widget overlay."""
         config = load_config()
-
-        if not config.get("use_widget_overlay", False):
-            return
 
         # Register edit mode toggle hotkey
         hotkey = config.get("overlay_edit_mode_hotkey", "Ctrl+F9")

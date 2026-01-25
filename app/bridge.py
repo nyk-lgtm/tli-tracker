@@ -185,21 +185,6 @@ class ApiBridge(QObject):
         """Toggle overlay window visibility."""
         return json.dumps(self.api.toggle_overlay(), default=str)
 
-    @Slot(result=str)
-    def start_drag(self) -> str:
-        """Start a native system drag operation."""
-        return json.dumps(self.api.start_drag(), default=str)
-
-    @Slot(result=str)
-    def save_overlay_position(self) -> str:
-        """Save current overlay position to config."""
-        return json.dumps(self.api.save_overlay_position(), default=str)
-
-    @Slot(int, int, result=str)
-    def resize_overlay(self, width: int, height: int) -> str:
-        """Resize the overlay window."""
-        return json.dumps(self.api.resize_overlay(width, height), default=str)
-
     @Slot(str, result=str)
     def save_widget_layout(self, layout_json: str) -> str:
         """Save widget layout to config."""
