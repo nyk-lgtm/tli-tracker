@@ -313,7 +313,7 @@ class Tracker:
                         ).total_seconds(),
                     }
                     for i, m in enumerate(self.state.current_session.maps)
-                    if m.ended_at and not m.is_league_zone
+                    if m.ended_at
                 ],
             }
 
