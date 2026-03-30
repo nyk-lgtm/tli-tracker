@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
         self.bridge = bridge
         self.api = api
         self.log_watcher = None
+        self._retry_dialog = None
 
         self.setWindowTitle("TLI Tracker")
         self.resize(500, 800)
@@ -86,32 +87,15 @@ class MainWindow(QMainWindow):
             return
 
         print("Main window loaded, starting log watcher...")
-        self._start_log_watcher()
+        self._try_start_watching()
 
-    def _start_log_watcher(self) -> None:
-        """Find game log and start watching (with retry support)."""
+    def _try_start_watching(self) -> None:
+        """Attempt to find game log and start watcher, show dialog if not found."""
         from app.log_watcher import LogWatcher
-        from PySide6.QtWidgets import QApplication
 
-        # Retry loop for finding game
-        while True:
-            log_path = self._find_game_log()
-            if log_path:
-                break
-
-            # All strategies failed — show dialog
-            result = show_error(
-                "Game Not Found",
-                "Could not find the Torchlight: Infinite log file.",
-                "Start the game and click Retry, or set the path manually in Settings.",
-                show_retry=True,
-            )
-            if result == DialogResult.EXIT:
-                QApplication.quit()
-                return
-            if result != DialogResult.RETRY:
-                self.bridge.emit_event("error", {"message": "Game not found"})
-                return
+        log_path = self._find_game_log()
+        if not log_path:
+            return
 
         print(f"Found log file: {log_path}")
         self.log_watcher = LogWatcher(log_path, self.api.tracker.process_log_chunk)
@@ -177,6 +161,11 @@ class MainWindow(QMainWindow):
         if not hwnd:
             hwnd = win32gui.FindWindow(None, "Torchlight: Infinite")
         if not hwnd:
+            self._show_retry_dialog(
+                "Game Not Found",
+                "Torchlight: Infinite is not running.",
+                "Please start the game first, then click Retry.",
+            )
             return None
 
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -187,6 +176,12 @@ class MainWindow(QMainWindow):
         log_path = game_root / "TorchLight" / "Saved" / "Logs" / "UE_game.log"
 
         if not log_path.exists():
+            self._show_retry_dialog(
+                "Log File Not Found",
+                "Could not find the game log file.",
+                f"Expected location: {log_path}\n\n"
+                "Make sure the game has fully loaded, then click Retry.",
+            )
             return None
 
         return str(log_path)
@@ -199,6 +194,35 @@ class MainWindow(QMainWindow):
         if config.get("cached_log_path") != log_path:
             config["cached_log_path"] = log_path
             save_config(config)
+
+    def _show_retry_dialog(self, title: str, message: str, detail: str) -> None:
+        """Show a non-modal retry/exit dialog that doesn't block the main window."""
+        from app.dialogs import StyledDialog
+
+        dialog = StyledDialog(
+            title=title,
+            message=message,
+            detail=detail,
+            icon="",
+            show_retry=True,
+            parent=self,
+        )
+        dialog.setWindowModality(Qt.WindowModality.NonModal)
+        dialog.finished.connect(self._on_retry_dialog_closed)
+        dialog.show()
+        self._retry_dialog = dialog
+
+    def _on_retry_dialog_closed(self) -> None:
+        """Handle retry dialog result."""
+        from PySide6.QtWidgets import QApplication
+
+        dialog = self._retry_dialog
+        self._retry_dialog = None
+
+        if dialog.result_action == DialogResult.RETRY:
+            self._try_start_watching()
+        elif dialog.result_action == DialogResult.EXIT:
+            QApplication.quit()
 
     def closeEvent(self, event) -> None:
         """Handle window close."""
