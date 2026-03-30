@@ -12,7 +12,7 @@ from .log_parser import LogParser
 from .bag_state import BagState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import get_item_name, get_item_type, load_config
+from .storage import get_config_value, get_item_name, get_item_type, load_config
 
 
 class Tracker:
@@ -31,19 +31,13 @@ class Tracker:
         price_manager: PriceManager,
         session_manager: SessionManager,
         on_update: Callable[[str, Any], None],
+        cloud_prices=None,
     ):
-        """
-        Initialize the tracker.
-
-        Args:
-            price_manager: PriceManager instance for price lookups
-            session_manager: SessionManager instance for session persistence
-            on_update: Callback function(event_type, data) to notify UI
-        """
         self.state = TrackerState()
         self.bag = BagState()
         self.parser = LogParser()
         self.prices = price_manager
+        self.cloud_prices = cloud_prices
         self.sessions = session_manager
         self.on_update = on_update
 
@@ -172,11 +166,9 @@ class Tracker:
                 # Skip items not in the database (gear, memories, slates, etc.)
                 continue
 
-            # Get price (with tax if enabled)
-            price = self.prices.get_price_with_tax(item_id)
+            price, price_status, price_source = self._resolve_price(item_id)
             value = price * quantity if price else None
 
-            # Create drop record
             drop = Drop(
                 item_id=item_id,
                 quantity=quantity,
@@ -184,10 +176,8 @@ class Tracker:
                 value=value,
             )
 
-            # Add to current map
             self.state.current_map.drops.append(drop)
 
-            # Notify UI of new drop
             self._notify(
                 "drop",
                 {
@@ -196,7 +186,8 @@ class Tracker:
                     "item_type": get_item_type(item_id),
                     "quantity": quantity,
                     "value": value,
-                    "price_status": self.prices.get_price_status(item_id),
+                    "price_status": price_status,
+                    "price_source": price_source,
                 },
             )
 
@@ -235,6 +226,67 @@ class Tracker:
 
         # Notify UI that state has changed
         self._notify_state()
+
+    def _resolve_price(self, item_id: str) -> tuple[Any, str, str]:
+        """
+        Pick the best available price for an item.
+
+        Returns (price_with_tax, price_status, price_source).
+        Local wins unless cloud is newer.
+        """
+        local_price = self.prices.get_price_with_tax(item_id)
+        local_age = self.prices.get_price_age(item_id)
+        local_status = self.prices.get_price_status(item_id)
+
+        cloud_price = None
+        cloud_age = None
+        cloud_status = "unknown"
+
+        if self.cloud_prices and get_config_value("cloud_prices_enabled", False):
+            cloud_price = self.cloud_prices.get_price_with_tax(item_id)
+            if cloud_price is not None:
+                cloud_age = self.cloud_prices.get_price_age(item_id)
+                cloud_status = self.cloud_prices.get_price_status(item_id)
+
+        # both exist: prefer whichever is more recent
+        if local_price is not None and cloud_price is not None:
+            if local_age is not None and cloud_age is not None:
+                if local_age <= cloud_age:
+                    return (local_price, local_status, "local")
+                return (cloud_price, cloud_status, "cloud")
+            if local_age is not None:
+                return (local_price, local_status, "local")
+            return (cloud_price, cloud_status, "cloud")
+
+        if local_price is not None:
+            return (local_price, local_status, "local")
+
+        if cloud_price is not None:
+            return (cloud_price, cloud_status, "cloud")
+
+        return (None, "unknown", "local")
+
+    def _backfill_cloud_prices(self) -> None:
+        """Recalculate all drop values using best available price."""
+        changed = False
+
+        def _update_drops(drops):
+            nonlocal changed
+            for drop in drops:
+                price, _, _ = self._resolve_price(drop.item_id)
+                new_value = price * drop.quantity if price else drop.value
+                if new_value != drop.value:
+                    drop.value = new_value
+                    changed = True
+
+        if self.state.current_map:
+            _update_drops(self.state.current_map.drops)
+
+        if self.state.current_session:
+            for map_run in self.state.current_session.maps:
+                _update_drops(map_run.drops)
+            if changed:
+                self.sessions.save_session(self.state.current_session)
 
     def _notify(self, event_type: str, data: Any) -> None:
         """Send an event to the UI."""
@@ -328,14 +380,17 @@ class Tracker:
 
     def _drop_to_dict(self, drop: Drop) -> dict:
         """Convert a Drop to a dictionary with item name and type."""
+        price, price_status, price_source = self._resolve_price(drop.item_id)
+        value = price * drop.quantity if price else drop.value
         return {
             "item_id": drop.item_id,
             "item_name": get_item_name(drop.item_id),
             "item_type": get_item_type(drop.item_id),
             "quantity": drop.quantity,
-            "value": drop.value,
+            "value": value,
             "timestamp": drop.timestamp.isoformat(),
-            "price_status": self.prices.get_price_status(drop.item_id),
+            "price_status": price_status,
+            "price_source": price_source,
         }
 
     def request_initialization(self) -> dict:

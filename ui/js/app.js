@@ -227,13 +227,6 @@ function init() {
         elements.btnCheckUpdates.addEventListener('click', checkForUpdates);
     }
 
-    // Opacity slider
-    elements.settingOpacity.addEventListener('input', (e) => {
-        const val = e.target.value;
-        elements.opacityValue.textContent = val + '%';
-        api('set_overlay_opacity', val / 100);
-    });
-
     // Close modals on backdrop click
     document.querySelectorAll('[id$="-modal"]').forEach(modal => {
         modal.addEventListener('click', (e) => {

@@ -1,0 +1,119 @@
+import json
+from datetime import datetime, timezone
+from typing import Optional
+
+from PySide6.QtCore import QObject, QUrl, Signal
+from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
+
+from .storage import get_config_value, load_config, load_json, save_json
+
+CLOUD_PRICES_URL = "https://api.tli-ahdb.workers.dev/prices"
+CLOUD_PRICES_FILE = "cloud_prices.json"
+FIXED_PRICE_IDS = {"100300"}
+
+
+class CloudPriceManager(QObject):
+    """Fetches and caches crowd-sourced prices from the cloud proxy."""
+
+    prices_updated = Signal()
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._prices: dict[str, dict] = {}
+        self._nam = QNetworkAccessManager(self)
+        self._nam.finished.connect(self._on_reply)
+        self._load()
+
+    def _load(self) -> None:
+        self._prices = load_json(CLOUD_PRICES_FILE, {})
+
+    def _save(self) -> None:
+        save_json(CLOUD_PRICES_FILE, self._prices)
+
+    # --- query API ---
+
+    def get_price(self, item_id: str) -> Optional[float]:
+        entry = self._prices.get(item_id)
+        return entry.get("price") if entry else None
+
+    def get_price_with_tax(self, item_id: str) -> Optional[float]:
+        price = self.get_price(item_id)
+        if price is None:
+            return None
+
+        config = load_config()
+        if config.get("tax_enabled", False) and item_id != "100300":
+            tax_rate = config.get("tax_rate", 0.125)
+            price = price * (1 - tax_rate)
+
+        return price
+
+    def get_price_age(self, item_id: str) -> Optional[float]:
+        """Age in seconds based on ETor's updatedAt timestamp."""
+        entry = self._prices.get(item_id)
+        if not entry or "updated_at" not in entry:
+            return None
+        try:
+            updated_str = entry["updated_at"]
+            # handle both Z suffix and +00:00
+            if updated_str.endswith("Z"):
+                updated_str = updated_str[:-1] + "+00:00"
+            updated_at = datetime.fromisoformat(updated_str)
+            now = datetime.now(timezone.utc)
+            return (now - updated_at).total_seconds()
+        except (ValueError, TypeError):
+            return None
+
+    def get_price_status(self, item_id: str) -> str:
+        age = self.get_price_age(item_id)
+        if age is None:
+            return "unknown"
+        if age < 3600:
+            return "fresh"
+        if age < 18000:
+            return "stale"
+        return "old"
+
+    def has_cached_data(self) -> bool:
+        return len(self._prices) > 0
+
+    # --- fetch ---
+
+    def fetch(self) -> None:
+        """Async fetch from cloud proxy. No-op if disabled."""
+        if not get_config_value("cloud_prices_enabled", False):
+            return
+        request = QNetworkRequest(QUrl(CLOUD_PRICES_URL))
+        self._nam.get(request)
+
+    def _on_reply(self, reply: QNetworkReply) -> None:
+        try:
+            if reply.error() != QNetworkReply.NetworkError.NoError:
+                print(f"Cloud price fetch failed: {reply.errorString()}")
+                return
+
+            data = json.loads(bytes(reply.readAll().data()))
+
+            if not data.get("success") or "data" not in data:
+                print("Cloud price response: unexpected format")
+                return
+
+            count = 0
+            for item in data["data"]:
+                item_id = str(item.get("id", ""))
+                if not item_id or item_id in FIXED_PRICE_IDS:
+                    continue
+                price = item.get("price")
+                updated_at = item.get("updatedAt", "")
+                if price is not None and updated_at:
+                    self._prices[item_id] = {
+                        "price": round(float(price), 4),
+                        "updated_at": updated_at,
+                    }
+                    count += 1
+
+            self._save()
+            print(f"Cloud prices updated: {count} items")
+            self.prices_updated.emit()
+        finally:
+            reply.deleteLater()

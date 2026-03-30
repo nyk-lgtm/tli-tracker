@@ -40,6 +40,20 @@ class TLITrackerApp:
         self.timer.timeout.connect(self.api.tracker._notify_state)
         self.timer.start(1000)  # Update every 1 second
 
+        # Cloud price refresh timer (10 min)
+        self.cloud_timer = QTimer()
+        self.cloud_timer.timeout.connect(self.api.cloud_prices.fetch)
+        self.cloud_timer.start(600_000)
+
+        # immediate fetch on startup if enabled and no cached data
+        config = load_config()
+        if config.get("cloud_prices_enabled", False):
+            if not self.api.cloud_prices.has_cached_data():
+                QTimer.singleShot(1000, self.api.cloud_prices.fetch)
+            else:
+                # still fetch to get latest data, just less urgently
+                QTimer.singleShot(3000, self.api.cloud_prices.fetch)
+
         # Create bridge for QWebChannel communication
         self.bridge = ApiBridge(self.api)
 

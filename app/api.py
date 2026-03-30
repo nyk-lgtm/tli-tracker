@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QFileDialog
 
 from .tracker import Tracker
 from .price_manager import PriceManager
+from .cloud_prices import CloudPriceManager
 from .session_manager import SessionManager
 from .storage import load_config, save_config, load_items, get_item_name, get_item_type
 from .overlay import set_click_through
@@ -38,11 +39,21 @@ class Api:
 
         # Initialize managers
         self.prices = PriceManager()
+        self.cloud_prices = CloudPriceManager()
         self.sessions = SessionManager()
         self.updater = Updater()
 
         # Initialize tracker with update callback
-        self.tracker = Tracker(self.prices, self.sessions, on_update=self._push_to_ui)
+        self.tracker = Tracker(
+            self.prices,
+            self.sessions,
+            on_update=self._push_to_ui,
+            cloud_prices=self.cloud_prices,
+        )
+
+        # refresh UI when cloud prices arrive
+        self.cloud_prices.prices_updated.connect(self.tracker._backfill_cloud_prices)
+        self.cloud_prices.prices_updated.connect(self.tracker._notify_state)
 
     def _push_to_ui(self, event_type: str, data: Any) -> None:
         """
@@ -226,9 +237,17 @@ class Api:
 
     def save_settings(self, settings: dict) -> dict:
         """Save application settings."""
+        # check if cloud prices just got enabled
+        old_config = load_config()
+        was_enabled = old_config.get("cloud_prices_enabled", False)
+
         success = save_config(settings)
         # notify overlay so it picks up widget/setting changes
         self._push_to_ui("settings_update", {})
+
+        # trigger immediate fetch when cloud prices toggled on
+        if settings.get("cloud_prices_enabled") and not was_enabled:
+            self.cloud_prices.fetch()
         return {"status": "ok" if success else "error"}
 
     def reset_settings(self) -> dict:
