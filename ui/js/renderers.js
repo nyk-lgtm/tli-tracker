@@ -177,13 +177,6 @@ function renderValueMode(drops) {
         }
     });
 
-    Object.values(itemTotals).forEach(item => {
-        const currentPrice = state.prices[item.id];
-        if (currentPrice !== undefined) {
-            item.value = item.quantity * currentPrice;
-        }
-    });
-
     // Sort by value/quantity, then limit to top 50 item types
     const sorted = Object.entries(itemTotals)
         .sort((a, b) => {
