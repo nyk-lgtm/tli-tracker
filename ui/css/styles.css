@@ -378,16 +378,15 @@ hr {
 .price-status.old { background-color: var(--color-danger); }
 .price-status.unknown { background-color: var(--color-text-dim); }
 
-/* Cloud price icon */
-.price-cloud-icon {
-    width: 10px;
-    height: 7px;
-    flex-shrink: 0;
+/* Cloud price indicator (hollow ring) */
+.price-status.cloud {
+    background-color: transparent !important;
+    border: 1.5px solid;
 }
-.price-cloud-icon.fresh { color: var(--color-success); }
-.price-cloud-icon.stale { color: var(--color-warning); }
-.price-cloud-icon.old { color: var(--color-danger); }
-.price-cloud-icon.unknown { color: var(--color-text-dim); }
+.price-status.cloud.fresh { border-color: var(--color-success); }
+.price-status.cloud.stale { border-color: var(--color-warning); }
+.price-status.cloud.old { border-color: var(--color-danger); }
+.price-status.cloud.unknown { border-color: var(--color-text-dim); }
 
 /* ============================================
    Modals

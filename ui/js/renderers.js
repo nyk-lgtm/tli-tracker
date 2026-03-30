@@ -215,9 +215,8 @@ function renderValueMode(drops) {
             : '(no price)';
 
         const statusClass = item.price_status || 'unknown';
-        const priceIndicator = item.price_source === 'cloud'
-            ? `<svg class="price-cloud-icon ${statusClass}" viewBox="0 0 24 16" fill="currentColor"><path d="M19.4 6.2A7 7 0 0 0 5.6 5.5 5.5 5.5 0 0 0 6 16h13a4.5 4.5 0 0 0 .4-9.8z"/></svg>`
-            : `<span class="price-status ${statusClass}"></span>`;
+        const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
+        const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
 
         return `
             <div class="drop-item">
@@ -257,9 +256,8 @@ function renderItemsMode(drops) {
     const html = sorted.map(([id, item]) => {
         const valueClass = item.quantity >= 0 ? 'positive' : 'negative';
         const statusClass = item.price_status || 'unknown';
-        const priceIndicator = item.price_source === 'cloud'
-            ? `<svg class="price-cloud-icon ${statusClass}" viewBox="0 0 24 16" fill="currentColor"><path d="M19.4 6.2A7 7 0 0 0 5.6 5.5 5.5 5.5 0 0 0 6 16h13a4.5 4.5 0 0 0 .4-9.8z"/></svg>`
-            : `<span class="price-status ${statusClass}"></span>`;
+        const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
+        const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
         return `
             <div class="drop-item">
                 <div class="drop-item-name">
