@@ -8,17 +8,6 @@ import { showStatus, hideStatus } from './utils.js';
 
 // ============ Updates ============
 
-export async function loadVersion() {
-    try {
-        const version = await api('get_version');
-        if (version && elements.checkUpdatesLabel) {
-            elements.checkUpdatesLabel.dataset.tooltip = `Current: v${version}`;
-        }
-    } catch (e) {
-        console.error('Failed to load version:', e);
-    }
-}
-
 export function showUpdateStatus(message, type = 'info') {
     const el = elements.updateStatus;
     const row = elements.updateRow;

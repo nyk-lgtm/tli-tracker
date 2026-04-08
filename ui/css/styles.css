@@ -534,10 +534,10 @@ hr {
     font-size: 0.875rem;
     color: var(--color-text);
     position: relative;
-    cursor: help;
 }
 
 .setting-label[data-tooltip] {
+    cursor: help;
     text-decoration: underline dotted;
     text-decoration-color: var(--color-text-dim);
     text-underline-offset: 3px;

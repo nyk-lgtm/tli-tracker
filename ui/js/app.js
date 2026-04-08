@@ -11,7 +11,7 @@ import { showStatus, hideStatus, formatTime, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners } from './settings.js';
 import { loadHistory } from './history.js';
-import { loadVersion, checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
+import { checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
 import { updateState, renderUI, renderDrops, addDrop } from './renderers.js';
 
 // ============ Event Handlers from Python ============
@@ -245,9 +245,6 @@ function init() {
 
     // Load settings
     loadSettings();
-
-    // Load version display
-    loadVersion();
 
     // Start timer loop
     startTimerLoop();
