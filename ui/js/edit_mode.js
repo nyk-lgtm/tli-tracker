@@ -202,6 +202,7 @@ const EditMode = {
         };
 
         widget.classList.add('dragging');
+        document.getElementById('widget-canvas')?.classList.add('group-dragging');
     },
 
     /**
@@ -259,6 +260,8 @@ const EditMode = {
 
         this.dragging.primary.classList.remove('dragging');
         this.dragging = null;
+
+        document.getElementById('widget-canvas')?.classList.remove('group-dragging');
 
         // Clear snap guides
         SnapEngine.clearGuides();

@@ -144,6 +144,11 @@
     box-shadow: 0 0 12px rgba(45, 212, 191, 0.5);
 }
 
+/* All selected widgets become semi-transparent during group drag */
+.group-dragging .widget.selected {
+    opacity: 0.9;
+}
+
 /* Keep stronger outline when dragging selected widget */
 .widget.selected.dragging {
     outline: 2px solid rgba(45, 212, 191, 0.9);
