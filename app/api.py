@@ -227,6 +227,8 @@ class Api:
     def save_settings(self, settings: dict) -> dict:
         """Save application settings."""
         success = save_config(settings)
+        # notify overlay so it picks up widget/setting changes
+        self._push_to_ui("settings_update", {})
         return {"status": "ok" if success else "error"}
 
     def reset_settings(self) -> dict:

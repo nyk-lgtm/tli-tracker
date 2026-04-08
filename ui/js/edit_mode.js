@@ -30,6 +30,7 @@ const EditMode = {
         document.addEventListener('mousedown', (e) => this.onMouseDown(e));
         document.addEventListener('mousemove', (e) => this.onMouseMove(e));
         document.addEventListener('mouseup', (e) => this.onMouseUp(e));
+        document.addEventListener('keydown', (e) => this.onKeyDown(e));
 
         console.log('[EditMode] Initialized');
     },
@@ -480,28 +481,48 @@ const EditMode = {
     },
 
     /**
+     * Handle keydown - delete selected widgets
+     */
+    onKeyDown(e) {
+        if (!this.enabled) return;
+        if (e.key !== 'Delete' || this.selected.size === 0) return;
+
+        for (const widget of this.selected) {
+            const widgetData = WidgetManager.getWidget(widget.id);
+            if (widgetData) {
+                widgetData.enabled = false;
+            }
+            widget.remove();
+        }
+        this.selected.clear();
+    },
+
+    /**
      * Save current widget layout to config
      */
     async saveLayout() {
         const widgets = [];
 
-        document.querySelectorAll('.widget').forEach(el => {
-            const id = el.id;
-            const widgetData = WidgetManager.getWidget(id);
-            if (!widgetData) return;
-
-            widgets.push({
-                ...widgetData,
-                position: {
-                    x: parseInt(el.style.left) || 0,
-                    y: parseInt(el.style.top) || 0,
-                },
-                size: {
-                    width: el.offsetWidth,
-                    height: el.offsetHeight,
-                },
-            });
-        });
+        for (const widgetData of WidgetManager.widgets) {
+            const el = document.getElementById(widgetData.id);
+            if (el) {
+                // visible widget — save current position/size from DOM
+                widgets.push({
+                    ...widgetData,
+                    position: {
+                        x: parseInt(el.style.left) || 0,
+                        y: parseInt(el.style.top) || 0,
+                    },
+                    size: {
+                        width: el.offsetWidth,
+                        height: el.offsetHeight,
+                    },
+                });
+            } else {
+                // disabled/removed widget — preserve as-is
+                widgets.push({ ...widgetData });
+            }
+        }
 
         // Update WidgetManager's widgets array
         WidgetManager.widgets = widgets;

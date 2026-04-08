@@ -131,11 +131,19 @@ def load_config() -> dict:
             changed = True
 
     # Populate widgets with defaults if empty
-    if not config.get("widgets"):
-        from app.widget_registry import get_default_widgets
+    from app.widget_registry import get_default_widgets
 
+    if not config.get("widgets"):
         config["widgets"] = get_default_widgets()
         changed = True
+    else:
+        # ensure all registered widgets exist (re-add any that were lost)
+        defaults = get_default_widgets()
+        existing_ids = {w["id"] for w in config["widgets"]}
+        for default_widget in defaults:
+            if default_widget["id"] not in existing_ids:
+                config["widgets"].append(default_widget)
+                changed = True
 
     # Save migrated config
     if changed:
