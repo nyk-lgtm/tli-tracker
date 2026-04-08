@@ -239,6 +239,8 @@ class Api:
             "show_map_value": False,
             "efficiency_per_map": False,
             "investment_per_map": 0,
+            "game_log_path": "",
+            "cached_log_path": "",
         }
         success = save_config(default_settings)
 
@@ -258,6 +260,20 @@ class Api:
         config[key] = value
         save_config(config)
         return {"status": "ok"}
+
+    # === Game Path API ===
+
+    def browse_game_log(self) -> dict:
+        """Open a file dialog for the user to select UE_game.log."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self._main_window,
+            "Select UE_game.log",
+            "",
+            "Log Files (UE_game.log);;All Files (*.*)",
+        )
+        if not file_path:
+            return {"status": "cancelled"}
+        return {"status": "ok", "path": file_path}
 
     # === Overlay API ===
 

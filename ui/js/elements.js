@@ -32,6 +32,9 @@ export function initElements() {
         historyTotalMaps: document.getElementById('history-total-maps'),
         historyAvgRate: document.getElementById('history-avg-rate'),
         historyList: document.getElementById('history-list'),
+        // Game path settings
+        btnBrowseGamePath: document.getElementById('btn-browse-game-path'),
+        gamePathStatus: document.getElementById('game-path-status'),
         // Settings (non-toggle)
         settingInvestment: document.getElementById('setting-investment'),
         btnSaveSettings: document.getElementById('btn-save-settings'),

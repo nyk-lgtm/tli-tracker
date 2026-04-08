@@ -153,6 +153,13 @@ class ApiBridge(QObject):
         value = json.loads(value_json)
         return json.dumps(self.api.set_setting(key, value), default=str)
 
+    # === Game Path API ===
+
+    @Slot(result=str)
+    def browse_game_log(self) -> str:
+        """Open a file dialog for the user to select UE_game.log."""
+        return json.dumps(self.api.browse_game_log(), default=str)
+
     # === Overlay API ===
 
     @Slot(float, result=str)

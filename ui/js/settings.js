@@ -171,6 +171,64 @@ function parseHotkey(hotkeyStr) {
     return { modifier: 'Ctrl', key: 'F9' };
 }
 
+/**
+ * Shorten a file path for display (keep last 3 segments)
+ */
+function shortenPath(fullPath) {
+    const sep = fullPath.includes('/') ? '/' : '\\';
+    const parts = fullPath.split(sep);
+    if (parts.length <= 3) return fullPath;
+    return '\u2026' + sep + parts.slice(-3).join(sep);
+}
+
+/**
+ * Render game path status text
+ */
+function renderGamePathStatus(manualPath, cachedPath) {
+    if (!elements.gamePathStatus) return;
+
+    if (manualPath) {
+        elements.gamePathStatus.innerHTML =
+            `<span class="text-teal-400" title="${manualPath}">${shortenPath(manualPath)}</span>` +
+            ` <a href="#" id="btn-clear-game-path" class="text-gray-500 hover:text-gray-300">(reset)</a>`;
+
+        // wire up the inline reset link
+        const resetLink = document.getElementById('btn-clear-game-path');
+        if (resetLink) {
+            resetLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                elements.gamePathStatus.dataset.manualPath = '';
+                renderGamePathStatus('', cachedPath);
+            });
+        }
+    } else if (cachedPath) {
+        elements.gamePathStatus.innerHTML =
+            `<span class="text-gray-500" title="${cachedPath}">Auto-detected: ${shortenPath(cachedPath)}</span>`;
+    } else {
+        elements.gamePathStatus.innerHTML =
+            `<span class="text-yellow-400">Not yet detected \u2014 start the game</span>`;
+    }
+}
+
+/**
+ * Initialize game path Browse button listener
+ */
+export function initGamePathListeners() {
+    if (elements.btnBrowseGamePath) {
+        elements.btnBrowseGamePath.addEventListener('click', async () => {
+            try {
+                const result = await api('browse_game_log');
+                if (result.status === 'ok' && result.path) {
+                    elements.gamePathStatus.dataset.manualPath = result.path;
+                    renderGamePathStatus(result.path, '');
+                }
+            } catch (e) {
+                console.error('Browse failed:', e);
+            }
+        });
+    }
+}
+
 export async function loadSettings() {
     try {
         const newSettings = await api('get_settings');
@@ -200,6 +258,14 @@ export async function loadSettings() {
             elements.widgetOpacityValue.textContent = elements.settingWidgetOpacity.value + '%';
         }
 
+        // Game log path
+        if (elements.gamePathStatus) {
+            const gamePath = newSettings.game_log_path || '';
+            const cachedPath = newSettings.cached_log_path || '';
+            elements.gamePathStatus.dataset.manualPath = gamePath;
+            renderGamePathStatus(gamePath, cachedPath);
+        }
+
         // Hotkey settings
         if (elements.settingHotkeyModifier && elements.settingHotkeyKey) {
             const hotkey = parseHotkey(newSettings.overlay_edit_mode_hotkey || 'Ctrl+F9');
@@ -227,6 +293,11 @@ export async function saveSettings() {
         settings.overlay_opacity = elements.settingWidgetOpacity.value / 100;
     }
     settings.investment_per_map = parseFloat(elements.settingInvestment.value) || 0;
+
+    // Save game log path
+    if (elements.gamePathStatus) {
+        settings.game_log_path = elements.gamePathStatus.dataset.manualPath || '';
+    }
 
     // Save widget enabled states
     if (settings.widgets) {

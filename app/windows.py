@@ -25,8 +25,6 @@ class MainWindow(QMainWindow):
         self.bridge = bridge
         self.api = api
         self.log_watcher = None
-        self._last_dialog_was_retry = False
-        self._last_dialog_was_exit = False
 
         self.setWindowTitle("TLI Tracker")
         self.resize(500, 800)
@@ -100,13 +98,18 @@ class MainWindow(QMainWindow):
             log_path = self._find_game_log()
             if log_path:
                 break
-            # _find_game_log shows dialog and returns None if not found
-            # If user clicked Exit, close the app
-            if self._last_dialog_was_exit:
+
+            # All strategies failed — show dialog
+            result = show_error(
+                "Game Not Found",
+                "Could not find the Torchlight: Infinite log file.",
+                "Start the game and click Retry, or set the path manually in Settings.",
+                show_retry=True,
+            )
+            if result == DialogResult.EXIT:
                 QApplication.quit()
                 return
-            # If user didn't click Retry, exit the loop
-            if not self._last_dialog_was_retry:
+            if result != DialogResult.RETRY:
                 self.bridge.emit_event("error", {"message": "Game not found"})
                 return
 
@@ -129,64 +132,73 @@ class MainWindow(QMainWindow):
         """
         Find the Torchlight Infinite log file.
 
-        Returns:
-            Path to log file, or None if not found (error dialog shown)
+        Tries in order: manual config path, cached path, live game detection.
+        Returns path string or None if all strategies fail.
         """
-        self._last_dialog_was_retry = False
-        self._last_dialog_was_exit = False
+        from app.storage import load_config
 
+        config = load_config()
+
+        # strategy 1: manual user-configured path
+        manual_path = config.get("game_log_path", "")
+        if manual_path:
+            p = Path(manual_path)
+            if p.exists() and p.is_file():
+                self._cache_log_path(str(p))
+                return str(p)
+            print(f"Manual game_log_path not found: {manual_path}")
+
+        # strategy 2: cached path from last successful detection
+        cached_path = config.get("cached_log_path", "")
+        if cached_path:
+            p = Path(cached_path)
+            if p.exists() and p.is_file():
+                return str(p)
+            print(f"Cached log path stale: {cached_path}")
+
+        # strategy 3: live game detection
+        result = self._detect_game_log_live()
+        if result:
+            self._cache_log_path(result)
+            return result
+
+        return None
+
+    def _detect_game_log_live(self) -> Optional[str]:
+        """Try to find game log via the running game process."""
         try:
             import win32gui
             import win32process
             import psutil
         except ImportError:
-            show_error(
-                "Missing Dependencies",
-                "Required Windows modules are not installed.",
-                "Please reinstall the application or install pywin32.",
-            )
             return None
 
-        # Find the game window
         hwnd = win32gui.FindWindow(None, "Torchlight: Infinite  ")
         if not hwnd:
             hwnd = win32gui.FindWindow(None, "Torchlight: Infinite")
-
         if not hwnd:
-            result = show_error(
-                "Game Not Found",
-                "Torchlight: Infinite is not running.",
-                "Please start the game first, then click Retry.",
-                show_retry=True,
-            )
-            self._last_dialog_was_retry = result == DialogResult.RETRY
-            self._last_dialog_was_exit = result == DialogResult.EXIT
             return None
 
-        # Get process ID from window handle
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
-
-        # Get executable path
         process = psutil.Process(pid)
         game_exe = process.exe()
 
-        # Derive log path
         game_root = Path(game_exe).parent.parent.parent
         log_path = game_root / "TorchLight" / "Saved" / "Logs" / "UE_game.log"
 
         if not log_path.exists():
-            result = show_error(
-                "Log File Not Found",
-                "Could not find the game log file.",
-                f"Expected location: {log_path}\n\n"
-                "Make sure the game has fully loaded, then click Retry.",
-                show_retry=True,
-            )
-            self._last_dialog_was_retry = result == DialogResult.RETRY
-            self._last_dialog_was_exit = result == DialogResult.EXIT
             return None
 
         return str(log_path)
+
+    def _cache_log_path(self, log_path: str) -> None:
+        """Update the cached log path in config."""
+        from app.storage import load_config, save_config
+
+        config = load_config()
+        if config.get("cached_log_path") != log_path:
+            config["cached_log_path"] = log_path
+            save_config(config)
 
     def closeEvent(self, event) -> None:
         """Handle window close."""

@@ -103,6 +103,9 @@ DEFAULT_CONFIG = {
     "show_map_value": False,  # Show current map value
     "efficiency_per_map": False,  # False = FE/hr, True = FE/map
     "investment_per_map": 0,  # FE cost per map (deducted from values)
+    # Game log path
+    "game_log_path": "",  # manual override for UE_game.log location
+    "cached_log_path": "",  # auto-cached from last successful detection
     # Widget-based overlay
     "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode
     "widgets": [],  # Widget instances (populated on first load if empty)
