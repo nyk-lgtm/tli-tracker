@@ -113,6 +113,22 @@ async function initialize() {
     }
 }
 
+let pauseInFlight = false;
+async function togglePause() {
+    if (pauseInFlight) return;
+    pauseInFlight = true;
+    try {
+        const result = await api('toggle_pause');
+        if (result.status === 'ok') {
+            showStatus(result.paused ? 'Tracking paused' : 'Tracking resumed', 'info', 2000);
+        }
+    } catch (e) {
+        showStatus('Failed to toggle pause', 'error', 2000);
+    } finally {
+        pauseInFlight = false;
+    }
+}
+
 async function resetSession() {
     const confirmed = await showConfirmDialog(
         'Reset Session',
@@ -203,6 +219,7 @@ function init() {
 
     // Bind event listeners
     elements.btnInitialize.addEventListener('click', initialize);
+    elements.btnPause.addEventListener('click', togglePause);
     elements.btnReset.addEventListener('click', resetSession);
     elements.btnModeValue.addEventListener('click', () => setDisplayMode('value'));
     elements.btnModeItems.addEventListener('click', () => setDisplayMode('items'));

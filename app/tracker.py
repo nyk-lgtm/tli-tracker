@@ -44,12 +44,23 @@ class Tracker:
         # Track if we're waiting for user to sort bag
         self._awaiting_init = False
 
+        # Pause state
+        self._is_paused = False
+        self._pause_started_at: datetime | None = None
+        self._paused_live_in_map = False
+        self._paused_live_is_league_zone = False
+        self._paused_map_transitions = 0
+
     def process_log_chunk(self, text: str) -> None:
         """
         Process a chunk of new log content.
 
         This is the main entry point called by the LogWatcher.
         """
+        if self._is_paused:
+            self._process_log_chunk_paused(text)
+            return
+
         skip_modfy = False
 
         # ALWAYS check for bag sorts (InitBagData)
@@ -104,6 +115,38 @@ class Tracker:
                 self._on_map_exit(is_league_zone=map_event.is_league_zone)
 
         # Extract price data from AH searches
+        price_events = self.parser.parse_price_search(text)
+        for event in price_events:
+            final_price = self.prices.update_from_search(event.item_id, event.prices)
+            self._backfill_prices(event.item_id)
+            self._notify(
+                "price_update", {"item_id": event.item_id, "price": final_price}
+            )
+
+    def _process_log_chunk_paused(self, text: str) -> None:
+        """Process log while paused: advance bag state silently, track scene changes, allow price updates."""
+        # keep bag state current so resume doesn't produce a phantom diff
+        init_items = self.parser.parse_bag_init(text)
+        if len(init_items) >= self.MIN_INIT_ITEMS:
+            self.bag.initialize(init_items)
+            if not self.state.is_initialized:
+                self.state.is_initialized = True
+                self._awaiting_init = False
+                self._notify("initialized", {"item_count": len(self.bag.baseline)})
+        elif self.state.is_initialized:
+            mods = self.parser.parse_bag_modifications(text)
+            if mods:
+                # advance slots and baseline, discard the diff
+                self.bag.process_modifications(mods)
+
+        # track map transitions so we can reconcile on resume
+        map_event = self.parser.parse_map_change(text)
+        if map_event:
+            self._paused_live_in_map = map_event.entering
+            self._paused_live_is_league_zone = map_event.is_league_zone
+            self._paused_map_transitions += 1
+
+        # price searches are orthogonal to session capture
         price_events = self.parser.parse_price_search(text)
         for event in price_events:
             final_price = self.prices.update_from_search(event.item_id, event.prices)
@@ -345,6 +388,7 @@ class Tracker:
 
             session = {
                 "id": self.state.current_session.id,
+                "paused": self._is_paused,
                 "duration_mapping": self.state.current_session.total_duration
                 + current_map_duration,
                 "duration_total": duration,
@@ -413,8 +457,81 @@ class Tracker:
         except ValueError:
             pass
 
+    def toggle_pause(self) -> dict:
+        """Toggle pause state. Returns current paused status."""
+        if self._is_paused:
+            return self._resume_tracking()
+        return self._pause_tracking()
+
+    def _pause_tracking(self) -> dict:
+        now = datetime.now()
+        self._is_paused = True
+        self._pause_started_at = now
+        self._paused_live_in_map = self.state.is_in_map
+        self._paused_live_is_league_zone = False
+        self._paused_map_transitions = 0
+
+        if self.state.current_session:
+            self.state.current_session.pause(now)
+        if self.state.current_map:
+            self.state.current_map.pause(now)
+
+        self._notify_state()
+        return {"status": "ok", "paused": True}
+
+    def _resume_tracking(self) -> dict:
+        now = datetime.now()
+        self._is_paused = False
+
+        if self.state.current_session:
+            self.state.current_session.resume(now)
+
+        # reconcile map state: what was happening when we paused vs now
+        was_in_map = self.state.current_map is not None
+        now_in_map = self._paused_live_in_map
+        had_transitions = self._paused_map_transitions > 0
+
+        if was_in_map and (not now_in_map or had_transitions):
+            # left the map (or left and re-entered a different one) — close old map at pause time
+            self.state.current_map.paused_at = (
+                None  # clear so duration_seconds doesn't subtract phantom pause
+            )
+            self.state.current_map.ended_at = self._pause_started_at
+            config = load_config()
+            if not self.state.current_map.is_league_zone:
+                self.state.current_map.investment = config.get("investment_per_map", 0)
+            if self.state.current_session:
+                self.state.current_session.maps.append(self.state.current_map)
+                self.sessions.save_session(self.state.current_session)
+            self.state.current_map = None
+            self.state.is_in_map = False
+
+        if now_in_map and (not was_in_map or had_transitions):
+            # entered a (new) map while paused — start a fresh one
+            self.state.is_in_map = True
+            self.state.current_map = MapRun(
+                started_at=now,
+                is_league_zone=self._paused_live_is_league_zone,
+            )
+            if not self.state.current_session:
+                self.state.current_session = self.sessions.create_session()
+        elif was_in_map and now_in_map and not had_transitions:
+            # never left the map — resume its timer
+            self.state.current_map.resume(now)
+
+        # always reset baseline so paused loot is invisible
+        self.bag.reset_baseline()
+
+        self._pause_started_at = None
+        self._notify_state()
+        return {"status": "ok", "paused": False}
+
     def reset_session(self) -> None:
         """Reset the current session."""
+        # clear pause state
+        self._is_paused = False
+        self._pause_started_at = None
+
         # End current session if exists
         if self.state.current_session:
             self.state.current_session.ended_at = datetime.now()
@@ -430,6 +547,9 @@ class Tracker:
 
     def reset_all(self) -> None:
         """Reset all tracking state."""
+        self._is_paused = False
+        self._pause_started_at = None
+
         self.bag.clear()
         self.state = TrackerState()
         self._awaiting_init = False

@@ -84,6 +84,10 @@ class Api:
         self.tracker.set_display_mode(mode)
         return {"status": "ok", "mode": mode}
 
+    def toggle_pause(self) -> dict:
+        """Toggle pause state for the current session."""
+        return self.tracker.toggle_pause()
+
     def reset_session(self) -> dict:
         """Reset the current tracking session."""
         self.tracker.reset_session()

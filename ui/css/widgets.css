@@ -287,6 +287,16 @@
     animation: none;
 }
 
+.stats-bar-content .in-map-dot.paused {
+    background: #f59e0b;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+/* amber border tint when paused */
+.widget-content.paused {
+    border-color: rgba(245, 158, 11, 0.35);
+}
+
 /* ========================================
    Chart Widgets
    ======================================== */

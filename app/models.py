@@ -61,13 +61,27 @@ class MapRun:
     drops: list[Drop] = field(default_factory=list)
     is_league_zone: bool = False
     investment: float = 0  # FE cost for this map (captured at map end)
+    paused_at: Optional[datetime] = None
+    paused_seconds: float = 0.0
+
+    def pause(self, now: datetime) -> None:
+        if not self.paused_at:
+            self.paused_at = now
+
+    def resume(self, now: datetime) -> None:
+        if self.paused_at:
+            self.paused_seconds += (now - self.paused_at).total_seconds()
+            self.paused_at = None
 
     @property
     def duration_seconds(self) -> float:
-        """Get duration in seconds."""
-        if not self.ended_at:
-            return (datetime.now() - self.started_at).total_seconds()
-        return (self.ended_at - self.started_at).total_seconds()
+        """Get duration in seconds, excluding paused time."""
+        end = self.ended_at or datetime.now()
+        raw = (end - self.started_at).total_seconds()
+        paused = self.paused_seconds
+        if self.paused_at:
+            paused += (datetime.now() - self.paused_at).total_seconds()
+        return raw - paused
 
     @property
     def total_value(self) -> float:
@@ -96,6 +110,7 @@ class MapRun:
             "total_items": self.total_items,
             "drops": [d.to_dict() for d in self.drops],
             "is_league_zone": self.is_league_zone,
+            "paused_seconds": self.paused_seconds,
         }
 
 
@@ -107,6 +122,21 @@ class Session:
     started_at: datetime
     ended_at: Optional[datetime] = None
     maps: list[MapRun] = field(default_factory=list)
+    paused_at: Optional[datetime] = None
+    paused_seconds: float = 0.0
+
+    def pause(self, now: datetime) -> None:
+        if not self.paused_at:
+            self.paused_at = now
+
+    def resume(self, now: datetime) -> None:
+        if self.paused_at:
+            self.paused_seconds += (now - self.paused_at).total_seconds()
+            self.paused_at = None
+
+    @property
+    def is_paused(self) -> bool:
+        return self.paused_at is not None
 
     @property
     def total_value(self) -> float:
@@ -135,10 +165,13 @@ class Session:
 
     @property
     def session_duration(self) -> float:
-        """Total elapsed time since session started (seconds)."""
-        if self.ended_at:
-            return (self.ended_at - self.started_at).total_seconds()
-        return (datetime.now() - self.started_at).total_seconds()
+        """Total elapsed time since session started, excluding paused time."""
+        end = self.ended_at or datetime.now()
+        raw = (end - self.started_at).total_seconds()
+        paused = self.paused_seconds
+        if self.paused_at:
+            paused += (datetime.now() - self.paused_at).total_seconds()
+        return raw - paused
 
     @property
     def map_count(self) -> int:
@@ -181,6 +214,7 @@ class Session:
             "map_count": self.map_count,
             "value_per_hour": self.value_per_hour,
             "maps_per_hour": self.maps_per_hour,
+            "paused_seconds": self.paused_seconds,
             "maps": [m.to_dict() for m in self.maps],
         }
 
@@ -199,6 +233,7 @@ class Session:
             "map_count": self.map_count,
             "value_per_hour": self.value_per_hour,
             "maps_per_hour": self.maps_per_hour,
+            "paused_seconds": self.paused_seconds,
         }
 
 

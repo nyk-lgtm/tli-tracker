@@ -24,6 +24,7 @@ export function updateState(data) {
     }
 
     renderUI();
+    renderPauseButton();
 }
 
 export function renderUI() {
@@ -76,8 +77,40 @@ export function renderUI() {
         elements.statMapCount.textContent = '0';
     }
 
+    // Paused badge pinned to bottom of session card
+    const sessionCard = elements.statSessionTotal.closest('.stat-card');
+    let badge = sessionCard.querySelector('.paused-badge');
+    if (state.session?.paused) {
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.className = 'paused-badge';
+            badge.textContent = 'PAUSED';
+            sessionCard.appendChild(badge);
+        }
+    } else if (badge) {
+        badge.remove();
+    }
+
     // Update init status (this also re-renders drops)
     updateInitStatus();
+}
+
+function renderPauseButton() {
+    const btn = elements.btnPause;
+    if (!btn) return;
+
+    if (state.session) {
+        btn.classList.remove('hidden');
+        if (state.session.paused) {
+            btn.textContent = 'Resume';
+            btn.classList.add('active');
+        } else {
+            btn.textContent = 'Pause';
+            btn.classList.remove('active');
+        }
+    } else {
+        btn.classList.add('hidden');
+    }
 }
 
 export function updateInitStatus() {

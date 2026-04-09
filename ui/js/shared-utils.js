@@ -65,6 +65,8 @@ TLI.formatCompact = function(value) {
 TLI.tickTimers = function(state) {
     const result = { mapTicked: false, sessionTicked: false };
 
+    if (state.session?.paused) return result;
+
     if (state.inMap && state.currentMap) {
         state.currentMap.duration += 1;
         result.mapTicked = true;

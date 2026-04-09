@@ -234,10 +234,12 @@ const WidgetManager = {
             valueContainer.style.display = this.settings.showMapValue ? 'flex' : 'none';
         }
 
-        // In-map indicator
+        // In-map indicator — amber when paused, teal when in-map, gray otherwise
+        const paused = this.state.session?.paused;
         const indicator = container.querySelector('[data-el="indicator"]');
         if (indicator) {
-            indicator.classList.toggle('inactive', !this.state.inMap);
+            indicator.classList.toggle('paused', !!paused);
+            indicator.classList.toggle('inactive', !this.state.inMap && !paused);
         }
 
         // Rate
@@ -378,6 +380,8 @@ const WidgetManager = {
      * Update all widget contents (without re-rendering containers)
      */
     updateAllWidgets() {
+        const paused = !!this.state.session?.paused;
+
         for (const widget of this.widgets) {
             if (!widget.enabled) continue;
 
@@ -386,6 +390,8 @@ const WidgetManager = {
 
             const content = el.querySelector('.widget-content');
             if (!content) continue;
+
+            content.classList.toggle('paused', paused);
 
             // Use targeted updates for stats bar, full re-render for charts
             if (widget.type === 'stats_bar') {
@@ -441,6 +447,7 @@ const WidgetManager = {
     async onSettingsUpdate() {
         await this.loadWidgets();
         this.renderAll();
+        this.updateAllWidgets();
         this.updateHotkeyLabel();
     },
 

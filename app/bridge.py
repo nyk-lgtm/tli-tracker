@@ -49,6 +49,11 @@ class ApiBridge(QObject):
         return json.dumps(self.api.set_display_mode(mode), default=str)
 
     @Slot(result=str)
+    def toggle_pause(self) -> str:
+        """Toggle pause state for the current session."""
+        return json.dumps(self.api.toggle_pause(), default=str)
+
+    @Slot(result=str)
     def reset_session(self) -> str:
         """Reset the current tracking session."""
         return json.dumps(self.api.reset_session(), default=str)

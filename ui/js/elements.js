@@ -18,6 +18,7 @@ export function initElements() {
         statMapCount: document.getElementById('stat-map-count'),
         dropsList: document.getElementById('drops-list'),
         btnInitialize: document.getElementById('btn-initialize'),
+        btnPause: document.getElementById('btn-pause'),
         btnReset: document.getElementById('btn-reset'),
         btnModeValue: document.getElementById('btn-mode-value'),
         btnModeItems: document.getElementById('btn-mode-items'),
