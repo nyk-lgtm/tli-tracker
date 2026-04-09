@@ -98,7 +98,8 @@ class CloudPriceManager(QObject):
                 print("Cloud price response: unexpected format")
                 return
 
-            count = 0
+            # replace entire cache so delisted items don't linger
+            new_prices = {}
             for item in data["data"]:
                 item_id = str(item.get("id", ""))
                 if not item_id or item_id in FIXED_PRICE_IDS:
@@ -106,12 +107,13 @@ class CloudPriceManager(QObject):
                 price = item.get("price")
                 updated_at = item.get("updatedAt", "")
                 if price is not None and updated_at:
-                    self._prices[item_id] = {
+                    new_prices[item_id] = {
                         "price": round(float(price), 4),
                         "updated_at": updated_at,
                     }
-                    count += 1
+            count = len(new_prices)
 
+            self._prices = new_prices
             self._save()
             print(f"Cloud prices updated: {count} items")
             self.prices_updated.emit()

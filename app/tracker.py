@@ -274,7 +274,7 @@ class Tracker:
             nonlocal changed
             for drop in drops:
                 price, _, _ = self._resolve_price(drop.item_id)
-                new_value = price * drop.quantity if price else drop.value
+                new_value = price * drop.quantity if price is not None else None
                 if new_value != drop.value:
                     drop.value = new_value
                     changed = True

@@ -246,8 +246,14 @@ class Api:
         self._push_to_ui("settings_update", {})
 
         # trigger immediate fetch when cloud prices toggled on
-        if settings.get("cloud_prices_enabled") and not was_enabled:
+        now_enabled = settings.get("cloud_prices_enabled", False)
+        if now_enabled and not was_enabled:
             self.cloud_prices.fetch()
+        elif was_enabled and not now_enabled:
+            # re-resolve all drops to local-only prices
+            self.tracker._backfill_cloud_prices()
+            self.tracker._notify_state()
+
         return {"status": "ok" if success else "error"}
 
     def reset_settings(self) -> dict:
@@ -263,7 +269,16 @@ class Api:
             "game_log_path": "",
             "cached_log_path": "",
         }
+        # check if cloud prices was enabled before reset
+        old_config = load_config()
+        was_cloud_enabled = old_config.get("cloud_prices_enabled", False)
+
         success = save_config(default_settings)
+
+        # re-resolve drops if cloud prices was just disabled by reset
+        if was_cloud_enabled:
+            self.tracker._backfill_cloud_prices()
+            self.tracker._notify_state()
 
         if self._overlay_window:
             self._push_to_ui("settings_reset", {})
