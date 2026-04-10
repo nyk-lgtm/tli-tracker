@@ -5,13 +5,13 @@ Handles storing and retrieving farming session data
 for analytics and historical tracking.
 """
 
+import json
+import uuid
 from datetime import datetime
 from typing import Optional
-import uuid
-import json
 
 from .models import Session
-from .storage import load_json, save_json, DATA_DIR
+from .storage import DATA_DIR, load_json, save_json
 
 
 class SessionManager:
@@ -124,7 +124,8 @@ class SessionManager:
         total_items = 0
 
         for session in self._sessions:
-            # Use net_value if available (new format), fallback to total_value (old format)
+            # Use net_value if available (new format),
+            # fallback to total_value for older session files.
             total_value += session.get("net_value", session.get("total_value", 0))
             total_maps += session.get("map_count", 0)
             total_time += session.get("session_duration", 0)
@@ -163,7 +164,7 @@ class SessionManager:
         return False
 
     def clear_all(self) -> None:
-        """Delete all session history (clears summaries and deletes all individual files)."""
+        """Delete all session history and remove individual session files."""
         # Delete all individual session files
         sessions_dir = DATA_DIR / "sessions"
         if sessions_dir.exists():

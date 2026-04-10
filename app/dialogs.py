@@ -8,17 +8,17 @@ from enum import Enum
 from typing import Optional
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QBrush, QColor, QPainter, QPainterPath, QPen
 from PySide6.QtWidgets import (
     QDialog,
-    QVBoxLayout,
+    QGraphicsDropShadowEffect,
     QHBoxLayout,
     QLabel,
-    QPushButton,
-    QGraphicsDropShadowEffect,
     QProgressBar,
+    QPushButton,
     QTextEdit,
+    QVBoxLayout,
 )
-from PySide6.QtGui import QPainter, QBrush, QColor, QPainterPath, QPen
 
 
 class DialogResult(Enum):
@@ -349,7 +349,10 @@ class UpdateAvailableDialog(QDialog):
         layout.addLayout(header)
 
         # Version info
-        version_text = f"A new version of TLI Tracker is available!\n\nCurrent: v{current_version}  →  New: v{new_version}"
+        version_text = (
+            "A new version of TLI Tracker is available!\n\n"
+            f"Current: v{current_version}  →  New: v{new_version}"
+        )
         version_label = QLabel(version_text)
         version_label.setObjectName("message")
         version_label.setWordWrap(True)

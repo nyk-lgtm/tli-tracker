@@ -1,0 +1,13 @@
+SendMessage STT----XchgSearchPrice----SynId = 42
+refer [2001]
+SendMessage End
+RecvMessage STT----XchgSearchPrice----SynId = 42
++1 [10.0]
++2 [11.0]
++3 [12.0]
++4 [13.0]
++5 [14.0]
++6 [15.0]
++7 [16.0]
++8 [17.0]
+RecvMessage End

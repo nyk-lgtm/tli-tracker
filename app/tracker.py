@@ -5,11 +5,11 @@ Coordinates log parsing, bag state, price lookups, and session management.
 """
 
 from datetime import datetime
-from typing import Callable, Any
+from typing import Any, Callable
 
-from .models import TrackerState, MapRun, Drop, DisplayMode
-from .log_parser import LogParser
 from .bag_state import BagState
+from .log_parser import LogParser
+from .models import DisplayMode, Drop, MapRun, TrackerState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
 from .storage import get_config_value, get_item_name, get_item_type, load_config
@@ -375,7 +375,8 @@ class Tracker:
                     [self._drop_to_dict(d) for d in self.state.current_map.drops]
                 )
 
-            # Calculate totals: session.net_value has stored investments, add current map
+            # session.net_value already includes completed-map investment;
+            # add the live current-map net value on top.
             total_net_value = (
                 self.state.current_session.net_value + current_map_net_value
             )

@@ -11,8 +11,8 @@ from typing import Optional
 HAS_WIN32 = False
 if sys.platform == "win32":
     try:
-        import win32gui
         import win32con
+        import win32gui
 
         HAS_WIN32 = True
     except ImportError:

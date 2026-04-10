@@ -7,13 +7,13 @@ Provides MainWindow and OverlayWindow using QWebEngineView.
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import Qt, QUrl, QTimer
-from PySide6.QtWidgets import QMainWindow
-from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWebEngineCore import QWebEngineSettings
+from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtWebChannel import QWebChannel
+from PySide6.QtWebEngineCore import QWebEngineSettings
+from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtWidgets import QMainWindow
 
-from app.dialogs import show_error, DialogResult
+from app.dialogs import DialogResult, show_error
 from app.monitor_utils import get_game_monitor, get_primary_monitor
 
 
@@ -151,9 +151,9 @@ class MainWindow(QMainWindow):
     def _detect_game_log_live(self) -> Optional[str]:
         """Try to find game log via the running game process."""
         try:
+            import psutil
             import win32gui
             import win32process
-            import psutil
         except ImportError:
             return None
 

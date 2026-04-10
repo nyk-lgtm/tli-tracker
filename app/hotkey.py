@@ -7,7 +7,7 @@ games are focused, since RegisterHotKey intercepts at the OS level.
 
 import sys
 import threading
-from queue import Queue, Empty
+from queue import Empty, Queue
 from typing import Callable, Optional
 
 from PySide6.QtCore import QObject, Signal
@@ -250,7 +250,8 @@ class HotkeyManager:
                         else:
                             error = ctypes.GetLastError()
                             print(
-                                f"[Hotkey] Failed to update id={hotkey_id}, error={error}"
+                                "[Hotkey] Failed to update "
+                                f"id={hotkey_id}, error={error}"
                             )
             except Empty:
                 pass

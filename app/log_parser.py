@@ -4,7 +4,7 @@ Log parser for Torchlight Infinite game logs.
 
 import re
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Dict, Optional
 
 
 @dataclass
@@ -137,7 +137,8 @@ class LogParser:
         events = []
 
         # 1. Find all Search Requests (The "Ask")
-        # We look for the entire block ending with 'SendMessage End' to ensure we capture the ID
+        # We need the entire block ending with "SendMessage End"
+        # so request parsing still has access to the item ID.
         for match in self.PATTERN_SEARCH_REQ_BLOCK.finditer(text):
             syn_id = match.group(1)
             content = match.group(2)

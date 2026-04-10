@@ -6,9 +6,11 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 *.egg-info/
 dist/
 build/
+.pytest_cache/
 
 # Environment
 .env
@@ -31,3 +33,4 @@ data/
 # Build/Installer output
 installer/
 .claude/
+profile-output/

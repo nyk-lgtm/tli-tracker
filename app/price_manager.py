@@ -7,7 +7,8 @@ auction house searches in the game log.
 
 from datetime import datetime
 from typing import Optional
-from .storage import load_json, save_json, load_config
+
+from .storage import load_config, load_json, save_json
 
 
 class PriceManager:

@@ -9,8 +9,8 @@ import threading
 from pathlib import Path
 from typing import Callable, Optional
 
+from watchdog.events import FileModifiedEvent, FileSystemEventHandler
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, FileModifiedEvent
 
 
 class LogFileHandler(FileSystemEventHandler):

@@ -1,0 +1,3 @@
+PageApplyBase@ _UpdateGameEnd:
+LastSceneName = World'/Game/Art/Maps/01SD/XZ_YuJinZhiXiBiNanSuo200'
+NextSceneName = World'/Game/Art/Maps/TestMap_A01'

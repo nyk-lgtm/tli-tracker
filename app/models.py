@@ -4,8 +4,8 @@ Data models for TLI Tracker.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
 from enum import Enum
+from typing import Optional
 
 
 class DisplayMode(Enum):

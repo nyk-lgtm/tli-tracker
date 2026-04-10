@@ -10,10 +10,10 @@ import subprocess
 import tempfile
 from dataclasses import dataclass
 from typing import Callable, Optional, Tuple
-from urllib.request import urlopen, Request
-from urllib.error import URLError, HTTPError
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
-from .version import VERSION, GITHUB_OWNER, GITHUB_REPO
+from .version import GITHUB_OWNER, GITHUB_REPO, VERSION
 
 
 @dataclass

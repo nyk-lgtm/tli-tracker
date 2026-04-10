@@ -42,7 +42,9 @@ def sync_version() -> str:
 def compile_nuitka() -> int:
     """Compile with Nuitka"""
     cmd = [
-        sys.executable, "-m", "nuitka",
+        sys.executable,
+        "-m",
+        "nuitka",
         "--standalone",
         "--enable-plugin=pyside6",
         f"--include-data-dir={ROOT / 'ui'}=ui",

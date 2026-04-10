@@ -6,16 +6,16 @@ Main entry point using PySide6 + QWebEngineView.
 
 import sys
 
-from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication
 
 from app.api import Api
 from app.bridge import ApiBridge
-from app.windows import MainWindow, OverlayWindow
+from app.hotkey import hotkey_manager
 from app.storage import load_config
 from app.version import VERSION
-from app.hotkey import hotkey_manager
+from app.windows import MainWindow, OverlayWindow
 
 
 class TLITrackerApp:
