@@ -35,11 +35,6 @@ class TLITrackerApp:
         # Create API instance
         self.api = Api()
 
-        # Create heartbeat timer for real-time UI updates
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.api.tracker._notify_state)
-        self.timer.start(1000)  # Update every 1 second
-
         # Cloud price refresh timer (10 min)
         self.cloud_timer = QTimer()
         self.cloud_timer.timeout.connect(self.api.cloud_prices.fetch)

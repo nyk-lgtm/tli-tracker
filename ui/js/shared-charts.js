@@ -178,39 +178,32 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
 /**
  * Render Donut Chart (loot distribution by category)
  * @param {HTMLElement} container - The container element
- * @param {Array} drops - Array of drop objects with item_type and value
+ * @param {Array} categoryTotals - Array of category objects with item_type and value
  */
-TLI.charts.renderDonut = function(container, drops) {
+TLI.charts.renderDonut = function(container, categoryTotals) {
     if (!container) return;
 
-    if (!drops || drops.length === 0) {
+    if (!categoryTotals || categoryTotals.length === 0) {
         container.innerHTML = '<div class="donut-empty">No drops yet</div>';
         return;
     }
 
-    // Aggregate drops by item category/type
-    const categoryTotals = {};
-    for (const drop of drops) {
-        const category = drop.item_type || 'Other';
-        const value = drop.value || 0;
-        if (value > 0) {
-            categoryTotals[category] = (categoryTotals[category] || 0) + value;
-        }
-    }
-
     // Sort by value - top 4 categories + "Other" for everything else (5 groups max)
-    const sortedCategories = Object.entries(categoryTotals)
-        .sort((a, b) => b[1] - a[1]);
+    const sortedCategories = [...categoryTotals]
+        .filter(item => (item.value || 0) > 0)
+        .sort((a, b) => b.value - a.value);
 
     const topItems = sortedCategories.slice(0, 4);
-    const otherValue = sortedCategories.slice(4).reduce((sum, item) => sum + item[1], 0);
+    const otherValue = sortedCategories
+        .slice(4)
+        .reduce((sum, item) => sum + item.value, 0);
 
     if (otherValue > 0) {
-        topItems.push(['Other', otherValue]);
+        topItems.push({ item_type: 'Other', value: otherValue });
     }
 
     // Calculate total for percentages
-    const total = topItems.reduce((sum, item) => sum + item[1], 0);
+    const total = topItems.reduce((sum, item) => sum + item.value, 0);
 
     if (total === 0) {
         container.innerHTML = '<div class="donut-empty">No valued drops</div>';
@@ -220,7 +213,8 @@ TLI.charts.renderDonut = function(container, drops) {
     // Build conic gradient stops
     const COLORS = TLI.charts.COLORS;
     let currentAngle = 0;
-    const gradientStops = topItems.map(([name, value], i) => {
+    const gradientStops = topItems.map((item, i) => {
+        const value = item.value;
         const percent = (value / total) * 100;
         const startAngle = currentAngle;
         currentAngle += percent;
@@ -228,7 +222,9 @@ TLI.charts.renderDonut = function(container, drops) {
     }).join(', ');
 
     // Build legend HTML (show all 5 items, truncate names to 20 chars)
-    const legendHTML = topItems.map(([name, value], i) => {
+    const legendHTML = topItems.map((item, i) => {
+        const name = item.item_type || 'Other';
+        const value = item.value;
         const percent = ((value / total) * 100).toFixed(0);
         const truncatedName = name.length > 20 ? name.substring(0, 20) + '...' : name;
         return `

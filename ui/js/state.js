@@ -8,9 +8,7 @@ export const state = {
     inMap: false,
     displayMode: 'value',
     currentMap: null,
-    session: null,
-    drops: [],
-    prices: {}
+    session: null
 };
 
 export const settings = {

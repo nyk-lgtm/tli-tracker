@@ -7,12 +7,12 @@
 
 import { state } from './state.js';
 import { elements, initElements } from './elements.js';
-import { showStatus, hideStatus, formatTime, tickTimers } from './utils.js';
+import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners } from './settings.js';
 import { loadHistory } from './history.js';
 import { checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
-import { updateState, renderUI, renderDrops, addDrop } from './renderers.js';
+import { updateState, renderUI, renderDrops, updateTimedStats } from './renderers.js';
 
 // ============ Event Handlers from Python ============
 
@@ -32,9 +32,6 @@ window.onPythonEvent = function(eventType, data) {
         case 'state':
             updateState(data);
             break;
-        case 'drop':
-            addDrop(data);
-            break;
         case 'map_enter':
             onMapEnter();
             break;
@@ -44,17 +41,11 @@ window.onPythonEvent = function(eventType, data) {
         case 'initialized':
             onInitialized(data.item_count);
             break;
-        case 'price_update':
-            if (data.item_id && data.price !== undefined) {
-                const cleanId = String(data.item_id).trim();
-                state.prices[cleanId] = data.price;
-                console.log(`Updated price for [${cleanId}]: ${data.price}`);
-                renderDrops();
-            }
-            break;
         case 'session_reset':
-            state.drops = [];
-            renderDrops();
+            state.session = null;
+            state.currentMap = null;
+            state.inMap = false;
+            renderUI();
             break;
     }
 };
@@ -66,20 +57,6 @@ function onReady() {
 
     // Load initial state
     api('get_stats').then(updateState);
-
-    // Initial fetch of price database to populate cache
-    api('get_prices').then(data => {
-        if (data) {
-            Object.entries(data).forEach(([id, entry]) => {
-                if (entry && entry.price !== undefined) {
-                    const cleanId = String(id).trim();
-                    state.prices[cleanId] = entry.price;
-                }
-            });
-            // Re-render if drops are already loaded
-            if (state.drops.length > 0) renderDrops();
-        }
-    });
 }
 
 function onInitialized(itemCount) {
@@ -140,8 +117,10 @@ async function resetSession() {
 
     try {
         await api('reset_session');
-        state.drops = [];
-        renderDrops();
+        state.session = null;
+        state.currentMap = null;
+        state.inMap = false;
+        renderUI();
         showStatus('Session reset', 'success', 2000);
     } catch (e) {
         showStatus('Reset failed', 'error', 3000);
@@ -201,12 +180,8 @@ function startTimerLoop() {
     timerInterval = setInterval(() => {
         const { mapTicked, sessionTicked } = tickTimers(state);
 
-        if (mapTicked) {
-            elements.statMapTime.textContent = formatTime(state.currentMap.duration);
-        }
-
-        if (sessionTicked) {
-            elements.statSessionTotal.textContent = formatTime(state.session.duration_total);
+        if (mapTicked || sessionTicked) {
+            updateTimedStats();
         }
     }, 1000);
 }

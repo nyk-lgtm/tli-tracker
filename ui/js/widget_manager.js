@@ -337,7 +337,7 @@ const WidgetManager = {
      */
     renderDonutChart(container) {
         const { session } = this.state;
-        const drops = session?.drops || [];
+        const categoryTotals = session?.category_totals || [];
 
         // Reuse existing structure if present, otherwise create it
         let chartContainer = container.querySelector('.chart-widget-inner');
@@ -360,7 +360,7 @@ const WidgetManager = {
         }
 
         if (typeof TLI !== 'undefined' && TLI.charts) {
-            TLI.charts.renderDonut(chartContent, drops);
+            TLI.charts.renderDonut(chartContent, categoryTotals);
         } else {
             chartContent.innerHTML = '<div class="chart-loading">Loading...</div>';
         }

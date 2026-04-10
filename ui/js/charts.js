@@ -56,7 +56,7 @@ export function renderCharts(elements, state, settings) {
 
     const session = state.session;
     const maps = session?.maps || [];
-    const drops = session?.drops || [];
+    const categoryTotals = session?.category_totals || [];
     const sessionDuration = session?.duration_total || 0;
     const currentValue = session?.value || 0;
     const currentMap = state.currentMap;
@@ -71,6 +71,6 @@ export function renderCharts(elements, state, settings) {
     }
 
     if (settings.chart_donut_enabled && elements.chartDonut) {
-        renderDonutChart(elements.chartDonut, drops);
+        renderDonutChart(elements.chartDonut, categoryTotals);
     }
 }

@@ -42,8 +42,33 @@ def test_tracker_initializes_and_tracks_drop_during_map() -> None:
     assert stats["initialized"] is True
     assert stats["in_map"] is True
     assert stats["session"] is not None
-    assert len(stats["session"]["drops"]) == 2
-    assert any(event_type == "drop" for event_type, _ in events)
+    assert "drops" not in stats["session"]
+    assert stats["current_map"] is not None
+    assert stats["current_map"]["items"] == 3
+    assert stats["current_map"]["value"] == 0
+    assert stats["current_map"]["duration"] >= 0
+    assert sorted(stats["session"]["item_rows"], key=lambda item: item["item_id"]) == [
+        {
+            "item_id": "2001",
+            "item_name": "Divine Core",
+            "item_type": "Currency",
+            "price_source": "local",
+            "price_status": "unknown",
+            "quantity": 2,
+            "value": 0.0,
+        },
+        {
+            "item_id": "3001",
+            "item_name": "Ember Relic",
+            "item_type": "Relic",
+            "price_source": "local",
+            "price_status": "unknown",
+            "quantity": 1,
+            "value": 0.0,
+        },
+    ]
+    assert stats["session"]["category_totals"] == []
+    assert any(event_type == "state" for event_type, _ in events)
 
 
 def test_tracker_reset_session_saves_completed_session() -> None:
@@ -97,5 +122,21 @@ def test_tracker_get_stats_includes_completed_and_current_map_drops() -> None:
     stats = tracker.get_stats()
 
     assert stats["session"] is not None
-    assert len(stats["session"]["drops"]) == 2
+    assert "drops" not in stats["session"]
     assert stats["session"]["map_count"] == 1
+    assert stats["session"]["value"] == 30.0
+    assert stats["session"]["items"] == 4
+    assert sorted(stats["session"]["item_rows"], key=lambda item: item["item_id"]) == [
+        {
+            "item_id": "2001",
+            "item_name": "Divine Core",
+            "item_type": "Currency",
+            "price_source": "local",
+            "price_status": "fresh",
+            "quantity": 4,
+            "value": 40.0,
+        }
+    ]
+    assert stats["session"]["category_totals"] == [
+        {"item_type": "Currency", "value": 40.0}
+    ]

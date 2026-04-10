@@ -43,6 +43,148 @@ class Tracker:
 
         # Track if we're waiting for user to sort bag
         self._awaiting_init = False
+        self._reset_live_cache(mark_dirty=True)
+
+    def _reset_live_cache(self, mark_dirty: bool = False) -> None:
+        """Reset cached aggregate state used by the live UI."""
+        self._live_items: dict[str, dict] = {}
+        self._live_category_totals: dict[str, float] = {}
+        self._live_maps: list[dict] = []
+        self._live_completed_value = 0.0
+        self._live_completed_items = 0
+        self._live_completed_duration = 0.0
+        self._live_completed_map_count = 0
+        self._live_current_value = 0.0
+        self._live_current_items = 0
+        self._live_dirty = mark_dirty
+
+    def _mark_live_dirty(self) -> None:
+        """Mark cached live aggregates as needing a rebuild."""
+        self._live_dirty = True
+
+    def _ensure_live_cache(self) -> None:
+        """Rebuild cached aggregates if they are stale."""
+        if self._live_dirty:
+            self._rebuild_live_cache()
+
+    def _rebuild_live_cache(self) -> None:
+        """Rebuild aggregate live state from persisted raw session data."""
+        self._reset_live_cache(mark_dirty=False)
+
+        session = self.state.current_session
+        if not session:
+            return
+
+        for index, map_run in enumerate(session.maps):
+            self._live_completed_value += map_run.net_value
+            self._live_completed_items += map_run.total_items
+            self._live_completed_duration += map_run.duration_seconds
+            if map_run.ended_at and not map_run.is_league_zone:
+                self._live_completed_map_count += 1
+                self._live_maps.append(
+                    {
+                        "index": index,
+                        "total_value": map_run.net_value,
+                        "duration_seconds": map_run.duration_seconds,
+                        "ended_at_offset": (
+                            map_run.ended_at - session.started_at
+                        ).total_seconds(),
+                    }
+                )
+
+            for drop in map_run.drops:
+                self._accumulate_drop(drop, include_current_map=False)
+
+        if self.state.current_map and (
+            not session.maps or session.maps[-1] is not self.state.current_map
+        ):
+            for drop in self.state.current_map.drops:
+                self._accumulate_drop(drop, include_current_map=True)
+
+        self._refresh_item_metadata()
+
+    def _accumulate_drop(self, drop: Drop, include_current_map: bool) -> None:
+        """Accumulate a raw drop into aggregate live state."""
+        item_name = get_item_name(drop.item_id)
+        if item_name.startswith("Unknown ("):
+            return
+
+        item_type = get_item_type(drop.item_id) or "Other"
+        entry = self._live_items.setdefault(
+            drop.item_id,
+            {
+                "item_id": drop.item_id,
+                "item_name": item_name,
+                "item_type": item_type,
+                "quantity": 0,
+                "value": 0.0,
+                "price_status": "unknown",
+                "price_source": "local",
+            },
+        )
+
+        entry["quantity"] += drop.quantity
+        if drop.value is not None:
+            entry["value"] += drop.value
+            if drop.value > 0:
+                self._live_category_totals[item_type] = (
+                    self._live_category_totals.get(item_type, 0.0) + drop.value
+                )
+
+        if include_current_map:
+            if drop.value is not None:
+                self._live_current_value += drop.value
+            if drop.quantity > 0:
+                self._live_current_items += drop.quantity
+
+    def _refresh_item_metadata(self) -> None:
+        """Refresh price status/source metadata for aggregate rows."""
+        for item_id, entry in self._live_items.items():
+            _, price_status, price_source = self._resolve_price(item_id)
+            entry["price_status"] = price_status
+            entry["price_source"] = price_source
+
+    def _apply_live_drop(
+        self,
+        item_id: str,
+        item_name: str,
+        item_type: str | None,
+        quantity: int,
+        value: float | None,
+        price_status: str,
+        price_source: str,
+    ) -> None:
+        """Incrementally apply a new live drop to aggregate state."""
+        normalized_type = item_type or "Other"
+        entry = self._live_items.setdefault(
+            item_id,
+            {
+                "item_id": item_id,
+                "item_name": item_name,
+                "item_type": normalized_type,
+                "quantity": 0,
+                "value": 0.0,
+                "price_status": price_status,
+                "price_source": price_source,
+            },
+        )
+
+        entry["item_name"] = item_name
+        entry["item_type"] = normalized_type
+        entry["quantity"] += quantity
+        if value is not None:
+            entry["value"] += value
+            self._live_current_value += value
+            if value > 0:
+                self._live_category_totals[normalized_type] = (
+                    self._live_category_totals.get(normalized_type, 0.0) + value
+                )
+
+        if quantity > 0:
+            self._live_current_items += quantity
+
+        entry["price_status"] = price_status
+        entry["price_source"] = price_source
 
         # Pause state
         self._is_paused = False
@@ -171,6 +313,9 @@ class Tracker:
         if not self.state.current_session:
             self.state.current_session = self.sessions.create_session()
 
+        self._live_current_value = 0.0
+        self._live_current_items = 0
+
         self._notify("map_enter", {})
         self._notify_state()
 
@@ -189,8 +334,37 @@ class Tracker:
                 self.state.current_session.maps.append(self.state.current_map)
                 self.sessions.save_session(self.state.current_session)
 
+            if self._live_dirty:
+                self._rebuild_live_cache()
+            else:
+                self._live_completed_value += self.state.current_map.net_value
+                self._live_completed_items += self._live_current_items
+                self._live_completed_duration += self.state.current_map.duration_seconds
+                if (
+                    not self.state.current_map.is_league_zone
+                    and self.state.current_map.ended_at
+                ):
+                    self._live_completed_map_count += 1
+                    self._live_maps.append(
+                        {
+                            "index": len(self.state.current_session.maps) - 1
+                            if self.state.current_session
+                            else 0,
+                            "total_value": self.state.current_map.net_value,
+                            "duration_seconds": self.state.current_map.duration_seconds,
+                            "ended_at_offset": (
+                                self.state.current_map.ended_at
+                                - self.state.current_session.started_at
+                            ).total_seconds()
+                            if self.state.current_session
+                            else 0,
+                        }
+                    )
+
         self.state.is_in_map = False
         self.state.current_map = None
+        self._live_current_value = 0.0
+        self._live_current_items = 0
 
         self._notify("map_exit", {})
         self._notify_state()
@@ -220,18 +394,14 @@ class Tracker:
             )
 
             self.state.current_map.drops.append(drop)
-
-            self._notify(
-                "drop",
-                {
-                    "item_id": item_id,
-                    "item_name": item_name,
-                    "item_type": get_item_type(item_id),
-                    "quantity": quantity,
-                    "value": value,
-                    "price_status": price_status,
-                    "price_source": price_source,
-                },
+            self._apply_live_drop(
+                item_id=item_id,
+                item_name=item_name,
+                item_type=get_item_type(item_id),
+                quantity=quantity,
+                value=value,
+                price_status=price_status,
+                price_source=price_source,
             )
 
         self._notify_state()
@@ -267,6 +437,7 @@ class Tracker:
             # Persist the updated session to disk
             self.sessions.save_session(self.state.current_session)
 
+        self._mark_live_dirty()
         # Notify UI that state has changed
         self._notify_state()
 
@@ -330,6 +501,7 @@ class Tracker:
                 _update_drops(map_run.drops)
             if changed:
                 self.sessions.save_session(self.state.current_session)
+                self._mark_live_dirty()
 
     def _notify(self, event_type: str, data: Any) -> None:
         """Send an event to the UI."""
@@ -346,6 +518,7 @@ class Tracker:
 
     def get_stats(self) -> dict:
         """Get current tracker statistics for UI."""
+        self._ensure_live_cache()
         config = load_config()
         investment = config.get("investment_per_map", 0)
 
@@ -355,63 +528,48 @@ class Tracker:
         if self.state.current_map:
             current_map_duration = self.state.current_map.duration_seconds
             # Current map: use config investment (not yet captured to map)
-            current_map_net_value = self.state.current_map.total_value - investment
+            current_map_net_value = self._live_current_value - investment
             current_map = {
                 "duration": current_map_duration,
                 "value": current_map_net_value,
-                "items": self.state.current_map.total_items,
+                "items": self._live_current_items,
             }
 
         session = None
-        session_drops = []
         if self.state.current_session:
-            # Get all drops from the session (completed maps + current map)
-            session_drops = [
-                self._drop_to_dict(d) for d in self.state.current_session.all_drops
-            ]
-            if self.state.current_map:
-                # Add current map's drops (not yet in session)
-                session_drops.extend(
-                    [self._drop_to_dict(d) for d in self.state.current_map.drops]
-                )
-
             # session.net_value already includes completed-map investment;
             # add the live current-map net value on top.
-            total_net_value = (
-                self.state.current_session.net_value + current_map_net_value
-            )
+            total_net_value = self._live_completed_value + current_map_net_value
             duration = self.state.current_session.session_duration
             hours = duration / 3600 if duration > 0 else 0
             value_per_hour = total_net_value / hours if hours > 0 else 0
-            map_count = self.state.current_session.map_count
+            map_count = self._live_completed_map_count
             maps_per_hour = map_count / hours if hours > 0 else 0
             value_per_map = total_net_value / map_count if map_count > 0 else 0
 
             session = {
                 "id": self.state.current_session.id,
                 "paused": self._is_paused,
-                "duration_mapping": self.state.current_session.total_duration
-                + current_map_duration,
+                "duration_mapping": (
+                    self._live_completed_duration + current_map_duration
+                ),
                 "duration_total": duration,
                 "value": total_net_value,
-                "items": self.state.current_session.total_items,
+                "items": self._live_completed_items + self._live_current_items,
                 "map_count": map_count,
                 "value_per_hour": value_per_hour,
                 "value_per_map": value_per_map,
                 "maps_per_hour": maps_per_hour,
-                "drops": session_drops,
-                "maps": [
-                    {
-                        "index": i,
-                        "total_value": m.net_value,
-                        "duration_seconds": m.duration_seconds,
-                        "ended_at_offset": (
-                            m.ended_at - self.state.current_session.started_at
-                        ).total_seconds(),
-                    }
-                    for i, m in enumerate(self.state.current_session.maps)
-                    if m.ended_at
+                "item_rows": list(self._live_items.values()),
+                "category_totals": [
+                    {"item_type": item_type, "value": value}
+                    for item_type, value in sorted(
+                        self._live_category_totals.items(),
+                        key=lambda item: item[1],
+                        reverse=True,
+                    )
                 ],
+                "maps": list(self._live_maps),
             }
 
         return {
@@ -421,21 +579,6 @@ class Tracker:
             "display_mode": self.state.display_mode.value,
             "current_map": current_map,
             "session": session,
-        }
-
-    def _drop_to_dict(self, drop: Drop) -> dict:
-        """Convert a Drop to a dictionary with item name and type."""
-        price, price_status, price_source = self._resolve_price(drop.item_id)
-        value = price * drop.quantity if price else drop.value
-        return {
-            "item_id": drop.item_id,
-            "item_name": get_item_name(drop.item_id),
-            "item_type": get_item_type(drop.item_id),
-            "quantity": drop.quantity,
-            "value": value,
-            "timestamp": drop.timestamp.isoformat(),
-            "price_status": price_status,
-            "price_source": price_source,
         }
 
     def request_initialization(self) -> dict:
@@ -542,6 +685,7 @@ class Tracker:
         self.state.current_session = None
         self.state.current_map = None
         self.state.is_in_map = False
+        self._reset_live_cache()
 
         self._notify("session_reset", {})
         self._notify_state()
@@ -554,6 +698,7 @@ class Tracker:
         self.bag.clear()
         self.state = TrackerState()
         self._awaiting_init = False
+        self._reset_live_cache()
 
         self._notify("reset", {})
         self._notify_state()

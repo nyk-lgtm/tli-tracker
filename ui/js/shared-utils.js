@@ -74,6 +74,18 @@ TLI.tickTimers = function(state) {
 
     if (state.session) {
         state.session.duration_total += 1;
+        if (state.inMap) {
+            state.session.duration_mapping += 1;
+        }
+
+        const hours = state.session.duration_total / 3600;
+        if (hours > 0) {
+            state.session.value_per_hour = state.session.value / hours;
+            state.session.maps_per_hour = state.session.map_count / hours;
+        } else {
+            state.session.value_per_hour = 0;
+            state.session.maps_per_hour = 0;
+        }
         result.sessionTicked = true;
     }
 

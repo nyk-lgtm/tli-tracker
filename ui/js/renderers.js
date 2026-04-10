@@ -16,13 +16,6 @@ export function updateState(data) {
     state.currentMap = data.current_map;
     state.session = data.session;
 
-    // Update drops from session (includes all maps + current map)
-    if (data.session && data.session.drops) {
-        state.drops = data.session.drops;
-    } else {
-        state.drops = [];
-    }
-
     renderUI();
     renderPauseButton();
 }
@@ -113,6 +106,28 @@ function renderPauseButton() {
     }
 }
 
+export function updateTimedStats() {
+    if (state.currentMap) {
+        elements.statMapTime.textContent = formatTime(state.currentMap.duration);
+    }
+
+    if (state.session) {
+        elements.statSessionMapping.textContent = formatTime(
+            state.session.duration_mapping
+        );
+        elements.statSessionTotal.textContent = formatTime(
+            state.session.duration_total
+        );
+        const efficiencyValue = settings.efficiency_per_map
+            ? state.session.value_per_map
+            : state.session.value_per_hour;
+        elements.statRate.innerHTML = formatRate(
+            efficiencyValue,
+            settings.efficiency_per_map
+        );
+    }
+}
+
 export function updateInitStatus() {
     if (state.awaitingInit) {
         // Waiting for user to sort bag
@@ -135,16 +150,10 @@ export function updateInitStatus() {
 
 // ============ Drop Rendering ============
 
-export function addDrop(dropData) {
-    // Add to beginning of list
-    state.drops.unshift(dropData);
-
-    // Re-render
-    renderDrops();
-}
-
 export function renderDrops() {
-    if (state.drops.length === 0) {
+    const itemRows = state.session?.item_rows || [];
+
+    if (itemRows.length === 0) {
         let emptyHtml = '';
 
         if (state.awaitingInit) {
@@ -180,60 +189,35 @@ export function renderDrops() {
         return;
     }
 
-    // Pass all drops - each render function will aggregate then limit to top 50 item types
+    // Render aggregate rows - the backend already collapsed raw drops into
+    // one row per item, so only a cheap display sort remains here.
     if (state.displayMode === 'items') {
-        renderItemsMode(state.drops);
+        renderItemsMode(itemRows);
     } else {
-        renderValueMode(state.drops);
+        renderValueMode(itemRows);
     }
 }
 
-function renderValueMode(drops) {
-    // Aggregate by item
-    const itemTotals = {};
-    drops.forEach(drop => {
-        const id = String(drop.item_id).trim();
+function renderValueMode(itemRows) {
+    const sorted = [...itemRows]
+        .sort((itemA, itemB) => {
+            const valueA = itemA.value || 0;
+            const valueB = itemB.value || 0;
+            const hasPriceA = Math.abs(valueA) > 0;
+            const hasPriceB = Math.abs(valueB) > 0;
 
-        if (!itemTotals[id]) {
-            itemTotals[id] = {
-                id: id,
-                name: drop.item_name,
-                quantity: 0,
-                value: 0,
-                price_status: drop.price_status,
-                price_source: drop.price_source || 'local'
-            };
-        }
-        itemTotals[id].quantity += drop.quantity;
-        if (drop.value !== null) {
-            itemTotals[id].value += drop.value;
-        }
-    });
-
-    // Sort by value/quantity, then limit to top 50 item types
-    const sorted = Object.entries(itemTotals)
-        .sort((a, b) => {
-            const itemA = a[1];
-            const itemB = b[1];
-
-            // Check if items have a valid price (value > 0)
-            const hasPriceA = Math.abs(itemA.value) > 0;
-            const hasPriceB = Math.abs(itemB.value) > 0;
-
-            if (hasPriceA && !hasPriceB) return -1; // A comes first
-            if (!hasPriceA && hasPriceB) return 1;  // B comes first
+            if (hasPriceA && !hasPriceB) return -1;
+            if (!hasPriceA && hasPriceB) return 1;
 
             if (hasPriceA) {
-                // Both have prices: sort by Total Value (desc)
-                return Math.abs(itemB.value) - Math.abs(itemA.value);
-            } else {
-                // Neither has price: sort by Quantity (desc)
-                return Math.abs(itemB.quantity) - Math.abs(itemA.quantity);
+                return Math.abs(valueB) - Math.abs(valueA);
             }
+
+            return Math.abs(itemB.quantity) - Math.abs(itemA.quantity);
         })
         .slice(0, 50);
 
-    const html = sorted.map(([id, item]) => {
+    const html = sorted.map((item) => {
         const valueClass = item.value >= 0 ? 'positive' : 'negative';
         const highValueClass = Math.abs(item.value) >= 10000 ? 'high-value' : '';
         const valueText = item.value !== 0
@@ -248,7 +232,7 @@ function renderValueMode(drops) {
             <div class="drop-item">
                 <div class="drop-item-name">
                     ${priceIndicator}
-                    <span>${item.name}</span>
+                    <span>${item.item_name}</span>
                     <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
                 </div>
                 <div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>
@@ -259,27 +243,12 @@ function renderValueMode(drops) {
     elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
 }
 
-function renderItemsMode(drops) {
-    // Aggregate by item
-    const itemCounts = {};
-    drops.forEach(drop => {
-        if (!itemCounts[drop.item_id]) {
-            itemCounts[drop.item_id] = {
-                name: drop.item_name,
-                quantity: 0,
-                price_status: drop.price_status,
-                price_source: drop.price_source || 'local'
-            };
-        }
-        itemCounts[drop.item_id].quantity += drop.quantity;
-    });
-
-    // Sort by quantity (highest first), then limit to top 50 item types
-    const sorted = Object.entries(itemCounts)
-        .sort((a, b) => b[1].quantity - a[1].quantity)
+function renderItemsMode(itemRows) {
+    const sorted = [...itemRows]
+        .sort((a, b) => b.quantity - a.quantity)
         .slice(0, 50);
 
-    const html = sorted.map(([id, item]) => {
+    const html = sorted.map((item) => {
         const valueClass = item.quantity >= 0 ? 'positive' : 'negative';
         const statusClass = item.price_status || 'unknown';
         const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
@@ -288,7 +257,7 @@ function renderItemsMode(drops) {
             <div class="drop-item">
                 <div class="drop-item-name">
                     ${priceIndicator}
-                    <span>${item.name}</span>
+                    <span>${item.item_name}</span>
                 </div>
                 <div class="drop-item-quantity font-mono ${valueClass}">×${item.quantity}</div>
             </div>
