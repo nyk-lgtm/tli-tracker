@@ -102,22 +102,27 @@ class Api:
 
     def get_session_history(self) -> list:
         """Get all past sessions."""
+        self.tracker.flush_current_session()
         return self.sessions.get_all()
 
     def get_recent_sessions(self, count: int = 10) -> list:
         """Get the N most recent sessions."""
+        self.tracker.flush_current_session()
         return self.sessions.get_recent(count)
 
     def get_today_sessions(self) -> list:
         """Get all sessions from today."""
+        self.tracker.flush_current_session()
         return self.sessions.get_today()
 
     def get_session_summary(self) -> dict:
         """Get aggregate statistics across all sessions."""
+        self.tracker.flush_current_session()
         return self.sessions.get_stats_summary()
 
     def delete_session(self, session_id: str) -> dict:
         """Delete a session by ID."""
+        self.tracker.flush_current_session()
         success = self.sessions.delete_session(session_id)
         return {"status": "ok" if success else "error"}
 
@@ -127,6 +132,7 @@ class Api:
 
         Opens a native file save dialog and writes the CSV.
         """
+        self.tracker.flush_current_session()
         # Load full session data
         session = self.sessions.get_session(session_id)
         if not session:
@@ -246,6 +252,7 @@ class Api:
         was_enabled = old_config.get("cloud_prices_enabled", False)
 
         success = save_config(settings)
+        self.tracker.refresh_runtime_config()
         # notify overlay so it picks up widget/setting changes
         self._push_to_ui("settings_update", {})
 
@@ -278,6 +285,7 @@ class Api:
         was_cloud_enabled = old_config.get("cloud_prices_enabled", False)
 
         success = save_config(default_settings)
+        self.tracker.refresh_runtime_config()
 
         # re-resolve drops if cloud prices was just disabled by reset
         if was_cloud_enabled:
@@ -299,6 +307,7 @@ class Api:
         config = load_config()
         config[key] = value
         save_config(config)
+        self.tracker.refresh_runtime_config()
         return {"status": "ok"}
 
     # === Game Path API ===

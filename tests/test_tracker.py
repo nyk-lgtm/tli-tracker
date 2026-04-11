@@ -105,6 +105,35 @@ def test_tracker_backfills_price_on_existing_drop() -> None:
     assert tracker.state.current_map.drops[0].value == 100.0
 
 
+def test_tracker_defers_backfill_persistence_until_flush(monkeypatch) -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(DROP_PLUS_ONE)
+    tracker.process_log_chunk(read_fixture("map_exit.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(DROP_PLUS_FOUR)
+
+    saved_sessions = []
+    monkeypatch.setattr(
+        tracker.sessions,
+        "save_session",
+        lambda session: saved_sessions.append(session.id),
+    )
+
+    tracker.prices.set_price("2001", 10.0)
+    tracker._backfill_prices("2001")
+
+    assert saved_sessions == []
+    assert tracker.state.current_map is not None
+    assert tracker.state.current_map.drops[0].value == 30.0
+    assert tracker.flush_current_session() is True
+    assert saved_sessions == [tracker.state.current_session.id]
+    assert tracker.flush_current_session() is False
+
+
 def test_tracker_get_stats_includes_completed_and_current_map_drops() -> None:
     events: list[tuple[str, dict]] = []
     tracker = make_tracker(events)

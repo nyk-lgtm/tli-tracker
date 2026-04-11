@@ -12,7 +12,7 @@ from .log_parser import LogParser
 from .models import DisplayMode, Drop, MapRun, TrackerState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import get_config_value, get_item_name, get_item_type, load_config
+from .storage import get_item_name, get_item_type, load_config
 
 
 class Tracker:
@@ -43,7 +43,12 @@ class Tracker:
 
         # Track if we're waiting for user to sort bag
         self._awaiting_init = False
+        self._runtime_config = {}
+        self._session_dirty = False
+        self._session_persisted = False
         self._reset_live_cache(mark_dirty=True)
+        self._reset_drop_index(mark_dirty=True)
+        self.refresh_runtime_config()
 
     def _reset_live_cache(self, mark_dirty: bool = False) -> None:
         """Reset cached aggregate state used by the live UI."""
@@ -61,6 +66,100 @@ class Tracker:
     def _mark_live_dirty(self) -> None:
         """Mark cached live aggregates as needing a rebuild."""
         self._live_dirty = True
+
+    def _reset_drop_index(self, mark_dirty: bool = False) -> None:
+        """Reset cached drop lookups used by repricing paths."""
+        self._drop_index: dict[str, list[Drop]] = {}
+        self._drop_index_dirty = mark_dirty
+
+    def _mark_drop_index_dirty(self) -> None:
+        """Mark cached drop lookups as needing a rebuild."""
+        self._drop_index_dirty = True
+
+    def _ensure_drop_index(self) -> None:
+        """Rebuild the per-item drop index if it is stale."""
+        if self._drop_index_dirty:
+            self._rebuild_drop_index()
+
+    def _rebuild_drop_index(self) -> None:
+        """Rebuild the per-item drop index from session state."""
+        self._reset_drop_index(mark_dirty=False)
+
+        session = self.state.current_session
+        if session:
+            for map_run in session.maps:
+                for drop in map_run.drops:
+                    self._index_drop(drop)
+
+        if self.state.current_map and (
+            not session
+            or not session.maps
+            or session.maps[-1] is not self.state.current_map
+        ):
+            for drop in self.state.current_map.drops:
+                self._index_drop(drop)
+
+    def _index_drop(self, drop: Drop) -> None:
+        """Add a drop reference to the per-item index."""
+        if self._drop_index_dirty:
+            return
+        self._drop_index.setdefault(drop.item_id, []).append(drop)
+
+    def refresh_runtime_config(self) -> None:
+        """Refresh the small config snapshot used in tight loops."""
+        config = load_config()
+        self._runtime_config = {
+            "tax_enabled": config.get("tax_enabled", False),
+            "tax_rate": config.get("tax_rate", 0.125),
+            "cloud_prices_enabled": config.get("cloud_prices_enabled", False),
+            "investment_per_map": config.get("investment_per_map", 0),
+        }
+
+    def _apply_tax(self, item_id: str, price: float | None) -> float | None:
+        """Apply configured tax rules to a raw price."""
+        if price is None:
+            return None
+
+        if self._runtime_config.get("tax_enabled", False) and item_id != "100300":
+            return price * (1 - self._runtime_config.get("tax_rate", 0.125))
+
+        return price
+
+    def _get_local_price(self, item_id: str) -> float | None:
+        """Get the current local price with tax applied from the config snapshot."""
+        return self._apply_tax(item_id, self.prices.get_price(item_id))
+
+    def _get_cloud_price(self, item_id: str) -> float | None:
+        """Get the current cloud price with tax applied from the config snapshot."""
+        if not self.cloud_prices:
+            return None
+        return self._apply_tax(item_id, self.cloud_prices.get_price(item_id))
+
+    def _has_persistable_session(self) -> bool:
+        """Return whether the current session should be written to disk."""
+        session = self.state.current_session
+        if not session:
+            return False
+        return (
+            self._session_persisted
+            or bool(session.maps)
+            or session.ended_at is not None
+        )
+
+    def _mark_session_dirty(self) -> None:
+        """Mark the current session as needing a deferred disk flush."""
+        if self._has_persistable_session():
+            self._session_dirty = True
+
+    def _persist_current_session(self) -> bool:
+        """Write the current session to disk and clear the deferred dirty flag."""
+        if not self.state.current_session:
+            return False
+
+        self.sessions.save_session(self.state.current_session)
+        self._session_dirty = False
+        self._session_persisted = True
+        return True
 
     def _ensure_live_cache(self) -> None:
         """Rebuild cached aggregates if they are stale."""
@@ -203,6 +302,7 @@ class Tracker:
             self._process_log_chunk_paused(text)
             return
 
+        self.refresh_runtime_config()
         skip_modfy = False
 
         # ALWAYS check for bag sorts (InitBagData)
@@ -312,6 +412,9 @@ class Tracker:
         # Ensure we have a session
         if not self.state.current_session:
             self.state.current_session = self.sessions.create_session()
+            self._session_dirty = False
+            self._session_persisted = False
+            self._reset_drop_index(mark_dirty=False)
 
         self._live_current_value = 0.0
         self._live_current_items = 0
@@ -326,13 +429,14 @@ class Tracker:
 
             # Capture investment setting at map completion (for non-league zones)
             if not is_league_zone:
-                config = load_config()
-                self.state.current_map.investment = config.get("investment_per_map", 0)
+                self.state.current_map.investment = self._runtime_config.get(
+                    "investment_per_map", 0
+                )
 
             # Add to session
             if self.state.current_session:
                 self.state.current_session.maps.append(self.state.current_map)
-                self.sessions.save_session(self.state.current_session)
+                self._persist_current_session()
 
             if self._live_dirty:
                 self._rebuild_live_cache()
@@ -394,6 +498,7 @@ class Tracker:
             )
 
             self.state.current_map.drops.append(drop)
+            self._index_drop(drop)
             self._apply_live_drop(
                 item_id=item_id,
                 item_name=item_name,
@@ -415,28 +520,22 @@ class Tracker:
         Args:
             item_id: The item whose price was just updated
         """
-        # Get the updated price with tax
-        price = self.prices.get_price_with_tax(item_id)
+        self.refresh_runtime_config()
+        price = self._get_local_price(item_id)
         if price is None:
             # No price available, nothing to backfill
             return
 
-        # Update current map drops
-        if self.state.current_map:
-            for drop in self.state.current_map.drops:
-                if drop.item_id == item_id:
-                    drop.value = price * drop.quantity
+        self._ensure_drop_index()
+        changed = False
+        for drop in self._drop_index.get(item_id, []):
+            new_value = price * drop.quantity
+            if drop.value != new_value:
+                drop.value = new_value
+                changed = True
 
-        # Update session history drops
-        if self.state.current_session:
-            for map_run in self.state.current_session.maps:
-                for drop in map_run.drops:
-                    if drop.item_id == item_id:
-                        drop.value = price * drop.quantity
-
-            # Persist the updated session to disk
-            self.sessions.save_session(self.state.current_session)
-
+        if changed:
+            self._mark_session_dirty()
         self._mark_live_dirty()
         # Notify UI that state has changed
         self._notify_state()
@@ -448,7 +547,7 @@ class Tracker:
         Returns (price_with_tax, price_status, price_source).
         Local wins unless cloud is newer.
         """
-        local_price = self.prices.get_price_with_tax(item_id)
+        local_price = self._get_local_price(item_id)
         local_age = self.prices.get_price_age(item_id)
         local_status = self.prices.get_price_status(item_id)
 
@@ -456,8 +555,10 @@ class Tracker:
         cloud_age = None
         cloud_status = "unknown"
 
-        if self.cloud_prices and get_config_value("cloud_prices_enabled", False):
-            cloud_price = self.cloud_prices.get_price_with_tax(item_id)
+        if self.cloud_prices and self._runtime_config.get(
+            "cloud_prices_enabled", False
+        ):
+            cloud_price = self._get_cloud_price(item_id)
             if cloud_price is not None:
                 cloud_age = self.cloud_prices.get_price_age(item_id)
                 cloud_status = self.cloud_prices.get_price_status(item_id)
@@ -482,26 +583,27 @@ class Tracker:
 
     def _backfill_cloud_prices(self) -> None:
         """Recalculate all drop values using best available price."""
+        self.refresh_runtime_config()
         changed = False
+        self._ensure_drop_index()
 
-        def _update_drops(drops):
-            nonlocal changed
-            for drop in drops:
-                price, _, _ = self._resolve_price(drop.item_id)
-                new_value = price * drop.quantity if price is not None else None
-                if new_value != drop.value:
-                    drop.value = new_value
-                    changed = True
+        for item_id, drops in self._drop_index.items():
+            price, _, _ = self._resolve_price(item_id)
+            if price is not None:
+                for drop in drops:
+                    candidate = price * drop.quantity
+                    if drop.value != candidate:
+                        drop.value = candidate
+                        changed = True
+            else:
+                for drop in drops:
+                    if drop.value is not None:
+                        drop.value = None
+                        changed = True
 
-        if self.state.current_map:
-            _update_drops(self.state.current_map.drops)
-
-        if self.state.current_session:
-            for map_run in self.state.current_session.maps:
-                _update_drops(map_run.drops)
-            if changed:
-                self.sessions.save_session(self.state.current_session)
-                self._mark_live_dirty()
+        if changed:
+            self._mark_session_dirty()
+            self._mark_live_dirty()
 
     def _notify(self, event_type: str, data: Any) -> None:
         """Send an event to the UI."""
@@ -518,9 +620,9 @@ class Tracker:
 
     def get_stats(self) -> dict:
         """Get current tracker statistics for UI."""
+        self.refresh_runtime_config()
         self._ensure_live_cache()
-        config = load_config()
-        investment = config.get("investment_per_map", 0)
+        investment = self._runtime_config.get("investment_per_map", 0)
 
         current_map = None
         current_map_duration = 0
@@ -670,6 +772,14 @@ class Tracker:
         self._notify_state()
         return {"status": "ok", "paused": False}
 
+    def flush_current_session(self) -> bool:
+        """Flush any deferred current-session persistence to disk."""
+        if not self._session_dirty:
+            return False
+        if not self._has_persistable_session():
+            return False
+        return self._persist_current_session()
+
     def reset_session(self) -> None:
         """Reset the current session."""
         # clear pause state
@@ -679,13 +789,16 @@ class Tracker:
         # End current session if exists
         if self.state.current_session:
             self.state.current_session.ended_at = datetime.now()
-            self.sessions.save_session(self.state.current_session)
+            self._persist_current_session()
 
         # Start fresh
         self.state.current_session = None
         self.state.current_map = None
         self.state.is_in_map = False
+        self._session_dirty = False
+        self._session_persisted = False
         self._reset_live_cache()
+        self._reset_drop_index()
 
         self._notify("session_reset", {})
         self._notify_state()
@@ -698,7 +811,10 @@ class Tracker:
         self.bag.clear()
         self.state = TrackerState()
         self._awaiting_init = False
+        self._session_dirty = False
+        self._session_persisted = False
         self._reset_live_cache()
+        self._reset_drop_index()
 
         self._notify("reset", {})
         self._notify_state()
