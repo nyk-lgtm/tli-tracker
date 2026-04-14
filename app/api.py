@@ -6,6 +6,7 @@ and directly by other Python components.
 """
 
 import csv
+import json
 from typing import Any, Optional
 
 from PySide6.QtWidgets import QFileDialog
@@ -16,7 +17,7 @@ from .price_manager import PriceManager
 from .session_manager import SessionManager
 from .storage import get_item_name, get_item_type, load_config, load_items, save_config
 from .tracker import Tracker
-from .updater import Updater
+from .updater import UpdateInfo, Updater
 from .version import VERSION
 
 
@@ -424,10 +425,8 @@ class Api:
 
     def save_widget_layout(self, layout_json: str) -> dict:
         """Save widget layout to config."""
-        import json as json_module
-
         try:
-            widgets = json_module.loads(layout_json)
+            widgets = json.loads(layout_json)
             config = load_config()
             config["widgets"] = widgets
             save_config(config)
@@ -523,8 +522,6 @@ class Api:
         - download_path: str (if successful)
         - error: str (if error)
         """
-        from .updater import UpdateInfo
-
         info = UpdateInfo(version=version, download_url=download_url, release_notes="")
 
         path, error = self.updater.download_update(info)
