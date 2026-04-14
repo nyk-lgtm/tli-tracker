@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from app import session_manager, storage
+from app import cloud_prices, price_manager, session_manager, storage
 
 
 @pytest.fixture(autouse=True)
@@ -12,6 +12,8 @@ def isolated_data_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     (data_dir / "sessions").mkdir()
 
     monkeypatch.setattr(storage, "DATA_DIR", data_dir)
+    monkeypatch.setattr(price_manager, "DATA_DIR", data_dir)
+    monkeypatch.setattr(cloud_prices, "DATA_DIR", data_dir)
     monkeypatch.setattr(session_manager, "DATA_DIR", data_dir)
     monkeypatch.setattr(
         storage,

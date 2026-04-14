@@ -5,10 +5,11 @@ Handles storing and retrieving item prices parsed from
 auction house searches in the game log.
 """
 
+import json
 from datetime import datetime
 from typing import Optional
 
-from .storage import load_config, load_json, save_json
+from .storage import DATA_DIR, load_config, preserve_unreadable_file, save_json
 
 
 class PriceManager:
@@ -29,11 +30,33 @@ class PriceManager:
 
     def __init__(self):
         self._prices: dict[str, dict] = {}
+        self._load_error: Exception | None = None
         self._load()
+
+    def _file_path(self):
+        return DATA_DIR / self.FILENAME
 
     def _load(self) -> None:
         """Load prices from disk."""
-        self._prices = load_json(self.FILENAME, {})
+        filepath = self._file_path()
+        if not filepath.exists():
+            self._prices = {}
+            self._load_error = None
+        else:
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if not isinstance(data, dict):
+                    raise ValueError(
+                        "prices.json must contain a JSON object at the top level"
+                    )
+                self._prices = data
+                self._load_error = None
+            except (json.JSONDecodeError, PermissionError, OSError, ValueError) as e:
+                print(f"[PriceManager] Failed to load prices: {e}")
+                self._prices = {}
+                self._load_error = e
+
         # Ensure fixed prices are set
         current_time = datetime.now().isoformat()
         for item_id, price_value in self.FIXED_PRICES.items():
@@ -41,7 +64,15 @@ class PriceManager:
 
     def _save(self) -> None:
         """Save prices to disk."""
-        save_json(self.FILENAME, self._prices)
+        filepath = self._file_path()
+        if self._load_error is not None and filepath.exists():
+            if preserve_unreadable_file(filepath) is None:
+                return
+
+        if save_json(self.FILENAME, self._prices):
+            self._load_error = None
+        else:
+            print("[PriceManager] Failed to save prices")
 
     def get_price(self, item_id: str) -> Optional[float]:
         """

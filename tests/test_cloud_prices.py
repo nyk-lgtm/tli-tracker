@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import MagicMock
 
+from app import storage
 from app.price_manager import PriceManager
 from app.session_manager import SessionManager
 from app.storage import build_default_config, load_config, save_config
@@ -201,3 +202,25 @@ def test_cache_replacement_prunes_delisted_items() -> None:
     assert "kept_item" in mgr._prices
     assert "new_item" in mgr._prices
     assert mgr._prices["kept_item"]["price"] == 25.0
+
+
+def test_invalid_cloud_cache_is_preserved_on_next_save() -> None:
+    from app.cloud_prices import CloudPriceManager
+
+    cache_path = storage.DATA_DIR / "cloud_prices.json"
+    cache_path.write_text("{broken", encoding="utf-8")
+
+    mgr = CloudPriceManager.__new__(CloudPriceManager)
+    mgr._prices = {}
+    mgr._load_error = None
+
+    mgr._load()
+
+    assert mgr._prices == {}
+    mgr._prices = {"2001": {"price": 7.5, "updated_at": fresh_timestamp()}}
+    mgr._save()
+
+    backups = list(storage.DATA_DIR.glob("cloud_prices.json.corrupt.*"))
+    assert len(backups) == 1
+    assert backups[0].read_text(encoding="utf-8") == "{broken"
+    assert storage.load_json("cloud_prices.json")["2001"]["price"] == 7.5

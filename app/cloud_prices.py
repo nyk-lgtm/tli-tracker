@@ -5,7 +5,13 @@ from typing import Optional
 from PySide6.QtCore import QObject, QUrl, Signal
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 
-from .storage import get_config_value, load_config, load_json, save_json
+from .storage import (
+    DATA_DIR,
+    get_config_value,
+    load_config,
+    preserve_unreadable_file,
+    save_json,
+)
 
 CLOUD_PRICES_URL = "https://api.tli-ahdb.workers.dev/prices"
 CLOUD_PRICES_FILE = "cloud_prices.json"
@@ -20,15 +26,45 @@ class CloudPriceManager(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._prices: dict[str, dict] = {}
+        self._load_error: Exception | None = None
         self._nam = QNetworkAccessManager(self)
         self._nam.finished.connect(self._on_reply)
         self._load()
 
+    def _file_path(self):
+        return DATA_DIR / CLOUD_PRICES_FILE
+
     def _load(self) -> None:
-        self._prices = load_json(CLOUD_PRICES_FILE, {})
+        filepath = self._file_path()
+        if not filepath.exists():
+            self._prices = {}
+            self._load_error = None
+            return
+
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if not isinstance(data, dict):
+                raise ValueError(
+                    "cloud_prices.json must contain a JSON object at the top level"
+                )
+            self._prices = data
+            self._load_error = None
+        except (json.JSONDecodeError, PermissionError, OSError, ValueError) as e:
+            print(f"[CloudPriceManager] Failed to load cloud prices cache: {e}")
+            self._prices = {}
+            self._load_error = e
 
     def _save(self) -> None:
-        save_json(CLOUD_PRICES_FILE, self._prices)
+        filepath = self._file_path()
+        if self._load_error is not None and filepath.exists():
+            if preserve_unreadable_file(filepath) is None:
+                return
+
+        if save_json(CLOUD_PRICES_FILE, self._prices):
+            self._load_error = None
+        else:
+            print("[CloudPriceManager] Failed to save cloud prices cache")
 
     # --- query API ---
 
