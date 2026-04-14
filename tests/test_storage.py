@@ -168,3 +168,12 @@ def test_reload_items_rereads_from_disk(
     assert storage.get_item_name("5555") == "Phantom Ember"
     # previously cached test items should be gone after the reload
     assert storage.get_item_name("2001") == "Unknown (2001)"
+
+
+def test_load_items_returns_empty_cache_when_items_file_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(storage, "ITEMS_FILE", tmp_path / "nonexistent.json")
+
+    assert storage.reload_items() == {}
+    assert storage.get_item_name("2001") == "Unknown (2001)"
