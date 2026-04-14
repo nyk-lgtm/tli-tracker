@@ -95,11 +95,7 @@ def test_load_config_persists_migrated_config_to_disk() -> None:
 def test_load_config_does_not_rewrite_file_when_unchanged(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    from app.widget_registry import get_default_widgets
-
-    complete = dict(storage.DEFAULT_CONFIG)
-    complete["widgets"] = get_default_widgets()
-    storage.save_config(complete)
+    storage.save_config(storage.build_default_config())
 
     save_calls: list[dict] = []
     monkeypatch.setattr(
@@ -111,6 +107,14 @@ def test_load_config_does_not_rewrite_file_when_unchanged(
     storage.load_config()
 
     assert save_calls == []
+
+
+def test_build_default_config_includes_full_widget_defaults() -> None:
+    config = storage.build_default_config()
+
+    for key in storage.DEFAULT_CONFIG:
+        assert key in config
+    assert config["widgets"]
 
 
 def test_load_config_keeps_invalid_file_on_disk_and_records_error(
@@ -149,7 +153,9 @@ def test_save_config_preserves_invalid_file_before_writing_new_config(
 
 
 def test_get_config_value_returns_stored_value() -> None:
-    storage.save_config({**storage.DEFAULT_CONFIG, "tax_rate": 0.2})
+    config = storage.build_default_config()
+    config["tax_rate"] = 0.2
+    storage.save_config(config)
     assert storage.get_config_value("tax_rate") == 0.2
 
 

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 from app.price_manager import PriceManager
 from app.session_manager import SessionManager
-from app.storage import save_config
+from app.storage import build_default_config, load_config, save_config
 from app.tracker import Tracker
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "logs"
@@ -146,6 +146,14 @@ def test_reset_settings_skips_backfill_when_cloud_was_off() -> None:
     api.reset_settings()
 
     api.tracker._backfill_cloud_prices.assert_not_called()
+
+
+def test_reset_settings_restores_canonical_default_config() -> None:
+    api = _make_bare_api(cloud_was_enabled=True)
+
+    api.reset_settings()
+
+    assert load_config() == build_default_config()
 
 
 # ===== Cache replacement =====

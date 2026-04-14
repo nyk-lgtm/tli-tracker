@@ -15,7 +15,14 @@ from .cloud_prices import CloudPriceManager
 from .overlay import set_click_through
 from .price_manager import PriceManager
 from .session_manager import SessionManager
-from .storage import get_item_name, get_item_type, load_config, load_items, save_config
+from .storage import (
+    build_default_config,
+    get_item_name,
+    get_item_type,
+    load_config,
+    load_items,
+    save_config,
+)
 from .tracker import Tracker
 from .updater import UpdateInfo, Updater
 from .version import VERSION
@@ -270,17 +277,7 @@ class Api:
 
     def reset_settings(self) -> dict:
         """Reset application settings to defaults."""
-        default_settings = {
-            "display_mode": "value",
-            "overlay_opacity": 0.9,
-            "tax_enabled": False,
-            "tax_rate": 0.125,
-            "show_map_value": False,
-            "efficiency_per_map": False,
-            "investment_per_map": 0,
-            "game_log_path": "",
-            "cached_log_path": "",
-        }
+        default_settings = build_default_config()
         # check if cloud prices was enabled before reset
         old_config = load_config()
         was_cloud_enabled = old_config.get("cloud_prices_enabled", False)

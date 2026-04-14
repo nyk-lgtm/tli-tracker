@@ -132,6 +132,15 @@ def get_config_load_error() -> Exception | None:
     return _config_load_error
 
 
+def build_default_config() -> dict[str, Any]:
+    """Build the canonical default config used for new/reset installs."""
+    from app.widget_registry import get_default_widgets
+
+    config = dict(DEFAULT_CONFIG)
+    config["widgets"] = get_default_widgets()
+    return config
+
+
 def load_config() -> dict:
     """
     Load application configuration.
@@ -165,23 +174,21 @@ def load_config() -> dict:
             config = {}
             load_failed = True
 
+    defaults = build_default_config()
+
     # Add missing keys from defaults
-    for key, value in DEFAULT_CONFIG.items():
+    for key, value in defaults.items():
         if key not in config:
             config[key] = value
             changed = True
 
-    # Populate widgets with defaults if empty
-    from app.widget_registry import get_default_widgets
-
     if not config.get("widgets"):
-        config["widgets"] = get_default_widgets()
+        config["widgets"] = defaults["widgets"]
         changed = True
     else:
         # ensure all registered widgets exist (re-add any that were lost)
-        defaults = get_default_widgets()
         existing_ids = {w["id"] for w in config["widgets"]}
-        for default_widget in defaults:
+        for default_widget in defaults["widgets"]:
             if default_widget["id"] not in existing_ids:
                 config["widgets"].append(default_widget)
                 changed = True
