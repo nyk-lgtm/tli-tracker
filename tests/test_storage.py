@@ -89,6 +89,7 @@ def test_load_config_persists_migrated_config_to_disk() -> None:
     # raw now has the full migrated set even though we only wrote one key
     for key in storage.DEFAULT_CONFIG:
         assert key in raw
+    assert storage.get_config_load_error() is None
 
 
 def test_load_config_does_not_rewrite_file_when_unchanged(
@@ -110,6 +111,38 @@ def test_load_config_does_not_rewrite_file_when_unchanged(
     storage.load_config()
 
     assert save_calls == []
+
+
+def test_load_config_keeps_invalid_file_on_disk_and_records_error(
+    isolated_data_dir: Path,
+) -> None:
+    config_path = isolated_data_dir / "config.json"
+    config_path.write_text("{not valid", encoding="utf-8")
+
+    config = storage.load_config()
+
+    assert config["display_mode"] == "value"
+    assert config["widgets"]
+    assert isinstance(storage.get_config_load_error(), json.JSONDecodeError)
+    assert config_path.read_text(encoding="utf-8") == "{not valid"
+
+
+def test_save_config_preserves_invalid_file_before_writing_new_config(
+    isolated_data_dir: Path,
+) -> None:
+    config_path = isolated_data_dir / "config.json"
+    config_path.write_text("{not valid", encoding="utf-8")
+
+    config = storage.load_config()
+    config["tax_rate"] = 0.2
+
+    assert storage.save_config(config) is True
+
+    backups = list(isolated_data_dir.glob("config.json.corrupt.*"))
+    assert len(backups) == 1
+    assert backups[0].read_text(encoding="utf-8") == "{not valid"
+    assert storage.load_json("config.json")["tax_rate"] == 0.2
+    assert storage.get_config_load_error() is None
 
 
 # ===== Config accessors =====

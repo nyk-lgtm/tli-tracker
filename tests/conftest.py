@@ -22,5 +22,7 @@ def isolated_data_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
             "3001": {"name": "Ember Relic", "type": "Relic"},
         },
     )
+    monkeypatch.setattr(storage, "_items_load_error", None)
+    monkeypatch.setattr(storage, "_config_load_error", None)
 
     return data_dir

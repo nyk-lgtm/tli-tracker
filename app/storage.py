@@ -112,6 +112,25 @@ DEFAULT_CONFIG = {
     "widgets": [],  # Widget instances (populated on first load if empty)
 }
 
+CONFIG_FILE = "config.json"
+_config_load_error: Exception | None = None
+
+
+def _build_backup_path(filepath: Path, label: str) -> Path:
+    """Build a unique sibling backup path for an unreadable data file."""
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    candidate = filepath.with_name(f"{filepath.name}.{label}.{timestamp}")
+    counter = 1
+    while candidate.exists():
+        candidate = filepath.with_name(f"{filepath.name}.{label}.{timestamp}-{counter}")
+        counter += 1
+    return candidate
+
+
+def get_config_load_error() -> Exception | None:
+    """Return the most recent config load error, if any."""
+    return _config_load_error
+
 
 def load_config() -> dict:
     """
@@ -120,10 +139,31 @@ def load_config() -> dict:
     Automatically migrates config by:
     - Adding new keys from DEFAULT_CONFIG
     - Populating widgets array with defaults if empty
-    - Saving back if any changes were made
+    - Saving back if any changes were made and the source file was readable
     """
-    config = load_json("config.json", {})
+    global _config_load_error
+    filepath = ensure_data_dir() / CONFIG_FILE
     changed = False
+    load_failed = False
+
+    if not filepath.exists():
+        config: dict[str, Any] = {}
+        _config_load_error = None
+    else:
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                raw_config = json.load(f)
+            if not isinstance(raw_config, dict):
+                raise ValueError(
+                    "config.json must contain a JSON object at the top level"
+                )
+            config = raw_config
+            _config_load_error = None
+        except (json.JSONDecodeError, PermissionError, OSError, ValueError) as e:
+            print(f"[Storage] Failed to load config: {e}")
+            _config_load_error = e
+            config = {}
+            load_failed = True
 
     # Add missing keys from defaults
     for key, value in DEFAULT_CONFIG.items():
@@ -147,7 +187,7 @@ def load_config() -> dict:
                 changed = True
 
     # Save migrated config
-    if changed:
+    if changed and not load_failed:
         save_config(config)
 
     return config
@@ -155,7 +195,22 @@ def load_config() -> dict:
 
 def save_config(config: dict) -> bool:
     """Save application configuration."""
-    return save_json("config.json", config)
+    global _config_load_error
+    filepath = ensure_data_dir() / CONFIG_FILE
+
+    if _config_load_error is not None and filepath.exists():
+        try:
+            backup_path = _build_backup_path(filepath, "corrupt")
+            filepath.replace(backup_path)
+            print(f"[Storage] Preserved unreadable config as {backup_path.name}")
+        except OSError as e:
+            print(f"[Storage] Failed to preserve unreadable config: {e}")
+            return False
+
+    success = save_json(CONFIG_FILE, config)
+    if success:
+        _config_load_error = None
+    return success
 
 
 def get_config_value(key: str, default: Any = None) -> Any:

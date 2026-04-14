@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         self.api = api
         self.log_watcher = None
         self._retry_dialog = None
+        self._config_load_warning_shown = False
         self._items_load_warning_shown = False
 
         self.setWindowTitle("TLI Tracker")
@@ -86,7 +87,28 @@ class MainWindow(QMainWindow):
 
         print("Main window loaded, starting log watcher...")
         self._try_start_watching()
+        self._check_config_load_error()
         self._check_items_load_error()
+
+    def _check_config_load_error(self) -> None:
+        if self._config_load_warning_shown:
+            return
+        from app.storage import get_config_load_error, load_config
+
+        # force config load so the startup warning sees any parse/read failure
+        load_config()
+        err = get_config_load_error()
+        if err is None:
+            return
+        self._config_load_warning_shown = True
+        show_warning(
+            "Settings File Unreadable",
+            "The settings file could not be read, so the app is using safe defaults "
+            "for this session.",
+            f"Error: {err}\n\n"
+            "Your original file will be preserved as a timestamped .corrupt backup "
+            "the next time settings are saved.",
+        )
 
     def _check_items_load_error(self) -> None:
         if self._items_load_warning_shown:
