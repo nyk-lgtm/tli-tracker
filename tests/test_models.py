@@ -246,3 +246,26 @@ def test_session_to_summary_dict_excludes_maps() -> None:
     d = session.to_summary_dict()
     assert "maps" not in d
     assert d["total_value"] == 50.0
+
+
+# ===== Pause / Resume =====
+
+
+def test_map_run_duration_excludes_completed_pause_window() -> None:
+    run = MapRun(started_at=BASE, ended_at=BASE + timedelta(minutes=10))
+    run.pause(BASE + timedelta(minutes=2))
+    run.resume(BASE + timedelta(minutes=5))
+    # 10 minutes total - 3 minutes paused = 7 minutes
+    assert run.duration_seconds == 420.0
+
+
+def test_session_duration_excludes_completed_pause_window() -> None:
+    session = Session(
+        id="s1",
+        started_at=BASE,
+        ended_at=BASE + timedelta(minutes=30),
+    )
+    session.pause(BASE + timedelta(minutes=10))
+    session.resume(BASE + timedelta(minutes=15))
+    # 30 minutes total - 5 minutes paused = 25 minutes
+    assert session.session_duration == 1500.0

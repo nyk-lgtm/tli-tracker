@@ -169,3 +169,103 @@ def test_tracker_get_stats_includes_completed_and_current_map_drops() -> None:
     assert stats["session"]["category_totals"] == [
         {"item_type": "Currency", "value": 40.0}
     ]
+
+
+# ===== Pause / Resume =====
+
+
+def test_toggle_pause_returns_paused_state() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    first = tracker.toggle_pause()
+    assert first == {"status": "ok", "paused": True}
+    assert tracker._is_paused is True
+
+    second = tracker.toggle_pause()
+    assert second == {"status": "ok", "paused": False}
+    assert tracker._is_paused is False
+
+
+def test_paused_tracker_does_not_capture_drops() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+
+    tracker.toggle_pause()
+    tracker.process_log_chunk(DROP_PLUS_TWO)
+
+    assert tracker.state.current_map is not None
+    assert tracker.state.current_map.drops == []
+
+
+def test_resume_in_same_map_preserves_map_and_clears_paused_at() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    map_before = tracker.state.current_map
+
+    tracker.toggle_pause()
+    assert map_before.paused_at is not None
+    tracker.toggle_pause()
+
+    assert tracker.state.current_map is map_before
+    assert tracker.state.is_in_map is True
+    assert map_before.paused_at is None
+
+
+def test_resume_after_leaving_map_during_pause_closes_map() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+
+    tracker.toggle_pause()
+    tracker.process_log_chunk(read_fixture("map_exit.log"))
+    tracker.toggle_pause()
+
+    assert tracker.state.current_map is None
+    assert tracker.state.is_in_map is False
+    assert tracker.state.current_session is not None
+    assert len(tracker.state.current_session.maps) == 1
+    assert tracker._session_persisted is True
+
+    # live cache should reflect the just-closed map
+    stats = tracker.get_stats()
+    assert stats["session"]["map_count"] == 1
+
+
+def test_resume_after_entering_map_during_pause_starts_fresh_map() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+
+    tracker.toggle_pause()
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.toggle_pause()
+
+    assert tracker.state.current_map is not None
+    assert tracker.state.is_in_map is True
+    assert tracker.state.current_session is not None
+    assert tracker.state.current_session.maps == []
+
+
+def test_reset_session_clears_pause_state() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.toggle_pause()
+    assert tracker._is_paused is True
+
+    tracker.reset_session()
+
+    assert tracker._is_paused is False
+    assert tracker._pause_started_at is None
