@@ -171,6 +171,45 @@ def test_tracker_get_stats_includes_completed_and_current_map_drops() -> None:
     ]
 
 
+def test_split_init_burst_keeps_existing_stack_out_of_first_drop() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    init_chunk_one = "\n".join(
+        [
+            "BagMgr@:InitBagData PageId = 1 SlotId = 1 ConfigBaseId = 3001 Num = 1",
+            "BagMgr@:InitBagData PageId = 1 SlotId = 2 ConfigBaseId = 2001 Num = 100",
+            *[
+                (
+                    f"BagMgr@:InitBagData PageId = 1 SlotId = {slot} "
+                    "ConfigBaseId = 3001 Num = 1"
+                )
+                for slot in range(3, 21)
+            ],
+        ]
+    )
+    init_chunk_two = "\n".join(
+        [
+            (
+                f"BagMgr@:InitBagData PageId = 1 SlotId = {slot} "
+                "ConfigBaseId = 3001 Num = 1"
+            )
+            for slot in range(21, 41)
+        ]
+    )
+
+    tracker.process_log_chunk(init_chunk_one)
+    tracker.process_log_chunk(init_chunk_two)
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(
+        "BagMgr@:Modfy BagItem PageId = 1 SlotId = 2 ConfigBaseId = 2001 Num = 101"
+    )
+
+    assert tracker.state.current_map is not None
+    assert tracker.state.current_map.drops[0].item_id == "2001"
+    assert tracker.state.current_map.drops[0].quantity == 1
+
+
 # ===== Pause / Resume =====
 
 

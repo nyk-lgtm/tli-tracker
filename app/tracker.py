@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any, Callable
 
 from .bag_state import BagState
-from .log_parser import LogParser
+from .log_parser import BagModifyEvent, LogParser
 from .models import DisplayMode, Drop, MapRun, TrackerState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
@@ -46,6 +46,9 @@ class Tracker:
         self._runtime_config = {}
         self._session_dirty = False
         self._session_persisted = False
+        self._pending_init_items: dict[str, BagModifyEvent] = {}
+        self._pending_init_old_baseline: dict[str, int] = {}
+        self._pending_init_existing_state = False
         self._reset_live_cache(mark_dirty=True)
         self._reset_drop_index(mark_dirty=True)
         self.refresh_runtime_config()
@@ -73,6 +76,58 @@ class Tracker:
     def _mark_live_dirty(self) -> None:
         """Mark cached live aggregates as needing a rebuild."""
         self._live_dirty = True
+
+    def _buffer_init_items(self, items: list[BagModifyEvent]) -> None:
+        """Accumulate a logical InitBagData burst across watcher chunks."""
+        if not self._pending_init_items:
+            self._pending_init_old_baseline = self.bag.get_baseline_copy()
+            self._pending_init_existing_state = self.state.is_initialized
+        for item in items:
+            slot_key = f"{item.page_id}:{item.slot_id}"
+            self._pending_init_items[slot_key] = item
+
+    def _flush_pending_init(self, process_changes: bool) -> bool:
+        """
+        Apply a buffered InitBagData burst as one inventory snapshot.
+
+        Returns whether the current chunk should skip Modfy processing because
+        a sort re-snapshot already accounted for those changes.
+        """
+        if not self._pending_init_items:
+            return False
+
+        init_items = list(self._pending_init_items.values())
+        old_baseline = self._pending_init_old_baseline
+        had_existing_state = self._pending_init_existing_state
+
+        self._pending_init_items = {}
+        self._pending_init_old_baseline = {}
+        self._pending_init_existing_state = False
+
+        count = self.bag.initialize(init_items)
+        skip_modfy = False
+
+        if had_existing_state:
+            changes = {}
+            for item_id, new_qty in self.bag.baseline.items():
+                old_qty = old_baseline.get(item_id, 0)
+                diff = new_qty - old_qty
+                if diff != 0:
+                    changes[item_id] = diff
+
+            for item_id, old_qty in old_baseline.items():
+                if item_id not in self.bag.baseline:
+                    changes[item_id] = -old_qty
+
+            if process_changes and changes:
+                self._process_drops(changes)
+            skip_modfy = process_changes
+        else:
+            self.state.is_initialized = True
+
+        self._awaiting_init = False
+        self._notify("initialized", {"item_count": count})
+        return skip_modfy
 
     def _reset_drop_index(self, mark_dirty: bool = False) -> None:
         """Reset cached drop lookups used by repricing paths."""
@@ -304,52 +359,30 @@ class Tracker:
 
         self.refresh_runtime_config()
         skip_modfy = False
-
-        # ALWAYS check for bag sorts (InitBagData)
         init_items = self.parser.parse_bag_init(text)
-        if len(init_items) >= self.MIN_INIT_ITEMS:
-            if self.state.is_initialized:
-                # Already initialized - this is a mid-session sort
-                # Save baseline before reinitializing to detect actual changes
-                old_baseline = self.bag.get_baseline_copy()
-                count = self.bag.initialize(init_items)
+        mods = self.parser.parse_bag_modifications(text)
+        map_event = self.parser.parse_map_change(text)
+        price_events = self.parser.parse_price_search(text)
 
-                # Calculate net changes from baseline comparison
-                changes = {}
-                for item_id, new_qty in self.bag.baseline.items():
-                    old_qty = old_baseline.get(item_id, 0)
-                    diff = new_qty - old_qty
-                    if diff != 0:
-                        changes[item_id] = diff
-
-                # Check for items that disappeared
-                for item_id, old_qty in old_baseline.items():
-                    if item_id not in self.bag.baseline:
-                        changes[item_id] = -old_qty
-
-                if changes:
-                    self._process_drops(changes)
-
-                # Skip Modfy processing in same chunk to prevent double-count
-                skip_modfy = True
-            else:
-                # First initialization
-                count = self.bag.initialize(init_items)
-                self.state.is_initialized = True
-
-            self._awaiting_init = False
-            self._notify("initialized", {"item_count": count})
+        # Buffer InitBagData across watcher chunks so a split sort dump doesn't
+        # overwrite earlier slots with a partial baseline.
+        if init_items:
+            self._buffer_init_items(init_items)
+        should_finalize_init = self._pending_init_items and (
+            not init_items or mods or map_event or price_events
+        )
+        if should_finalize_init:
+            finalized_skip_modfy = self._flush_pending_init(process_changes=True)
+            skip_modfy = skip_modfy or finalized_skip_modfy
 
         # Process bag modifications
         if self.state.is_initialized and not skip_modfy:
-            mods = self.parser.parse_bag_modifications(text)
             if mods:
                 changes = self.bag.process_modifications(mods)
                 if changes:
                     self._process_drops(changes)
 
         # Check for map changes
-        map_event = self.parser.parse_map_change(text)
         if map_event:
             if map_event.entering:
                 self._on_map_enter(is_league_zone=map_event.is_league_zone)
@@ -357,7 +390,6 @@ class Tracker:
                 self._on_map_exit(is_league_zone=map_event.is_league_zone)
 
         # Extract price data from AH searches
-        price_events = self.parser.parse_price_search(text)
         for event in price_events:
             final_price = self.prices.update_from_search(event.item_id, event.prices)
             self._backfill_prices(event.item_id)
@@ -367,29 +399,31 @@ class Tracker:
 
     def _process_log_chunk_paused(self, text: str) -> None:
         """Process log while paused: silent bag, tracked transitions, live prices."""
-        # keep bag state current so resume doesn't produce a phantom diff
         init_items = self.parser.parse_bag_init(text)
-        if len(init_items) >= self.MIN_INIT_ITEMS:
-            self.bag.initialize(init_items)
-            if not self.state.is_initialized:
-                self.state.is_initialized = True
-                self._awaiting_init = False
-                self._notify("initialized", {"item_count": len(self.bag.baseline)})
+        mods = self.parser.parse_bag_modifications(text)
+        map_event = self.parser.parse_map_change(text)
+        price_events = self.parser.parse_price_search(text)
+
+        # keep bag state current so resume doesn't produce a phantom diff
+        if init_items:
+            self._buffer_init_items(init_items)
+        should_finalize_init = self._pending_init_items and (
+            not init_items or mods or map_event or price_events
+        )
+        if should_finalize_init:
+            self._flush_pending_init(process_changes=False)
         elif self.state.is_initialized:
-            mods = self.parser.parse_bag_modifications(text)
             if mods:
                 # advance slots and baseline, discard the diff
                 self.bag.process_modifications(mods)
 
         # track map transitions so we can reconcile on resume
-        map_event = self.parser.parse_map_change(text)
         if map_event:
             self._paused_live_in_map = map_event.entering
             self._paused_live_is_league_zone = map_event.is_league_zone
             self._paused_map_transitions += 1
 
         # price searches are orthogonal to session capture
-        price_events = self.parser.parse_price_search(text)
         for event in price_events:
             final_price = self.prices.update_from_search(event.item_id, event.prices)
             self._backfill_prices(event.item_id)
