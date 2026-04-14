@@ -30,7 +30,6 @@ class TLITrackerApp:
         self.app = QApplication(sys.argv)
         self.app.setApplicationName("TLI Tracker")
         self.app.aboutToQuit.connect(self.cleanup)
-        # icon_path = get_resource_path("ui/assets/logo.ico")
         self.app.setWindowIcon(QIcon("ui/assets/logo.ico"))
 
         # Create API instance

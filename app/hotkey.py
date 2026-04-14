@@ -7,6 +7,7 @@ games are focused, since RegisterHotKey intercepts at the OS level.
 
 import sys
 import threading
+import time
 from queue import Empty, Queue
 from typing import Callable, Optional
 
@@ -274,9 +275,7 @@ class HotkeyManager:
                 elif msg.message == 0x0012:  # WM_QUIT
                     break
 
-            # Small sleep to prevent busy-waiting
-            import time
-
+            # small sleep to prevent busy-waiting
             time.sleep(0.01)
 
         # Unregister all hotkeys

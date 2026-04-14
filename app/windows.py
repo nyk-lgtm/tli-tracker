@@ -4,6 +4,7 @@ Qt window classes for TLI Tracker.
 Provides MainWindow and OverlayWindow using QWebEngineView.
 """
 
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -61,13 +62,9 @@ class MainWindow(QMainWindow):
 
     def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
-        import sys
-
         if getattr(sys, "frozen", False):
-            # Running as compiled exe
             base_path = Path(sys.executable).parent
         else:
-            # Running from source
             base_path = Path(__file__).parent.parent
 
         ui_path = base_path / "ui" / filename
@@ -348,8 +345,6 @@ class OverlayWindow(QMainWindow):
 
     def _get_ui_path(self, filename: str) -> Optional[Path]:
         """Get the path to a UI file."""
-        import sys
-
         if getattr(sys, "frozen", False):
             base_path = Path(sys.executable).parent
         else:
