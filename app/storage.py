@@ -178,24 +178,33 @@ ItemData = dict[str, str]
 
 # Cache for items to avoid repeated file reads
 _item_cache: dict[str, ItemData] | None = None
+_items_load_error: Exception | None = None
 
 
 def load_items() -> dict[str, ItemData]:
-    global _item_cache
+    global _item_cache, _items_load_error
     if _item_cache is None:
         try:
-            # Load directly from the internal resource path
             with open(ITEMS_FILE, "r", encoding="utf-8") as f:
                 _item_cache = json.load(f)
-        except Exception:
+            _items_load_error = None
+        except (FileNotFoundError, PermissionError, OSError, json.JSONDecodeError) as e:
+            # keep app running with empty db; UI layer surfaces a one-time warning
+            print(f"[Storage] Failed to load item database: {e}")
+            _items_load_error = e
             _item_cache = {}
     return _item_cache
 
 
+def get_items_load_error() -> Exception | None:
+    return _items_load_error
+
+
 def reload_items() -> dict[str, ItemData]:
     """Force reload the item database (clears cache)."""
-    global _item_cache
+    global _item_cache, _items_load_error
     _item_cache = None
+    _items_load_error = None
     return load_items()
 
 

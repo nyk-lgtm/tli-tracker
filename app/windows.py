@@ -13,7 +13,7 @@ from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QMainWindow
 
-from app.dialogs import DialogResult, show_error
+from app.dialogs import DialogResult, show_error, show_warning
 from app.monitor_utils import get_game_monitor, get_primary_monitor
 
 
@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         self.api = api
         self.log_watcher = None
         self._retry_dialog = None
+        self._items_load_warning_shown = False
 
         self.setWindowTitle("TLI Tracker")
         self.resize(500, 800)
@@ -88,6 +89,24 @@ class MainWindow(QMainWindow):
 
         print("Main window loaded, starting log watcher...")
         self._try_start_watching()
+        self._check_items_load_error()
+
+    def _check_items_load_error(self) -> None:
+        if self._items_load_warning_shown:
+            return
+        from app.storage import get_items_load_error
+
+        err = get_items_load_error()
+        if err is None:
+            return
+        self._items_load_warning_shown = True
+        show_warning(
+            "Item Database Unavailable",
+            'The item database failed to load. Drops will show as "Unknown" '
+            "until this is resolved.",
+            f"Error: {err}\n\n"
+            "Try reinstalling the application, or report this issue if it persists.",
+        )
 
     def _try_start_watching(self) -> None:
         """Attempt to find game log and start watcher, show dialog if not found."""
