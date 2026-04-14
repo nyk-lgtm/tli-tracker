@@ -94,8 +94,10 @@ class MainWindow(QMainWindow):
     def _check_items_load_error(self) -> None:
         if self._items_load_warning_shown:
             return
-        from app.storage import get_items_load_error
+        from app.storage import get_items_load_error, load_items
 
+        # force the lazy load so the error state is populated before we check it
+        load_items()
         err = get_items_load_error()
         if err is None:
             return

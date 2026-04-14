@@ -177,3 +177,11 @@ def test_load_items_returns_empty_cache_when_items_file_missing(
 
     assert storage.reload_items() == {}
     assert storage.get_item_name("2001") == "Unknown (2001)"
+
+
+def test_load_items_records_error_when_items_file_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(storage, "ITEMS_FILE", tmp_path / "nonexistent.json")
+    storage.reload_items()
+    assert isinstance(storage.get_items_load_error(), FileNotFoundError)
