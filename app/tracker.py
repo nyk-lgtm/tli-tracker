@@ -50,6 +50,13 @@ class Tracker:
         self._reset_drop_index(mark_dirty=True)
         self.refresh_runtime_config()
 
+        # Pause state
+        self._is_paused = False
+        self._pause_started_at: datetime | None = None
+        self._paused_live_in_map = False
+        self._paused_live_is_league_zone = False
+        self._paused_map_transitions = 0
+
     def _reset_live_cache(self, mark_dirty: bool = False) -> None:
         """Reset cached aggregate state used by the live UI."""
         self._live_items: dict[str, dict] = {}
@@ -285,13 +292,6 @@ class Tracker:
         entry["price_status"] = price_status
         entry["price_source"] = price_source
 
-        # Pause state
-        self._is_paused = False
-        self._pause_started_at: datetime | None = None
-        self._paused_live_in_map = False
-        self._paused_live_is_league_zone = False
-        self._paused_map_transitions = 0
-
     def process_log_chunk(self, text: str) -> None:
         """
         Process a chunk of new log content.
@@ -366,7 +366,7 @@ class Tracker:
             )
 
     def _process_log_chunk_paused(self, text: str) -> None:
-        """Process log while paused: advance bag state silently, track scene changes, allow price updates."""
+        """Process log while paused: silent bag, tracked transitions, live prices."""
         # keep bag state current so resume doesn't produce a phantom diff
         init_items = self.parser.parse_bag_init(text)
         if len(init_items) >= self.MIN_INIT_ITEMS:
@@ -722,12 +722,14 @@ class Tracker:
         if self.state.current_map:
             self.state.current_map.pause(now)
 
+        self._mark_live_dirty()
         self._notify_state()
         return {"status": "ok", "paused": True}
 
     def _resume_tracking(self) -> dict:
         now = datetime.now()
         self._is_paused = False
+        self.refresh_runtime_config()
 
         if self.state.current_session:
             self.state.current_session.resume(now)
@@ -738,17 +740,18 @@ class Tracker:
         had_transitions = self._paused_map_transitions > 0
 
         if was_in_map and (not now_in_map or had_transitions):
-            # left the map (or left and re-entered a different one) — close old map at pause time
+            # left the map (or left and re-entered a different one); close at pause
             self.state.current_map.paused_at = (
                 None  # clear so duration_seconds doesn't subtract phantom pause
             )
             self.state.current_map.ended_at = self._pause_started_at
-            config = load_config()
             if not self.state.current_map.is_league_zone:
-                self.state.current_map.investment = config.get("investment_per_map", 0)
+                self.state.current_map.investment = self._runtime_config.get(
+                    "investment_per_map", 0
+                )
             if self.state.current_session:
                 self.state.current_session.maps.append(self.state.current_map)
-                self.sessions.save_session(self.state.current_session)
+                self._persist_current_session()
             self.state.current_map = None
             self.state.is_in_map = False
 
@@ -761,6 +764,9 @@ class Tracker:
             )
             if not self.state.current_session:
                 self.state.current_session = self.sessions.create_session()
+                self._session_dirty = False
+                self._session_persisted = False
+                self._reset_drop_index(mark_dirty=False)
         elif was_in_map and now_in_map and not had_transitions:
             # never left the map — resume its timer
             self.state.current_map.resume(now)
@@ -769,6 +775,7 @@ class Tracker:
         self.bag.reset_baseline()
 
         self._pause_started_at = None
+        self._mark_live_dirty()
         self._notify_state()
         return {"status": "ok", "paused": False}
 
