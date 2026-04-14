@@ -8,10 +8,11 @@ for analytics and historical tracking.
 import json
 import uuid
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 from .models import Session
-from .storage import DATA_DIR, load_json, save_json
+from .storage import DATA_DIR, preserve_unreadable_file, save_json
 
 
 class SessionManager:
@@ -29,16 +30,83 @@ class SessionManager:
         self._sessions: list[dict] = []
         self._load()
 
+    def _summary_path(self) -> Path:
+        return DATA_DIR / self.FILENAME
+
+    def _sessions_dir(self) -> Path:
+        return DATA_DIR / "sessions"
+
+    def _load_summary_file(self) -> list[dict]:
+        summary_file = self._summary_path()
+        if not summary_file.exists():
+            return []
+
+        with open(summary_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if not isinstance(data, dict):
+            raise ValueError(
+                "sessions.json must contain a JSON object at the top level"
+            )
+
+        sessions = data.get("sessions", [])
+        if not isinstance(sessions, list):
+            raise ValueError("sessions.json field 'sessions' must be a JSON array")
+
+        return sessions
+
+    def _rebuild_summary_from_session_files(self) -> list[dict]:
+        """Rebuild the summary index from the per-session files on disk."""
+        summaries: list[dict] = []
+        sessions_dir = self._sessions_dir()
+        if not sessions_dir.exists():
+            return summaries
+
+        for session_file in sessions_dir.glob("*.json"):
+            try:
+                with open(session_file, "r", encoding="utf-8") as f:
+                    record = json.load(f)
+                if not isinstance(record, dict):
+                    raise ValueError(
+                        f"{session_file.name} must contain a JSON object "
+                        "at the top level"
+                    )
+                if not record.get("id") or not record.get("started_at"):
+                    raise ValueError(
+                        f"{session_file.name} is missing required session fields"
+                    )
+                summary = dict(record)
+                summary.pop("maps", None)
+                summaries.append(summary)
+            except (json.JSONDecodeError, PermissionError, OSError, ValueError) as e:
+                print(
+                    "[SessionManager] Skipping unreadable session file "
+                    f"{session_file.name}: {e}"
+                )
+
+        summaries.sort(key=lambda session: session.get("started_at", ""), reverse=True)
+        return summaries[: self.MAX_SESSIONS]
+
     def _load(self) -> None:
         """Load sessions from disk."""
-        data = load_json(self.FILENAME, {"sessions": []})
-        self._sessions = data.get("sessions", [])
+        try:
+            self._sessions = self._load_summary_file()
+        except (json.JSONDecodeError, PermissionError, OSError, ValueError) as e:
+            print(f"[SessionManager] Failed to load sessions summary: {e}")
+            self._sessions = self._rebuild_summary_from_session_files()
+            summary_file = self._summary_path()
+            if (
+                summary_file.exists()
+                and preserve_unreadable_file(summary_file) is not None
+            ):
+                self._save()
 
     def _save(self) -> None:
         """Save sessions to disk."""
         # Prune old sessions
         self._sessions = self._sessions[: self.MAX_SESSIONS]
-        save_json(self.FILENAME, {"sessions": self._sessions})
+        if not save_json(self.FILENAME, {"sessions": self._sessions}):
+            print("[SessionManager] Failed to save sessions summary")
 
     def create_session(self) -> Session:
         """
@@ -85,7 +153,8 @@ class SessionManager:
         try:
             with open(session_file, "r", encoding="utf-8") as f:
                 return json.load(f)
-        except (json.JSONDecodeError, IOError):
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"[SessionManager] Failed to load session {session_id}: {e}")
             return None
 
     def get_all(self) -> list[dict]:

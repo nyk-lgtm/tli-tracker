@@ -127,6 +127,18 @@ def _build_backup_path(filepath: Path, label: str) -> Path:
     return candidate
 
 
+def preserve_unreadable_file(filepath: Path, label: str = "corrupt") -> Path | None:
+    """Rename an unreadable file aside so a fresh replacement can be written."""
+    try:
+        backup_path = _build_backup_path(filepath, label)
+        filepath.replace(backup_path)
+        print(f"[Storage] Preserved unreadable file as {backup_path.name}")
+        return backup_path
+    except OSError as e:
+        print(f"[Storage] Failed to preserve unreadable file: {e}")
+        return None
+
+
 def get_config_load_error() -> Exception | None:
     """Return the most recent config load error, if any."""
     return _config_load_error
@@ -206,12 +218,7 @@ def save_config(config: dict) -> bool:
     filepath = ensure_data_dir() / CONFIG_FILE
 
     if _config_load_error is not None and filepath.exists():
-        try:
-            backup_path = _build_backup_path(filepath, "corrupt")
-            filepath.replace(backup_path)
-            print(f"[Storage] Preserved unreadable config as {backup_path.name}")
-        except OSError as e:
-            print(f"[Storage] Failed to preserve unreadable config: {e}")
+        if preserve_unreadable_file(filepath) is None:
             return False
 
     success = save_json(CONFIG_FILE, config)
