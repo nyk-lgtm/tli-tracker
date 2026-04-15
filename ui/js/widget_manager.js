@@ -71,6 +71,9 @@ const WidgetManager = {
         // Update hotkey label
         this.updateHotkeyLabel();
 
+        // Show first-run edit-mode hint if not yet dismissed
+        this.maybeShowEditHint();
+
         // Start timer loop for live updates
         this.startTimerLoop();
 
@@ -458,6 +461,53 @@ const WidgetManager = {
         const label = document.getElementById('edit-mode-hotkey');
         if (label && this.settings.editModeHotkey) {
             label.textContent = this.settings.editModeHotkey;
+        }
+        const hintKey = document.getElementById('edit-hint-hotkey');
+        if (hintKey && this.settings.editModeHotkey) {
+            hintKey.textContent = this.settings.editModeHotkey;
+        }
+    },
+
+    // localStorage key for the first-run edit-hint dismissal flag
+    EDIT_HINT_STORAGE_KEY: 'tli_overlay_edit_hint_dismissed',
+
+    /**
+     * Show the first-run edit-mode hint badge unless previously dismissed.
+     */
+    maybeShowEditHint() {
+        const badge = document.getElementById('edit-hint-badge');
+        if (!badge) return;
+
+        let dismissed = false;
+        try {
+            dismissed = localStorage.getItem(this.EDIT_HINT_STORAGE_KEY) === '1';
+        } catch (e) {
+            // private mode / storage unavailable — treat as not dismissed
+        }
+
+        // No widgets means nothing for the user to edit yet
+        const hasWidgets = this.widgets.some(w => w.enabled);
+        if (dismissed || !hasWidgets) return;
+
+        badge.classList.remove('hidden');
+
+        const close = document.getElementById('edit-hint-close');
+        if (close && !close.dataset.bound) {
+            close.dataset.bound = '1';
+            close.addEventListener('click', () => this.dismissEditHint());
+        }
+    },
+
+    /**
+     * Hide and persist dismissal of the first-run edit-mode hint.
+     */
+    dismissEditHint() {
+        const badge = document.getElementById('edit-hint-badge');
+        if (badge) badge.classList.add('hidden');
+        try {
+            localStorage.setItem(this.EDIT_HINT_STORAGE_KEY, '1');
+        } catch (e) {
+            // storage unavailable — badge will reappear next session, acceptable
         }
     },
 

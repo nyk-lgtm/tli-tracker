@@ -221,7 +221,7 @@ async function togglePause() {
 async function resetSession() {
     const confirmed = await showConfirmDialog(
         'Reset Session',
-        'The current session will be saved to history and a new session will start.',
+        'The current session will be saved to history and a new session will start on next map entry.',
         'Reset',
         'Cancel'
     );

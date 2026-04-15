@@ -83,6 +83,79 @@
 }
 
 /* ========================================
+   First-run Edit-Mode Hint Badge
+   ======================================== */
+
+.edit-hint-badge {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px 10px 16px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid rgba(45, 212, 191, 0.6);
+    border-radius: 999px;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.4),
+        0 0 12px rgba(45, 212, 191, 0.25);
+    color: #f1f5f9;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: auto;
+    z-index: 9997;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: edit-hint-fade-in 0.3s ease-out;
+}
+
+.edit-hint-badge.hidden {
+    display: none;
+}
+
+.edit-hint-text kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    margin: 0 2px;
+    background: rgba(45, 212, 191, 0.15);
+    border: 1px solid rgba(45, 212, 191, 0.5);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(45, 212, 191, 1);
+}
+
+.edit-hint-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: #94a3b8;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+}
+
+.edit-hint-close:hover {
+    color: #f1f5f9;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes edit-hint-fade-in {
+    from { opacity: 0; transform: translate(-50%, 8px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ========================================
    Snap Guides
    ======================================== */
 

@@ -26,6 +26,12 @@
 
         <!-- Snap guides (rendered during drag) -->
         <svg id="snap-guides" class="snap-guides"></svg>
+
+        <!-- First-run hint badge for edit-mode hotkey (hidden by default) -->
+        <div id="edit-hint-badge" class="edit-hint-badge hidden" role="status">
+            <span class="edit-hint-text">Press <kbd id="edit-hint-hotkey">Ctrl+F9</kbd> to edit overlay layout</span>
+            <button type="button" id="edit-hint-close" class="edit-hint-close" aria-label="Dismiss">&times;</button>
+        </div>
     </div>
 
     <script src="js/shared-utils.js"></script>
