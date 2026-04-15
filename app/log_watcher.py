@@ -152,6 +152,18 @@ class LogWatcher:
         except (IOError, OSError):
             return ""
 
+    def read_tail(self, max_bytes: int = 512_000) -> str:
+        """Read the most recent portion of the log file."""
+        try:
+            with open(self.log_path, "rb") as f:
+                f.seek(0, 2)
+                file_size = f.tell()
+                start = max(file_size - max_bytes, 0)
+                f.seek(start)
+                return f.read().decode("utf-8", errors="ignore")
+        except (IOError, OSError):
+            return ""
+
     def reset(self) -> None:
         """Reset to ignore existing content."""
         if self.handler:

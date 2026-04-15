@@ -130,6 +130,27 @@ class LogParser:
 
         return None
 
+    def parse_last_map_change(self, text: str) -> Optional[MapChangeEvent]:
+        """Return the most recent map transition found in a block of log text."""
+        last_match = None
+        for match in self.PATTERN_SCENE_CHANGE.finditer(text):
+            last_match = match
+
+        if not last_match:
+            return None
+
+        event_text = last_match.group(0)
+        is_league_zone = bool(self.PATTERN_LEAGUE_ZONE.search(event_text))
+        last_scene, next_scene = last_match.group(1), last_match.group(2)
+
+        if self.REFUGE_SCENE in last_scene and self.REFUGE_SCENE not in next_scene:
+            return MapChangeEvent(entering=True, is_league_zone=is_league_zone)
+
+        if self.REFUGE_SCENE not in last_scene and self.REFUGE_SCENE in next_scene:
+            return MapChangeEvent(entering=False, is_league_zone=is_league_zone)
+
+        return None
+
     def parse_price_search(self, text: str) -> list[PriceDataEvent]:
         """
         Extract price data by linking SendMessage (Item ID) with RecvMessage (Prices).

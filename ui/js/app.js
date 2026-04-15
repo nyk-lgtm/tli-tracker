@@ -22,6 +22,54 @@ import {
     toggleExpandedPriceHistoryItem
 } from './price-history.js';
 
+let initPollInterval = null;
+let initPollInFlight = false;
+
+function stopInitPolling() {
+    if (!initPollInterval) {
+        return;
+    }
+
+    clearInterval(initPollInterval);
+    initPollInterval = null;
+}
+
+function syncInitPolling() {
+    if (!state.awaitingInit) {
+        stopInitPolling();
+        return;
+    }
+
+    if (initPollInterval) {
+        return;
+    }
+
+    initPollInterval = setInterval(() => {
+        void pollTrackerState();
+    }, 400);
+}
+
+function applyTrackerState(data) {
+    updateState(data);
+    syncInitPolling();
+}
+
+async function pollTrackerState() {
+    if (initPollInFlight) {
+        return;
+    }
+
+    initPollInFlight = true;
+    try {
+        const nextState = await api('get_stats');
+        applyTrackerState(nextState);
+    } catch (error) {
+        console.error('State poll failed:', error);
+    } finally {
+        initPollInFlight = false;
+    }
+}
+
 // ============ Event Handlers from Python ============
 
 /**
@@ -38,7 +86,7 @@ window.onPythonEvent = function(eventType, data) {
             showStatus(data.message, 'error');
             break;
         case 'state':
-            updateState(data);
+            applyTrackerState(data);
             break;
         case 'map_enter':
             onMapEnter();
@@ -59,6 +107,7 @@ window.onPythonEvent = function(eventType, data) {
             state.currentMap = null;
             state.inMap = false;
             renderUI();
+            syncInitPolling();
             break;
     }
 };
@@ -69,11 +118,12 @@ function onReady() {
     showStatus('Connected to the game', 'success', 3000);
 
     // Load initial state
-    api('get_stats').then(updateState);
+    api('get_stats').then(applyTrackerState);
 }
 
 function onInitialized(itemCount) {
     showStatus(`Initialized with ${itemCount} items`, 'success', 3000);
+    void pollTrackerState();
 }
 
 function onMapEnter() {
@@ -142,9 +192,10 @@ async function initialize() {
     try {
         const result = await api('request_initialization');
         showStatus(result.message, 'info');
-        // State update from backend will keep button in "Waiting..." state
+        await pollTrackerState();
     } catch (e) {
         showStatus('Initialization failed', 'error');
+        stopInitPolling();
         // Reset button on error
         elements.btnInitialize.disabled = false;
         elements.btnInitialize.textContent = 'Re-sync Bag';
@@ -183,6 +234,7 @@ async function resetSession() {
         state.currentMap = null;
         state.inMap = false;
         renderUI();
+        syncInitPolling();
         showStatus('Session reset', 'success', 2000);
     } catch (e) {
         showStatus('Reset failed', 'error', 3000);

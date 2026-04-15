@@ -4,6 +4,7 @@ Core tracker - the main state machine for drop tracking.
 Coordinates log parsing, bag state, price lookups, and session management.
 """
 
+import time
 from datetime import datetime
 from typing import Any, Callable
 
@@ -25,6 +26,7 @@ class Tracker:
 
     # Minimum InitBagData entries to consider a valid initialization
     MIN_INIT_ITEMS = 20
+    INIT_BURST_IDLE_SECONDS = 0.35
 
     def __init__(
         self,
@@ -49,6 +51,7 @@ class Tracker:
         self._pending_init_items: dict[str, BagModifyEvent] = {}
         self._pending_init_old_baseline: dict[str, int] = {}
         self._pending_init_existing_state = False
+        self._pending_init_last_seen_at: float | None = None
         self._reset_live_cache(mark_dirty=True)
         self._reset_drop_index(mark_dirty=True)
         self.refresh_runtime_config()
@@ -85,6 +88,25 @@ class Tracker:
         for item in items:
             slot_key = f"{item.page_id}:{item.slot_id}"
             self._pending_init_items[slot_key] = item
+        self._pending_init_last_seen_at = time.monotonic()
+
+    def _clear_pending_init_buffer(self) -> None:
+        """Clear any buffered InitBagData snapshot state."""
+        self._pending_init_items = {}
+        self._pending_init_old_baseline = {}
+        self._pending_init_existing_state = False
+        self._pending_init_last_seen_at = None
+
+    def _flush_pending_init_if_idle(self, process_changes: bool) -> bool:
+        """Flush buffered InitBagData once the sort burst has gone quiet."""
+        if not self._pending_init_items or self._pending_init_last_seen_at is None:
+            return False
+
+        idle_for = time.monotonic() - self._pending_init_last_seen_at
+        if idle_for < self.INIT_BURST_IDLE_SECONDS:
+            return False
+
+        return self._flush_pending_init(process_changes=process_changes)
 
     def _flush_pending_init(self, process_changes: bool) -> bool:
         """
@@ -100,9 +122,7 @@ class Tracker:
         old_baseline = self._pending_init_old_baseline
         had_existing_state = self._pending_init_existing_state
 
-        self._pending_init_items = {}
-        self._pending_init_old_baseline = {}
-        self._pending_init_existing_state = False
+        self._clear_pending_init_buffer()
 
         count = self.bag.initialize(init_items)
         skip_modfy = False
@@ -431,8 +451,10 @@ class Tracker:
                 "price_update", {"item_id": event.item_id, "price": final_price}
             )
 
-    def _on_map_enter(self, is_league_zone: bool = False) -> None:
-        """Handle entering a map."""
+    def _start_current_map(
+        self, is_league_zone: bool = False, notify: bool = True
+    ) -> None:
+        """Start tracking a current map run without a fresh scene-change event."""
         self.state.is_in_map = True
 
         # Reset bag baseline for this map
@@ -453,8 +475,13 @@ class Tracker:
         self._live_current_value = 0.0
         self._live_current_items = 0
 
-        self._notify("map_enter", {})
-        self._notify_state()
+        if notify:
+            self._notify("map_enter", {})
+            self._notify_state()
+
+    def _on_map_enter(self, is_league_zone: bool = False) -> None:
+        """Handle entering a map."""
+        self._start_current_map(is_league_zone=is_league_zone, notify=True)
 
     def _on_map_exit(self, is_league_zone: bool = False) -> None:
         """Handle exiting a map."""
@@ -652,8 +679,26 @@ class Tracker:
 
     # === Public API ===
 
+    def bootstrap_from_log_tail(self, text: str) -> bool:
+        """
+        Bootstrap current in-map state from recent existing log text.
+
+        This lets the app start mid-map and still begin tracking after a bag sync,
+        without replaying old bag modifications or stale drops from prior sessions.
+        """
+        if self.state.current_map or self.state.is_in_map:
+            return False
+
+        map_event = self.parser.parse_last_map_change(text)
+        if not map_event or not map_event.entering:
+            return False
+
+        self._start_current_map(is_league_zone=map_event.is_league_zone, notify=False)
+        return True
+
     def get_stats(self) -> dict:
         """Get current tracker statistics for UI."""
+        self._flush_pending_init_if_idle(process_changes=not self._is_paused)
         self.refresh_runtime_config()
         self._ensure_live_cache()
         investment = self._runtime_config.get("investment_per_map", 0)
@@ -723,6 +768,7 @@ class Tracker:
 
         The user should sort their bag in-game after calling this.
         """
+        self._clear_pending_init_buffer()
         self._awaiting_init = True
         self.bag.clear()
         self.state.is_initialized = False
@@ -852,6 +898,7 @@ class Tracker:
         self.bag.clear()
         self.state = TrackerState()
         self._awaiting_init = False
+        self._clear_pending_init_buffer()
         self._session_dirty = False
         self._session_persisted = False
         self._reset_live_cache()

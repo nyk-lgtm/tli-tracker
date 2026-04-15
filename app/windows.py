@@ -141,6 +141,7 @@ class MainWindow(QMainWindow):
         self.log_watcher = LogWatcher(log_path, self.api.tracker.process_log_chunk)
 
         if self.log_watcher.start():
+            self._bootstrap_tracker_from_recent_log()
             print("Log watcher started successfully")
             self.bridge.emit_event("ready", {})
         else:
@@ -151,6 +152,20 @@ class MainWindow(QMainWindow):
                 "Try restarting the application.",
             )
             self.bridge.emit_event("error", {"message": "Failed to start log watcher"})
+
+    def _bootstrap_tracker_from_recent_log(self) -> None:
+        """Restore current in-map state when the app starts mid-run."""
+        if not self.log_watcher:
+            return
+
+        recent_log = self.log_watcher.read_tail()
+        if recent_log and self.api.tracker.bootstrap_from_log_tail(recent_log):
+            print("Bootstrapped current map state from recent log tail")
+            return
+
+        full_log = self.log_watcher.read_existing()
+        if full_log and self.api.tracker.bootstrap_from_log_tail(full_log):
+            print("Bootstrapped current map state from full log scan")
 
     def _find_game_log(self) -> Optional[str]:
         """

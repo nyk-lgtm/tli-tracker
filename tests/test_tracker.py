@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import app.tracker as tracker_module
 from app.price_manager import PriceManager
 from app.session_manager import SessionManager
 from app.storage import save_config
@@ -208,6 +209,110 @@ def test_split_init_burst_keeps_existing_stack_out_of_first_drop() -> None:
     assert tracker.state.current_map is not None
     assert tracker.state.current_map.drops[0].item_id == "2001"
     assert tracker.state.current_map.drops[0].quantity == 1
+
+
+def test_idle_bag_init_flushes_without_needing_map_reentry(monkeypatch) -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+    clock = {"now": 100.0}
+
+    monkeypatch.setattr(tracker_module.time, "monotonic", lambda: clock["now"])
+
+    tracker.request_initialization()
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+
+    waiting_stats = tracker.get_stats()
+    assert waiting_stats["awaiting_init"] is True
+    assert waiting_stats["initialized"] is False
+
+    clock["now"] += Tracker.INIT_BURST_IDLE_SECONDS + 0.01
+
+    initialized_stats = tracker.get_stats()
+    assert initialized_stats["awaiting_init"] is False
+    assert initialized_stats["initialized"] is True
+    assert tracker.bag.initialized is True
+
+
+def test_resync_inside_map_tracks_future_drops_after_init_settles(
+    monkeypatch,
+) -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+    clock = {"now": 100.0}
+
+    monkeypatch.setattr(tracker_module.time, "monotonic", lambda: clock["now"])
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+
+    tracker.request_initialization()
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    clock["now"] += Tracker.INIT_BURST_IDLE_SECONDS + 0.01
+
+    settled_stats = tracker.get_stats()
+    assert settled_stats["initialized"] is True
+    assert settled_stats["awaiting_init"] is False
+    assert settled_stats["in_map"] is True
+
+    tracker.process_log_chunk(
+        "BagMgr@:Modfy BagItem PageId = 1 SlotId = 2 ConfigBaseId = 2001 Num = 2"
+    )
+
+    stats = tracker.get_stats()
+    assert stats["current_map"] is not None
+    assert stats["current_map"]["items"] == 1
+    assert stats["session"] is not None
+    assert stats["session"]["item_rows"] == [
+        {
+            "item_id": "2001",
+            "item_name": "Divine Core",
+            "item_type": "Currency",
+            "price_source": "local",
+            "price_status": "unknown",
+            "quantity": 1,
+            "value": 0.0,
+        }
+    ]
+
+
+def test_bootstrap_mid_map_start_allows_sync_and_drop_tracking(monkeypatch) -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+    clock = {"now": 100.0}
+
+    monkeypatch.setattr(tracker_module.time, "monotonic", lambda: clock["now"])
+
+    assert tracker.bootstrap_from_log_tail(read_fixture("map_enter.log")) is True
+
+    bootstrapped_stats = tracker.get_stats()
+    assert bootstrapped_stats["in_map"] is True
+    assert bootstrapped_stats["current_map"] is not None
+    assert bootstrapped_stats["session"] is not None
+
+    tracker.request_initialization()
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    clock["now"] += Tracker.INIT_BURST_IDLE_SECONDS + 0.01
+
+    tracker.get_stats()
+    tracker.process_log_chunk(
+        "BagMgr@:Modfy BagItem PageId = 1 SlotId = 2 ConfigBaseId = 2001 Num = 2"
+    )
+
+    stats = tracker.get_stats()
+    assert stats["current_map"] is not None
+    assert stats["current_map"]["items"] == 1
+    assert stats["session"] is not None
+    assert stats["session"]["item_rows"] == [
+        {
+            "item_id": "2001",
+            "item_name": "Divine Core",
+            "item_type": "Currency",
+            "price_source": "local",
+            "price_status": "unknown",
+            "quantity": 1,
+            "value": 0.0,
+        }
+    ]
 
 
 # ===== Pause / Resume =====
