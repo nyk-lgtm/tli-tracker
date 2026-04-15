@@ -15,7 +15,7 @@ from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import QMainWindow
 
 from app.dialogs import DialogResult, show_error, show_warning
-from app.monitor_utils import get_game_monitor, get_primary_monitor
+from app.monitor_utils import find_game_window, get_game_monitor, get_primary_monitor
 
 
 class MainWindow(QMainWindow):
@@ -156,6 +156,10 @@ class MainWindow(QMainWindow):
     def _bootstrap_tracker_from_recent_log(self) -> None:
         """Restore current in-map state when the app starts mid-run."""
         if not self.log_watcher:
+            return
+
+        if not find_game_window():
+            print("Game not running, skipping log bootstrap")
             return
 
         recent_log = self.log_watcher.read_tail()
