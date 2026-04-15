@@ -16,6 +16,7 @@ from .storage import (
 CLOUD_PRICES_URL = "https://api.tli-ahdb.workers.dev/prices"
 CLOUD_PRICES_FILE = "cloud_prices.json"
 FIXED_PRICE_IDS = {"100300"}
+MAX_REASONABLE_CLOUD_PRICE = 1_000_000.0
 
 
 class CloudPriceManager(QObject):
@@ -34,6 +35,30 @@ class CloudPriceManager(QObject):
     def _file_path(self):
         return DATA_DIR / CLOUD_PRICES_FILE
 
+    def _normalize_price_entry(
+        self, item_id: str, price: object, updated_at: object
+    ) -> dict[str, object] | None:
+        """Validate and normalize one cloud price entry."""
+        if not item_id or item_id in FIXED_PRICE_IDS:
+            return None
+
+        if not isinstance(updated_at, str) or not updated_at:
+            return None
+
+        try:
+            numeric_price = float(price)
+        except (TypeError, ValueError):
+            return None
+
+        # Defensive guard against poisoned worker payloads or stale bogus cache data.
+        if numeric_price <= 0 or numeric_price > MAX_REASONABLE_CLOUD_PRICE:
+            return None
+
+        return {
+            "price": round(numeric_price, 4),
+            "updated_at": updated_at,
+        }
+
     def _load(self) -> None:
         filepath = self._file_path()
         if not filepath.exists():
@@ -48,7 +73,29 @@ class CloudPriceManager(QObject):
                 raise ValueError(
                     "cloud_prices.json must contain a JSON object at the top level"
                 )
-            self._prices = data
+            normalized_prices = {}
+            dropped_entries = 0
+            for item_id, entry in data.items():
+                if not isinstance(entry, dict):
+                    dropped_entries += 1
+                    continue
+                normalized_entry = self._normalize_price_entry(
+                    str(item_id),
+                    entry.get("price"),
+                    entry.get("updated_at"),
+                )
+                if normalized_entry is None:
+                    dropped_entries += 1
+                    continue
+                normalized_prices[str(item_id)] = normalized_entry
+
+            if dropped_entries:
+                print(
+                    "[CloudPriceManager] Dropped "
+                    f"{dropped_entries} invalid cached cloud price entries"
+                )
+
+            self._prices = normalized_prices
             self._load_error = None
         except (json.JSONDecodeError, PermissionError, OSError, ValueError) as e:
             print(f"[CloudPriceManager] Failed to load cloud prices cache: {e}")
@@ -136,21 +183,27 @@ class CloudPriceManager(QObject):
 
             # replace entire cache so delisted items don't linger
             new_prices = {}
+            dropped_entries = 0
             for item in data["data"]:
                 item_id = str(item.get("id", ""))
-                if not item_id or item_id in FIXED_PRICE_IDS:
+                normalized_entry = self._normalize_price_entry(
+                    item_id,
+                    item.get("price"),
+                    item.get("updatedAt", ""),
+                )
+                if normalized_entry is None:
+                    dropped_entries += 1
                     continue
-                price = item.get("price")
-                updated_at = item.get("updatedAt", "")
-                if price is not None and updated_at:
-                    new_prices[item_id] = {
-                        "price": round(float(price), 4),
-                        "updated_at": updated_at,
-                    }
+                new_prices[item_id] = normalized_entry
             count = len(new_prices)
 
             self._prices = new_prices
             self._save()
+            if dropped_entries:
+                print(
+                    "Cloud prices: dropped "
+                    f"{dropped_entries} invalid entries from fetch"
+                )
             print(f"Cloud prices updated: {count} items")
             self.prices_updated.emit()
         finally:

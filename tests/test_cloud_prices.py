@@ -204,6 +204,45 @@ def test_cache_replacement_prunes_delisted_items() -> None:
     assert mgr._prices["kept_item"]["price"] == 25.0
 
 
+def test_cache_replacement_drops_absurd_cloud_prices() -> None:
+    from PySide6.QtNetwork import QNetworkReply
+
+    from app.cloud_prices import CloudPriceManager
+
+    mgr = CloudPriceManager.__new__(CloudPriceManager)
+    mgr._prices = {}
+    mgr._save = MagicMock()
+    mgr.prices_updated = MagicMock()
+
+    reply = MagicMock()
+    reply.error.return_value = QNetworkReply.NetworkError.NoError
+    reply.readAll.return_value = MagicMock(
+        data=lambda: json.dumps(
+            {
+                "success": True,
+                "data": [
+                    {
+                        "id": "good_item",
+                        "price": 25.0,
+                        "updatedAt": "2025-06-01T00:00:00Z",
+                    },
+                    {
+                        "id": "bad_item",
+                        "price": 710421059.0,
+                        "updatedAt": "2025-06-01T00:00:00Z",
+                    },
+                ],
+            }
+        ).encode()
+    )
+    reply.deleteLater = MagicMock()
+
+    mgr._on_reply(reply)
+
+    assert "good_item" in mgr._prices
+    assert "bad_item" not in mgr._prices
+
+
 def test_invalid_cloud_cache_is_preserved_on_next_save() -> None:
     from app.cloud_prices import CloudPriceManager
 
@@ -224,3 +263,34 @@ def test_invalid_cloud_cache_is_preserved_on_next_save() -> None:
     assert len(backups) == 1
     assert backups[0].read_text(encoding="utf-8") == "{broken"
     assert storage.load_json("cloud_prices.json")["2001"]["price"] == 7.5
+
+
+def test_load_drops_absurd_cached_cloud_prices() -> None:
+    from app.cloud_prices import CloudPriceManager
+
+    cache_path = storage.DATA_DIR / "cloud_prices.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "good_item": {
+                    "price": 42.0,
+                    "updated_at": "2025-06-01T00:00:00Z",
+                },
+                "bad_item": {
+                    "price": 710421059.0,
+                    "updated_at": "2025-06-01T00:00:00Z",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    mgr = CloudPriceManager.__new__(CloudPriceManager)
+    mgr._prices = {}
+    mgr._load_error = None
+
+    mgr._load()
+
+    assert mgr._prices == {
+        "good_item": {"price": 42.0, "updated_at": "2025-06-01T00:00:00Z"}
+    }
