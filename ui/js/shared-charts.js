@@ -252,26 +252,22 @@ function formatPriceHistoryLabel(value) {
     }
 
     const absolute = Math.abs(value);
+    const trim = (str) => str.replace(/0+$/, '').replace(/\.$/, '');
+
+    if (absolute >= 1000000) {
+        return `${trim((value / 1000000).toFixed(3))}M`;
+    }
 
     if (absolute >= 1000) {
-        return absolute >= 1000000
-            ? `${(value / 1000000).toFixed(1).replace(/\.0$/, '')}M`
-            : `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+        const kStr = (value / 1000).toFixed(3);
+        // promote to M if rounding pushed the k-form to 1000+
+        if (Math.abs(parseFloat(kStr)) >= 1000) {
+            return `${trim((value / 1000000).toFixed(3))}M`;
+        }
+        return `${trim(kStr)}k`;
     }
 
-    if (absolute >= 100) {
-        return value.toFixed(1).replace(/\.0$/, '');
-    }
-
-    if (absolute >= 10) {
-        return value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
-    }
-
-    if (absolute >= 1) {
-        return value.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
-    }
-
-    return value.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+    return trim(value.toFixed(3));
 }
 
 function formatPriceHistoryDate(timestamp, rangeKey) {
@@ -348,22 +344,36 @@ TLI.charts.renderPriceHistory = function(container, history) {
         return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
     }).join(' ');
 
-    const guideValues = [
-        rawMax,
-        rawMin + (rawMax - rawMin) / 2,
-        rawMin
-    ];
-    const guides = guideValues.map((value) => ({
-        value,
-        y: getY(value),
-        topPercent: (getY(value) / height) * 100
-    }));
-    const guidelines = guides.map(({ y }) => {
+    const midValue = rawMin + (rawMax - rawMin) / 2;
+    const topY = getY(rawMax);
+    const midY = getY(midValue);
+    const bottomY = getY(rawMin);
+    // gridlines are position-only so a label collision never drops a visual reference
+    const gridYs = rawMax === rawMin ? [topY] : [topY, midY, bottomY];
+    const guidelines = gridYs.map((y) => {
         return `<line class="price-history-guide" x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}"></line>`;
     }).join('');
-    const yAxisLabels = guides.map(({ value, topPercent }) => {
-        return `<span class="price-history-yaxis-label" style="top: ${topPercent.toFixed(2)}%">${formatPriceHistoryLabel(value)}</span>`;
+    const topLabel = formatPriceHistoryLabel(rawMax);
+    const midLabel = formatPriceHistoryLabel(midValue);
+    const bottomLabel = formatPriceHistoryLabel(rawMin);
+    // endpoints take priority over mid so a collision never drops rawMin's label
+    const labelEntries = [{ label: topLabel, y: topY }];
+    if (bottomLabel !== topLabel) {
+        labelEntries.push({ label: bottomLabel, y: bottomY });
+    }
+    if (midLabel !== topLabel && midLabel !== bottomLabel) {
+        labelEntries.push({ label: midLabel, y: midY });
+    }
+    const yAxisLabels = labelEntries.map(({ label, y }) => {
+        const topPercent = (y / height) * 100;
+        return `<span class="price-history-yaxis-label" style="top: ${topPercent.toFixed(2)}%">${label}</span>`;
     }).join('');
+    // sizer reserves gutter width for the widest label; absolute labels overlay it
+    const widestLabel = labelEntries.reduce(
+        (widest, entry) => entry.label.length > widest.length ? entry.label : widest,
+        ''
+    );
+    const yAxisSizer = `<span class="price-history-yaxis-sizer" aria-hidden="true">${widestLabel}</span>`;
 
     const lastPoint = points[pointCount - 1];
     const lastXPoint = getX(pointCount - 1);
@@ -371,7 +381,7 @@ TLI.charts.renderPriceHistory = function(container, history) {
 
     container.innerHTML = `
         <div class="price-history-visual">
-            <div class="price-history-yaxis">${yAxisLabels}</div>
+            <div class="price-history-yaxis">${yAxisSizer}${yAxisLabels}</div>
             <div class="price-history-plot">
                 <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
                     ${guidelines}

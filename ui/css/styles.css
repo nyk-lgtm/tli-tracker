@@ -570,10 +570,16 @@ hr {
     grid-column: 1;
     grid-row: 1;
     position: relative;
-    width: 2.75rem;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.68rem;
     color: var(--color-text-dim);
+}
+
+.price-history-yaxis-sizer {
+    visibility: hidden;
+    display: block;
+    white-space: nowrap;
+    line-height: 1;
 }
 
 .price-history-yaxis-label {
