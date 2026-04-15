@@ -117,6 +117,18 @@ class ApiBridge(QObject):
         """Remove a price entry."""
         return json.dumps(self.api.remove_price(item_id), default=str)
 
+    @Slot(str, str, result=str)
+    def get_price_history(self, item_id: str, range_key: str) -> str:
+        """Get the current cached price history snapshot for one item/range."""
+        return json.dumps(self.api.get_price_history(item_id, range_key), default=str)
+
+    @Slot(str, str, result=str)
+    def request_price_history(self, item_id: str, range_key: str) -> str:
+        """Queue a background refresh for one item/range if needed."""
+        return json.dumps(
+            self.api.request_price_history(item_id, range_key), default=str
+        )
+
     # === Items API ===
 
     @Slot(result=str)

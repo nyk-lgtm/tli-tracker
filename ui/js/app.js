@@ -13,6 +13,14 @@ import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSet
 import { loadHistory } from './history.js';
 import { checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
 import { updateState, renderUI, renderDrops, updateTimedStats } from './renderers.js';
+import {
+    applyPriceHistoryUpdate,
+    collapseExpandedPriceHistory,
+    ensurePriceHistory,
+    getActivePriceHistoryRangeKey,
+    setActivePriceHistoryRangeKey,
+    toggleExpandedPriceHistoryItem
+} from './price-history.js';
 
 // ============ Event Handlers from Python ============
 
@@ -41,7 +49,12 @@ window.onPythonEvent = function(eventType, data) {
         case 'initialized':
             onInitialized(data.item_count);
             break;
+        case 'price_history':
+            applyPriceHistoryUpdate(data);
+            renderDrops();
+            break;
         case 'session_reset':
+            collapseExpandedPriceHistory();
             state.session = null;
             state.currentMap = null;
             state.inMap = false;
@@ -70,6 +83,54 @@ function onMapEnter() {
 
 function onMapExit() {
     // State update will handle the UI
+}
+
+function loadPriceHistoryForRange(itemId, rangeKey) {
+    setActivePriceHistoryRangeKey(rangeKey);
+    const fetchPromise = ensurePriceHistory(itemId, rangeKey);
+    renderDrops();
+    void fetchPromise.then((entry) => {
+        console.debug('[PriceHistory]', itemId, rangeKey, entry.status);
+        renderDrops();
+        return entry;
+    }).catch((error) => {
+        console.error('[PriceHistory] request failed:', itemId, rangeKey, error);
+        renderDrops();
+    });
+    return fetchPromise;
+}
+
+async function handleDropRowClick(event) {
+    const rangeButton = event.target.closest('[data-price-history-range]');
+    if (rangeButton && elements.dropsList.contains(rangeButton)) {
+        const itemId = rangeButton.dataset.itemId;
+        const rangeKey = rangeButton.dataset.priceHistoryRange;
+        if (!itemId || !rangeKey) {
+            return;
+        }
+
+        void loadPriceHistoryForRange(itemId, rangeKey);
+        return;
+    }
+
+    const row = event.target.closest('[data-drop-row]');
+    if (!row || !elements.dropsList.contains(row)) {
+        return;
+    }
+
+    const itemId = row.dataset.itemId;
+    if (!itemId) {
+        return;
+    }
+
+    const expandedItemId = toggleExpandedPriceHistoryItem(itemId);
+
+    if (expandedItemId === itemId) {
+        void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey());
+        return;
+    }
+
+    renderDrops();
 }
 
 // ============ UI Actions ============
@@ -117,6 +178,7 @@ async function resetSession() {
 
     try {
         await api('reset_session');
+        collapseExpandedPriceHistory();
         state.session = null;
         state.currentMap = null;
         state.inMap = false;
@@ -202,6 +264,7 @@ function init() {
     elements.btnHistory.addEventListener('click', () => { openModal('history'); loadHistory(); });
     elements.btnOverlay.addEventListener('click', toggleOverlay);
     elements.btnResetSettings.addEventListener('click', resetDefaults);
+    elements.dropsList.addEventListener('click', handleDropRowClick);
 
     // Settings modal
     elements.btnCloseSettings.addEventListener('click', () => closeModal('settings'));

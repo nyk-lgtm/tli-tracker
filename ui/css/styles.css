@@ -324,21 +324,44 @@ hr {
     overflow-y: auto;
 }
 
+.drop-row {
+    border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.drop-row:last-child {
+    border-bottom: none;
+}
+
+.drop-row.expanded {
+    background:
+        linear-gradient(180deg, rgba(13, 148, 136, 0.08) 0%, rgba(13, 148, 136, 0.03) 100%);
+}
+
 .drop-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.625rem 1rem;
-    border-bottom: 1px solid var(--color-border-subtle);
     transition: background-color var(--transition-fast);
 }
 
-.drop-item:last-child {
-    border-bottom: none;
+.drop-item-toggle {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
 }
 
 .drop-item:hover {
     background-color: rgba(255, 255, 255, 0.02);
+}
+
+.drop-row.expanded .drop-item:hover,
+.drop-row.expanded .drop-item {
+    background-color: transparent;
 }
 
 .drop-item-name {
@@ -346,11 +369,239 @@ hr {
     align-items: center;
     gap: 0.5rem;
     font-size: 0.875rem;
+    min-width: 0;
+}
+
+.drop-item-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.drop-item-end {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: 1rem;
+    flex-shrink: 0;
 }
 
 .drop-item-quantity {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
+}
+
+.drop-item-history-badge {
+    border: 1px solid rgba(34, 197, 94, 0.28);
+    border-radius: 999px;
+    padding: 0.125rem 0.45rem;
+    color: #86efac;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.drop-item-panel {
+    padding: 0 1rem 0.875rem;
+}
+
+.drop-item-panel-state {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 0.7rem;
+    background: rgba(15, 23, 42, 0.35);
+    color: var(--color-text-dim);
+    font-size: 0.8125rem;
+    padding: 0.875rem 1rem;
+}
+
+.drop-item-panel-state.error {
+    color: #fca5a5;
+    border-color: rgba(239, 68, 68, 0.24);
+}
+
+.drop-item-panel-spinner {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    border-top-color: #5eead4;
+    animation: dropSpinner 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes dropSpinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.drop-item-history-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.drop-item-history-meta-main {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.drop-item-history-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.2rem 0.55rem;
+    background: rgba(34, 197, 94, 0.12);
+    color: #bbf7d0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.drop-item-history-range {
+    color: var(--color-text-dim);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.drop-item-history-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.45);
+    padding: 0.2rem;
+}
+
+.drop-item-history-toggle-btn {
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-dim);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.28rem 0.68rem;
+    transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.drop-item-history-toggle-btn:hover {
+    color: var(--color-text);
+}
+
+.drop-item-history-toggle-btn:active {
+    transform: scale(0.98);
+}
+
+.drop-item-history-toggle-btn.active {
+    background: rgba(34, 197, 94, 0.16);
+    color: #dcfce7;
+    box-shadow: inset 0 0 0 1px rgba(134, 239, 172, 0.18);
+}
+
+.drop-item-history-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.drop-item-history-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: 0.65rem;
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.drop-item-history-label {
+    color: var(--color-text-dim);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.drop-item-history-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--color-text);
+}
+
+.drop-item-history-value.positive {
+    color: var(--color-success);
+}
+
+.drop-item-history-value.negative {
+    color: var(--color-danger);
+}
+
+.drop-item-history-chart {
+    min-height: 8.25rem;
+}
+
+.price-history-visual {
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 0.85rem;
+    background:
+        radial-gradient(circle at top, rgba(34, 197, 94, 0.1), transparent 55%),
+        rgba(15, 23, 42, 0.45);
+    padding: 0.75rem 0.75rem 0.6rem;
+}
+
+.price-history-visual svg {
+    display: block;
+    width: 100%;
+    height: 5.75rem;
+}
+
+.price-history-guide {
+    stroke: rgba(148, 163, 184, 0.18);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+}
+
+.price-history-line {
+    fill: none;
+    stroke: #4ade80;
+    stroke-width: 2.2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.price-history-dot {
+    fill: #bbf7d0;
+    stroke: rgba(187, 247, 208, 0.35);
+    stroke-width: 3;
+}
+
+.price-history-axis {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    color: var(--color-text-dim);
+    font-size: 0.72rem;
 }
 
 /* Animated drop entry */

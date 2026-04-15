@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QFileDialog
 
 from .cloud_prices import CloudPriceManager
 from .overlay import set_click_through
+from .price_history_manager import PriceHistoryManager
 from .price_manager import PriceManager
 from .session_manager import SessionManager
 from .storage import (
@@ -48,6 +49,7 @@ class Api:
         # Initialize managers
         self.prices = PriceManager()
         self.cloud_prices = CloudPriceManager()
+        self.price_history = PriceHistoryManager()
         self.sessions = SessionManager()
         self.updater = Updater()
 
@@ -62,6 +64,9 @@ class Api:
         # refresh UI when cloud prices arrive
         self.cloud_prices.prices_updated.connect(self.tracker._backfill_cloud_prices)
         self.cloud_prices.prices_updated.connect(self.tracker._notify_state)
+        self.price_history.history_updated.connect(
+            lambda payload: self._push_to_ui("price_history", payload)
+        )
 
     def _push_to_ui(self, event_type: str, data: Any) -> None:
         """
@@ -236,6 +241,14 @@ class Api:
         """Remove a price entry."""
         success = self.prices.remove_price(item_id)
         return {"status": "ok" if success else "error"}
+
+    def get_price_history(self, item_id: str, range_key: str) -> dict:
+        """Get the current cached price history snapshot for one item/range."""
+        return self.price_history.get_price_history(item_id, range_key)
+
+    def request_price_history(self, item_id: str, range_key: str) -> dict:
+        """Queue a background refresh for one item/range if needed."""
+        return self.price_history.request_price_history(item_id, range_key)
 
     # === Items API ===
 

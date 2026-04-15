@@ -5,6 +5,16 @@
 import { state, settings } from './state.js';
 import { elements } from './elements.js';
 import { formatTime, formatValue, formatRate } from './utils.js';
+import { renderPriceHistoryChart } from './charts.js';
+import {
+    PRICE_HISTORY_RANGE_OPTIONS,
+    formatPriceHistoryValue,
+    getActivePriceHistoryRangeKey,
+    getExpandedPriceHistoryItemId,
+    getPriceHistoryRange,
+    getPriceHistoryEntry,
+    syncExpandedPriceHistory
+} from './price-history.js';
 
 // ============ State Management ============
 
@@ -152,6 +162,7 @@ export function updateInitStatus() {
 
 export function renderDrops() {
     const itemRows = state.session?.item_rows || [];
+    syncExpandedPriceHistory(itemRows.map((item) => item.item_id));
 
     if (itemRows.length === 0) {
         let emptyHtml = '';
@@ -198,6 +209,190 @@ export function renderDrops() {
     }
 }
 
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function formatHistoryTimestamp(timestamp, rangeKey) {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    if (rangeKey === '7d') {
+        return date
+            .toLocaleString([], {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })
+            .replace(',', '');
+    }
+
+    return date.toLocaleDateString([], {
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function renderHistoryRangeToggle(itemId, activeRangeKey) {
+    return `
+        <div class="drop-item-history-toggle" role="group" aria-label="Price history range">
+            ${PRICE_HISTORY_RANGE_OPTIONS.map((range) => `
+                <button
+                    type="button"
+                    class="drop-item-history-toggle-btn${range.key === activeRangeKey ? ' active' : ''}"
+                    data-price-history-range="${escapeHtml(range.key)}"
+                    data-item-id="${escapeHtml(itemId)}"
+                    aria-pressed="${range.key === activeRangeKey ? 'true' : 'false'}"
+                >
+                    ${range.label}
+                </button>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderHistoryPanel(itemId) {
+    const activeRange = getPriceHistoryRange();
+    const entry = getPriceHistoryEntry(itemId, activeRange.key);
+
+    let contentHtml = '';
+    let rangeHtml = '';
+
+    if (entry.status === 'ready' && entry.data) {
+        const { stats } = entry.data;
+        const changeClass = stats.deltaPercent === null
+            ? ''
+            : stats.deltaPercent >= 0 ? 'positive' : 'negative';
+        const changeLabel = stats.deltaPercent === null
+            ? 'n/a'
+            : `${stats.deltaPercent >= 0 ? '+' : ''}${stats.deltaPercent.toFixed(1)}%`;
+
+        if (stats.startTimestamp !== null && stats.endTimestamp !== null) {
+            rangeHtml = `
+                <div class="drop-item-history-range">
+                    ${escapeHtml(formatHistoryTimestamp(stats.startTimestamp, activeRange.key))}
+                    -
+                    ${escapeHtml(formatHistoryTimestamp(stats.endTimestamp, activeRange.key))}
+                </div>
+            `;
+        }
+
+        contentHtml = `
+            <div class="drop-item-history-stats">
+                <div class="drop-item-history-stat">
+                    <span class="drop-item-history-label">Latest</span>
+                    <span class="drop-item-history-value">${formatPriceHistoryValue(stats.latest)} FE</span>
+                </div>
+                <div class="drop-item-history-stat">
+                    <span class="drop-item-history-label">High</span>
+                    <span class="drop-item-history-value">${formatPriceHistoryValue(stats.max)} FE</span>
+                </div>
+                <div class="drop-item-history-stat">
+                    <span class="drop-item-history-label">Low</span>
+                    <span class="drop-item-history-value">${formatPriceHistoryValue(stats.min)} FE</span>
+                </div>
+                <div class="drop-item-history-stat">
+                    <span class="drop-item-history-label">Change</span>
+                    <span class="drop-item-history-value ${changeClass}">${changeLabel}</span>
+                </div>
+            </div>
+            <div
+                class="drop-item-history-chart"
+                data-price-history-chart="${escapeHtml(itemId)}"
+            ></div>
+        `;
+    } else if (entry.status === 'error') {
+        contentHtml = `
+            <div class="drop-item-panel-state error">
+                ${escapeHtml(entry.errorMessage || `Failed to load ${activeRange.label} history.`)}
+            </div>
+        `;
+    } else if (entry.status === 'empty') {
+        contentHtml = `
+            <div class="drop-item-panel-state">
+                No ${activeRange.label} price history available for this item yet.
+            </div>
+        `;
+    } else {
+        contentHtml = `
+            <div class="drop-item-panel-state loading">
+                <span class="drop-item-panel-spinner" aria-hidden="true"></span>
+                <span>Loading ${activeRange.label} history...</span>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="drop-item-panel">
+            <div class="drop-item-history-meta">
+                <div class="drop-item-history-meta-main">
+                    <div class="drop-item-history-chip">${activeRange.label}</div>
+                    ${rangeHtml}
+                </div>
+                ${renderHistoryRangeToggle(itemId, activeRange.key)}
+            </div>
+            ${contentHtml}
+        </div>
+    `;
+}
+
+function renderDropRow(item, trailingHtml) {
+    const itemId = String(item.item_id || '');
+    const isExpanded = getExpandedPriceHistoryItemId() === itemId;
+    const statusClass = item.price_status || 'unknown';
+    const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
+    const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
+    const activeRange = getPriceHistoryRange();
+    const badgeHtml = itemId
+        ? `<span class="drop-item-history-badge">${activeRange.label}</span>`
+        : '';
+
+    return `
+        <div class="drop-row${isExpanded ? ' expanded' : ''}">
+            <div
+                class="drop-item drop-item-toggle"
+                data-drop-row
+                data-item-id="${escapeHtml(itemId)}"
+                aria-expanded="${isExpanded ? 'true' : 'false'}"
+            >
+                <div class="drop-item-name">
+                    ${priceIndicator}
+                    ${trailingHtml.nameHtml}
+                </div>
+                <div class="drop-item-end">
+                    ${badgeHtml}
+                    ${trailingHtml.valueHtml}
+                </div>
+            </div>
+            ${isExpanded ? renderHistoryPanel(itemId) : ''}
+        </div>
+    `;
+}
+
+function mountPriceHistoryCharts() {
+    if (!elements.dropsList) {
+        return;
+    }
+
+    const activeRangeKey = getActivePriceHistoryRangeKey();
+    elements.dropsList.querySelectorAll('[data-price-history-chart]').forEach((container) => {
+        const itemId = container.getAttribute('data-price-history-chart');
+        const entry = getPriceHistoryEntry(itemId, activeRangeKey);
+        if (entry.status === 'ready' && entry.data) {
+            renderPriceHistoryChart(container, entry.data);
+        }
+    });
+}
+
 function renderValueMode(itemRows) {
     const sorted = [...itemRows]
         .sort((itemA, itemB) => {
@@ -224,23 +419,17 @@ function renderValueMode(itemRows) {
             ? formatValue(item.value)
             : '(no price)';
 
-        const statusClass = item.price_status || 'unknown';
-        const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
-        const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
-
-        return `
-            <div class="drop-item">
-                <div class="drop-item-name">
-                    ${priceIndicator}
-                    <span>${item.item_name}</span>
-                    <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
-                </div>
-                <div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>
-            </div>
-        `;
+        return renderDropRow(item, {
+            nameHtml: `
+                <span class="drop-item-label">${escapeHtml(item.item_name)}</span>
+                <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
+            `,
+            valueHtml: `<div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>`
+        });
     }).join('');
 
     elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
+    mountPriceHistoryCharts();
 }
 
 function renderItemsMode(itemRows) {
@@ -250,19 +439,12 @@ function renderItemsMode(itemRows) {
 
     const html = sorted.map((item) => {
         const valueClass = item.quantity >= 0 ? 'positive' : 'negative';
-        const statusClass = item.price_status || 'unknown';
-        const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
-        const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
-        return `
-            <div class="drop-item">
-                <div class="drop-item-name">
-                    ${priceIndicator}
-                    <span>${item.item_name}</span>
-                </div>
-                <div class="drop-item-quantity font-mono ${valueClass}">×${item.quantity}</div>
-            </div>
-        `;
+        return renderDropRow(item, {
+            nameHtml: `<span class="drop-item-label">${escapeHtml(item.item_name)}</span>`,
+            valueHtml: `<div class="drop-item-quantity font-mono ${valueClass}">×${item.quantity}</div>`
+        });
     }).join('');
 
     elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
+    mountPriceHistoryCharts();
 }

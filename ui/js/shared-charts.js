@@ -245,3 +245,149 @@ TLI.charts.renderDonut = function(container, categoryTotals) {
         </div>
     `;
 };
+
+function formatPriceHistoryLabel(value) {
+    if (!Number.isFinite(value)) {
+        return '0';
+    }
+
+    const absolute = Math.abs(value);
+
+    if (absolute >= 1000) {
+        return absolute >= 1000000
+            ? `${(value / 1000000).toFixed(1).replace(/\.0$/, '')}M`
+            : `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k`;
+    }
+
+    if (absolute >= 100) {
+        return value.toFixed(1).replace(/\.0$/, '');
+    }
+
+    if (absolute >= 10) {
+        return value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    if (absolute >= 1) {
+        return value.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    return value.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+}
+
+function formatPriceHistoryDate(timestamp, rangeKey) {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    if (rangeKey === '7d') {
+        return date
+            .toLocaleString([], {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })
+            .replace(',', '');
+    }
+
+    return date.toLocaleDateString([], {
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+/**
+ * Render Price History Chart (line chart for one item's price history)
+ * @param {HTMLElement} container - The container element
+ * @param {Object} history - Normalized history payload with { points, stats }
+ */
+TLI.charts.renderPriceHistory = function(container, history) {
+    if (!container) return;
+
+    const points = Array.isArray(history?.points) ? history.points : [];
+    const rangeKey = history?.rangeKey === '7d' ? '7d' : '30d';
+    if (points.length === 0) {
+        container.innerHTML = '<div class="price-history-empty">No history</div>';
+        return;
+    }
+
+    const values = points.map((point) => Number(point.value) || 0);
+    const rawMin = Math.min(...values);
+    const rawMax = Math.max(...values);
+    const baseRange = rawMax - rawMin || Math.max(Math.abs(rawMax), 1);
+    const verticalPadding = baseRange * 0.14;
+    const minValue = rawMin - verticalPadding;
+    const maxValue = rawMax + verticalPadding;
+    const valueRange = maxValue - minValue || 1;
+
+    const width = 260;
+    const height = 92;
+    const paddingLeft = 8;
+    const paddingRight = 8;
+    const paddingTop = 10;
+    const paddingBottom = 14;
+    const chartWidth = width - paddingLeft - paddingRight;
+    const chartHeight = height - paddingTop - paddingBottom;
+    const pointCount = points.length;
+
+    const getX = (index) => {
+        if (pointCount === 1) {
+            return width / 2;
+        }
+        return paddingLeft + (index / (pointCount - 1)) * chartWidth;
+    };
+    const getY = (value) => {
+        return height - paddingBottom - ((value - minValue) / valueRange) * chartHeight;
+    };
+
+    const linePath = points.map((point, index) => {
+        const x = getX(index);
+        const y = getY(point.value);
+        return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
+    }).join(' ');
+
+    const firstX = getX(0);
+    const lastX = getX(pointCount - 1);
+    const areaPath = `${linePath} L ${lastX} ${height - paddingBottom} L ${firstX} ${height - paddingBottom} Z`;
+
+    const guideValues = [
+        rawMax,
+        rawMin + (rawMax - rawMin) / 2,
+        rawMin
+    ];
+    const guidelines = guideValues.map((value) => {
+        const y = getY(value);
+        return `<line class="price-history-guide" x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}"></line>`;
+    }).join('');
+
+    const lastPoint = points[pointCount - 1];
+    const lastXPoint = getX(pointCount - 1);
+    const lastYPoint = getY(lastPoint.value);
+    const gradientId = container.dataset.gradientId
+        || `price-history-gradient-${Math.random().toString(36).slice(2, 10)}`;
+    container.dataset.gradientId = gradientId;
+
+    container.innerHTML = `
+        <div class="price-history-visual">
+            <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.32"/>
+                        <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                ${guidelines}
+                <path class="price-history-area" d="${areaPath}" fill="url(#${gradientId})"></path>
+                <path class="price-history-line" d="${linePath}"></path>
+                <circle class="price-history-dot" cx="${lastXPoint}" cy="${lastYPoint}" r="3"></circle>
+            </svg>
+            <div class="price-history-axis">
+                <span>${formatPriceHistoryDate(points[0].timestamp, rangeKey)}</span>
+                <span>${formatPriceHistoryLabel(rawMin)} FE</span>
+                <span>${formatPriceHistoryDate(lastPoint.timestamp, rangeKey)}</span>
+            </div>
+        </div>
+    `;
+};

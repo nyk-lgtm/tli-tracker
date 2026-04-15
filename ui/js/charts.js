@@ -9,6 +9,7 @@ export const CHART_COLORS = window.TLI.charts.COLORS;
 export const renderPulseChart = window.TLI.charts.renderPulse;
 export const renderEfficiencyChart = window.TLI.charts.renderEfficiency;
 export const renderDonutChart = window.TLI.charts.renderDonut;
+export const renderPriceHistoryChart = window.TLI.charts.renderPriceHistory;
 
 /**
  * Update the charts container visibility and grid layout
