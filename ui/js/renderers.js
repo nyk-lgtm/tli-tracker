@@ -428,7 +428,7 @@ function renderValueMode(itemRows) {
         });
     }).join('');
 
-    elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
+    elements.dropsList.innerHTML = html;
     mountPriceHistoryCharts();
 }
 
@@ -445,6 +445,6 @@ function renderItemsMode(itemRows) {
         });
     }).join('');
 
-    elements.dropsList.innerHTML = html || '<div class="empty-state">No drops yet</div>';
+    elements.dropsList.innerHTML = html;
     mountPriceHistoryCharts();
 }
