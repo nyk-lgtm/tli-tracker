@@ -12,10 +12,19 @@ from PySide6.QtCore import Qt, QTimer, QUrl
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QApplication, QMainWindow
 
-from app.dialogs import DialogResult, show_error, show_warning
+from app.dialogs import DialogResult, StyledDialog, show_error, show_warning
+from app.log_watcher import LogWatcher
 from app.monitor_utils import find_game_window, get_game_monitor, get_primary_monitor
+from app.overlay import set_click_through
+from app.storage import (
+    get_config_load_error,
+    get_items_load_error,
+    load_config,
+    load_items,
+    save_config,
+)
 
 
 class MainWindow(QMainWindow):
@@ -93,7 +102,6 @@ class MainWindow(QMainWindow):
     def _check_config_load_error(self) -> None:
         if self._config_load_warning_shown:
             return
-        from app.storage import get_config_load_error, load_config
 
         # force config load so the startup warning sees any parse/read failure
         load_config()
@@ -113,7 +121,6 @@ class MainWindow(QMainWindow):
     def _check_items_load_error(self) -> None:
         if self._items_load_warning_shown:
             return
-        from app.storage import get_items_load_error, load_items
 
         # force the lazy load so the error state is populated before we check it
         load_items()
@@ -131,8 +138,6 @@ class MainWindow(QMainWindow):
 
     def _try_start_watching(self) -> None:
         """Attempt to find game log and start watcher, show dialog if not found."""
-        from app.log_watcher import LogWatcher
-
         log_path = self._find_game_log()
         if not log_path:
             return
@@ -178,8 +183,6 @@ class MainWindow(QMainWindow):
         Tries in order: manual config path, cached path, live game detection.
         Returns path string or None if all strategies fail.
         """
-        from app.storage import load_config
-
         config = load_config()
 
         # strategy 1: manual user-configured path
@@ -247,8 +250,6 @@ class MainWindow(QMainWindow):
 
     def _cache_log_path(self, log_path: str) -> None:
         """Update the cached log path in config."""
-        from app.storage import load_config, save_config
-
         config = load_config()
         if config.get("cached_log_path") != log_path:
             config["cached_log_path"] = log_path
@@ -256,8 +257,6 @@ class MainWindow(QMainWindow):
 
     def _show_retry_dialog(self, title: str, message: str, detail: str) -> None:
         """Show a non-modal retry/exit dialog that doesn't block the main window."""
-        from app.dialogs import StyledDialog
-
         dialog = StyledDialog(
             title=title,
             message=message,
@@ -273,8 +272,6 @@ class MainWindow(QMainWindow):
 
     def _on_retry_dialog_closed(self) -> None:
         """Handle retry dialog result."""
-        from PySide6.QtWidgets import QApplication
-
         dialog = self._retry_dialog
         self._retry_dialog = None
 
@@ -413,8 +410,6 @@ class OverlayWindow(QMainWindow):
     def _apply_click_through(self, enabled: bool) -> None:
         """Apply click-through using Win32 API."""
         try:
-            from app.overlay import set_click_through
-
             hwnd = int(self.winId())
             set_click_through(hwnd, enabled)
         except Exception as e:

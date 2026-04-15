@@ -11,6 +11,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from app.widget_registry import get_default_widgets
+
 
 def is_frozen():
     """Check if running as a compiled EXE"""
@@ -146,8 +148,6 @@ def get_config_load_error() -> Exception | None:
 
 def build_default_config() -> dict[str, Any]:
     """Build the canonical default config used for new/reset installs."""
-    from app.widget_registry import get_default_widgets
-
     config = dict(DEFAULT_CONFIG)
     config["widgets"] = get_default_widgets()
     return config
