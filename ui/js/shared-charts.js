@@ -348,44 +348,39 @@ TLI.charts.renderPriceHistory = function(container, history) {
         return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
     }).join(' ');
 
-    const firstX = getX(0);
-    const lastX = getX(pointCount - 1);
-    const areaPath = `${linePath} L ${lastX} ${height - paddingBottom} L ${firstX} ${height - paddingBottom} Z`;
-
     const guideValues = [
         rawMax,
         rawMin + (rawMax - rawMin) / 2,
         rawMin
     ];
-    const guidelines = guideValues.map((value) => {
-        const y = getY(value);
+    const guides = guideValues.map((value) => ({
+        value,
+        y: getY(value),
+        topPercent: (getY(value) / height) * 100
+    }));
+    const guidelines = guides.map(({ y }) => {
         return `<line class="price-history-guide" x1="${paddingLeft}" y1="${y}" x2="${width - paddingRight}" y2="${y}"></line>`;
+    }).join('');
+    const yAxisLabels = guides.map(({ value, topPercent }) => {
+        return `<span class="price-history-yaxis-label" style="top: ${topPercent.toFixed(2)}%">${formatPriceHistoryLabel(value)}</span>`;
     }).join('');
 
     const lastPoint = points[pointCount - 1];
     const lastXPoint = getX(pointCount - 1);
     const lastYPoint = getY(lastPoint.value);
-    const gradientId = container.dataset.gradientId
-        || `price-history-gradient-${Math.random().toString(36).slice(2, 10)}`;
-    container.dataset.gradientId = gradientId;
 
     container.innerHTML = `
         <div class="price-history-visual">
-            <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
-                <defs>
-                    <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#22c55e" stop-opacity="0.32"/>
-                        <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
-                    </linearGradient>
-                </defs>
-                ${guidelines}
-                <path class="price-history-area" d="${areaPath}" fill="url(#${gradientId})"></path>
-                <path class="price-history-line" d="${linePath}"></path>
-                <circle class="price-history-dot" cx="${lastXPoint}" cy="${lastYPoint}" r="3"></circle>
-            </svg>
+            <div class="price-history-yaxis">${yAxisLabels}</div>
+            <div class="price-history-plot">
+                <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                    ${guidelines}
+                    <path class="price-history-line" d="${linePath}"></path>
+                    <circle class="price-history-dot" cx="${lastXPoint}" cy="${lastYPoint}" r="3"></circle>
+                </svg>
+            </div>
             <div class="price-history-axis">
                 <span>${formatPriceHistoryDate(points[0].timestamp, rangeKey)}</span>
-                <span>${formatPriceHistoryLabel(rawMin)} FE</span>
                 <span>${formatPriceHistoryDate(lastPoint.timestamp, rangeKey)}</span>
             </div>
         </div>

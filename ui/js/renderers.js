@@ -300,7 +300,7 @@ function renderHistoryPanel(itemId) {
                     <span class="drop-item-history-label">Low</span>
                     <span class="drop-item-history-value">${formatPriceHistoryValue(stats.min)} FE</span>
                 </div>
-                <div class="drop-item-history-stat">
+                <div class="drop-item-history-stat" title="Percent change from the oldest to the newest price point in the selected timeframe">
                     <span class="drop-item-history-label">Change</span>
                     <span class="drop-item-history-value ${changeClass}">${changeLabel}</span>
                 </div>
