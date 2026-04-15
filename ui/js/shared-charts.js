@@ -388,6 +388,10 @@ TLI.charts.renderPriceHistory = function(container, history) {
                     <path class="price-history-line" d="${linePath}"></path>
                     <circle class="price-history-dot" cx="${lastXPoint}" cy="${lastYPoint}" r="3"></circle>
                 </svg>
+                <div class="price-history-tooltip" role="tooltip" aria-hidden="true">
+                    <span class="price-history-tooltip-value"></span>
+                    <span class="price-history-tooltip-date"></span>
+                </div>
             </div>
             <div class="price-history-axis">
                 <span>${formatPriceHistoryDate(points[0].timestamp, rangeKey)}</span>
@@ -395,4 +399,59 @@ TLI.charts.renderPriceHistory = function(container, history) {
             </div>
         </div>
     `;
+
+    const plotEl = container.querySelector('.price-history-plot');
+    const dotEl = plotEl && plotEl.querySelector('.price-history-dot');
+    const tooltipEl = plotEl && plotEl.querySelector('.price-history-tooltip');
+    const tooltipValueEl = tooltipEl && tooltipEl.querySelector('.price-history-tooltip-value');
+    const tooltipDateEl = tooltipEl && tooltipEl.querySelector('.price-history-tooltip-date');
+    if (!plotEl || !dotEl || !tooltipEl) return;
+
+    const formatTooltipDate = (timestamp) => {
+        const date = new Date(timestamp);
+        if (Number.isNaN(date.getTime())) return '';
+        return date
+            .toLocaleString([], {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })
+            .replace(',', '');
+    };
+
+    const updateHover = (clientX) => {
+        const rect = plotEl.getBoundingClientRect();
+        if (rect.width === 0) return;
+        let index;
+        if (pointCount === 1) {
+            index = 0;
+        } else {
+            const vbX = ((clientX - rect.left) / rect.width) * width;
+            const ratio = (vbX - paddingLeft) / chartWidth;
+            index = Math.round(ratio * (pointCount - 1));
+            index = Math.max(0, Math.min(pointCount - 1, index));
+        }
+        const point = points[index];
+        const cx = getX(index);
+        const cy = getY(point.value);
+        dotEl.setAttribute('cx', cx);
+        dotEl.setAttribute('cy', cy);
+        plotEl.classList.add('is-hovering');
+
+        const pxX = (cx / width) * rect.width;
+        const pxY = (cy / height) * rect.height;
+        tooltipValueEl.textContent = `${formatPriceHistoryLabel(point.value)} FE`;
+        tooltipDateEl.textContent = formatTooltipDate(point.timestamp);
+        tooltipEl.style.left = `${pxX}px`;
+        tooltipEl.style.top = `${pxY}px`;
+        tooltipEl.setAttribute('aria-hidden', 'false');
+    };
+
+    plotEl.addEventListener('mousemove', (ev) => updateHover(ev.clientX));
+    plotEl.addEventListener('mouseleave', () => {
+        plotEl.classList.remove('is-hovering');
+        tooltipEl.setAttribute('aria-hidden', 'true');
+    });
 };
