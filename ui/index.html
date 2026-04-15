@@ -99,13 +99,14 @@
         </div>
 
         <!-- Info Note -->
-        <div class="mt-auto mb-6 text-xs text-center text-gray-600">
+        <div class="mb-6 text-xs text-center text-gray-600">
             Gear drops not tracked
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex items-center justify-end gap-3 mt-4">
-            <button id="btn-initialize" class="hidden btn-primary">
+        <div class="flex items-center justify-end gap-3 mt-auto">
+            <button id="btn-initialize" class="hidden btn-ghost"
+                data-tooltip="Reset tracking baseline — sort your bag in-game to re-seed. Use if drops stop matching reality.">
                 Re-sync Bag
             </button>
 
@@ -114,7 +115,7 @@
             </button>
 
             <button id="btn-reset" class="btn-ghost btn-destructive">
-                Reset Session
+                Reset/End Session
             </button>
         </div>
     </div>
