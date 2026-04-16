@@ -1,13 +1,8 @@
 # TLI Tracker
 
-🚨 ALERT 🚨 idk if tos 🚨
-
-However, this app doesn't read or write any data outside of ur machine.
-Only time it connects to the internet is to check for updates and, if enabled, download an update installer from releases.
-
-gl 👍
-
 A real-time drop tracker and overlay for tli that monitors ur loot and displays farm stats
+
+This app doesn't read or write any game releated data outside of ur machine. Unless u enable cloud pricing.
 
 <table>
   <tr>
@@ -33,13 +28,11 @@ cuz u'll have to run the app urself via python in order for windows to stop comp
 
 1. Be on Windows
 2. Also ur game should be in English
-   - pretty sure that decides in which language the game logs r saved, if not idk
-   - basically this thing won't work with any other language.. yet
 
 ### Option 1: Setup.exe
 
 1. Download the latest release from the releases page
-2. Left click (two times) `TLITracker_Setup.exe`
+2. Left click `TLITracker_Setup.exe`  (two times)
 
 ### Option 2: From Source
 
@@ -66,7 +59,7 @@ cuz u'll have to run the app urself via python in order for windows to stop comp
 
 1. **Launch the App** - Start TLI Tracker, read the words on the screen
 
-2. **Configure Log Path** - On first run, the app will attempt to locate ur game logs automatically. If it doesn't, good luck I haven't gotten there yet.
+2. **Configure Log Path** - On first run, the app will attempt to locate ur game logs automatically. If it doesn't, you can set the custom log path in the app settings.
 
 3. **Start Farming** - The app automatically detects when u enter and exit maps or pick up items
 
@@ -78,21 +71,19 @@ cuz u'll have to run the app urself via python in order for windows to stop comp
 
 5. **Manage Sessions** - Create new and view/export past sessions
 
-## Configuration
-
-Settings can be adjusted through the overlay UI or by editing `data/config.json`.
-
 ## How It Works
 
+0. Enable game logs in the game settings and sort the bag ingame to start tracking
 1. Watches the Torchlight Infinite game log file for changes
 2. Parses log entries to detect:
-   - Map entry/exit events
+   - Map entry/exit events (this is when the session timer starts)
    - Item drops (bag modifications)
    - Price data from in-game searches
       - all price data is stored locally on ur machine
-      - updates only when u "price-check" the item from ur bag in-game
-      - if u see "(no price)" on the app the item's value is considered to be 0 for the purpose of calcs .. just price check the item or ignore
+      - updates only when u "price-check" the item from ur bag in-game, or at set intervals if you enable cloud pricing
+      - if u see "(no price)" on the app the item's value is considered to be 0 for the purpose of calcs, just price check the item or ignore
 3. Looks up prices u saved and calculates total values for the dropped items during a session
+4. When you are done Reset/End session button stops and saves the current session
 
 ## Thanks
 
