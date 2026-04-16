@@ -106,7 +106,10 @@
         <!-- Update Notification (main window) -->
         <div id="update-notification" class="update-notification hidden">
             <span id="update-notification-text" class="text-sm font-medium"></span>
-            <button id="btn-update-restart" class="btn-primary text-xs">Restart to Update</button>
+            <div class="flex items-center gap-2">
+                <button id="btn-update-restart" class="btn-primary text-xs">Restart to Update</button>
+                <button id="btn-update-dismiss" class="update-notification-close" aria-label="Dismiss until next restart" data-tooltip="Dismiss until next restart">×</button>
+            </div>
         </div>
 
         <!-- Action Buttons -->

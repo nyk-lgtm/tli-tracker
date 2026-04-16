@@ -48,6 +48,7 @@ export function initElements() {
         updateNotification: document.getElementById('update-notification'),
         updateNotificationText: document.getElementById('update-notification-text'),
         btnUpdateRestart: document.getElementById('btn-update-restart'),
+        btnUpdateDismiss: document.getElementById('btn-update-dismiss'),
         // Settings tabs
         settingsTabs: document.querySelectorAll('.settings-tab'),
         tabGeneral: document.getElementById('tab-general'),

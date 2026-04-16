@@ -15,6 +15,7 @@ const DEFAULT_UPDATE_STATE = Object.freeze({
 
 let currentUpdateState = { ...DEFAULT_UPDATE_STATE };
 let applyInFlight = false;
+let dismissedForVersion = '';
 
 const MANUAL_FADE_DELAY_MS = 3000;
 const FADE_TRANSITION_MS = 400;
@@ -199,6 +200,10 @@ function renderUpdateNotification() {
     }
 
     if (currentUpdateState.status === 'downloaded') {
+        if (dismissedForVersion && dismissedForVersion === currentUpdateState.new_version) {
+            el.classList.add('hidden');
+            return;
+        }
         el.classList.remove('hidden');
         text.textContent = currentUpdateState.new_version
             ? `Update ready: v${currentUpdateState.new_version}`
@@ -256,6 +261,11 @@ export async function applyDownloadedUpdate() {
         applyInFlight = false;
         await loadUpdateState();
     }
+}
+
+export function dismissUpdateBanner() {
+    dismissedForVersion = currentUpdateState.new_version || '';
+    renderUpdateNotification();
 }
 
 export async function checkForUpdates() {
