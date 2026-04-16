@@ -1317,6 +1317,10 @@ button[data-tooltip]:hover::before {
     color: rgba(255, 255, 255, 0.95);
 }
 
+.update-notification-close.hidden {
+    display: none;
+}
+
 /* Inline update status in settings modal */
 #update-row.hidden,
 #update-status.hidden {

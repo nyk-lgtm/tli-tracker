@@ -58,7 +58,6 @@ class Updater(QObject):
         self._download_path: Path | None = None
         self._applying_update = False
         self._pending_update: UpdateInfo | None = None
-        self._last_checked_at: str = ""
         self._state = self._build_state()
 
     def get_update_state(self) -> dict:
@@ -134,7 +133,7 @@ class Updater(QObject):
             "progress_percent": 0,
             "error": "",
             "trigger": "",
-            "last_checked_at": self._last_checked_at,
+            "last_checked_at": "",
         }
         state.update(overrides)
         return state
@@ -145,7 +144,6 @@ class Updater(QObject):
 
     def _set_state(self, **updates) -> None:
         next_state = self._build_state(**self._state)
-        next_state["last_checked_at"] = self._last_checked_at
         next_state.update(updates)
         self._state = next_state
         self._emit_state()
@@ -175,7 +173,7 @@ class Updater(QObject):
         if self._check_reply is reply:
             self._check_reply = None
 
-        self._last_checked_at = datetime.now(timezone.utc).isoformat()
+        self._state["last_checked_at"] = datetime.now(timezone.utc).isoformat()
 
         try:
             if reply.error() != QNetworkReply.NetworkError.NoError:

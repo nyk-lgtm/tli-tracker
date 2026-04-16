@@ -216,6 +216,7 @@ function renderUpdateNotification() {
     const el = elements.updateNotification;
     const text = elements.updateNotificationText;
     const btn = elements.btnUpdateRestart;
+    const dismissBtn = elements.btnUpdateDismiss;
     if (!el || !text || !btn) return;
 
     // manual checks stay entirely in the settings modal
@@ -223,6 +224,9 @@ function renderUpdateNotification() {
         el.classList.add('hidden');
         return;
     }
+
+    // dismiss is meaningless once the user has committed to applying
+    if (dismissBtn) dismissBtn.classList.toggle('hidden', applyInFlight);
 
     if (applyInFlight) {
         el.classList.remove('hidden');
