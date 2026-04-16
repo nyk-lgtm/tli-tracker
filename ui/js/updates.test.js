@@ -48,7 +48,7 @@ test('downloaded state switches the action to restart', () => {
         progress_percent: 100
     });
 
-    assert.equal(view.buttonText, 'Restart to Update');
+    assert.equal(view.buttonText, 'Update');
     assert.equal(view.buttonDisabled, false);
     assert.equal(view.statusMessage, 'Update ready: v0.2.3');
     assert.equal(view.statusType, 'success');
