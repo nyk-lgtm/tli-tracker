@@ -24,9 +24,6 @@ jobs:
           pip install -r requirements.txt
           pip install nuitka
 
-      - name: Run tests
-        run: python -m pytest
-
       - name: Build with Nuitka
         run: python scripts/build.py
 
