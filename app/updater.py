@@ -134,6 +134,7 @@ class Updater(QObject):
             "error": "",
             "trigger": "",
             "last_checked_at": "",
+            "release_notes": "",
         }
         state.update(overrides)
         return state
@@ -150,7 +151,9 @@ class Updater(QObject):
 
     def _set_error(self, message: str) -> None:
         self._pending_update = None
-        self._set_state(status="error", progress_percent=0, error=message)
+        self._set_state(
+            status="error", progress_percent=0, error=message, release_notes=""
+        )
 
     def _ensure_network_manager(self) -> QNetworkAccessManager:
         if self._network_manager is None:
@@ -197,6 +200,7 @@ class Updater(QObject):
                     new_version="",
                     progress_percent=0,
                     error="",
+                    release_notes="",
                 )
                 return
 
@@ -213,13 +217,14 @@ class Updater(QObject):
             self._pending_update = UpdateInfo(
                 version=latest_version,
                 download_url=download_url,
-                release_notes=str(data.get("body", "No release notes available.")),
+                release_notes=str(data.get("body", "")),
             )
             self._set_state(
                 status="downloading",
                 new_version=latest_version,
                 progress_percent=0,
                 error="",
+                release_notes=self._pending_update.release_notes,
             )
             self._start_download_request(self._pending_update)
         finally:

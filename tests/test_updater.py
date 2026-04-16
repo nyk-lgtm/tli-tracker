@@ -1,3 +1,4 @@
+import json
 import subprocess
 from pathlib import Path
 
@@ -204,6 +205,71 @@ def test_check_completion_records_last_checked_at(
     snapshot = updater.get_update_state()
     assert snapshot["last_checked_at"]
     assert "T" in snapshot["last_checked_at"]
+
+
+def test_release_notes_surface_in_snapshot_on_successful_check(
+    qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    updater = Updater()
+    monkeypatch.setattr(updater, "_start_download_request", lambda info: None)
+
+    payload = json.dumps(
+        {
+            "tag_name": "v99.0.0",
+            "body": "**New**\n- Something shiny",
+            "assets": [
+                {
+                    "name": updater.INSTALLER_NAME,
+                    "browser_download_url": "https://example.com/installer.exe",
+                }
+            ],
+        }
+    ).encode("utf-8")
+
+    class FakeReply:
+        def error(self) -> QNetworkReply.NetworkError:
+            return QNetworkReply.NetworkError.NoError
+
+        def readAll(self) -> bytes:
+            return payload
+
+        def deleteLater(self) -> None:
+            pass
+
+    updater._on_check_finished(FakeReply())
+
+    snapshot = updater.get_update_state()
+    assert snapshot["status"] == "downloading"
+    assert snapshot["release_notes"] == "**New**\n- Something shiny"
+
+
+def test_release_notes_cleared_when_up_to_date(
+    qt_app: QCoreApplication,
+) -> None:
+    updater = Updater()
+    payload = json.dumps(
+        {
+            "tag_name": f"v{updater.current_version}",
+            "body": "noise that should not surface",
+            "assets": [],
+        }
+    ).encode("utf-8")
+
+    class FakeReply:
+        def error(self) -> QNetworkReply.NetworkError:
+            return QNetworkReply.NetworkError.NoError
+
+        def readAll(self) -> bytes:
+            return payload
+
+        def deleteLater(self) -> None:
+            pass
+
+    updater._on_check_finished(FakeReply())
+
+    snapshot = updater.get_update_state()
+    assert snapshot["status"] == "up_to_date"
+    assert snapshot["release_notes"] == ""
 
 
 def test_config_migration_backfills_auto_download_updates() -> None:
