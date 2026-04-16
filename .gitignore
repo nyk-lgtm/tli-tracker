@@ -34,5 +34,8 @@ tmp/
 
 # Build/Installer output
 installer/
+
+# Dev tooling
+/ui/js/preview_inject.js
 .claude/
 profile-output/

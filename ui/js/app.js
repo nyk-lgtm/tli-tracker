@@ -368,6 +368,11 @@ function init() {
     // Auto-check for updates on startup (delay to avoid overwriting "Connected" message)
     setTimeout(() => checkForUpdatesOnStartup(), 4000);
 
+    if (window.__PREVIEW__?.enabled) {
+        applyTrackerState(window.__PREVIEW__.state);
+        window.onPythonEvent = () => {};
+    }
+
     console.log('TLI Tracker UI initialized');
 }
 

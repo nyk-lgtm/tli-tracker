@@ -758,7 +758,13 @@ window.onPythonEvent = function(eventType, data) {
 
 // Initialize when API is ready
 if (typeof waitForApi !== 'undefined') {
-    waitForApi().then(() => WidgetManager.init());
+    waitForApi().then(async () => {
+        await WidgetManager.init();
+        if (window.__PREVIEW__?.enabled) {
+            WidgetManager.updateState(window.__PREVIEW__.state);
+            window.onPythonEvent = () => {};
+        }
+    });
 } else {
     document.addEventListener('DOMContentLoaded', () => {
         // Fallback: wait a bit for API
