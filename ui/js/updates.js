@@ -16,6 +16,11 @@ const DEFAULT_UPDATE_STATE = Object.freeze({
 let currentUpdateState = { ...DEFAULT_UPDATE_STATE };
 let applyInFlight = false;
 
+const MANUAL_FADE_DELAY_MS = 5000;
+const FADE_TRANSITION_MS = 400;
+let fadeDelayTimer = null;
+let fadeHideTimer = null;
+
 export function normalizeUpdateState(snapshot = {}) {
     return {
         ...DEFAULT_UPDATE_STATE,
@@ -85,9 +90,40 @@ export function buildUpdateViewModel(snapshot, { applyPending = false } = {}) {
     return view;
 }
 
+function cancelStatusFade() {
+    if (fadeDelayTimer) {
+        clearTimeout(fadeDelayTimer);
+        fadeDelayTimer = null;
+    }
+    if (fadeHideTimer) {
+        clearTimeout(fadeHideTimer);
+        fadeHideTimer = null;
+    }
+    elements.updateStatus?.classList.remove('fading-out');
+}
+
+function scheduleStatusFade() {
+    const el = elements.updateStatus;
+    if (!el) return;
+
+    cancelStatusFade();
+    fadeDelayTimer = setTimeout(() => {
+        fadeDelayTimer = null;
+        el.classList.add('fading-out');
+        fadeHideTimer = setTimeout(() => {
+            fadeHideTimer = null;
+            el.textContent = '';
+            el.classList.add('hidden');
+            el.classList.remove('fading-out', 'status-info', 'status-success', 'status-error');
+        }, FADE_TRANSITION_MS);
+    }, MANUAL_FADE_DELAY_MS);
+}
+
 function renderUpdateStatus(message = '', type = 'info') {
     const el = elements.updateStatus;
     if (!el) return;
+
+    cancelStatusFade();
 
     if (!message) {
         el.textContent = '';
@@ -123,6 +159,14 @@ function renderUpdateControls() {
     }
 
     renderUpdateStatus(view.statusMessage, view.statusType);
+
+    const shouldFade = !applyInFlight
+        && currentUpdateState.trigger === 'manual'
+        && (currentUpdateState.status === 'up_to_date' || currentUpdateState.status === 'downloaded')
+        && !!view.statusMessage;
+    if (shouldFade) {
+        scheduleStatusFade();
+    }
 }
 
 function renderUpdateNotification() {
