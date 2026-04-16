@@ -46,6 +46,7 @@ class MainWindow(QMainWindow):
 
         # Create web view
         self.web_view = QWebEngineView()
+        self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.setCentralWidget(self.web_view)
 
         # Enable settings for loading external resources (Tailwind CDN)
@@ -318,6 +319,7 @@ class OverlayWindow(QMainWindow):
 
         # Create web view
         self.web_view = QWebEngineView()
+        self.web_view.setContextMenuPolicy(Qt.ContextMenuPolicy.NoContextMenu)
         self.setCentralWidget(self.web_view)
         self.web_view.page().setBackgroundColor(Qt.GlobalColor.transparent)
 
