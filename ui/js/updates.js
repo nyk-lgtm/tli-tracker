@@ -16,10 +16,11 @@ const DEFAULT_UPDATE_STATE = Object.freeze({
 let currentUpdateState = { ...DEFAULT_UPDATE_STATE };
 let applyInFlight = false;
 
-const MANUAL_FADE_DELAY_MS = 5000;
+const MANUAL_FADE_DELAY_MS = 3000;
 const FADE_TRANSITION_MS = 400;
 let fadeDelayTimer = null;
 let fadeHideTimer = null;
+let manualStatusConsumed = false;
 
 export function normalizeUpdateState(snapshot = {}) {
     return {
@@ -115,6 +116,7 @@ function scheduleStatusFade() {
             el.textContent = '';
             el.classList.add('hidden');
             el.classList.remove('fading-out', 'status-info', 'status-success', 'status-error');
+            manualStatusConsumed = true;
         }, FADE_TRANSITION_MS);
     }, MANUAL_FADE_DELAY_MS);
 }
@@ -158,9 +160,14 @@ function renderUpdateControls() {
         return;
     }
 
-    renderUpdateStatus(view.statusMessage, view.statusType);
+    const suppressConsumed = manualStatusConsumed
+        && currentUpdateState.trigger === 'manual'
+        && !applyInFlight;
+    const message = suppressConsumed ? '' : view.statusMessage;
+    renderUpdateStatus(message, view.statusType);
 
     const shouldFade = !applyInFlight
+        && !suppressConsumed
         && currentUpdateState.trigger === 'manual'
         && (currentUpdateState.status === 'up_to_date' || currentUpdateState.status === 'downloaded')
         && !!view.statusMessage;
@@ -262,6 +269,7 @@ export async function checkForUpdates() {
     }
 
     try {
+        manualStatusConsumed = false;
         await startUpdateFlow('manual');
     } catch (error) {
         console.error('Update flow failed:', error);
