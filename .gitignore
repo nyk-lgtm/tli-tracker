@@ -28,7 +28,8 @@ Thumbs.db
 
 # Project specific
 temp_docs/
-data/
+data/*
+!data/item_ids.json
 tmp/
 
 # Build/Installer output

@@ -1,0 +1,7922 @@
+{
+  "1001": {
+    "name": "Sparks of Moth Fire",
+    "type": "Legendary Equipment"
+  },
+  "1003": {
+    "name": "Fallen Starlight",
+    "type": "Legendary Equipment"
+  },
+  "1009": {
+    "name": "Space Rift",
+    "type": "Legendary Equipment"
+  },
+  "1010": {
+    "name": "Pedigree of Gods",
+    "type": "Legendary Equipment"
+  },
+  "1011": {
+    "name": "Residence of Stars",
+    "type": "Legendary Equipment"
+  },
+  "1012": {
+    "name": "When Sparks Set the Prairie Ablaze",
+    "type": "Legendary Equipment"
+  },
+  "5011": {
+    "name": "Elixir of Oblivion",
+    "type": "Universal Items"
+  },
+  "5028": {
+    "name": "Netherrealm resonance",
+    "type": "Universal Items"
+  },
+  "5029": {
+    "name": "Winding Key",
+    "type": "Universal Items"
+  },
+  "5030": {
+    "name": "Twin Reflection",
+    "type": "Universal Items"
+  },
+  "5031": {
+    "name": "Sprout of Legends",
+    "type": "Universal Items"
+  },
+  "5040": {
+    "name": "Deep Space Resonance",
+    "type": "Universal Items"
+  },
+  "5080": {
+    "name": "Energy Core",
+    "type": "Universal Items"
+  },
+  "5140": {
+    "name": "Memory Scrap",
+    "type": "Memory Scrap"
+  },
+  "5142": {
+    "name": "Memory Thread - Magic",
+    "type": "Memory Thread"
+  },
+  "5143": {
+    "name": "Memory Thread - Rare",
+    "type": "Memory Thread"
+  },
+  "5144": {
+    "name": "Memory Thread - Epic",
+    "type": "Memory Thread"
+  },
+  "5201": {
+    "name": "Divinity Fragment",
+    "type": "Divinity Fragment"
+  },
+  "5202": {
+    "name": "Divinity Pact Fragment",
+    "type": "Divinity Fragment"
+  },
+  "5210": {
+    "name": "Divinity Stone",
+    "type": "Divinity Stone"
+  },
+  "5220": {
+    "name": "Transcendence Wedge (Magic)",
+    "type": "Transcendence Wedge"
+  },
+  "5230": {
+    "name": "Transcendence Wedge (Rare)",
+    "type": "Transcendence Wedge"
+  },
+  "5240": {
+    "name": "Unifying Wedge",
+    "type": "Unifying Wedge"
+  },
+  "5250": {
+    "name": "Transcendence Wedge (Legendary)",
+    "type": "Transcendence Wedge"
+  },
+  "5300": {
+    "name": "Pages of Aeterna",
+    "type": "The City of Aeterna"
+  },
+  "5310": {
+    "name": "Aeterna Reverberation - Fleeting",
+    "type": "Aeterna Reverberation"
+  },
+  "5311": {
+    "name": "Aeterna Reverberation - Eternal",
+    "type": "Aeterna Reverberation"
+  },
+  "5401": {
+    "name": "Divinity Pact - God of Might",
+    "type": "Divinity Pact"
+  },
+  "5402": {
+    "name": "Divinity Pact - The Brave",
+    "type": "Divinity Pact"
+  },
+  "5403": {
+    "name": "Divinity Pact - Onslaughter",
+    "type": "Divinity Pact"
+  },
+  "5404": {
+    "name": "Divinity Pact - Warlord",
+    "type": "Divinity Pact"
+  },
+  "5405": {
+    "name": "Divinity Pact - Goddess of Hunting",
+    "type": "Divinity Pact"
+  },
+  "5406": {
+    "name": "Divinity Pact - Marksman",
+    "type": "Divinity Pact"
+  },
+  "5407": {
+    "name": "Divinity Pact - Bladerunner",
+    "type": "Divinity Pact"
+  },
+  "5408": {
+    "name": "Divinity Pact - Druid",
+    "type": "Divinity Pact"
+  },
+  "5409": {
+    "name": "Divinity Pact - Goddess of Knowledge",
+    "type": "Divinity Pact"
+  },
+  "5410": {
+    "name": "Divinity Pact - Magister",
+    "type": "Divinity Pact"
+  },
+  "5411": {
+    "name": "Divinity Pact - Arcanist",
+    "type": "Divinity Pact"
+  },
+  "5412": {
+    "name": "Divinity Pact - Elementalist",
+    "type": "Divinity Pact"
+  },
+  "5413": {
+    "name": "Divinity Pact - God of War",
+    "type": "Divinity Pact"
+  },
+  "5414": {
+    "name": "Divinity Pact - Shadowdancer",
+    "type": "Divinity Pact"
+  },
+  "5415": {
+    "name": "Divinity Pact - Ronin",
+    "type": "Divinity Pact"
+  },
+  "5416": {
+    "name": "Divinity Pact - Ranger",
+    "type": "Divinity Pact"
+  },
+  "5417": {
+    "name": "Divinity Pact - Goddess of Deception",
+    "type": "Divinity Pact"
+  },
+  "5418": {
+    "name": "Divinity Pact - Shadowmaster",
+    "type": "Divinity Pact"
+  },
+  "5419": {
+    "name": "Divinity Pact - Psychic",
+    "type": "Divinity Pact"
+  },
+  "5420": {
+    "name": "Divinity Pact - Warlock",
+    "type": "Divinity Pact"
+  },
+  "5421": {
+    "name": "Divinity Pact - God of Machines",
+    "type": "Divinity Pact"
+  },
+  "5422": {
+    "name": "Divinity Pact - Machinist",
+    "type": "Divinity Pact"
+  },
+  "5423": {
+    "name": "Divinity Pact - Steel Vanguard",
+    "type": "Divinity Pact"
+  },
+  "5424": {
+    "name": "Divinity Pact - Alchemist",
+    "type": "Divinity Pact"
+  },
+  "5425": {
+    "name": "Divinity Pact - Warrior",
+    "type": "Divinity Pact"
+  },
+  "5426": {
+    "name": "Divinity Pact - Assassin",
+    "type": "Divinity Pact"
+  },
+  "5427": {
+    "name": "Divinity Pact - Prophet",
+    "type": "Divinity Pact"
+  },
+  "5428": {
+    "name": "Divinity Pact - Sentinel",
+    "type": "Divinity Pact"
+  },
+  "5429": {
+    "name": "Divinity Pact - Lich",
+    "type": "Divinity Pact"
+  },
+  "5430": {
+    "name": "Divinity Pact - Artisan",
+    "type": "Divinity Pact"
+  },
+  "5700": {
+    "name": "TOWER Token - Energy",
+    "type": "TOWER Token"
+  },
+  "5701": {
+    "name": "TOWER Token - Fluorescent",
+    "type": "TOWER Token"
+  },
+  "5702": {
+    "name": "TOWER Token - Affix",
+    "type": "TOWER Token"
+  },
+  "5703": {
+    "name": "TOWER Token - Undetermined Fate",
+    "type": "TOWER Token"
+  },
+  "5704": {
+    "name": "TOWER Token - Corrosion",
+    "type": "TOWER Token"
+  },
+  "5705": {
+    "name": "TOWER Token - Priceless",
+    "type": "TOWER Token"
+  },
+  "6002": {
+    "name": "Secret of the Glacial Abyss",
+    "type": "Fluorescent Memory"
+  },
+  "6003": {
+    "name": "Crow's Wail",
+    "type": "Fluorescent Memory"
+  },
+  "6004": {
+    "name": "Maud's Trick",
+    "type": "Fluorescent Memory"
+  },
+  "6006": {
+    "name": "Portent Moon",
+    "type": "Fluorescent Memory"
+  },
+  "6007": {
+    "name": "Lost Secrets",
+    "type": "Fluorescent Memory"
+  },
+  "6008": {
+    "name": "A Terrible Price",
+    "type": "Fluorescent Memory"
+  },
+  "6019": {
+    "name": "Helio Rock",
+    "type": "Fluorescent Memory"
+  },
+  "6026": {
+    "name": "Antonius's Help",
+    "type": "Fluorescent Memory"
+  },
+  "6027": {
+    "name": "Aureole Rock",
+    "type": "Fluorescent Memory"
+  },
+  "6054": {
+    "name": "Clergy's Thinking",
+    "type": "Fluorescent Memory"
+  },
+  "6055": {
+    "name": "Antonius' Research",
+    "type": "Fluorescent Memory"
+  },
+  "6111": {
+    "name": "Supernova Explosion",
+    "type": "Fluorescent Memory"
+  },
+  "6118": {
+    "name": "Echo of the Gods",
+    "type": "Fluorescent Memory"
+  },
+  "6119": {
+    "name": "Stray Fireflies",
+    "type": "Fluorescent Memory"
+  },
+  "6125": {
+    "name": "Hundredfold Windfall",
+    "type": "Fluorescent Memory"
+  },
+  "6127": {
+    "name": "Immolating Flame",
+    "type": "Fluorescent Memory"
+  },
+  "6135": {
+    "name": "Defile the Stars",
+    "type": "Fluorescent Memory"
+  },
+  "6139": {
+    "name": "Divine Supernova",
+    "type": "Fluorescent Memory"
+  },
+  "6141": {
+    "name": "The Kiss of the Heartless",
+    "type": "Fluorescent Memory"
+  },
+  "6143": {
+    "name": "Second Divinity",
+    "type": "Fluorescent Memory"
+  },
+  "6147": {
+    "name": "Gaze Upon the Reflection",
+    "type": "Fluorescent Memory"
+  },
+  "6148": {
+    "name": "Unhatched Shadow",
+    "type": "Fluorescent Memory"
+  },
+  "6153": {
+    "name": "Tomorrow's Direction",
+    "type": "Fluorescent Memory"
+  },
+  "6216": {
+    "name": "Disappearing Shadow",
+    "type": "Fluorescent Memory"
+  },
+  "6217": {
+    "name": "Unfettered Constellation",
+    "type": "Fluorescent Memory"
+  },
+  "6218": {
+    "name": "End of the Past",
+    "type": "Fluorescent Memory"
+  },
+  "6219": {
+    "name": "Beginning of the Past",
+    "type": "Fluorescent Memory"
+  },
+  "6221": {
+    "name": "Prism's Echo",
+    "type": "Fluorescent Memory"
+  },
+  "6222": {
+    "name": "Exiled Destiny",
+    "type": "Fluorescent Memory"
+  },
+  "6223": {
+    "name": "Calamity's Devotion",
+    "type": "Fluorescent Memory"
+  },
+  "6224": {
+    "name": "Concoction Recipe",
+    "type": "Fluorescent Memory"
+  },
+  "6225": {
+    "name": "Immortality Concoction Recipe",
+    "type": "Fluorescent Memory"
+  },
+  "7001": {
+    "name": "Leap Attack",
+    "type": "Active Skill"
+  },
+  "7002": {
+    "name": "Ice Shot",
+    "type": "Active Skill"
+  },
+  "7006": {
+    "name": "Hammer of Ash",
+    "type": "Active Skill"
+  },
+  "7007": {
+    "name": "Chromatic Shot",
+    "type": "Active Skill"
+  },
+  "7008": {
+    "name": "Resurrection Warcry",
+    "type": "Active Skill"
+  },
+  "7018": {
+    "name": "Whirlwind",
+    "type": "Active Skill"
+  },
+  "7019": {
+    "name": "Focused Slash",
+    "type": "Active Skill"
+  },
+  "7020": {
+    "name": "Stoneskin",
+    "type": "Active Skill"
+  },
+  "7021": {
+    "name": "Thundercloud",
+    "type": "Active Skill"
+  },
+  "7025": {
+    "name": "Blink",
+    "type": "Active Skill"
+  },
+  "7027": {
+    "name": "Bombard",
+    "type": "Active Skill"
+  },
+  "7028": {
+    "name": "Shadow Shot",
+    "type": "Active Skill"
+  },
+  "7029": {
+    "name": "Shadow Swamp",
+    "type": "Active Skill"
+  },
+  "7030": {
+    "name": "Marked Rain of Arrows",
+    "type": "Active Skill"
+  },
+  "7031": {
+    "name": "Bull's Rage",
+    "type": "Active Skill"
+  },
+  "7032": {
+    "name": "Shadow Dash",
+    "type": "Active Skill"
+  },
+  "7033": {
+    "name": "Frost Shield",
+    "type": "Active Skill"
+  },
+  "7034": {
+    "name": "Rocket Jump",
+    "type": "Active Skill"
+  },
+  "7035": {
+    "name": "Split Firebolt",
+    "type": "Active Skill"
+  },
+  "7036": {
+    "name": "Blizzard",
+    "type": "Active Skill"
+  },
+  "7039": {
+    "name": "Obscure",
+    "type": "Active Skill"
+  },
+  "7040": {
+    "name": "Mana Boil",
+    "type": "Active Skill"
+  },
+  "7041": {
+    "name": "Frost Impact",
+    "type": "Active Skill"
+  },
+  "7042": {
+    "name": "Path of Flames",
+    "type": "Active Skill"
+  },
+  "7043": {
+    "name": "Berserking Blade",
+    "type": "Active Skill"
+  },
+  "7044": {
+    "name": "Charged Pummel",
+    "type": "Active Skill"
+  },
+  "7047": {
+    "name": "Chain Lightning",
+    "type": "Active Skill"
+  },
+  "7048": {
+    "name": "Double Thrusts",
+    "type": "Active Skill"
+  },
+  "7049": {
+    "name": "Mind Control",
+    "type": "Active Skill"
+  },
+  "7050": {
+    "name": "Ring of Ice",
+    "type": "Active Skill"
+  },
+  "7051": {
+    "name": "Split Shot",
+    "type": "Active Skill"
+  },
+  "7052": {
+    "name": "Flame Slash",
+    "type": "Active Skill"
+  },
+  "7053": {
+    "name": "Icy Blade",
+    "type": "Active Skill"
+  },
+  "7054": {
+    "name": "Frost Spike",
+    "type": "Active Skill"
+  },
+  "7055": {
+    "name": "Wilt Spike",
+    "type": "Active Skill"
+  },
+  "7056": {
+    "name": "Lightning Shot",
+    "type": "Active Skill"
+  },
+  "7057": {
+    "name": "Corrosive Shot",
+    "type": "Active Skill"
+  },
+  "7058": {
+    "name": "Burning Shot",
+    "type": "Active Skill"
+  },
+  "7059": {
+    "name": "Electrifying Shot",
+    "type": "Active Skill"
+  },
+  "7060": {
+    "name": "Corrosive Throw",
+    "type": "Active Skill"
+  },
+  "7062": {
+    "name": "Inexhaustible Barrage",
+    "type": "Active Skill"
+  },
+  "7063": {
+    "name": "Rain of Arrows",
+    "type": "Active Skill"
+  },
+  "7064": {
+    "name": "Savage Charge",
+    "type": "Active Skill"
+  },
+  "7065": {
+    "name": "Ice Lances",
+    "type": "Active Skill"
+  },
+  "7066": {
+    "name": "Sparkle",
+    "type": "Active Skill"
+  },
+  "7067": {
+    "name": "Ring of Blades",
+    "type": "Active Skill"
+  },
+  "7068": {
+    "name": "Flame Core",
+    "type": "Active Skill"
+  },
+  "7069": {
+    "name": "Lightning Storm",
+    "type": "Active Skill"
+  },
+  "7070": {
+    "name": "Flame Jet",
+    "type": "Active Skill"
+  },
+  "7071": {
+    "name": "Frost Terra",
+    "type": "Active Skill"
+  },
+  "7072": {
+    "name": "Scorching Beam",
+    "type": "Active Skill"
+  },
+  "7073": {
+    "name": "Wilting Beam",
+    "type": "Active Skill"
+  },
+  "7074": {
+    "name": "Frigid Transmission",
+    "type": "Active Skill"
+  },
+  "7078": {
+    "name": "Forced Start",
+    "type": "Active Skill"
+  },
+  "7079": {
+    "name": "Aegis of Fire",
+    "type": "Active Skill"
+  },
+  "7080": {
+    "name": "Delayed Pain",
+    "type": "Active Skill"
+  },
+  "7081": {
+    "name": "Defensive Buffer",
+    "type": "Active Skill"
+  },
+  "7082": {
+    "name": "Brisk Wind",
+    "type": "Active Skill"
+  },
+  "7084": {
+    "name": "Burst of Anger",
+    "type": "Active Skill"
+  },
+  "7086": {
+    "name": "Scorching Pulse",
+    "type": "Active Skill"
+  },
+  "7087": {
+    "name": "Fixate",
+    "type": "Active Skill"
+  },
+  "7088": {
+    "name": "Secret Origin Unleash",
+    "type": "Active Skill"
+  },
+  "7089": {
+    "name": "Aim",
+    "type": "Active Skill"
+  },
+  "7090": {
+    "name": "Swiftness Dew",
+    "type": "Active Skill"
+  },
+  "7091": {
+    "name": "Groundshaker",
+    "type": "Active Skill"
+  },
+  "7092": {
+    "name": "Focused Shot",
+    "type": "Active Skill"
+  },
+  "7093": {
+    "name": "Fire Burst",
+    "type": "Active Skill"
+  },
+  "7094": {
+    "name": "Thunderbolt Overload",
+    "type": "Active Skill"
+  },
+  "7101": {
+    "name": "Fearless",
+    "type": "Passive Skill"
+  },
+  "7102": {
+    "name": "Weapon Amplification",
+    "type": "Passive Skill"
+  },
+  "7103": {
+    "name": "Rejuvenation",
+    "type": "Passive Skill"
+  },
+  "7104": {
+    "name": "Electric Conversion",
+    "type": "Passive Skill"
+  },
+  "7105": {
+    "name": "Frigid Domain",
+    "type": "Passive Skill"
+  },
+  "7106": {
+    "name": "Nimbleness",
+    "type": "Passive Skill"
+  },
+  "7107": {
+    "name": "Spell Amplification",
+    "type": "Passive Skill"
+  },
+  "7108": {
+    "name": "Energy Fortress",
+    "type": "Passive Skill"
+  },
+  "7109": {
+    "name": "Magical Source",
+    "type": "Passive Skill"
+  },
+  "7110": {
+    "name": "Precise Projectiles",
+    "type": "Passive Skill"
+  },
+  "7111": {
+    "name": "Elemental Resistance",
+    "type": "Passive Skill"
+  },
+  "7112": {
+    "name": "Swiftness",
+    "type": "Passive Skill"
+  },
+  "7113": {
+    "name": "Deep Pain",
+    "type": "Passive Skill"
+  },
+  "7114": {
+    "name": "Erosion Amplification",
+    "type": "Passive Skill"
+  },
+  "7115": {
+    "name": "Charged Flames",
+    "type": "Passive Skill"
+  },
+  "7116": {
+    "name": "Steadfast",
+    "type": "Passive Skill"
+  },
+  "7120": {
+    "name": "Fearless Warcry",
+    "type": "Active Skill"
+  },
+  "7121": {
+    "name": "Raging Warcry",
+    "type": "Active Skill"
+  },
+  "7122": {
+    "name": "Charging Warcry",
+    "type": "Active Skill"
+  },
+  "7123": {
+    "name": "Black Hole",
+    "type": "Active Skill"
+  },
+  "7125": {
+    "name": "Summon Machine Guard",
+    "type": "Active Skill"
+  },
+  "7126": {
+    "name": "Summon Spider Tank",
+    "type": "Active Skill"
+  },
+  "7127": {
+    "name": "Summon Fire Magus",
+    "type": "Passive Skill"
+  },
+  "7128": {
+    "name": "Summon Frost Magus",
+    "type": "Passive Skill"
+  },
+  "7129": {
+    "name": "Summon Thunder Magus",
+    "type": "Passive Skill"
+  },
+  "7130": {
+    "name": "Timid",
+    "type": "Active Skill"
+  },
+  "7131": {
+    "name": "Electrocute",
+    "type": "Active Skill"
+  },
+  "7132": {
+    "name": "Vulnerability",
+    "type": "Active Skill"
+  },
+  "7133": {
+    "name": "Scorch",
+    "type": "Active Skill"
+  },
+  "7134": {
+    "name": "Dazzled",
+    "type": "Active Skill"
+  },
+  "7135": {
+    "name": "Entangled Pain",
+    "type": "Active Skill"
+  },
+  "7136": {
+    "name": "Biting Cold",
+    "type": "Active Skill"
+  },
+  "7137": {
+    "name": "Corruption",
+    "type": "Active Skill"
+  },
+  "7138": {
+    "name": "Acuteness Focus",
+    "type": "Passive Skill"
+  },
+  "7139": {
+    "name": "Corrosion Focus",
+    "type": "Passive Skill"
+  },
+  "7140": {
+    "name": "Ice Focus",
+    "type": "Passive Skill"
+  },
+  "7141": {
+    "name": "Thunder Focus",
+    "type": "Passive Skill"
+  },
+  "7142": {
+    "name": "Flame Focus",
+    "type": "Passive Skill"
+  },
+  "7143": {
+    "name": "Life Tonic",
+    "type": "Active Skill"
+  },
+  "7144": {
+    "name": "Mana Tonic",
+    "type": "Active Skill"
+  },
+  "7145": {
+    "name": "Elemental Shock",
+    "type": "Active Skill"
+  },
+  "7146": {
+    "name": "Machine Army",
+    "type": "Active Skill"
+  },
+  "7147": {
+    "name": "Prayer",
+    "type": "Active Skill"
+  },
+  "7149": {
+    "name": "Dark Gate",
+    "type": "Active Skill"
+  },
+  "7153": {
+    "name": "Thunderlight Bond",
+    "type": "Active Skill"
+  },
+  "7154": {
+    "name": "Arcane Circle",
+    "type": "Active Skill"
+  },
+  "7155": {
+    "name": "Ice Bond",
+    "type": "Active Skill"
+  },
+  "7156": {
+    "name": "Drinking Recovery",
+    "type": "Active Skill"
+  },
+  "7157": {
+    "name": "Reform",
+    "type": "Active Skill"
+  },
+  "7158": {
+    "name": "Centralized Loading",
+    "type": "Active Skill"
+  },
+  "7159": {
+    "name": "Blink Arrow",
+    "type": "Active Skill"
+  },
+  "7160": {
+    "name": "Swift Shadow Raid",
+    "type": "Active Skill"
+  },
+  "7161": {
+    "name": "Safeguard Ring",
+    "type": "Active Skill"
+  },
+  "7167": {
+    "name": "Icebound Beam",
+    "type": "Active Skill"
+  },
+  "7168": {
+    "name": "Spiral Strike",
+    "type": "Active Skill"
+  },
+  "7169": {
+    "name": "Compound Tonic",
+    "type": "Active Skill"
+  },
+  "7170": {
+    "name": "Moon Strike",
+    "type": "Active Skill"
+  },
+  "7172": {
+    "name": "Howling Gale",
+    "type": "Active Skill"
+  },
+  "7173": {
+    "name": "Blazing Bullet",
+    "type": "Active Skill"
+  },
+  "7174": {
+    "name": "Thunder Slash",
+    "type": "Active Skill"
+  },
+  "7175": {
+    "name": "Thunder Spike",
+    "type": "Active Skill"
+  },
+  "7177": {
+    "name": "Haunting Abomination",
+    "type": "Active Skill"
+  },
+  "7178": {
+    "name": "Frost Core",
+    "type": "Active Skill"
+  },
+  "7179": {
+    "name": "Thunder Core",
+    "type": "Active Skill"
+  },
+  "7180": {
+    "name": "Ghost Blade Einherjar",
+    "type": "Active Skill"
+  },
+  "7181": {
+    "name": "Arrow Einherjar",
+    "type": "Active Skill"
+  },
+  "7182": {
+    "name": "Summon Grim Phantom",
+    "type": "Active Skill"
+  },
+  "7183": {
+    "name": "Overpower",
+    "type": "Active Skill"
+  },
+  "7184": {
+    "name": "Onslaught Punch",
+    "type": "Active Skill"
+  },
+  "7185": {
+    "name": "Aimed Shot",
+    "type": "Active Skill"
+  },
+  "7186": {
+    "name": "Blazing Dance",
+    "type": "Passive Skill"
+  },
+  "7187": {
+    "name": "Blazing Spin",
+    "type": "Passive Skill"
+  },
+  "7188": {
+    "name": "Blazing Incineration",
+    "type": "Passive Skill"
+  },
+  "7189": {
+    "name": "Molten Rising",
+    "type": "Passive Skill"
+  },
+  "7190": {
+    "name": "Glacier Ripples",
+    "type": "Passive Skill"
+  },
+  "7191": {
+    "name": "Frost Release",
+    "type": "Passive Skill"
+  },
+  "7192": {
+    "name": "Permafrost Cast",
+    "type": "Passive Skill"
+  },
+  "7193": {
+    "name": "Ice Earthshaker",
+    "type": "Passive Skill"
+  },
+  "7194": {
+    "name": "Lightning Star",
+    "type": "Passive Skill"
+  },
+  "7195": {
+    "name": "Thunderlight Arrow",
+    "type": "Passive Skill"
+  },
+  "7196": {
+    "name": "Thundercloud Surge",
+    "type": "Passive Skill"
+  },
+  "7197": {
+    "name": "Lightning Surge",
+    "type": "Passive Skill"
+  },
+  "7198": {
+    "name": "High Energy Beam",
+    "type": "Active Skill"
+  },
+  "7199": {
+    "name": "Destructive Light Cannon",
+    "type": "Active Skill"
+  },
+  "7200": {
+    "name": "Whirlwind Blade",
+    "type": "Active Skill"
+  },
+  "7201": {
+    "name": "Lightning Beam",
+    "type": "Active Skill"
+  },
+  "7202": {
+    "name": "Speed Phantom",
+    "type": "Active Skill"
+  },
+  "7203": {
+    "name": "Archery Bond",
+    "type": "Active Skill"
+  },
+  "7204": {
+    "name": "Nourishment of Life",
+    "type": "Active Skill"
+  },
+  "7205": {
+    "name": "Dazzling Bloom",
+    "type": "Active Skill"
+  },
+  "7206": {
+    "name": "Star Stalker",
+    "type": "Active Skill"
+  },
+  "7207": {
+    "name": "Harmonious Field",
+    "type": "Active Skill"
+  },
+  "7208": {
+    "name": "Shackles of Malice",
+    "type": "Active Skill"
+  },
+  "7209": {
+    "name": "Summon Rock Magus",
+    "type": "Passive Skill"
+  },
+  "7210": {
+    "name": "Shattered Stone",
+    "type": "Passive Skill"
+  },
+  "7211": {
+    "name": "Gold Rush",
+    "type": "Passive Skill"
+  },
+  "7212": {
+    "name": "Rock Blast",
+    "type": "Passive Skill"
+  },
+  "7213": {
+    "name": "Towering Mountains",
+    "type": "Passive Skill"
+  },
+  "7214": {
+    "name": "Summon Erosion Magus",
+    "type": "Passive Skill"
+  },
+  "7215": {
+    "name": "Scattered Mud",
+    "type": "Passive Skill"
+  },
+  "7216": {
+    "name": "Withering Payback",
+    "type": "Passive Skill"
+  },
+  "7217": {
+    "name": "Bleak Grass",
+    "type": "Passive Skill"
+  },
+  "7218": {
+    "name": "World of Thorns",
+    "type": "Passive Skill"
+  },
+  "7219": {
+    "name": "Radical Order",
+    "type": "Passive Skill"
+  },
+  "7220": {
+    "name": "Cruelty",
+    "type": "Passive Skill"
+  },
+  "7221": {
+    "name": "Domain Expansion",
+    "type": "Passive Skill"
+  },
+  "7222": {
+    "name": "Rising Edge",
+    "type": "Active Skill"
+  },
+  "7223": {
+    "name": "Crescent Slash",
+    "type": "Active Skill"
+  },
+  "7224": {
+    "name": "Serpent Beam",
+    "type": "Active Skill"
+  },
+  "7225": {
+    "name": "Gale Slash",
+    "type": "Active Skill"
+  },
+  "7226": {
+    "name": "Spectral Slash",
+    "type": "Active Skill"
+  },
+  "7227": {
+    "name": "Vendetta",
+    "type": "Active Skill"
+  },
+  "7228": {
+    "name": "Shockwave Warcry",
+    "type": "Active Skill"
+  },
+  "7229": {
+    "name": "Endless Vendetta",
+    "type": "Active Skill"
+  },
+  "7230": {
+    "name": "Ailment Amplification",
+    "type": "Passive Skill"
+  },
+  "7231": {
+    "name": "Module: Goblin Priest",
+    "type": "Modularization Skill"
+  },
+  "7232": {
+    "name": "Module: Trog 2nd General",
+    "type": "Modularization Skill"
+  },
+  "7234": {
+    "name": "Module: Dwarven Automaton",
+    "type": "Modularization Skill"
+  },
+  "7235": {
+    "name": "Module: Trog Mage",
+    "type": "Modularization Skill"
+  },
+  "7236": {
+    "name": "Module: Goblin Priest of Elements",
+    "type": "Modularization Skill"
+  },
+  "7237": {
+    "name": "Module: Medium Ember Automaton",
+    "type": "Modularization Skill"
+  },
+  "7238": {
+    "name": "Module: Huge Ember Automaton",
+    "type": "Modularization Skill"
+  },
+  "7239": {
+    "name": "Module: Ent Great Elder",
+    "type": "Modularization Skill"
+  },
+  "7240": {
+    "name": "Module: Ratlin Stormer Captain",
+    "type": "Modularization Skill"
+  },
+  "7241": {
+    "name": "Module: Chief Machinist",
+    "type": "Modularization Skill"
+  },
+  "7242": {
+    "name": "Module: Lean Phantom",
+    "type": "Modularization Skill"
+  },
+  "7243": {
+    "name": "Module: God of Swords",
+    "type": "Modularization Skill"
+  },
+  "7244": {
+    "name": "Module: Tyrant",
+    "type": "Modularization Skill"
+  },
+  "7245": {
+    "name": "Module: Ichi Storm",
+    "type": "Modularization Skill"
+  },
+  "7246": {
+    "name": "Module: Sand Giant",
+    "type": "Modularization Skill"
+  },
+  "7247": {
+    "name": "Module: Einherjar Elder Sage",
+    "type": "Modularization Skill"
+  },
+  "7248": {
+    "name": "Module: Aember Winged Beast",
+    "type": "Modularization Skill"
+  },
+  "7249": {
+    "name": "Module: Punisher",
+    "type": "Modularization Skill"
+  },
+  "7252": {
+    "name": "Frostclaw",
+    "type": "Active Skill"
+  },
+  "7253": {
+    "name": "Firebird",
+    "type": "Active Skill"
+  },
+  "7255": {
+    "name": "Earthshatter",
+    "type": "Active Skill"
+  },
+  "7256": {
+    "name": "Aember Rain",
+    "type": "Active Skill"
+  },
+  "7257": {
+    "name": "Molten Barrage",
+    "type": "Active Skill"
+  },
+  "7258": {
+    "name": "All-Out Volley",
+    "type": "Active Skill"
+  },
+  "7259": {
+    "name": "Rockfall",
+    "type": "Active Skill"
+  },
+  "7260": {
+    "name": "Thunderfall",
+    "type": "Active Skill"
+  },
+  "7261": {
+    "name": "Kinetic Thrust",
+    "type": "Active Skill"
+  },
+  "7262": {
+    "name": "Groundslam",
+    "type": "Active Skill"
+  },
+  "7263": {
+    "name": "Overstrike",
+    "type": "Active Skill"
+  },
+  "7264": {
+    "name": "Searing Crush",
+    "type": "Active Skill"
+  },
+  "7265": {
+    "name": "Sweep",
+    "type": "Active Skill"
+  },
+  "7266": {
+    "name": "Rootsurge",
+    "type": "Active Skill"
+  },
+  "7267": {
+    "name": "Blitz Strike",
+    "type": "Active Skill"
+  },
+  "7268": {
+    "name": "Burst Hammer",
+    "type": "Active Skill"
+  },
+  "7269": {
+    "name": "Firebomb",
+    "type": "Active Skill"
+  },
+  "7270": {
+    "name": "Pyromania",
+    "type": "Active Skill"
+  },
+  "7271": {
+    "name": "Flickering Shadow",
+    "type": "Active Skill"
+  },
+  "7272": {
+    "name": "Sin of the Fallen",
+    "type": "Active Skill"
+  },
+  "7273": {
+    "name": "Blade of Glory",
+    "type": "Active Skill"
+  },
+  "7274": {
+    "name": "High Court Covenant",
+    "type": "Active Skill"
+  },
+  "7275": {
+    "name": "Ravaging Slash",
+    "type": "Active Skill"
+  },
+  "7276": {
+    "name": "Auric Shot",
+    "type": "Active Skill"
+  },
+  "7278": {
+    "name": "Gravelshot",
+    "type": "Active Skill"
+  },
+  "7279": {
+    "name": "Divine Judgment",
+    "type": "Active Skill"
+  },
+  "7280": {
+    "name": "Javelin of Judgment",
+    "type": "Active Skill"
+  },
+  "7281": {
+    "name": "Spikeburst",
+    "type": "Active Skill"
+  },
+  "7282": {
+    "name": "Tailsweep",
+    "type": "Active Skill"
+  },
+  "7283": {
+    "name": "Impaling Thrust",
+    "type": "Active Skill"
+  },
+  "7284": {
+    "name": "Twinstrike",
+    "type": "Active Skill"
+  },
+  "7285": {
+    "name": "Undercurrent",
+    "type": "Active Skill"
+  },
+  "7286": {
+    "name": "Resistance Dew",
+    "type": "Active Skill"
+  },
+  "7287": {
+    "name": "Steadfast Dew",
+    "type": "Active Skill"
+  },
+  "7288": {
+    "name": "Nimbleness Dew",
+    "type": "Active Skill"
+  },
+  "7289": {
+    "name": "Tenacity Dew",
+    "type": "Active Skill"
+  },
+  "7290": {
+    "name": "Tortoise Shell Distillate",
+    "type": "Active Skill"
+  },
+  "7291": {
+    "name": "Scorpion Stinger Distillate",
+    "type": "Active Skill"
+  },
+  "7292": {
+    "name": "Putrid Toad Distillate",
+    "type": "Active Skill"
+  },
+  "7293": {
+    "name": "Saltpeter Mushroom Distillate",
+    "type": "Active Skill"
+  },
+  "7294": {
+    "name": "Fire Lizard Distillate",
+    "type": "Active Skill"
+  },
+  "7295": {
+    "name": "White Rhino Distillate",
+    "type": "Active Skill"
+  },
+  "7296": {
+    "name": "Thunder Wood Distillate",
+    "type": "Active Skill"
+  },
+  "7317": {
+    "name": "Ominous",
+    "type": "Active Skill"
+  },
+  "7401": {
+    "name": "Multiple Projectiles",
+    "type": "Support Skill"
+  },
+  "7405": {
+    "name": "Multistrike",
+    "type": "Support Skill"
+  },
+  "7406": {
+    "name": "Projectile Split",
+    "type": "Support Skill"
+  },
+  "7407": {
+    "name": "Increased Area",
+    "type": "Support Skill"
+  },
+  "7408": {
+    "name": "Melee Knockback",
+    "type": "Support Skill"
+  },
+  "7410": {
+    "name": "Overload",
+    "type": "Support Skill"
+  },
+  "7411": {
+    "name": "Tendonslicer",
+    "type": "Support Skill"
+  },
+  "7412": {
+    "name": "Glacial Freeze",
+    "type": "Support Skill"
+  },
+  "7413": {
+    "name": "Additional Ignite",
+    "type": "Support Skill"
+  },
+  "7414": {
+    "name": "High Voltage",
+    "type": "Support Skill"
+  },
+  "7415": {
+    "name": "Quick Mobility",
+    "type": "Support Skill"
+  },
+  "7416": {
+    "name": "Extended Duration",
+    "type": "Support Skill"
+  },
+  "7417": {
+    "name": "Spell Concentration",
+    "type": "Support Skill"
+  },
+  "7418": {
+    "name": "Added Erosion Damage",
+    "type": "Support Skill"
+  },
+  "7419": {
+    "name": "Critical Strike Rating Increase",
+    "type": "Support Skill"
+  },
+  "7420": {
+    "name": "Critical Strike Damage Increase",
+    "type": "Support Skill"
+  },
+  "7421": {
+    "name": "Physical to Fire",
+    "type": "Support Skill"
+  },
+  "7422": {
+    "name": "Lightning to Cold",
+    "type": "Support Skill"
+  },
+  "7423": {
+    "name": "Deep Wounds",
+    "type": "Support Skill"
+  },
+  "7424": {
+    "name": "Improved Corrosion",
+    "type": "Support Skill"
+  },
+  "7426": {
+    "name": "Passivation",
+    "type": "Support Skill"
+  },
+  "7427": {
+    "name": "Quick Decision",
+    "type": "Support Skill"
+  },
+  "7428": {
+    "name": "Cost Conversion",
+    "type": "Support Skill"
+  },
+  "7429": {
+    "name": "Jump",
+    "type": "Support Skill"
+  },
+  "7430": {
+    "name": "Shortened Duration",
+    "type": "Support Skill"
+  },
+  "7431": {
+    "name": "Added Fire Damage",
+    "type": "Support Skill"
+  },
+  "7432": {
+    "name": "Added Cold Damage",
+    "type": "Support Skill"
+  },
+  "7433": {
+    "name": "Added Lightning Damage",
+    "type": "Support Skill"
+  },
+  "7434": {
+    "name": "Control Spell",
+    "type": "Support Skill"
+  },
+  "7435": {
+    "name": "Elemental Fusion",
+    "type": "Support Skill"
+  },
+  "7439": {
+    "name": "Recklessness",
+    "type": "Support Skill"
+  },
+  "7440": {
+    "name": "Slow Projectile",
+    "type": "Support Skill"
+  },
+  "7441": {
+    "name": "Grudge",
+    "type": "Support Skill"
+  },
+  "7442": {
+    "name": "Projectile Penetration",
+    "type": "Support Skill"
+  },
+  "7443": {
+    "name": "Steamroll",
+    "type": "Support Skill"
+  },
+  "7444": {
+    "name": "Cataclysm",
+    "type": "Support Skill"
+  },
+  "7445": {
+    "name": "Hunting Tempo",
+    "type": "Support Skill"
+  },
+  "7447": {
+    "name": "Multifaceted Guard",
+    "type": "Support Skill"
+  },
+  "7448": {
+    "name": "Sentry Modification",
+    "type": "Support Skill"
+  },
+  "7449": {
+    "name": "Fire Explosion",
+    "type": "Support Skill"
+  },
+  "7450": {
+    "name": "Nova Shot",
+    "type": "Support Skill"
+  },
+  "7451": {
+    "name": "Precision Strike",
+    "type": "Support Skill"
+  },
+  "7452": {
+    "name": "Haunt",
+    "type": "Support Skill"
+  },
+  "7454": {
+    "name": "Guard",
+    "type": "Support Skill"
+  },
+  "7455": {
+    "name": "Channel Preparation",
+    "type": "Support Skill"
+  },
+  "7456": {
+    "name": "Raging Slash",
+    "type": "Support Skill"
+  },
+  "7458": {
+    "name": "Quick Return",
+    "type": "Support Skill"
+  },
+  "7463": {
+    "name": "Restrain",
+    "type": "Support Skill"
+  },
+  "7464": {
+    "name": "Attack Focus",
+    "type": "Support Skill"
+  },
+  "7469": {
+    "name": "Wind Projectiles",
+    "type": "Support Skill"
+  },
+  "7472": {
+    "name": "Pain Amplification",
+    "type": "Support Skill"
+  },
+  "7473": {
+    "name": "Blind",
+    "type": "Support Skill"
+  },
+  "7474": {
+    "name": "Electric Punishment",
+    "type": "Support Skill"
+  },
+  "7475": {
+    "name": "Ailment Termination",
+    "type": "Support Skill"
+  },
+  "7476": {
+    "name": "Enhanced Ailment",
+    "type": "Support Skill"
+  },
+  "7477": {
+    "name": "Added Physical Damage",
+    "type": "Support Skill"
+  },
+  "7478": {
+    "name": "Cooldown Reduction",
+    "type": "Support Skill"
+  },
+  "7479": {
+    "name": "Emergency restoration",
+    "type": "Support Skill"
+  },
+  "7480": {
+    "name": "Instant restoration",
+    "type": "Support Skill"
+  },
+  "7485": {
+    "name": "Ground Divide",
+    "type": "Support Skill"
+  },
+  "7487": {
+    "name": "Scattershot Beam",
+    "type": "Support Skill"
+  },
+  "7488": {
+    "name": "Focused Beam",
+    "type": "Support Skill"
+  },
+  "7489": {
+    "name": "Refracted Prism",
+    "type": "Support Skill"
+  },
+  "7490": {
+    "name": "Servant Damage",
+    "type": "Support Skill"
+  },
+  "7491": {
+    "name": "Servant Life",
+    "type": "Support Skill"
+  },
+  "7494": {
+    "name": "Elemental Duo",
+    "type": "Support Skill"
+  },
+  "7495": {
+    "name": "Maniacal Army",
+    "type": "Support Skill"
+  },
+  "7496": {
+    "name": "Mechanical Modification",
+    "type": "Support Skill"
+  },
+  "7497": {
+    "name": "Assault Command",
+    "type": "Support Skill"
+  },
+  "7498": {
+    "name": "Defense Form",
+    "type": "Support Skill"
+  },
+  "7504": {
+    "name": "Well-Fought Battle",
+    "type": "Support Skill"
+  },
+  "7505": {
+    "name": "Fragile Resurrection",
+    "type": "Support Skill"
+  },
+  "7507": {
+    "name": "Residues",
+    "type": "Support Skill"
+  },
+  "7509": {
+    "name": "All In",
+    "type": "Support Skill"
+  },
+  "7510": {
+    "name": "Iron Fortification",
+    "type": "Support Skill"
+  },
+  "7511": {
+    "name": "Emergency Avoidance",
+    "type": "Support Skill"
+  },
+  "7512": {
+    "name": "Concentration Warcry",
+    "type": "Support Skill"
+  },
+  "7513": {
+    "name": "Lion's Roars",
+    "type": "Support Skill"
+  },
+  "7514": {
+    "name": "Periodic Burst",
+    "type": "Support Skill"
+  },
+  "7515": {
+    "name": "Terrain of Malice",
+    "type": "Support Skill"
+  },
+  "7516": {
+    "name": "Electric Overload",
+    "type": "Support Skill"
+  },
+  "7517": {
+    "name": "Elemental Impact",
+    "type": "Support Skill"
+  },
+  "7519": {
+    "name": "Carpet Bombardment",
+    "type": "Support Skill"
+  },
+  "7521": {
+    "name": "Mass Effect",
+    "type": "Support Skill"
+  },
+  "7522": {
+    "name": "Defense Layers",
+    "type": "Support Skill"
+  },
+  "7525": {
+    "name": "Focus Acceleration",
+    "type": "Support Skill"
+  },
+  "7526": {
+    "name": "Focus Buff",
+    "type": "Support Skill"
+  },
+  "7528": {
+    "name": "Seal Conversion",
+    "type": "Support Skill"
+  },
+  "7529": {
+    "name": "Psychic Burst",
+    "type": "Support Skill"
+  },
+  "7530": {
+    "name": "Magic Dash",
+    "type": "Support Skill"
+  },
+  "7531": {
+    "name": "Psychic Surge",
+    "type": "Support Skill"
+  },
+  "7532": {
+    "name": "Savage Growth",
+    "type": "Support Skill"
+  },
+  "7533": {
+    "name": "Harvest Time",
+    "type": "Support Skill"
+  },
+  "7534": {
+    "name": "Preparation",
+    "type": "Support Skill"
+  },
+  "7603": {
+    "name": "Charge",
+    "type": "Support Skill"
+  },
+  "7605": {
+    "name": "Gladiator's Roar",
+    "type": "Support Skill"
+  },
+  "7606": {
+    "name": "Aura Amplification",
+    "type": "Support Skill"
+  },
+  "7612": {
+    "name": "Friend of Spirit Magi",
+    "type": "Support Skill"
+  },
+  "7613": {
+    "name": "Protection Field",
+    "type": "Support Skill"
+  },
+  "7614": {
+    "name": "Hyper Metabolism",
+    "type": "Support Skill"
+  },
+  "7615": {
+    "name": "Emergency Aid",
+    "type": "Support Skill"
+  },
+  "7616": {
+    "name": "Medicinal Buildup",
+    "type": "Support Skill"
+  },
+  "7618": {
+    "name": "Reclusion",
+    "type": "Support Skill"
+  },
+  "7620": {
+    "name": "Willpower",
+    "type": "Support Skill"
+  },
+  "7621": {
+    "name": "Recuperation",
+    "type": "Support Skill"
+  },
+  "7622": {
+    "name": "Spell Tangle",
+    "type": "Support Skill"
+  },
+  "7623": {
+    "name": "Manifold Entanglement",
+    "type": "Support Skill"
+  },
+  "7700": {
+    "name": "Focused Shot: Aspire (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7701": {
+    "name": "Focused Shot: Long Shot (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7702": {
+    "name": "Focused Shot: Building Momentum (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7703": {
+    "name": "Focused Shot: Power Bow (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7704": {
+    "name": "Focused Shot: Snipe (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7705": {
+    "name": "Burning Shot: Fiery Blast (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7706": {
+    "name": "Burning Shot: Combustion (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7707": {
+    "name": "Burning Shot: Ignition (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7708": {
+    "name": "Burning Shot: Through Fire (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7709": {
+    "name": "Chain Lightning: Web of Lightning (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7710": {
+    "name": "Chain Lightning: Augmentation (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7711": {
+    "name": "Chain Lightning: Lucky (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7712": {
+    "name": "Chain Lightning: Merge (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7713": {
+    "name": "Focused Slash: Tranquility (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7714": {
+    "name": "Focused Slash: Duel (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7715": {
+    "name": "Focused Slash: Fervor (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7716": {
+    "name": "Focused Slash: Behead (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7717": {
+    "name": "Icy Blade: Quick Freeze (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7720": {
+    "name": "Icy Blade: Hidden Edge (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7721": {
+    "name": "Flame Slash: Immediate Threat (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7722": {
+    "name": "Flame Slash: Inverted Blaze (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7723": {
+    "name": "Double Thrusts: Cutthroat (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7724": {
+    "name": "Corrosive Throw: Augmentation (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7725": {
+    "name": "Corrosive Throw: Swift Strike (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7726": {
+    "name": "Corrosive Throw: Blitz Strike (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7727": {
+    "name": "Blazing Bullet: Fiery Blast (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7728": {
+    "name": "Blazing Bullet: Ignition Point (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7729": {
+    "name": "Blazing Bullet: Dual Resonance (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7730": {
+    "name": "Wilt Spike: Wither (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7731": {
+    "name": "Wilt Spike: Languish (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7732": {
+    "name": "Wilt Spike: Mirage (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7733": {
+    "name": "Wilt Spike: Evanescence (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7734": {
+    "name": "Hammer of Ash: Upheaval (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7735": {
+    "name": "Hammer of Ash: Rekindle (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7737": {
+    "name": "Hammer of Ash: Quickfire (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7738": {
+    "name": "Hammer of Ash: Blast Quake (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7739": {
+    "name": "Frost Impact: Ice Cluster (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7740": {
+    "name": "Frost Impact: Frozen Trajectory (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7741": {
+    "name": "Frost Impact: Chilling Surge (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7742": {
+    "name": "Frost Impact: Chilling Buildup (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7744": {
+    "name": "Whirlwind: Endless Wind (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7745": {
+    "name": "Whirlwind: Wind Barrier (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7746": {
+    "name": "Whirlwind: Whirling Blade (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7747": {
+    "name": "Lightning Shot: Offshoot (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7748": {
+    "name": "Lightning Shot: Crossed Lightning (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7750": {
+    "name": "Split Shot: Volley (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7751": {
+    "name": "Split Shot: Diversion (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7752": {
+    "name": "Split Shot: Collaboration (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7753": {
+    "name": "Split Shot: Rapid Advance (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7754": {
+    "name": "Ice Shot: Ice Blast (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7755": {
+    "name": "Ice Shot: Batter (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7756": {
+    "name": "Bombard: Cannon (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7757": {
+    "name": "Bombard: Guided (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7758": {
+    "name": "Bombard: Fission (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7759": {
+    "name": "Bombard: Grenade (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7760": {
+    "name": "Bombard: Smokescreen (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7761": {
+    "name": "Berserking Blade: Desperation (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7762": {
+    "name": "Berserking Blade: Sweep (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7763": {
+    "name": "Berserking Blade: Decimate (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7764": {
+    "name": "Berserking Blade: Rampage (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7765": {
+    "name": "Charged Pummel: Drastic Shift (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7766": {
+    "name": "Charged Pummel: Connected (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7767": {
+    "name": "Charged Pummel: Charge Reduction (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7768": {
+    "name": "Charged Pummel: Electric Charge (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7769": {
+    "name": "Moon Strike: Rainbow (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7770": {
+    "name": "Moon Strike: Lunar Ring (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7771": {
+    "name": "Moon Strike: Lunar Eclipse (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7772": {
+    "name": "Moon Strike: Wax and Wane (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7773": {
+    "name": "Savage Charge: Infuriate (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7774": {
+    "name": "Savage Charge: Bulldoze (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7775": {
+    "name": "Savage Charge: Raid (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7776": {
+    "name": "Marked Rain of Arrows: Heartpiercer (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7777": {
+    "name": "Marked Rain of Arrows: Chain Reaction (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7778": {
+    "name": "Marked Rain of Arrows: Hyper Blast (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7779": {
+    "name": "Marked Rain of Arrows: Threads of Arrows (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7780": {
+    "name": "Corrosive Shot: Swift Action (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7781": {
+    "name": "Corrosive Shot: Degeneration (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7782": {
+    "name": "Corrosive Shot: Burst of Agony (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7783": {
+    "name": "Inexhaustible Barrage: Bombard (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7784": {
+    "name": "Inexhaustible Barrage: Fatal Pursuit (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7785": {
+    "name": "Inexhaustible Barrage: Landslide (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7786": {
+    "name": "Thunder Spike: Numb (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7788": {
+    "name": "Thunder Spike: Tremble (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7789": {
+    "name": "Thunder Spike: Rumbling Thunder (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7790": {
+    "name": "Thunder Slash: Keen Edge (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7791": {
+    "name": "Thunder Slash: Blade Cluster (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7792": {
+    "name": "Thunder Slash: Flurry (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7793": {
+    "name": "Thunder Slash: Big Stride (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7795": {
+    "name": "Ring of Blades: Blade Formation (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7796": {
+    "name": "Ring of Blades: Razor Edge (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7797": {
+    "name": "Ring of Blades: Strength in Numbers (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7798": {
+    "name": "Frost Spike: Offshoot (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7800": {
+    "name": "Frost Spike: Ice Fission (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7801": {
+    "name": "Frost Spike: Glaciate (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7802": {
+    "name": "Rain of Arrows: Swift Flight (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7803": {
+    "name": "Rain of Arrows: Payback (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7804": {
+    "name": "Rain of Arrows: Tracking (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7805": {
+    "name": "Arrow Einherjar: Arrowstorm (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7806": {
+    "name": "Arrow Einherjar: Advancement (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7807": {
+    "name": "Arrow Einherjar: Fellowship (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7808": {
+    "name": "Shadow Shot: Eradicate (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7809": {
+    "name": "Split Firebolt: Split (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7810": {
+    "name": "Split Firebolt: Focal Point (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7811": {
+    "name": "Ice Lances: Rebound (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7812": {
+    "name": "Ice Lances: Ice Corrosion (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7813": {
+    "name": "Ice Lances: Bounce (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7814": {
+    "name": "Ice Lances: Permafrost (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7815": {
+    "name": "Sparkle: Magnetic Field (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7817": {
+    "name": "Sparkle: Strobe (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7818": {
+    "name": "Sparkle: Static Electricity (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7819": {
+    "name": "Whirlwind Blade: Unsheath (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7820": {
+    "name": "Whirlwind Blade: Swift Slash (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7821": {
+    "name": "Whirlwind Blade: Sharpen (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7822": {
+    "name": "Whirlwind Blade: Circling (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7823": {
+    "name": "Ring of Ice: Ice Seal (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7824": {
+    "name": "Ring of Ice: Cascade (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7825": {
+    "name": "Blizzard: Freezing Point (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7826": {
+    "name": "Blizzard: Hail (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7827": {
+    "name": "Blizzard: Avalanche (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7828": {
+    "name": "Blizzard: Numbing Cold (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7829": {
+    "name": "Lightning Storm: Surging Thunder (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7830": {
+    "name": "Lightning Storm: Boundless (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7831": {
+    "name": "Lightning Storm: Raging Storm (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7832": {
+    "name": "Flame Core: Lone Vanguard (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7833": {
+    "name": "Flame Core: Engage (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7834": {
+    "name": "Flame Jet: Burst (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7835": {
+    "name": "Flame Jet: Scorched Earth (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7836": {
+    "name": "Flame Jet: Offshoot (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7837": {
+    "name": "Flame Jet: Furnace (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7838": {
+    "name": "Frost Terra: Rime (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7839": {
+    "name": "Frost Terra: Snow Shell (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7840": {
+    "name": "Frost Terra: Cohesion (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7841": {
+    "name": "Frost Terra: Winter's Bite (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7842": {
+    "name": "Shadow Swamp: Gushing Spring (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7843": {
+    "name": "Shadow Swamp: Splatter (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7844": {
+    "name": "Shadow Swamp: Overlapping Waves (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7845": {
+    "name": "Shadow Swamp: Still Water (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7846": {
+    "name": "Thunderbolt Overload: Leap (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7847": {
+    "name": "Thunderbolt Overload: Retribution (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7848": {
+    "name": "Thunderbolt Overload: Augmentation (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7849": {
+    "name": "Frost Core: Chase (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7850": {
+    "name": "Frost Core: Puncture (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7851": {
+    "name": "Summon Thunder Magus: Lightning Ward (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7852": {
+    "name": "Summon Thunder Magus: Continuation (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7853": {
+    "name": "Summon Thunder Magus: Heavy Arrow (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7854": {
+    "name": "Summon Thunder Magus: Agility (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7855": {
+    "name": "Summon Frost Magus: Cold Ward (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7856": {
+    "name": "Summon Frost Magus: Piercing Cold (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7857": {
+    "name": "Summon Frost Magus: Ice Crusher (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7858": {
+    "name": "Summon Frost Magus: Vengeance (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7859": {
+    "name": "Summon Fire Magus: Fire Ward (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7860": {
+    "name": "Summon Fire Magus: Aflame (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7861": {
+    "name": "Summon Fire Magus: Flowing Flames (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7862": {
+    "name": "Summon Fire Magus: Wicked Spirit (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7863": {
+    "name": "Summon Fire Magus: Engulfing Flames (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7864": {
+    "name": "Synthetic Troop: Force Field (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7865": {
+    "name": "Summon Machine Guard: Iron Fist (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7866": {
+    "name": "Summon Machine Guard: Pummel (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7867": {
+    "name": "Summon Machine Guard: Crushing Blow (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7868": {
+    "name": "Summon Machine Guard: Discipline (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7869": {
+    "name": "Summon Machine Guard: Dead Silence (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7870": {
+    "name": "Summon Grim Phantom: Glare (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7871": {
+    "name": "Summon Grim Phantom: Spur (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7872": {
+    "name": "Summon Grim Phantom: Shriek (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7873": {
+    "name": "Summon Grim Phantom: Undercurrent (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7874": {
+    "name": "Summon Grim Phantom: Flicker (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7875": {
+    "name": "Summon Spider Tank: Steamroll (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7876": {
+    "name": "Summon Spider Tank: Focus Fire (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7877": {
+    "name": "Summon Spider Tank: Spider Egg (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7878": {
+    "name": "Ghost Blade Einherjar: Prestige (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7879": {
+    "name": "Ghost Blade Einherjar: Unbroken (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7880": {
+    "name": "Ghost Blade Einherjar: Eruption (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7881": {
+    "name": "Ghost Blade Einherjar: Heroes (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7882": {
+    "name": "Groundshaker: Frequent Quake (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7883": {
+    "name": "Groundshaker: Epicenter (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7884": {
+    "name": "Groundshaker: Collapse (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7885": {
+    "name": "Groundshaker: Cripple (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7886": {
+    "name": "Groundshaker: Wrathful Vault (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7887": {
+    "name": "Howling Gale: Rapid Sweep (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7888": {
+    "name": "Howling Gale: Headwind (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7889": {
+    "name": "Howling Gale: Furious Sweep (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7890": {
+    "name": "Howling Gale: Eye of the Gale (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7891": {
+    "name": "Shackles of Malice: Defile (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7892": {
+    "name": "Shackles of Malice: Vendetta (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7893": {
+    "name": "Shackles of Malice: Mutual Destruction (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7894": {
+    "name": "Shackles of Malice: Spite (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7895": {
+    "name": "Mind Control: Concentrate (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7896": {
+    "name": "Mind Control: Befuddle (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7897": {
+    "name": "Mind Control: Enthrall (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7898": {
+    "name": "Mind Control: Entice (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7899": {
+    "name": "Fire Burst: Heart of Flame (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7900": {
+    "name": "Fire Burst: Violent Blast (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7901": {
+    "name": "Fire Burst: Prairie Fire (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7902": {
+    "name": "Fire Burst: Converge (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7903": {
+    "name": "Icebound Beam: Frostbitten (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7905": {
+    "name": "Icebound Beam: Chilling Spike (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7906": {
+    "name": "Icebound Beam: Ring Blade (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7907": {
+    "name": "Scorching Beam: Supercharge (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7908": {
+    "name": "Scorching Beam: Shockwave (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7909": {
+    "name": "Scorching Beam: Disintegrate (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7910": {
+    "name": "Scorching Beam: Immolate (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7911": {
+    "name": "Thunder Core: Electric Field (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7912": {
+    "name": "Thunder Core: Lone Vanguard (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7913": {
+    "name": "Thunder Core: Lightning Lasso (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7914": {
+    "name": "Thunder Core: Augmentation (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7915": {
+    "name": "Path of Flames: Spontaneous Combustion (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7917": {
+    "name": "Path of Flames: Heat Wave (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7918": {
+    "name": "Path of Flames: Raging Boil (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7919": {
+    "name": "Thundercloud: Billowing Cloud (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7920": {
+    "name": "Thundercloud: Alarmed Awakening (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7921": {
+    "name": "Thundercloud: Heavy Cloud (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7922": {
+    "name": "Thundercloud: Thunderous Blow (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7923": {
+    "name": "Summon Rock Magus: Unyielding (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7924": {
+    "name": "Summon Rock Magus: Forging (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7925": {
+    "name": "Summon Rock Magus: Clustering Sand (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7926": {
+    "name": "Summon Rock Magus: Stone Refinement (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7927": {
+    "name": "Summon Erosion Magus: Plague Source (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7928": {
+    "name": "Summon Erosion Magus: Wicked (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7929": {
+    "name": "Summon Erosion Magus: Frequent Quake (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7930": {
+    "name": "Summon Erosion Magus: Malignant (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7931": {
+    "name": "Summon Erosion Magus: Malady (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7932": {
+    "name": "Double Thrusts: Restless (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7934": {
+    "name": "Double Thrusts: Recourse (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7935": {
+    "name": "Lightning Beam: Aftershock (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7936": {
+    "name": "Lightning Beam: Relentless (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7937": {
+    "name": "Lightning Beam: Reverberation (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7938": {
+    "name": "Lightning Beam: Salvo (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7939": {
+    "name": "Wilting Beam: Dispirit (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7940": {
+    "name": "Wilting Beam: Reflection (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7941": {
+    "name": "Wilting Beam: Set Course (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7942": {
+    "name": "Wilting Beam: Rapid Completion (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7943": {
+    "name": "Electrifying Shot: Close-Range (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7945": {
+    "name": "Electrifying Shot: Multishot (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7947": {
+    "name": "Marked Rain of Arrows: Rainfall (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7948": {
+    "name": "Haunting Abomination: Misdeeds (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7949": {
+    "name": "Haunting Abomination: Feud (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7950": {
+    "name": "Haunting Abomination: Hail Mary (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7951": {
+    "name": "Haunting Abomination: Depravity (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7952": {
+    "name": "Thunder Focus: Haste (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7953": {
+    "name": "Thunder Focus: Quickstep (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7954": {
+    "name": "Thunder Focus: Tremor (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7955": {
+    "name": "Thunder Focus: Overflow (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7956": {
+    "name": "Flame Focus: Kindling (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7957": {
+    "name": "Flame Focus: Flint (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7958": {
+    "name": "Flame Focus: Blast (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7959": {
+    "name": "Corrosion Focus: Clustering (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7960": {
+    "name": "Corrosion Focus: Infection (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7961": {
+    "name": "Corrosion Focus: Splash (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7962": {
+    "name": "Ice Focus: Shattered Ice (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7963": {
+    "name": "Ice Focus: Permafrost (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7964": {
+    "name": "Ice Focus: Frigid Wind (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7965": {
+    "name": "Ice Focus: Solemn Chill (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7966": {
+    "name": "Acuteness Focus: Piercing Agony (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7967": {
+    "name": "Acuteness Focus: Sharpening (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7968": {
+    "name": "Acuteness Focus: Dull Pain (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7969": {
+    "name": "Acuteness Focus: Remaining Strength (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7970": {
+    "name": "Crescent Slash: Raid (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7971": {
+    "name": "Crescent Slash: Vile (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7972": {
+    "name": "Crescent Slash: Flash (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7973": {
+    "name": "Crescent Slash: Rising (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7974": {
+    "name": "Serpent Beam: Barrage (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7975": {
+    "name": "Serpent Beam: Inferno (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7976": {
+    "name": "Serpent Beam: Torrent (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7977": {
+    "name": "Serpent Beam: Twin Blaze (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7978": {
+    "name": "Gale Slash: Onslaught (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7979": {
+    "name": "Gale Slash: Dominance (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7980": {
+    "name": "Gale Slash: Soaring (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7981": {
+    "name": "Gale Slash: Brutality (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7982": {
+    "name": "Spectral Slash: Detonation (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7983": {
+    "name": "Spectral Slash: Legion (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7984": {
+    "name": "Spectral Slash: Synchrony (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7985": {
+    "name": "Frigid Transmission: Thin Ice (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7986": {
+    "name": "Chromatic Shot: Lightchaser (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7987": {
+    "name": "Chromatic Shot: Splendor (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7988": {
+    "name": "Modularization: Shared Burden (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7989": {
+    "name": "Modularization: Resonance (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7990": {
+    "name": "Modularization: Cluster (Magnificent)",
+    "type": "Magnificent Support Skill"
+  },
+  "7991": {
+    "name": "Modularization: Superconductivity (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7992": {
+    "name": "Modularization: Calibrate (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7993": {
+    "name": "Modularization: Compress (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "7994": {
+    "name": "Modularization: Sever (Noble)",
+    "type": "Noble Support Skill"
+  },
+  "8000": {
+    "name": "Activation Medium: Preparation",
+    "type": "Activation Medium Skill"
+  },
+  "8002": {
+    "name": "Activation Medium: Perpetual Motion",
+    "type": "Activation Medium Skill"
+  },
+  "8003": {
+    "name": "Activation Medium: Elite",
+    "type": "Activation Medium Skill"
+  },
+  "8004": {
+    "name": "Activation Medium: Boss",
+    "type": "Activation Medium Skill"
+  },
+  "8005": {
+    "name": "Activation Medium: Life",
+    "type": "Activation Medium Skill"
+  },
+  "8006": {
+    "name": "Activation Medium: Energy Shield",
+    "type": "Activation Medium Skill"
+  },
+  "8007": {
+    "name": "Activation Medium: Severe Injury",
+    "type": "Activation Medium Skill"
+  },
+  "8008": {
+    "name": "Activation Medium: Multistrike",
+    "type": "Activation Medium Skill"
+  },
+  "8009": {
+    "name": "Activation Medium: Demolisher",
+    "type": "Activation Medium Skill"
+  },
+  "8010": {
+    "name": "Activation Medium: Spell Burst",
+    "type": "Activation Medium Skill"
+  },
+  "8011": {
+    "name": "Activation Medium: Start",
+    "type": "Activation Medium Skill"
+  },
+  "8012": {
+    "name": "Activation Medium: Root",
+    "type": "Activation Medium Skill"
+  },
+  "8013": {
+    "name": "Activation Medium: Resonance Activation",
+    "type": "Activation Medium Skill"
+  },
+  "8014": {
+    "name": "Activation Medium: Resonance",
+    "type": "Activation Medium Skill"
+  },
+  "8015": {
+    "name": "Activation Medium: Rhythm",
+    "type": "Activation Medium Skill"
+  },
+  "8017": {
+    "name": "Activation Medium: Wind Rhythm",
+    "type": "Activation Medium Skill"
+  },
+  "8018": {
+    "name": "Activation Medium: Root Attack",
+    "type": "Activation Medium Skill"
+  },
+  "8019": {
+    "name": "Activation Medium: Still Attack",
+    "type": "Activation Medium Skill"
+  },
+  "8020": {
+    "name": "Activation Medium: Sentry",
+    "type": "Activation Medium Skill"
+  },
+  "8021": {
+    "name": "Activation Medium: Minion",
+    "type": "Activation Medium Skill"
+  },
+  "8022": {
+    "name": "Activation Medium: Critical Strike",
+    "type": "Activation Medium Skill"
+  },
+  "8023": {
+    "name": "Activation Medium: Channel",
+    "type": "Activation Medium Skill"
+  },
+  "8024": {
+    "name": "Activation Medium: Instruction",
+    "type": "Activation Medium Skill"
+  },
+  "8025": {
+    "name": "Activation Medium: Lock On",
+    "type": "Activation Medium Skill"
+  },
+  "8026": {
+    "name": "Activation Medium: Track",
+    "type": "Activation Medium Skill"
+  },
+  "8027": {
+    "name": "Activation Medium: Burst Activation",
+    "type": "Activation Medium Skill"
+  },
+  "8028": {
+    "name": "Activation Medium: Motionless",
+    "type": "Activation Medium Skill"
+  },
+  "8030": {
+    "name": "Activation Medium: Tangle",
+    "type": "Activation Medium Skill"
+  },
+  "8300": {
+    "name": "Precise: Fearless",
+    "type": "Passive Skill"
+  },
+  "8301": {
+    "name": "Precise: Weapon Amplification",
+    "type": "Passive Skill"
+  },
+  "8302": {
+    "name": "Precise: Rejuvenation",
+    "type": "Passive Skill"
+  },
+  "8303": {
+    "name": "Precise: Electric Conversion",
+    "type": "Passive Skill"
+  },
+  "8304": {
+    "name": "Precise: Frigid Domain",
+    "type": "Passive Skill"
+  },
+  "8305": {
+    "name": "Precise: Nimbleness",
+    "type": "Passive Skill"
+  },
+  "8306": {
+    "name": "Precise: Spell Amplification",
+    "type": "Passive Skill"
+  },
+  "8307": {
+    "name": "Precise: Energy Fortress",
+    "type": "Passive Skill"
+  },
+  "8308": {
+    "name": "Precise: Magical Source",
+    "type": "Passive Skill"
+  },
+  "8309": {
+    "name": "Precise: Precise Projectiles",
+    "type": "Passive Skill"
+  },
+  "8310": {
+    "name": "Precise: Elemental Resistance",
+    "type": "Passive Skill"
+  },
+  "8311": {
+    "name": "Precise: Swiftness",
+    "type": "Passive Skill"
+  },
+  "8312": {
+    "name": "Precise: Deep Pain",
+    "type": "Passive Skill"
+  },
+  "8313": {
+    "name": "Precise: Erosion Amplification",
+    "type": "Passive Skill"
+  },
+  "8314": {
+    "name": "Precise: Charged Flames",
+    "type": "Passive Skill"
+  },
+  "8315": {
+    "name": "Precise: Steadfast",
+    "type": "Passive Skill"
+  },
+  "8316": {
+    "name": "Precise: Acuteness Focus",
+    "type": "Passive Skill"
+  },
+  "8317": {
+    "name": "Precise: Corrosion Focus",
+    "type": "Passive Skill"
+  },
+  "8318": {
+    "name": "Precise: Ice Focus",
+    "type": "Passive Skill"
+  },
+  "8319": {
+    "name": "Precise: Thunder Focus",
+    "type": "Passive Skill"
+  },
+  "8320": {
+    "name": "Precise: Flame Focus",
+    "type": "Passive Skill"
+  },
+  "8328": {
+    "name": "Precise: Radical Order",
+    "type": "Passive Skill"
+  },
+  "8329": {
+    "name": "Precise: Cruelty",
+    "type": "Passive Skill"
+  },
+  "8330": {
+    "name": "Precise: Domain Expansion",
+    "type": "Passive Skill"
+  },
+  "8331": {
+    "name": "Precise: Ailment Amplification",
+    "type": "Passive Skill"
+  },
+  "8600": {
+    "name": "Precise: Seal Conversion",
+    "type": "Support Skill"
+  },
+  "8601": {
+    "name": "Precise: Selfless",
+    "type": "Support Skill"
+  },
+  "8602": {
+    "name": "Precise: Selfishness",
+    "type": "Support Skill"
+  },
+  "8603": {
+    "name": "Precise: Stand as One",
+    "type": "Support Skill"
+  },
+  "8604": {
+    "name": "Precise: Disciplined",
+    "type": "Support Skill"
+  },
+  "8605": {
+    "name": "Precise: Concentrated",
+    "type": "Support Skill"
+  },
+  "8606": {
+    "name": "Precise: Malleable",
+    "type": "Support Skill"
+  },
+  "8607": {
+    "name": "Precise: Safety in Numbers",
+    "type": "Support Skill"
+  },
+  "8608": {
+    "name": "Precise: Focus Buff",
+    "type": "Support Skill"
+  },
+  "8611": {
+    "name": "Precise: Superpower",
+    "type": "Support Skill"
+  },
+  "8612": {
+    "name": "Precise: Friend of Spirit Magi",
+    "type": "Support Skill"
+  },
+  "8613": {
+    "name": "Precise: Protection Field",
+    "type": "Support Skill"
+  },
+  "8614": {
+    "name": "Precise Restrain",
+    "type": "Support Skill"
+  },
+  "8615": {
+    "name": "Precise: Harmony",
+    "type": "Support Skill"
+  },
+  "8616": {
+    "name": "Precise: Purify",
+    "type": "Support Skill"
+  },
+  "10001": {
+    "name": "Sinful Plunder Compass",
+    "type": "Compass"
+  },
+  "10002": {
+    "name": "Sinful Plunder Compass (Artifact)",
+    "type": "Compass"
+  },
+  "10003": {
+    "name": "Transgression Plunder Compass",
+    "type": "Compass"
+  },
+  "10010": {
+    "name": "Novel Compass",
+    "type": "Compass"
+  },
+  "10011": {
+    "name": "Lavish Novel Compass",
+    "type": "Compass"
+  },
+  "10012": {
+    "name": "Conquering Novel Compass",
+    "type": "Compass"
+  },
+  "10022": {
+    "name": "Soldier Compass",
+    "type": "Compass"
+  },
+  "10023": {
+    "name": "Strength in Numbers Soldier Compass",
+    "type": "Compass"
+  },
+  "10032": {
+    "name": "Veteran Compass",
+    "type": "Compass"
+  },
+  "10033": {
+    "name": "Unrivaled Veteran Compass",
+    "type": "Compass"
+  },
+  "10042": {
+    "name": "Elite Compass",
+    "type": "Compass"
+  },
+  "10043": {
+    "name": "Generous Elite Compass",
+    "type": "Compass"
+  },
+  "10044": {
+    "name": "Bountiful Elite Compass",
+    "type": "Compass"
+  },
+  "10046": {
+    "name": "Boss Compass",
+    "type": "Compass"
+  },
+  "10050": {
+    "name": "Beacon Compass",
+    "type": "Compass"
+  },
+  "10051": {
+    "name": "Progressing Beacon Compass",
+    "type": "Compass"
+  },
+  "10052": {
+    "name": "Ecliptic Astrolabe",
+    "type": "Compass"
+  },
+  "10053": {
+    "name": "Vast Ecliptic Astrolabe",
+    "type": "Compass"
+  },
+  "10054": {
+    "name": "Ascendant Ecliptic Astrolabe",
+    "type": "Compass"
+  },
+  "10060": {
+    "name": "Renown Edge Compass",
+    "type": "Compass"
+  },
+  "10071": {
+    "name": "Militant Compass",
+    "type": "Compass"
+  },
+  "10072": {
+    "name": "Priceless Militant Compass",
+    "type": "Compass"
+  },
+  "10073": {
+    "name": "Trinket Militant Compass",
+    "type": "Compass"
+  },
+  "10081": {
+    "name": "Ember Compass",
+    "type": "Compass"
+  },
+  "10082": {
+    "name": "Bounty Ember Compass",
+    "type": "Compass"
+  },
+  "10083": {
+    "name": "Reserve Ember Compass",
+    "type": "Compass"
+  },
+  "10101": {
+    "name": "Fluorescent Compass",
+    "type": "Compass"
+  },
+  "10102": {
+    "name": "Colorful Fluorescent Compass",
+    "type": "Compass"
+  },
+  "10103": {
+    "name": "Focus Fluorescent Compass",
+    "type": "Compass"
+  },
+  "10104": {
+    "name": "Colorful Fluorescent Compass (Artifact)",
+    "type": "Compass"
+  },
+  "10109": {
+    "name": "Mystery Treasure Gods Compass",
+    "type": "Compass"
+  },
+  "10110": {
+    "name": "Flourishing Gods Compass",
+    "type": "Compass"
+  },
+  "10120": {
+    "name": "War Compass",
+    "type": "Compass"
+  },
+  "10122": {
+    "name": "Valiant War Compass",
+    "type": "Compass"
+  },
+  "10130": {
+    "name": "Might Compass",
+    "type": "Compass"
+  },
+  "10131": {
+    "name": "Flourishing Might Compass",
+    "type": "Compass"
+  },
+  "10133": {
+    "name": "Onslaught Might Compass",
+    "type": "Compass"
+  },
+  "10134": {
+    "name": "Mecha Might Compass (Artifact)",
+    "type": "Compass"
+  },
+  "10140": {
+    "name": "Hunting Compass",
+    "type": "Compass"
+  },
+  "10142": {
+    "name": "General Hunting Compass",
+    "type": "Compass"
+  },
+  "10150": {
+    "name": "Mechanical Compass",
+    "type": "Compass"
+  },
+  "10151": {
+    "name": "Brilliant Mechanical Compass",
+    "type": "Compass"
+  },
+  "10153": {
+    "name": "Divide Mechanical Compass",
+    "type": "Compass"
+  },
+  "10154": {
+    "name": "Cruising Mechanical Compass (Artifact)",
+    "type": "Compass"
+  },
+  "10160": {
+    "name": "Dark Surge Compass",
+    "type": "Compass"
+  },
+  "10161": {
+    "name": "Bandit Dark Surge Compass",
+    "type": "Compass"
+  },
+  "10162": {
+    "name": "Divine Warrior Dark Surge Compass",
+    "type": "Compass"
+  },
+  "10170": {
+    "name": "Blacksail Compass",
+    "type": "Compass"
+  },
+  "10171": {
+    "name": "Returning Blacksail Compass",
+    "type": "Compass"
+  },
+  "10180": {
+    "name": "Cube Compass",
+    "type": "Compass"
+  },
+  "10181": {
+    "name": "Cube Compass: Two Extremes",
+    "type": "Compass"
+  },
+  "10182": {
+    "name": "Fortuitous Cube Compass",
+    "type": "Compass"
+  },
+  "10190": {
+    "name": "Aeterna Compass",
+    "type": "Compass"
+  },
+  "10191": {
+    "name": "Familial Aeterna Compass",
+    "type": "Compass"
+  },
+  "10200": {
+    "name": "Nightmare Compass",
+    "type": "Compass"
+  },
+  "10210": {
+    "name": "Folklore Compass",
+    "type": "Compass"
+  },
+  "10211": {
+    "name": "Uncanny Folklore Compass",
+    "type": "Compass"
+  },
+  "10220": {
+    "name": "Doll Astrolabe",
+    "type": "Compass"
+  },
+  "10221": {
+    "name": "Collection Doll Astrolabe",
+    "type": "Compass"
+  },
+  "10222": {
+    "name": "Collection Doll Astrolabe (Artifact)",
+    "type": "Compass"
+  },
+  "10230": {
+    "name": "Frozen Canvas Compass",
+    "type": "Compass"
+  },
+  "10231": {
+    "name": "Frozen Canvas Compass: Abundance",
+    "type": "Compass"
+  },
+  "10240": {
+    "name": "Arcana Compass",
+    "type": "Compass"
+  },
+  "10241": {
+    "name": "Trump Card Arcana Compass",
+    "type": "Compass"
+  },
+  "10242": {
+    "name": "The Fated Arcana Compass",
+    "type": "Compass"
+  },
+  "10250": {
+    "name": "Sandlord Compass",
+    "type": "Compass"
+  },
+  "10260": {
+    "name": "Outlaw Compass",
+    "type": "Compass"
+  },
+  "10261": {
+    "name": "Bounty Outlaw Compass",
+    "type": "Compass"
+  },
+  "10262": {
+    "name": "Alert Outlaw Compass",
+    "type": "Compass"
+  },
+  "10270": {
+    "name": "Cage Astrolabe",
+    "type": "Compass"
+  },
+  "10272": {
+    "name": "Golden Cage Astrolabe",
+    "type": "Compass"
+  },
+  "10280": {
+    "name": "Overrealm Compass",
+    "type": "Compass"
+  },
+  "10281": {
+    "name": "Shadow Overrealm Compass",
+    "type": "Compass"
+  },
+  "10282": {
+    "name": "Containment Overrealm Compass",
+    "type": "Compass"
+  },
+  "10290": {
+    "name": "Vorax Compass",
+    "type": "Compass"
+  },
+  "10291": {
+    "name": "Scavenger Vorax Compass",
+    "type": "Compass"
+  },
+  "10292": {
+    "name": "Consultation Vorax Compass",
+    "type": "Compass"
+  },
+  "10300": {
+    "name": "Dim Lunar Stone",
+    "type": "Season Compass"
+  },
+  "10301": {
+    "name": "Bright Lunar Stone",
+    "type": "Season Compass"
+  },
+  "10302": {
+    "name": "Dazzling Lunar Stone",
+    "type": "Season Compass"
+  },
+  "10310": {
+    "name": "Creation Compass",
+    "type": "Compass"
+  },
+  "10311": {
+    "name": "Derivative Creation Compass",
+    "type": "Compass"
+  },
+  "10312": {
+    "name": "Record Creation Compass",
+    "type": "Compass"
+  },
+  "12000": {
+    "name": "Flourishing Profound Probe",
+    "type": "Probe"
+  },
+  "12001": {
+    "name": "Flourishing Deep Space Probe",
+    "type": "Probe"
+  },
+  "12010": {
+    "name": "Gear Profound Probe",
+    "type": "Probe"
+  },
+  "12011": {
+    "name": "Gear Deep Space Probe",
+    "type": "Probe"
+  },
+  "12020": {
+    "name": "Ember Profound Probe",
+    "type": "Probe"
+  },
+  "12021": {
+    "name": "Ember Deep Space Probe",
+    "type": "Probe"
+  },
+  "12030": {
+    "name": "Fluorescent Profound Probe",
+    "type": "Probe"
+  },
+  "12031": {
+    "name": "Fluorescent Deep Space Probe",
+    "type": "Probe"
+  },
+  "12040": {
+    "name": "Compass Profound Probe",
+    "type": "Probe"
+  },
+  "12041": {
+    "name": "Compass Deep Space Probe",
+    "type": "Probe"
+  },
+  "12050": {
+    "name": "Beacon Profound Probe",
+    "type": "Probe"
+  },
+  "12101": {
+    "name": "Might Deep Space Probe",
+    "type": "Probe"
+  },
+  "12111": {
+    "name": "Machine Deep Space Probe",
+    "type": "Probe"
+  },
+  "12121": {
+    "name": "Doll Deep Space Probe",
+    "type": "Probe"
+  },
+  "12131": {
+    "name": "Outlaw Deep Space Probe",
+    "type": "Probe"
+  },
+  "100200": {
+    "name": "Flame Sand",
+    "type": "Fuel"
+  },
+  "100300": {
+    "name": "Flame Elementium",
+    "type": "Fuel"
+  },
+  "110101": {
+    "name": "Arminius Guillotine",
+    "type": "Legendary Equipment"
+  },
+  "110102": {
+    "name": "Varagon's Attack",
+    "type": "Legendary Equipment"
+  },
+  "110103": {
+    "name": "Despised Shadow",
+    "type": "Legendary Equipment"
+  },
+  "110104": {
+    "name": "Highest Glance",
+    "type": "Legendary Equipment"
+  },
+  "110205": {
+    "name": "End Night Banquet",
+    "type": "Legendary Equipment"
+  },
+  "110209": {
+    "name": "Ominous Gift",
+    "type": "Legendary Equipment"
+  },
+  "110301": {
+    "name": "Crosser",
+    "type": "Legendary Equipment"
+  },
+  "110302": {
+    "name": "Circular Clearing",
+    "type": "Legendary Equipment"
+  },
+  "110303": {
+    "name": "Cursed Flame",
+    "type": "Legendary Equipment"
+  },
+  "110305": {
+    "name": "Shamed",
+    "type": "Legendary Equipment"
+  },
+  "110306": {
+    "name": "Will",
+    "type": "Legendary Equipment"
+  },
+  "110309": {
+    "name": "Harbinger's Reversed Plumes",
+    "type": "Legendary Equipment"
+  },
+  "110401": {
+    "name": "Farewell Desire",
+    "type": "Legendary Equipment"
+  },
+  "110405": {
+    "name": "Fleeting Regret",
+    "type": "Legendary Equipment"
+  },
+  "110408": {
+    "name": "Thunder Branch",
+    "type": "Legendary Equipment"
+  },
+  "110409": {
+    "name": "Oathkeeper",
+    "type": "Legendary Equipment"
+  },
+  "110505": {
+    "name": "Incorrect Arbitration",
+    "type": "Legendary Equipment"
+  },
+  "110602": {
+    "name": "Scorching Words",
+    "type": "Legendary Equipment"
+  },
+  "110604": {
+    "name": "Misube's Refusal",
+    "type": "Legendary Equipment"
+  },
+  "110605": {
+    "name": "Steel Stagnation",
+    "type": "Legendary Equipment"
+  },
+  "110606": {
+    "name": "Frozen Will",
+    "type": "Legendary Equipment"
+  },
+  "110607": {
+    "name": "Interlocking Soul",
+    "type": "Legendary Equipment"
+  },
+  "110702": {
+    "name": "Elemental Whirl",
+    "type": "Legendary Equipment"
+  },
+  "110703": {
+    "name": "Eternal Moon",
+    "type": "Legendary Equipment"
+  },
+  "110705": {
+    "name": "Flying Bird",
+    "type": "Legendary Equipment"
+  },
+  "110707": {
+    "name": "Throat-Slasher",
+    "type": "Legendary Equipment"
+  },
+  "110802": {
+    "name": "Memory",
+    "type": "Legendary Equipment"
+  },
+  "110804": {
+    "name": "Imploration Dagger",
+    "type": "Legendary Equipment"
+  },
+  "110808": {
+    "name": "Shadow of Thunderlight's Eyes",
+    "type": "Legendary Equipment"
+  },
+  "110809": {
+    "name": "Frantic Shadow",
+    "type": "Legendary Equipment"
+  },
+  "110901": {
+    "name": "Mountain Howling",
+    "type": "Legendary Equipment"
+  },
+  "110902": {
+    "name": "Bow of Endless Dusk",
+    "type": "Legendary Equipment"
+  },
+  "110904": {
+    "name": "Sun-shooter Long Bow",
+    "type": "Legendary Equipment"
+  },
+  "110905": {
+    "name": "Shadow of Thunderlight's Touch",
+    "type": "Legendary Equipment"
+  },
+  "110908": {
+    "name": "Glacial Abyss Arrow",
+    "type": "Legendary Equipment"
+  },
+  "111101": {
+    "name": "King Lionheart's Ambition",
+    "type": "Legendary Equipment"
+  },
+  "111103": {
+    "name": "Scorching Wave",
+    "type": "Legendary Equipment"
+  },
+  "111201": {
+    "name": "Severed Wrist",
+    "type": "Legendary Equipment"
+  },
+  "111203": {
+    "name": "Frozen Sight",
+    "type": "Legendary Equipment"
+  },
+  "111205": {
+    "name": "Buzzing",
+    "type": "Legendary Equipment"
+  },
+  "111207": {
+    "name": "Gravel",
+    "type": "Legendary Equipment"
+  },
+  "111303": {
+    "name": "Plain Echo",
+    "type": "Legendary Equipment"
+  },
+  "111305": {
+    "name": "Ralph's Ambition",
+    "type": "Legendary Equipment"
+  },
+  "111306": {
+    "name": "Dumb Voice",
+    "type": "Legendary Equipment"
+  },
+  "111401": {
+    "name": "Jumble Ice",
+    "type": "Legendary Equipment"
+  },
+  "111402": {
+    "name": "Shadow of Thunderlight's Fury",
+    "type": "Legendary Equipment"
+  },
+  "111403": {
+    "name": "Twisted Branch",
+    "type": "Legendary Equipment"
+  },
+  "111404": {
+    "name": "Spring Resurrection",
+    "type": "Legendary Equipment"
+  },
+  "111406": {
+    "name": "Fire Lord's Promise",
+    "type": "Legendary Equipment"
+  },
+  "111407": {
+    "name": "Oversight",
+    "type": "Legendary Equipment"
+  },
+  "111408": {
+    "name": "Supreme Throne",
+    "type": "Legendary Equipment"
+  },
+  "111410": {
+    "name": "Scepter of Excommunication",
+    "type": "Legendary Equipment"
+  },
+  "111411": {
+    "name": "Scorching Tempo",
+    "type": "Legendary Equipment"
+  },
+  "111505": {
+    "name": "Sage's Foresight",
+    "type": "Legendary Equipment"
+  },
+  "111509": {
+    "name": "Fiery Oath",
+    "type": "Legendary Equipment"
+  },
+  "112101": {
+    "name": "Glorious Journey",
+    "type": "Legendary Equipment"
+  },
+  "112103": {
+    "name": "Unbreakable Armor",
+    "type": "Legendary Equipment"
+  },
+  "112104": {
+    "name": "Dragon Breath Armor",
+    "type": "Legendary Equipment"
+  },
+  "112105": {
+    "name": "Evil Heart Armor",
+    "type": "Legendary Equipment"
+  },
+  "112106": {
+    "name": "Shattered Moonlight",
+    "type": "Legendary Equipment"
+  },
+  "112107": {
+    "name": "Crimson King",
+    "type": "Legendary Equipment"
+  },
+  "112112": {
+    "name": "Kingly Armor",
+    "type": "Legendary Equipment"
+  },
+  "112113": {
+    "name": "Iced Drinker's Cage",
+    "type": "Legendary Equipment"
+  },
+  "112114": {
+    "name": "Vestment of Song",
+    "type": "Legendary Equipment"
+  },
+  "112116": {
+    "name": "Phantasm",
+    "type": "Legendary Equipment"
+  },
+  "112119": {
+    "name": "Royal Cycle",
+    "type": "Legendary Equipment"
+  },
+  "112121": {
+    "name": "Undying Faith",
+    "type": "Legendary Equipment"
+  },
+  "112122": {
+    "name": "Endless Fortress",
+    "type": "Legendary Equipment"
+  },
+  "112123": {
+    "name": "Martyr's Staff",
+    "type": "Legendary Equipment"
+  },
+  "112124": {
+    "name": "Corrupted Bulwark",
+    "type": "Legendary Equipment"
+  },
+  "112126": {
+    "name": "Void Embankment",
+    "type": "Legendary Equipment"
+  },
+  "112130": {
+    "name": "Double Rainbow",
+    "type": "Legendary Equipment"
+  },
+  "112131": {
+    "name": "Flaming Evil",
+    "type": "Legendary Equipment"
+  },
+  "112132": {
+    "name": "Frozen Path",
+    "type": "Legendary Equipment"
+  },
+  "112133": {
+    "name": "Fleeting Sky",
+    "type": "Legendary Equipment"
+  },
+  "112134": {
+    "name": "Cicada Shell",
+    "type": "Legendary Equipment"
+  },
+  "112135": {
+    "name": "Heavyware",
+    "type": "Legendary Equipment"
+  },
+  "112137": {
+    "name": "Stellar Vestment of Eminence",
+    "type": "Legendary Equipment"
+  },
+  "112139": {
+    "name": "Twilight Vestment",
+    "type": "Legendary Equipment"
+  },
+  "112141": {
+    "name": "Devouring Tide",
+    "type": "Legendary Equipment"
+  },
+  "112142": {
+    "name": "Arrival of the Polar Night",
+    "type": "Legendary Equipment"
+  },
+  "112145": {
+    "name": "Omniscient Prototype",
+    "type": "Legendary Equipment"
+  },
+  "112146": {
+    "name": "Mere Eternity",
+    "type": "Legendary Equipment"
+  },
+  "112147": {
+    "name": "Friend Nemesis",
+    "type": "Legendary Equipment"
+  },
+  "112149": {
+    "name": "Sarituya",
+    "type": "Legendary Equipment"
+  },
+  "112150": {
+    "name": "Aslan",
+    "type": "Legendary Equipment"
+  },
+  "112151": {
+    "name": "Furious Man's Body",
+    "type": "Legendary Equipment"
+  },
+  "112152": {
+    "name": "Mad Doctor's Silver-Plated Lung",
+    "type": "Legendary Equipment"
+  },
+  "112153": {
+    "name": "Magnus' Jealousy",
+    "type": "Legendary Equipment"
+  },
+  "112154": {
+    "name": "Ralph's Burial",
+    "type": "Legendary Equipment"
+  },
+  "112155": {
+    "name": "Israfel's Sorrow",
+    "type": "Legendary Equipment"
+  },
+  "112156": {
+    "name": "Gauze of Phantom Sin",
+    "type": "Legendary Equipment"
+  },
+  "112157": {
+    "name": "Blight",
+    "type": "Legendary Equipment"
+  },
+  "112158": {
+    "name": "Ruinous Star",
+    "type": "Legendary Equipment"
+  },
+  "112159": {
+    "name": "Agony's Embrace",
+    "type": "Legendary Equipment"
+  },
+  "112161": {
+    "name": "Lightning Striker's Sacrum",
+    "type": "Legendary Equipment"
+  },
+  "112162": {
+    "name": "Trinity",
+    "type": "Legendary Equipment"
+  },
+  "112163": {
+    "name": "Genius Battlegear",
+    "type": "Legendary Equipment"
+  },
+  "112165": {
+    "name": "Imperious Verdict",
+    "type": "Legendary Equipment"
+  },
+  "112166": {
+    "name": "Agony of Lost Self",
+    "type": "Legendary Equipment"
+  },
+  "112167": {
+    "name": "Varagon's Lament",
+    "type": "Legendary Equipment"
+  },
+  "112168": {
+    "name": "Futile Tradeoff",
+    "type": "Legendary Equipment"
+  },
+  "112169": {
+    "name": "Silent Avowal",
+    "type": "Legendary Equipment"
+  },
+  "112201": {
+    "name": "Rock Lizard's Skull",
+    "type": "Legendary Equipment"
+  },
+  "112203": {
+    "name": "Last Words of Chaos",
+    "type": "Legendary Equipment"
+  },
+  "112204": {
+    "name": "Legendary Soldier Spectacles",
+    "type": "Legendary Equipment"
+  },
+  "112205": {
+    "name": "Machine Lord",
+    "type": "Legendary Equipment"
+  },
+  "112206": {
+    "name": "Opening Heart",
+    "type": "Legendary Equipment"
+  },
+  "112207": {
+    "name": "Cold Breath",
+    "type": "Legendary Equipment"
+  },
+  "112208": {
+    "name": "Surging Inspiration",
+    "type": "Legendary Equipment"
+  },
+  "112209": {
+    "name": "Fiend Crown",
+    "type": "Legendary Equipment"
+  },
+  "112211": {
+    "name": "Webbed Arcane Headscarf",
+    "type": "Legendary Equipment"
+  },
+  "112212": {
+    "name": "Blind Vision",
+    "type": "Legendary Equipment"
+  },
+  "112213": {
+    "name": "Siren Faceguard",
+    "type": "Legendary Equipment"
+  },
+  "112214": {
+    "name": "Scarlet Decree",
+    "type": "Legendary Equipment"
+  },
+  "112215": {
+    "name": "Awakening Skull",
+    "type": "Legendary Equipment"
+  },
+  "112216": {
+    "name": "Imperial Iron Sentry",
+    "type": "Legendary Equipment"
+  },
+  "112217": {
+    "name": "Tide of the Styx",
+    "type": "Legendary Equipment"
+  },
+  "112219": {
+    "name": "Sun's Embrace",
+    "type": "Legendary Equipment"
+  },
+  "112220": {
+    "name": "Thunder Jawbone",
+    "type": "Legendary Equipment"
+  },
+  "112221": {
+    "name": "Corrupted Marrow",
+    "type": "Legendary Equipment"
+  },
+  "112223": {
+    "name": "When Winter Comes",
+    "type": "Legendary Equipment"
+  },
+  "112228": {
+    "name": "Fool's Crown",
+    "type": "Legendary Equipment"
+  },
+  "112229": {
+    "name": "Divine Ember",
+    "type": "Legendary Equipment"
+  },
+  "112230": {
+    "name": "Hekate's Vision",
+    "type": "Legendary Equipment"
+  },
+  "112231": {
+    "name": "Hunting the Eye of the Kraken",
+    "type": "Legendary Equipment"
+  },
+  "112232": {
+    "name": "Flying Light at Daybreak",
+    "type": "Legendary Equipment"
+  },
+  "112235": {
+    "name": "Troublemaker",
+    "type": "Legendary Equipment"
+  },
+  "112237": {
+    "name": "Boor's Iron Crown",
+    "type": "Legendary Equipment"
+  },
+  "112240": {
+    "name": "Legless Bird's Lament",
+    "type": "Legendary Equipment"
+  },
+  "112241": {
+    "name": "Hanging Two-Tone Mask",
+    "type": "Legendary Equipment"
+  },
+  "112249": {
+    "name": "Magnus' Scar",
+    "type": "Legendary Equipment"
+  },
+  "112250": {
+    "name": "Headless Crown",
+    "type": "Legendary Equipment"
+  },
+  "112251": {
+    "name": "Solid River",
+    "type": "Legendary Equipment"
+  },
+  "112252": {
+    "name": "Brainwave Emitter",
+    "type": "Legendary Equipment"
+  },
+  "112253": {
+    "name": "Mask of Infernal Iron",
+    "type": "Legendary Equipment"
+  },
+  "112254": {
+    "name": "Kragol's Roar",
+    "type": "Legendary Equipment"
+  },
+  "112255": {
+    "name": "Trauma's Embrace",
+    "type": "Legendary Equipment"
+  },
+  "112256": {
+    "name": "Iron and Bloom",
+    "type": "Legendary Equipment"
+  },
+  "112257": {
+    "name": "Malign Embrace",
+    "type": "Legendary Equipment"
+  },
+  "112303": {
+    "name": "Praise for Injury",
+    "type": "Legendary Equipment"
+  },
+  "112305": {
+    "name": "Berserker Bracer",
+    "type": "Legendary Equipment"
+  },
+  "112307": {
+    "name": "Ice and Fire",
+    "type": "Legendary Equipment"
+  },
+  "112308": {
+    "name": "Boom Gloves",
+    "type": "Legendary Equipment"
+  },
+  "112309": {
+    "name": "Feline Gloves",
+    "type": "Legendary Equipment"
+  },
+  "112310": {
+    "name": "Ice Pulse",
+    "type": "Legendary Equipment"
+  },
+  "112311": {
+    "name": "Chaos Abyss",
+    "type": "Legendary Equipment"
+  },
+  "112313": {
+    "name": "Sage's Insight",
+    "type": "Legendary Equipment"
+  },
+  "112314": {
+    "name": "Marksman Bracers",
+    "type": "Legendary Equipment"
+  },
+  "112315": {
+    "name": "Thunder Manipulator",
+    "type": "Legendary Equipment"
+  },
+  "112317": {
+    "name": "Blinding Bracers",
+    "type": "Legendary Equipment"
+  },
+  "112318": {
+    "name": "Tyrant's Iron Fist",
+    "type": "Legendary Equipment"
+  },
+  "112320": {
+    "name": "Ardor",
+    "type": "Legendary Equipment"
+  },
+  "112322": {
+    "name": "Varagon Shroud",
+    "type": "Legendary Equipment"
+  },
+  "112323": {
+    "name": "Ghost Slaughter",
+    "type": "Legendary Equipment"
+  },
+  "112326": {
+    "name": "Torturer's Touch",
+    "type": "Legendary Equipment"
+  },
+  "112329": {
+    "name": "Miniature Void Sea",
+    "type": "Legendary Equipment"
+  },
+  "112330": {
+    "name": "Wings of Light",
+    "type": "Legendary Equipment"
+  },
+  "112333": {
+    "name": "Sea Splitter",
+    "type": "Legendary Equipment"
+  },
+  "112335": {
+    "name": "Clenched Spring",
+    "type": "Legendary Equipment"
+  },
+  "112336": {
+    "name": "Blade-dancer's Fingers",
+    "type": "Legendary Equipment"
+  },
+  "112337": {
+    "name": "Magnus' Laws",
+    "type": "Legendary Equipment"
+  },
+  "112338": {
+    "name": "Ralph's Laws",
+    "type": "Legendary Equipment"
+  },
+  "112339": {
+    "name": "Israfel's Laws",
+    "type": "Legendary Equipment"
+  },
+  "112340": {
+    "name": "Aeterna Martyr",
+    "type": "Legendary Equipment"
+  },
+  "112341": {
+    "name": "Archmage's Hands",
+    "type": "Legendary Equipment"
+  },
+  "112342": {
+    "name": "Vow's Grasp",
+    "type": "Legendary Equipment"
+  },
+  "112343": {
+    "name": "Tyrant's Smoldering Hold",
+    "type": "Legendary Equipment"
+  },
+  "112344": {
+    "name": "Alloy Covenant",
+    "type": "Legendary Equipment"
+  },
+  "112345": {
+    "name": "Stray Bird's Return",
+    "type": "Legendary Equipment"
+  },
+  "112346": {
+    "name": "Death's Touch",
+    "type": "Legendary Equipment"
+  },
+  "112347": {
+    "name": "Providential Grace",
+    "type": "Legendary Equipment"
+  },
+  "112348": {
+    "name": "Blade-Dancer's Edges",
+    "type": "Legendary Equipment"
+  },
+  "112349": {
+    "name": "Hand of Malice",
+    "type": "Legendary Equipment"
+  },
+  "112351": {
+    "name": "Quantum Convergence",
+    "type": "Legendary Equipment"
+  },
+  "112352": {
+    "name": "Grandmaster's Hands",
+    "type": "Legendary Equipment"
+  },
+  "112353": {
+    "name": "Vajra Handguards",
+    "type": "Legendary Equipment"
+  },
+  "112354": {
+    "name": "Grasp of Truth",
+    "type": "Legendary Equipment"
+  },
+  "112355": {
+    "name": "Demons' Touch",
+    "type": "Legendary Equipment"
+  },
+  "112356": {
+    "name": "Vendetta's Sleeve-Blade",
+    "type": "Legendary Equipment"
+  },
+  "112401": {
+    "name": "Dragon Scale Shoes",
+    "type": "Legendary Equipment"
+  },
+  "112402": {
+    "name": "Boots of Sinned Fire",
+    "type": "Legendary Equipment"
+  },
+  "112403": {
+    "name": "Lone Walker's Boots",
+    "type": "Legendary Equipment"
+  },
+  "112404": {
+    "name": "Resolution Steps",
+    "type": "Legendary Equipment"
+  },
+  "112405": {
+    "name": "Final Bastion",
+    "type": "Legendary Equipment"
+  },
+  "112407": {
+    "name": "Valerie's Night Stroll",
+    "type": "Legendary Equipment"
+  },
+  "112409": {
+    "name": "Royal Guard's Boots",
+    "type": "Legendary Equipment"
+  },
+  "112410": {
+    "name": "Grace Boots",
+    "type": "Legendary Equipment"
+  },
+  "112412": {
+    "name": "Powered Battle Greaves",
+    "type": "Legendary Equipment"
+  },
+  "112413": {
+    "name": "Guild Guard Boots",
+    "type": "Legendary Equipment"
+  },
+  "112414": {
+    "name": "Blade-dancer's Steps",
+    "type": "Legendary Equipment"
+  },
+  "112415": {
+    "name": "King's Boon",
+    "type": "Legendary Equipment"
+  },
+  "112416": {
+    "name": "Awaiting",
+    "type": "Legendary Equipment"
+  },
+  "112417": {
+    "name": "Fighting Stompers",
+    "type": "Legendary Equipment"
+  },
+  "112418": {
+    "name": "Mind Infusion",
+    "type": "Legendary Equipment"
+  },
+  "112419": {
+    "name": "Ralph's Footsteps",
+    "type": "Legendary Equipment"
+  },
+  "112420": {
+    "name": "Feline Steps",
+    "type": "Legendary Equipment"
+  },
+  "112423": {
+    "name": "Rat King's Escape Show",
+    "type": "Legendary Equipment"
+  },
+  "112424": {
+    "name": "Crow's Plume",
+    "type": "Legendary Equipment"
+  },
+  "112426": {
+    "name": "Fire Shielding Prosthetics",
+    "type": "Legendary Equipment"
+  },
+  "112427": {
+    "name": "Thunder Channeling Prosthetics",
+    "type": "Legendary Equipment"
+  },
+  "112428": {
+    "name": "Cold Sanctuary Prosthetics",
+    "type": "Legendary Equipment"
+  },
+  "112430": {
+    "name": "Shadow Dance",
+    "type": "Legendary Equipment"
+  },
+  "112431": {
+    "name": "Air Treaders",
+    "type": "Legendary Equipment"
+  },
+  "112433": {
+    "name": "Wind Chasers",
+    "type": "Legendary Equipment"
+  },
+  "112434": {
+    "name": "Wriggling Tango",
+    "type": "Legendary Equipment"
+  },
+  "112435": {
+    "name": "Heels of Hands",
+    "type": "Legendary Equipment"
+  },
+  "112436": {
+    "name": "Ralph's Journey",
+    "type": "Legendary Equipment"
+  },
+  "112437": {
+    "name": "Boots of Devastation",
+    "type": "Legendary Equipment"
+  },
+  "112438": {
+    "name": "Fire Lord's Pyric Stride",
+    "type": "Legendary Equipment"
+  },
+  "112439": {
+    "name": "Verdant Steps",
+    "type": "Legendary Equipment"
+  },
+  "112440": {
+    "name": "Pathfinder's Path",
+    "type": "Legendary Equipment"
+  },
+  "112441": {
+    "name": "Frozen Ripples",
+    "type": "Legendary Equipment"
+  },
+  "112442": {
+    "name": "Trickster's Tread",
+    "type": "Legendary Equipment"
+  },
+  "112502": {
+    "name": "Arcane Shield",
+    "type": "Legendary Equipment"
+  },
+  "112503": {
+    "name": "Shield of Judgment",
+    "type": "Legendary Equipment"
+  },
+  "112505": {
+    "name": "Last Stand",
+    "type": "Legendary Equipment"
+  },
+  "112506": {
+    "name": "Silent Sentry Shield",
+    "type": "Legendary Equipment"
+  },
+  "112507": {
+    "name": "Heavy Soul",
+    "type": "Legendary Equipment"
+  },
+  "112508": {
+    "name": "Electricity Amplifier",
+    "type": "Legendary Equipment"
+  },
+  "112510": {
+    "name": "Glacier Caster Shield",
+    "type": "Legendary Equipment"
+  },
+  "112518": {
+    "name": "The Coward's Counterfire",
+    "type": "Legendary Equipment"
+  },
+  "112519": {
+    "name": "Cover the Sun",
+    "type": "Legendary Equipment"
+  },
+  "112521": {
+    "name": "Reverse-Reverse-Reverse Mirror",
+    "type": "Legendary Equipment"
+  },
+  "113101": {
+    "name": "Born in Fire",
+    "type": "Legendary Equipment"
+  },
+  "113102": {
+    "name": "Fury Heart",
+    "type": "Legendary Equipment"
+  },
+  "113107": {
+    "name": "Horn Ring",
+    "type": "Legendary Equipment"
+  },
+  "113108": {
+    "name": "Decayed Mind",
+    "type": "Legendary Equipment"
+  },
+  "113109": {
+    "name": "Restless Glacier",
+    "type": "Legendary Equipment"
+  },
+  "113111": {
+    "name": "Chaotic Ending",
+    "type": "Legendary Equipment"
+  },
+  "113112": {
+    "name": "Searing Finger Bone",
+    "type": "Legendary Equipment"
+  },
+  "113116": {
+    "name": "Exemption Thunderhell",
+    "type": "Legendary Equipment"
+  },
+  "113117": {
+    "name": "Frozen Lightning",
+    "type": "Legendary Equipment"
+  },
+  "113118": {
+    "name": "Lone Survivor",
+    "type": "Legendary Equipment"
+  },
+  "113119": {
+    "name": "Lonesome",
+    "type": "Legendary Equipment"
+  },
+  "113120": {
+    "name": "Stream of Steel",
+    "type": "Legendary Equipment"
+  },
+  "113122": {
+    "name": "Frozen Flame",
+    "type": "Legendary Equipment"
+  },
+  "113123": {
+    "name": "Burning Ice",
+    "type": "Legendary Equipment"
+  },
+  "113124": {
+    "name": "Windbreath Convergence",
+    "type": "Legendary Equipment"
+  },
+  "113125": {
+    "name": "Windbreath Dispersion",
+    "type": "Legendary Equipment"
+  },
+  "113126": {
+    "name": "Traceless Pain",
+    "type": "Legendary Equipment"
+  },
+  "113128": {
+    "name": "Kaleidoscope",
+    "type": "Legendary Equipment"
+  },
+  "113130": {
+    "name": "Clay Doll's Broken Finger",
+    "type": "Legendary Equipment"
+  },
+  "113131": {
+    "name": "Folklore of Locking Fingers",
+    "type": "Legendary Equipment"
+  },
+  "113132": {
+    "name": "Passing of Time",
+    "type": "Legendary Equipment"
+  },
+  "113133": {
+    "name": "Time of Vow",
+    "type": "Legendary Equipment"
+  },
+  "113134": {
+    "name": "Unholy Prayer",
+    "type": "Legendary Equipment"
+  },
+  "113137": {
+    "name": "Heart of Rock",
+    "type": "Legendary Equipment"
+  },
+  "113138": {
+    "name": "Heart of Magic",
+    "type": "Legendary Equipment"
+  },
+  "113139": {
+    "name": "Silver Frost",
+    "type": "Legendary Equipment"
+  },
+  "113201": {
+    "name": "Chain of Resistance",
+    "type": "Legendary Equipment"
+  },
+  "113202": {
+    "name": "Forlorn Crystal",
+    "type": "Legendary Equipment"
+  },
+  "113203": {
+    "name": "Vortex Heart",
+    "type": "Legendary Equipment"
+  },
+  "113205": {
+    "name": "Master Defender Pendant",
+    "type": "Legendary Equipment"
+  },
+  "113207": {
+    "name": "Magnus' Mindflame",
+    "type": "Legendary Equipment"
+  },
+  "113208": {
+    "name": "Truth",
+    "type": "Legendary Equipment"
+  },
+  "113209": {
+    "name": "Warden's Breastpin",
+    "type": "Legendary Equipment"
+  },
+  "113211": {
+    "name": "Ocean of Rock",
+    "type": "Legendary Equipment"
+  },
+  "113213": {
+    "name": "Blessing Pendant",
+    "type": "Legendary Equipment"
+  },
+  "113214": {
+    "name": "Pentagram Astrolabe",
+    "type": "Legendary Equipment"
+  },
+  "113215": {
+    "name": "Necklace of Firebird",
+    "type": "Legendary Equipment"
+  },
+  "113217": {
+    "name": "Ownerless",
+    "type": "Legendary Equipment"
+  },
+  "113218": {
+    "name": "Sage's Shackle",
+    "type": "Legendary Equipment"
+  },
+  "113222": {
+    "name": "Phantom",
+    "type": "Legendary Equipment"
+  },
+  "113242": {
+    "name": "Illusory Ocean Silk - Iron Rain",
+    "type": "Legendary Equipment"
+  },
+  "113243": {
+    "name": "Illusory Ocean Silk - Ash",
+    "type": "Legendary Equipment"
+  },
+  "113244": {
+    "name": "Illusory Ocean Silk - Thunder",
+    "type": "Legendary Equipment"
+  },
+  "113245": {
+    "name": "Illusory Ocean Silk - Chilly",
+    "type": "Legendary Equipment"
+  },
+  "113246": {
+    "name": "Illusory Ocean Silk - Unreal",
+    "type": "Legendary Equipment"
+  },
+  "113251": {
+    "name": "Broken Sun Ring",
+    "type": "Legendary Equipment"
+  },
+  "113252": {
+    "name": "Mother Goddess' Paddock",
+    "type": "Legendary Equipment"
+  },
+  "113254": {
+    "name": "Clarity",
+    "type": "Legendary Equipment"
+  },
+  "113255": {
+    "name": "Chain behind the Curtain",
+    "type": "Legendary Equipment"
+  },
+  "113256": {
+    "name": "Strange Snow",
+    "type": "Legendary Equipment"
+  },
+  "113257": {
+    "name": "False God's Skin",
+    "type": "Legendary Equipment"
+  },
+  "113260": {
+    "name": "Rat King's Megagon Dice",
+    "type": "Legendary Equipment"
+  },
+  "113263": {
+    "name": "Iron Nest",
+    "type": "Legendary Equipment"
+  },
+  "113264": {
+    "name": "Elegy of Immortality",
+    "type": "Legendary Equipment"
+  },
+  "113267": {
+    "name": "Photophobia",
+    "type": "Legendary Equipment"
+  },
+  "113269": {
+    "name": "Howling Wind",
+    "type": "Legendary Equipment"
+  },
+  "113272": {
+    "name": "Lady's Tears",
+    "type": "Legendary Equipment"
+  },
+  "113273": {
+    "name": "Revered Light",
+    "type": "Legendary Equipment"
+  },
+  "113274": {
+    "name": "Decaying Blessing",
+    "type": "Legendary Equipment"
+  },
+  "113275": {
+    "name": "Heart of the Storm",
+    "type": "Legendary Equipment"
+  },
+  "113276": {
+    "name": "Prayer Bead of Evil",
+    "type": "Legendary Equipment"
+  },
+  "113277": {
+    "name": "Coldness Tracer's Tear",
+    "type": "Legendary Equipment"
+  },
+  "113278": {
+    "name": "Mercurial Torment",
+    "type": "Legendary Equipment"
+  },
+  "113279": {
+    "name": "Mortal's Reverie",
+    "type": "Legendary Equipment"
+  },
+  "113280": {
+    "name": "Heart of Animitta",
+    "type": "Legendary Equipment"
+  },
+  "113281": {
+    "name": "Necklace of Inverse",
+    "type": "Legendary Equipment"
+  },
+  "113283": {
+    "name": "Frostbolt",
+    "type": "Legendary Equipment"
+  },
+  "113284": {
+    "name": "Law of Greed",
+    "type": "Legendary Equipment"
+  },
+  "113285": {
+    "name": "Old Grudge",
+    "type": "Legendary Equipment"
+  },
+  "113301": {
+    "name": "Steel's Lament",
+    "type": "Legendary Equipment"
+  },
+  "113303": {
+    "name": "Eternal Sun",
+    "type": "Legendary Equipment"
+  },
+  "113304": {
+    "name": "Insulation",
+    "type": "Legendary Equipment"
+  },
+  "113305": {
+    "name": "Strayed Healer's Waistguard",
+    "type": "Legendary Equipment"
+  },
+  "113306": {
+    "name": "Elemental Whisper Belt",
+    "type": "Legendary Equipment"
+  },
+  "113307": {
+    "name": "Confusion Elemental Belt",
+    "type": "Legendary Equipment"
+  },
+  "113308": {
+    "name": "Pale Mist's Embrace",
+    "type": "Legendary Equipment"
+  },
+  "113309": {
+    "name": "Witchdoctor's Herb Bag",
+    "type": "Legendary Equipment"
+  },
+  "113311": {
+    "name": "Winter of Origin",
+    "type": "Legendary Equipment"
+  },
+  "113313": {
+    "name": "Compensatory Life",
+    "type": "Legendary Equipment"
+  },
+  "113315": {
+    "name": "Desire of Survival",
+    "type": "Legendary Equipment"
+  },
+  "113317": {
+    "name": "Everburn Thunderfire",
+    "type": "Legendary Equipment"
+  },
+  "113318": {
+    "name": "Light Hunter Belt",
+    "type": "Legendary Equipment"
+  },
+  "113319": {
+    "name": "Cry of Divinity",
+    "type": "Legendary Equipment"
+  },
+  "113320": {
+    "name": "Embrace of the Dark Surge",
+    "type": "Legendary Equipment"
+  },
+  "113322": {
+    "name": "Polygonal Enclosure",
+    "type": "Legendary Equipment"
+  },
+  "113323": {
+    "name": "Corrosion of Manifolds",
+    "type": "Legendary Equipment"
+  },
+  "113326": {
+    "name": "Eternal Sea Fog",
+    "type": "Legendary Equipment"
+  },
+  "113329": {
+    "name": "Enamor",
+    "type": "Legendary Equipment"
+  },
+  "113330": {
+    "name": "Formation Breaker",
+    "type": "Legendary Equipment"
+  },
+  "113332": {
+    "name": "Call of Souls",
+    "type": "Legendary Equipment"
+  },
+  "113333": {
+    "name": "Rat Herder's Golden Rein",
+    "type": "Legendary Equipment"
+  },
+  "113335": {
+    "name": "Eternity",
+    "type": "Legendary Equipment"
+  },
+  "113336": {
+    "name": "Hot Night's Embrace",
+    "type": "Legendary Equipment"
+  },
+  "113337": {
+    "name": "Dawn Break",
+    "type": "Legendary Equipment"
+  },
+  "113338": {
+    "name": "Entangled Root",
+    "type": "Legendary Equipment"
+  },
+  "113339": {
+    "name": "Bodhi Girdle",
+    "type": "Legendary Equipment"
+  },
+  "113340": {
+    "name": "Silent Observer",
+    "type": "Legendary Equipment"
+  },
+  "113341": {
+    "name": "Tranquil Stir",
+    "type": "Legendary Equipment"
+  },
+  "140004": {
+    "name": "Shallow Dream Talking - Weapon",
+    "type": "Dream Talking"
+  },
+  "140005": {
+    "name": "Shallow Dream Talking - Armor",
+    "type": "Dream Talking"
+  },
+  "140006": {
+    "name": "Shallow Dream Talking - Trinket",
+    "type": "Dream Talking"
+  },
+  "200003": {
+    "name": "Fine Ember",
+    "type": "Ember"
+  },
+  "200021": {
+    "name": "Truth Fossil",
+    "type": "Fossil"
+  },
+  "200028": {
+    "name": "Precious Ember",
+    "type": "Ember"
+  },
+  "200029": {
+    "name": "Matchless Ember",
+    "type": "Ember"
+  },
+  "200030": {
+    "name": "Ultimate Ember",
+    "type": "Ember"
+  },
+  "210000": {
+    "name": "Aemberon Core",
+    "type": "Corrosion Material"
+  },
+  "210001": {
+    "name": "Familiar Nexus",
+    "type": "Corrosion Material"
+  },
+  "210002": {
+    "name": "Corrupted Axis",
+    "type": "Corrosion Material"
+  },
+  "210003": {
+    "name": "Glorious Axis",
+    "type": "Corrosion Material"
+  },
+  "260001": {
+    "name": "Goddess of Hunting's Divinity",
+    "type": "Goddess of Hunting"
+  },
+  "260002": {
+    "name": "Goddess of Hunting's Divinity",
+    "type": "Goddess of Hunting"
+  },
+  "260003": {
+    "name": "Goddess of Hunting's Divinity",
+    "type": "Goddess of Hunting"
+  },
+  "260004": {
+    "name": "Goddess of Hunting's Divinity",
+    "type": "Goddess of Hunting"
+  },
+  "260005": {
+    "name": "Goddess of Hunting's Divinity",
+    "type": "Goddess of Hunting"
+  },
+  "260006": {
+    "name": "Goddess of Hunting's Divinity",
+    "type": "Goddess of Hunting"
+  },
+  "260101": {
+    "name": "Goddess of Deception's Divinity",
+    "type": "Goddess of Deception"
+  },
+  "260102": {
+    "name": "Goddess of Deception's Divinity",
+    "type": "Goddess of Deception"
+  },
+  "260103": {
+    "name": "Goddess of Deception's Divinity",
+    "type": "Goddess of Deception"
+  },
+  "260104": {
+    "name": "Goddess of Deception's Divinity",
+    "type": "Goddess of Deception"
+  },
+  "260105": {
+    "name": "Goddess of Deception's Divinity",
+    "type": "Goddess of Deception"
+  },
+  "260106": {
+    "name": "Goddess of Deception's Divinity",
+    "type": "Goddess of Deception"
+  },
+  "260201": {
+    "name": "Goddess of Knowledge's Divinity",
+    "type": "Goddess of Knowledge"
+  },
+  "260202": {
+    "name": "Goddess of Knowledge's Divinity",
+    "type": "Goddess of Knowledge"
+  },
+  "260203": {
+    "name": "Goddess of Knowledge's Divinity",
+    "type": "Goddess of Knowledge"
+  },
+  "260204": {
+    "name": "Goddess of Knowledge's Divinity",
+    "type": "Goddess of Knowledge"
+  },
+  "260205": {
+    "name": "Goddess of Knowledge's Divinity",
+    "type": "Goddess of Knowledge"
+  },
+  "260206": {
+    "name": "Goddess of Knowledge's Divinity",
+    "type": "Goddess of Knowledge"
+  },
+  "260301": {
+    "name": "God of War's Divinity",
+    "type": "God of War"
+  },
+  "260302": {
+    "name": "God of War's Divinity",
+    "type": "God of War"
+  },
+  "260303": {
+    "name": "God of War's Divinity",
+    "type": "God of War"
+  },
+  "260304": {
+    "name": "God of War's Divinity",
+    "type": "God of War"
+  },
+  "260305": {
+    "name": "God of War's Divinity",
+    "type": "God of War"
+  },
+  "260306": {
+    "name": "God of War's Divinity",
+    "type": "God of War"
+  },
+  "260401": {
+    "name": "God of Machines' Divinity",
+    "type": "God of Machines"
+  },
+  "260402": {
+    "name": "God of Machines' Divinity",
+    "type": "God of Machines"
+  },
+  "260403": {
+    "name": "God of Machines' Divinity",
+    "type": "God of Machines"
+  },
+  "260404": {
+    "name": "God of Machines' Divinity",
+    "type": "God of Machines"
+  },
+  "260405": {
+    "name": "God of Machines' Divinity",
+    "type": "God of Machines"
+  },
+  "260406": {
+    "name": "God of Machines' Divinity",
+    "type": "God of Machines"
+  },
+  "260501": {
+    "name": "God of Might's Divinity",
+    "type": "God of Might"
+  },
+  "260502": {
+    "name": "God of Might's Divinity",
+    "type": "God of Might"
+  },
+  "260503": {
+    "name": "God of Might's Divinity",
+    "type": "God of Might"
+  },
+  "260504": {
+    "name": "God of Might's Divinity",
+    "type": "God of Might"
+  },
+  "260505": {
+    "name": "God of Might's Divinity",
+    "type": "God of Might"
+  },
+  "260506": {
+    "name": "God of Might's Divinity",
+    "type": "God of Might"
+  },
+  "300005": {
+    "name": "Inheritance Axis",
+    "type": "Fossil"
+  },
+  "300006": {
+    "name": "Sacred Fossil",
+    "type": "Fossil"
+  },
+  "301120": {
+    "name": "Blueprint: Eternity",
+    "type": "Gear Blueprint"
+  },
+  "301128": {
+    "name": "Blueprint: Lone Walker's Boots",
+    "type": "Gear Blueprint"
+  },
+  "330001": {
+    "name": "Snowpaper Fragment",
+    "type": "The Frozen Canvas"
+  },
+  "330002": {
+    "name": "Colored Snow",
+    "type": "The Frozen Canvas"
+  },
+  "338001": {
+    "name": "Wandering Star",
+    "type": "Destiny Related"
+  },
+  "338002": {
+    "name": "Star Net",
+    "type": "Destiny Related"
+  },
+  "339001": {
+    "name": "Inspiration Essence",
+    "type": "The Frozen Canvas"
+  },
+  "350001": {
+    "name": "Micro Fate: Fire Resistance",
+    "type": "Destiny"
+  },
+  "350002": {
+    "name": "Micro Fate: Cold Resistance",
+    "type": "Destiny"
+  },
+  "350003": {
+    "name": "Micro Fate: Lightning Resistance",
+    "type": "Destiny"
+  },
+  "350004": {
+    "name": "Micro Fate: Erosion Resistance",
+    "type": "Destiny"
+  },
+  "350005": {
+    "name": "Micro Fate: Attack Damage",
+    "type": "Destiny"
+  },
+  "350006": {
+    "name": "Micro Fate: Spell Damage",
+    "type": "Destiny"
+  },
+  "350007": {
+    "name": "Micro Fate: Strength",
+    "type": "Destiny"
+  },
+  "350008": {
+    "name": "Micro Fate: Dexterity",
+    "type": "Destiny"
+  },
+  "350009": {
+    "name": "Micro Fate: Intelligence",
+    "type": "Destiny"
+  },
+  "350010": {
+    "name": "Micro Fate: Armor",
+    "type": "Destiny"
+  },
+  "350011": {
+    "name": "Micro Fate: Evade",
+    "type": "Destiny"
+  },
+  "350012": {
+    "name": "Micro Fate: Energy Shield",
+    "type": "Destiny"
+  },
+  "350013": {
+    "name": "Micro Fate: Critical Strike Rating",
+    "type": "Destiny"
+  },
+  "350014": {
+    "name": "Micro Fate: Attack Block Chance",
+    "type": "Destiny"
+  },
+  "350015": {
+    "name": "Micro Fate: Spell Block Chance",
+    "type": "Destiny"
+  },
+  "350016": {
+    "name": "Micro Fate: Reaping Duration",
+    "type": "Destiny"
+  },
+  "350017": {
+    "name": "Micro Fate: Life Regeneration",
+    "type": "Destiny"
+  },
+  "350018": {
+    "name": "Micro Fate: Energy Shield Charge Speed",
+    "type": "Destiny"
+  },
+  "350019": {
+    "name": "Micro Fate: Multistrike Chance",
+    "type": "Destiny"
+  },
+  "350021": {
+    "name": "Micro Fate: Attack Cast Speed",
+    "type": "Destiny"
+  },
+  "350023": {
+    "name": "Micro Fate: Mana%",
+    "type": "Destiny"
+  },
+  "350024": {
+    "name": "Micro Fate: Focus Speed",
+    "type": "Destiny"
+  },
+  "350100": {
+    "name": "Micro Fate: Aura Effect",
+    "type": "Destiny"
+  },
+  "350101": {
+    "name": "Micro Fate: Affliction Effect",
+    "type": "Destiny"
+  },
+  "350102": {
+    "name": "Micro Fate: Block Ratio",
+    "type": "Destiny"
+  },
+  "350103": {
+    "name": "Micro Fate: Critical Strike Damage",
+    "type": "Destiny"
+  },
+  "350104": {
+    "name": "Micro Fate: Seal Compensation",
+    "type": "Destiny"
+  },
+  "350105": {
+    "name": "Micro Fate: Curse Effect",
+    "type": "Destiny"
+  },
+  "350106": {
+    "name": "Micro Fate: Movement Speed",
+    "type": "Destiny"
+  },
+  "350107": {
+    "name": "Micro Fate: Energy Shield Restored on Defeat",
+    "type": "Destiny"
+  },
+  "350108": {
+    "name": "Micro Fate: Life Restored on Defeat",
+    "type": "Destiny"
+  },
+  "350109": {
+    "name": "Micro Fate: Command",
+    "type": "Destiny"
+  },
+  "350110": {
+    "name": "Micro Fate: Double Damage Chance",
+    "type": "Destiny"
+  },
+  "350111": {
+    "name": "Micro Fate: Multistrike Increment",
+    "type": "Destiny"
+  },
+  "350112": {
+    "name": "Micro Fate: Growth",
+    "type": "Destiny"
+  },
+  "350113": {
+    "name": "Micro Fate: Max Fire Resistance",
+    "type": "Destiny"
+  },
+  "350114": {
+    "name": "Micro Fate: Max Cold Resistance",
+    "type": "Destiny"
+  },
+  "350115": {
+    "name": "Micro Fate: Max Lightning Resistance",
+    "type": "Destiny"
+  },
+  "350116": {
+    "name": "Micro Fate: Max Erosion Resistance",
+    "type": "Destiny"
+  },
+  "350117": {
+    "name": "Micro Fate: Origin of Spirit Magus",
+    "type": "Destiny"
+  },
+  "350118": {
+    "name": "Micro Fate: Deterioration Chance",
+    "type": "Destiny"
+  },
+  "350119": {
+    "name": "Micro Fate: Deterioration Duration",
+    "type": "Destiny"
+  },
+  "350120": {
+    "name": "Micro Fate: Ignite Damage Mitigation",
+    "type": "Destiny"
+  },
+  "350121": {
+    "name": "Micro Fate: Numbed Effect Mitigation",
+    "type": "Destiny"
+  },
+  "350122": {
+    "name": "Micro Fate: Wilt Damage Mitigation",
+    "type": "Destiny"
+  },
+  "350123": {
+    "name": "Micro Fate: Trauma Damage Mitigation",
+    "type": "Destiny"
+  },
+  "350124": {
+    "name": "Micro Fate: Slow Effect Mitigation",
+    "type": "Destiny"
+  },
+  "350125": {
+    "name": "Micro Fate: Paralysis Effect Mitigation",
+    "type": "Destiny"
+  },
+  "350126": {
+    "name": "Micro Fate: Weaken Effect Mitigation",
+    "type": "Destiny"
+  },
+  "350127": {
+    "name": "Micro Fate: Numbed Effect",
+    "type": "Destiny"
+  },
+  "350301": {
+    "name": "Medium Fate: Fire Resistance",
+    "type": "Destiny"
+  },
+  "350302": {
+    "name": "Medium Fate: Cold Resistance",
+    "type": "Destiny"
+  },
+  "350303": {
+    "name": "Medium Fate: Lightning Resistance",
+    "type": "Destiny"
+  },
+  "350304": {
+    "name": "Medium Fate: Erosion Resistance",
+    "type": "Destiny"
+  },
+  "350305": {
+    "name": "Medium Fate: Attack Damage",
+    "type": "Destiny"
+  },
+  "350306": {
+    "name": "Medium Fate: Spell Damage",
+    "type": "Destiny"
+  },
+  "350307": {
+    "name": "Medium Fate: Strength",
+    "type": "Destiny"
+  },
+  "350308": {
+    "name": "Medium Fate: Dexterity",
+    "type": "Destiny"
+  },
+  "350309": {
+    "name": "Medium Fate: Intelligence",
+    "type": "Destiny"
+  },
+  "350310": {
+    "name": "Medium Fate: Armor",
+    "type": "Destiny"
+  },
+  "350311": {
+    "name": "Medium Fate: Evade",
+    "type": "Destiny"
+  },
+  "350312": {
+    "name": "Medium Fate: Energy Shield",
+    "type": "Destiny"
+  },
+  "350313": {
+    "name": "Medium Fate: Critical Strike Rating",
+    "type": "Destiny"
+  },
+  "350314": {
+    "name": "Medium Fate: Attack Block Chance",
+    "type": "Destiny"
+  },
+  "350315": {
+    "name": "Medium Fate: Spell Block Chance",
+    "type": "Destiny"
+  },
+  "350316": {
+    "name": "Medium Fate: Reaping Duration",
+    "type": "Destiny"
+  },
+  "350317": {
+    "name": "Medium Fate: Life Regeneration",
+    "type": "Destiny"
+  },
+  "350318": {
+    "name": "Medium Fate: Energy Shield Charge Speed",
+    "type": "Destiny"
+  },
+  "350319": {
+    "name": "Medium Fate: Multistrike Chance",
+    "type": "Destiny"
+  },
+  "350321": {
+    "name": "Medium Fate: Attack Cast Speed",
+    "type": "Destiny"
+  },
+  "350323": {
+    "name": "Medium Fate: Mana%",
+    "type": "Destiny"
+  },
+  "350324": {
+    "name": "Medium Fate: Focus Speed",
+    "type": "Destiny"
+  },
+  "350400": {
+    "name": "Medium Fate: Aura Effect",
+    "type": "Destiny"
+  },
+  "350401": {
+    "name": "Medium Fate: Affliction Effect",
+    "type": "Destiny"
+  },
+  "350402": {
+    "name": "Medium Fate: Block Ratio",
+    "type": "Destiny"
+  },
+  "350403": {
+    "name": "Medium Fate: Critical Strike Damage",
+    "type": "Destiny"
+  },
+  "350404": {
+    "name": "Medium Fate: Seal Compensation",
+    "type": "Destiny"
+  },
+  "350405": {
+    "name": "Medium Fate: Curse Effect",
+    "type": "Destiny"
+  },
+  "350406": {
+    "name": "Medium Fate: Movement Speed",
+    "type": "Destiny"
+  },
+  "350407": {
+    "name": "Medium Fate: Energy Shield Restored on Defeat",
+    "type": "Destiny"
+  },
+  "350408": {
+    "name": "Medium Fate: Life Restored on Defeat",
+    "type": "Destiny"
+  },
+  "350409": {
+    "name": "Medium Fate: Command",
+    "type": "Destiny"
+  },
+  "350410": {
+    "name": "Medium Fate: Double Damage Chance",
+    "type": "Destiny"
+  },
+  "350411": {
+    "name": "Medium Fate: Multistrike Increment",
+    "type": "Destiny"
+  },
+  "350412": {
+    "name": "Medium Fate: Growth",
+    "type": "Destiny"
+  },
+  "350413": {
+    "name": "Medium Fate: Max Fire Resistance",
+    "type": "Destiny"
+  },
+  "350414": {
+    "name": "Medium Fate: Max Cold Resistance",
+    "type": "Destiny"
+  },
+  "350415": {
+    "name": "Medium Fate: Max Lightning Resistance",
+    "type": "Destiny"
+  },
+  "350416": {
+    "name": "Medium Fate: Max Erosion Resistance",
+    "type": "Destiny"
+  },
+  "350417": {
+    "name": "Medium Fate: Origin of Spirit Magus",
+    "type": "Destiny"
+  },
+  "350418": {
+    "name": "Medium Fate: Numbed Effect",
+    "type": "Destiny"
+  },
+  "350501": {
+    "name": "Kismet: Double Blade",
+    "type": "Destiny"
+  },
+  "350502": {
+    "name": "Kismet: Lion",
+    "type": "Destiny"
+  },
+  "350503": {
+    "name": "Kismet: Guillotine",
+    "type": "Destiny"
+  },
+  "350505": {
+    "name": "Kismet: Shackles",
+    "type": "Destiny"
+  },
+  "350506": {
+    "name": "Kismet: War Hammer",
+    "type": "Destiny"
+  },
+  "350507": {
+    "name": "Kismet: Hound",
+    "type": "Destiny"
+  },
+  "350508": {
+    "name": "Kismet: Giant Bear",
+    "type": "Destiny"
+  },
+  "350509": {
+    "name": "Kismet: Scale",
+    "type": "Destiny"
+  },
+  "350510": {
+    "name": "Kismet: Giant",
+    "type": "Destiny"
+  },
+  "350511": {
+    "name": "Kismet: Prosthetics",
+    "type": "Destiny"
+  },
+  "350512": {
+    "name": "Kismet: Leader",
+    "type": "Destiny"
+  },
+  "350513": {
+    "name": "Kismet: Screw",
+    "type": "Destiny"
+  },
+  "350514": {
+    "name": "Kismet: Green Shoot",
+    "type": "Destiny"
+  },
+  "350515": {
+    "name": "Kismet: Wind Chime",
+    "type": "Destiny"
+  },
+  "350516": {
+    "name": "Kismet: Bouquet",
+    "type": "Destiny"
+  },
+  "350517": {
+    "name": "Kismet: Tiger Roar",
+    "type": "Destiny"
+  },
+  "350518": {
+    "name": "Kismet: Mercury Bottle",
+    "type": "Destiny"
+  },
+  "350519": {
+    "name": "Kismet: Scorpion Stinger",
+    "type": "Destiny"
+  },
+  "350520": {
+    "name": "Kismet: Growth Ring",
+    "type": "Destiny"
+  },
+  "350521": {
+    "name": "Kismet: Spades",
+    "type": "Destiny"
+  },
+  "350522": {
+    "name": "Kismet: Black Square",
+    "type": "Destiny"
+  },
+  "350523": {
+    "name": "Kismet: Red Leech",
+    "type": "Destiny"
+  },
+  "350525": {
+    "name": "Kismet: Volcano",
+    "type": "Destiny"
+  },
+  "350526": {
+    "name": "Kismet: Spider Fluid",
+    "type": "Destiny"
+  },
+  "350527": {
+    "name": "Kismet: Hunter",
+    "type": "Destiny"
+  },
+  "350528": {
+    "name": "Kismet: Fisherman",
+    "type": "Destiny"
+  },
+  "350529": {
+    "name": "Kismet: Hawk",
+    "type": "Destiny"
+  },
+  "350530": {
+    "name": "Kismet: Ripple",
+    "type": "Destiny"
+  },
+  "350531": {
+    "name": "Kismet: Mouth of the Spring",
+    "type": "Destiny"
+  },
+  "350532": {
+    "name": "Kismet: Witch Cloak",
+    "type": "Destiny"
+  },
+  "350533": {
+    "name": "Kismet: Guard",
+    "type": "Destiny"
+  },
+  "350534": {
+    "name": "Kismet: Shadow Mage",
+    "type": "Destiny"
+  },
+  "350535": {
+    "name": "Kismet: Ice Soul",
+    "type": "Destiny"
+  },
+  "350536": {
+    "name": "Kismet: Stone Bear",
+    "type": "Destiny"
+  },
+  "350537": {
+    "name": "Kismet: Civet",
+    "type": "Destiny"
+  },
+  "350538": {
+    "name": "Kismet: Pale Fox",
+    "type": "Destiny"
+  },
+  "350539": {
+    "name": "Kismet: Longevity Tree",
+    "type": "Destiny"
+  },
+  "350540": {
+    "name": "Kismet: Shield",
+    "type": "Destiny"
+  },
+  "350541": {
+    "name": "Kismet: Star Trail",
+    "type": "Destiny"
+  },
+  "350542": {
+    "name": "Kismet: Synthetic Heart",
+    "type": "Destiny"
+  },
+  "350543": {
+    "name": "Kismet: Creek",
+    "type": "Destiny"
+  },
+  "350544": {
+    "name": "Kismet: Sacred Crest",
+    "type": "Destiny"
+  },
+  "350545": {
+    "name": "Kismet: Fluffy Ball",
+    "type": "Destiny"
+  },
+  "350546": {
+    "name": "Kismet: Ashes",
+    "type": "Destiny"
+  },
+  "350547": {
+    "name": "Kismet: Ascetic",
+    "type": "Destiny"
+  },
+  "350548": {
+    "name": "Kismet: Tiger's Chain",
+    "type": "Destiny"
+  },
+  "350701": {
+    "name": "Dual Kismet: Solid Rock",
+    "type": "Destiny"
+  },
+  "350702": {
+    "name": "Dual Kismet: Fire in the Stone",
+    "type": "Destiny"
+  },
+  "350703": {
+    "name": "Dual Kismet: Sun Slash",
+    "type": "Destiny"
+  },
+  "350704": {
+    "name": "Dual Kismet: Evil Flame",
+    "type": "Destiny"
+  },
+  "350706": {
+    "name": "Dual Kismet: Hot Ice",
+    "type": "Destiny"
+  },
+  "350707": {
+    "name": "Dual Kismet: Echidna",
+    "type": "Destiny"
+  },
+  "350708": {
+    "name": "Dual Kismet: Viper",
+    "type": "Destiny"
+  },
+  "350709": {
+    "name": "Dual Kismet: Rock Core",
+    "type": "Destiny"
+  },
+  "350710": {
+    "name": "Dual Kismet: Fire Plume",
+    "type": "Destiny"
+  },
+  "350711": {
+    "name": "Dual Kismet: Thunder Branch",
+    "type": "Destiny"
+  },
+  "350712": {
+    "name": "Dual Kismet: Ice Flower",
+    "type": "Destiny"
+  },
+  "350713": {
+    "name": "Dual Kismet: Dark Moon",
+    "type": "Destiny"
+  },
+  "350714": {
+    "name": "Dual Kismet: Ghost Bee",
+    "type": "Destiny"
+  },
+  "350715": {
+    "name": "Dual Kismet: Mechanical Tree",
+    "type": "Destiny"
+  },
+  "350716": {
+    "name": "Dual Kismet: Queen Ant",
+    "type": "Destiny"
+  },
+  "350717": {
+    "name": "Dual Kismet: Hanging Bird",
+    "type": "Destiny"
+  },
+  "350718": {
+    "name": "Dual Kismet: Twin Cities",
+    "type": "Destiny"
+  },
+  "350719": {
+    "name": "Dual Kismet: Bounded Holy Maiden",
+    "type": "Destiny"
+  },
+  "350720": {
+    "name": "Dual Kismet: Mammoth",
+    "type": "Destiny"
+  },
+  "350721": {
+    "name": "Dual Kismet: Mountain God",
+    "type": "Destiny"
+  },
+  "350722": {
+    "name": "Dual Kismet: Spirit Orb",
+    "type": "Destiny"
+  },
+  "350723": {
+    "name": "Dual Kismet: Hunter's Hand",
+    "type": "Destiny"
+  },
+  "350724": {
+    "name": "Dual Kismet: God's Fall",
+    "type": "Destiny"
+  },
+  "350725": {
+    "name": "Dual Kismet: Headless",
+    "type": "Destiny"
+  },
+  "350726": {
+    "name": "Dual Kismet: Heartless",
+    "type": "Destiny"
+  },
+  "350727": {
+    "name": "Dual Kismet: Pointer",
+    "type": "Destiny"
+  },
+  "350728": {
+    "name": "Dual Kismet: Pendulum",
+    "type": "Destiny"
+  },
+  "350729": {
+    "name": "Dual Kismet: Shadow",
+    "type": "Destiny"
+  },
+  "350730": {
+    "name": "Dual Kismet: Three-Eyed Cat",
+    "type": "Destiny"
+  },
+  "350731": {
+    "name": "Dual Kismet: Two-Headed Crow",
+    "type": "Destiny"
+  },
+  "350732": {
+    "name": "Dual Kismet: Plague Source",
+    "type": "Destiny"
+  },
+  "350733": {
+    "name": "Dual Kismet: Star-Chasing Arrow",
+    "type": "Destiny"
+  },
+  "350734": {
+    "name": "Dual Kismet: Mighty Arrow",
+    "type": "Destiny"
+  },
+  "350735": {
+    "name": "Dual Kismet: Great Library",
+    "type": "Destiny"
+  },
+  "350737": {
+    "name": "Dual Kismet: Iron Wall",
+    "type": "Destiny"
+  },
+  "350738": {
+    "name": "Dual Kismet: Hatch Out",
+    "type": "Destiny"
+  },
+  "350739": {
+    "name": "Dual Kismet: Perched River",
+    "type": "Destiny"
+  },
+  "350740": {
+    "name": "Dual Kismet: Flash Flood",
+    "type": "Destiny"
+  },
+  "350741": {
+    "name": "Dual Kismet: Wraith",
+    "type": "Destiny"
+  },
+  "350742": {
+    "name": "Dual Kismet: Spindle",
+    "type": "Destiny"
+  },
+  "350743": {
+    "name": "Dual Kismet: Mirror Cracks",
+    "type": "Destiny"
+  },
+  "350744": {
+    "name": "Dual Kismet: Unholy Grail",
+    "type": "Destiny"
+  },
+  "350746": {
+    "name": "Dual Kismet: Sky Piercer",
+    "type": "Destiny"
+  },
+  "350747": {
+    "name": "Dual Kismet: Prophet",
+    "type": "Destiny"
+  },
+  "350748": {
+    "name": "Dual Kismet: Butterfly in a Bottle",
+    "type": "Destiny"
+  },
+  "350749": {
+    "name": "Dual Kismet: Bird in a Pond",
+    "type": "Destiny"
+  },
+  "350750": {
+    "name": "Dual Kismet: Fish in a Cage",
+    "type": "Destiny"
+  },
+  "350751": {
+    "name": "Dual Kismet: Witch's Cauldron",
+    "type": "Destiny"
+  },
+  "350752": {
+    "name": "Dual Kismet: Peerless",
+    "type": "Destiny"
+  },
+  "350753": {
+    "name": "Dual Kismet: Destiny's Betrayal",
+    "type": "Destiny"
+  },
+  "350756": {
+    "name": "Dual Kismet: Bitterbond",
+    "type": "Destiny"
+  },
+  "350757": {
+    "name": "Dual Kismet: Resentful Maiden",
+    "type": "Destiny"
+  },
+  "350900": {
+    "name": "Undetermined Fate",
+    "type": "Undetermined Fate"
+  },
+  "360101": {
+    "name": "Sage Lv. 1",
+    "type": "Aromatic Material"
+  },
+  "360102": {
+    "name": "Silver Mound Lv. 2",
+    "type": "Aromatic Material"
+  },
+  "360103": {
+    "name": "Soft Rush Lv. 3",
+    "type": "Aromatic Material"
+  },
+  "360201": {
+    "name": "Night-Blooming Cereus Lv. 4",
+    "type": "Aromatic Material"
+  },
+  "360202": {
+    "name": "Gloomy Daffodil Lv. 5",
+    "type": "Aromatic Material"
+  },
+  "360203": {
+    "name": "Golden Iris Lv. 6",
+    "type": "Aromatic Material"
+  },
+  "360301": {
+    "name": "Giant Civet Musk Lv. 7",
+    "type": "Aromatic Material"
+  },
+  "360302": {
+    "name": "Sandalwood Incense Lv. 8",
+    "type": "Aromatic Material"
+  },
+  "360303": {
+    "name": "Stygian Benzoin Lv. 9",
+    "type": "Aromatic Material"
+  },
+  "360402": {
+    "name": "Imprint Crystal",
+    "type": "Universal Items"
+  },
+  "360403": {
+    "name": "Base Mod",
+    "type": "Mod"
+  },
+  "360404": {
+    "name": "Expansion Mod - Warlock",
+    "type": "Mod"
+  },
+  "360405": {
+    "name": "Expansion Mod - Vanguard",
+    "type": "Mod"
+  },
+  "360406": {
+    "name": "Expansion Mod - Sniper",
+    "type": "Mod"
+  },
+  "360407": {
+    "name": "Expansion Mod - Tank",
+    "type": "Mod"
+  },
+  "360502": {
+    "name": "Ethereal Prism: Haze",
+    "type": "Ethereal Prism"
+  },
+  "360503": {
+    "name": "Ethereal Prism: Phantasmagoria",
+    "type": "Ethereal Prism"
+  },
+  "360602": {
+    "name": "Ethereal Prism: One For All",
+    "type": "Ethereal Prism"
+  },
+  "360603": {
+    "name": "Ethereal Prism: Unwavering Fortress",
+    "type": "Ethereal Prism"
+  },
+  "360604": {
+    "name": "Ethereal Prism: Unstoppable Force",
+    "type": "Ethereal Prism"
+  },
+  "360605": {
+    "name": "Ethereal Prism: Hare's Agility",
+    "type": "Ethereal Prism"
+  },
+  "360606": {
+    "name": "Ethereal Prism: Sweeping Fury",
+    "type": "Ethereal Prism"
+  },
+  "360607": {
+    "name": "Ethereal Prism: Fortune's Flip",
+    "type": "Ethereal Prism"
+  },
+  "360608": {
+    "name": "Ethereal Prism: Keen Intellect",
+    "type": "Ethereal Prism"
+  },
+  "360609": {
+    "name": "Ethereal Prism: Towering Presence",
+    "type": "Ethereal Prism"
+  },
+  "360611": {
+    "name": "Ethereal Prism: Spell Ripple",
+    "type": "Ethereal Prism"
+  },
+  "360612": {
+    "name": "Ethereal Prism: Juggernaut",
+    "type": "Ethereal Prism"
+  },
+  "360613": {
+    "name": "Ethereal Prism: Adaptive Defense",
+    "type": "Ethereal Prism"
+  },
+  "360614": {
+    "name": "Ethereal Prism: Unmatched Valor",
+    "type": "Ethereal Prism"
+  },
+  "360615": {
+    "name": "Ethereal Prism: Self-Delusion",
+    "type": "Ethereal Prism"
+  },
+  "360616": {
+    "name": "Ethereal Prism: Escalating Affliction",
+    "type": "Ethereal Prism"
+  },
+  "360617": {
+    "name": "Ethereal Prism: Guaranteed Reaping",
+    "type": "Ethereal Prism"
+  },
+  "360618": {
+    "name": "Ethereal Prism: Commander's Gambit",
+    "type": "Ethereal Prism"
+  },
+  "360619": {
+    "name": "Ethereal Prism: Circle of Life",
+    "type": "Ethereal Prism"
+  },
+  "360620": {
+    "name": "Ethereal Prism: Miraculous Touch",
+    "type": "Ethereal Prism"
+  },
+  "360621": {
+    "name": "Ethereal Prism: Dark Advance",
+    "type": "Ethereal Prism"
+  },
+  "360623": {
+    "name": "Ethereal Prism: Effortless Command",
+    "type": "Ethereal Prism"
+  },
+  "360624": {
+    "name": "Ethereal Prism: Crushing Blast",
+    "type": "Ethereal Prism"
+  },
+  "360625": {
+    "name": "Ethereal Prism: Tainted Flesh",
+    "type": "Ethereal Prism"
+  },
+  "360626": {
+    "name": "Ethereal Prism: Storm's Command",
+    "type": "Ethereal Prism"
+  },
+  "360627": {
+    "name": "Ethereal Prism: Fire's Allure",
+    "type": "Ethereal Prism"
+  },
+  "360628": {
+    "name": "Ethereal Prism: Fiery Fantasy",
+    "type": "Ethereal Prism"
+  },
+  "360701": {
+    "name": "Inverse Image",
+    "type": "Special Prism"
+  },
+  "370101": {
+    "name": "Prism Gauge - Rare",
+    "type": "Prism Gauge"
+  },
+  "370201": {
+    "name": "Prism Gauge - Legendary",
+    "type": "Prism Gauge"
+  },
+  "370301": {
+    "name": "Prism Level I",
+    "type": "Prism Level"
+  },
+  "370401": {
+    "name": "Prism Level II",
+    "type": "Prism Level"
+  },
+  "370501": {
+    "name": "Prism Level III",
+    "type": "Prism Level"
+  },
+  "370601": {
+    "name": "Inverse Image Echo",
+    "type": "Inverse Image Echo"
+  },
+  "370701": {
+    "name": "Prism Repairer",
+    "type": "Prism Repairer"
+  },
+  "380101": {
+    "name": "Cutting Instrument",
+    "type": "Cutting Instrument"
+  },
+  "380102": {
+    "name": "Mutagenic Slurry",
+    "type": "Corrosion Material"
+  },
+  "380103": {
+    "name": "Vorax Amputated Limb - Decayed",
+    "type": "Vorax Amputated Limb"
+  },
+  "380104": {
+    "name": "Imprinting Iron",
+    "type": "Imprinting Iron"
+  },
+  "380105": {
+    "name": "Sullied Suture",
+    "type": "Suture"
+  },
+  "380106": {
+    "name": "Tenacious Suture",
+    "type": "Suture"
+  },
+  "380107": {
+    "name": "Exquisite Suture",
+    "type": "Suture"
+  },
+  "380109": {
+    "name": "Vorax Amputated Limb - Engorged",
+    "type": "Vorax Amputated Limb"
+  },
+  "380110": {
+    "name": "Vorax Amputated Limb - Throbbing",
+    "type": "Vorax Amputated Limb"
+  },
+  "380111": {
+    "name": "Organ Teratoma",
+    "type": "Vorax Exchange Material"
+  },
+  "380201": {
+    "name": "Rotten Organ: Fine",
+    "type": "Normal Organ"
+  },
+  "380202": {
+    "name": "Rotten Organ: Matchless",
+    "type": "Normal Organ"
+  },
+  "380203": {
+    "name": "Inert Organ: Fine",
+    "type": "Normal Organ"
+  },
+  "380204": {
+    "name": "Inert Organ: Matchless",
+    "type": "Normal Organ"
+  },
+  "380205": {
+    "name": "Vital Organ: Fine",
+    "type": "Normal Organ"
+  },
+  "380206": {
+    "name": "Vital Organ: Matchless",
+    "type": "Normal Organ"
+  },
+  "381001": {
+    "name": "Flawless Wings: Bladed",
+    "type": "Flawless Wings - Persistent"
+  },
+  "381002": {
+    "name": "Flawless Wings: Molten",
+    "type": "Flawless Wings - Persistent"
+  },
+  "381003": {
+    "name": "Flawless Wings: Ossified",
+    "type": "Flawless Wings - Persistent"
+  },
+  "381004": {
+    "name": "Flawless Wings: Leathern",
+    "type": "Flawless Wings - Persistent"
+  },
+  "381005": {
+    "name": "Flawless Skin: Crystalline",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381006": {
+    "name": "Flawless Skin: Barbed",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381007": {
+    "name": "Flawless Skin: Tolerant",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381008": {
+    "name": "Flawless Skin: Adamantine",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381009": {
+    "name": "Flawless Skin: Compensatory",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381010": {
+    "name": "Flawless Skin: Attenuated",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381011": {
+    "name": "Flawless Skin: Acid-Etched",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381012": {
+    "name": "Flawless Skin: Hyperplastic",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381013": {
+    "name": "Flawless Skin: Weightless",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381014": {
+    "name": "Flawless Skin: Glabrous",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381015": {
+    "name": "Flawless Skin: Dura",
+    "type": "Flawless Skin - Defensive"
+  },
+  "381016": {
+    "name": "Flawless Eyes: Rancorous",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381017": {
+    "name": "Flawless Eyes: Impassive",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381018": {
+    "name": "Flawless Eyes: Sinister",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381019": {
+    "name": "Flawless Eyes: Ardent",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381020": {
+    "name": "Flawless Eyes: Keen",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381021": {
+    "name": "Flawless Eyes: Tarnished",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381022": {
+    "name": "Flawless Eyes: Cursed",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381023": {
+    "name": "Flawless Wings: Shell",
+    "type": "Flawless Wings - Persistent"
+  },
+  "381024": {
+    "name": "Flawless Eyes: Limpid",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381025": {
+    "name": "Flawless Eyes: Glistening",
+    "type": "Flawless Eyes - Debuff"
+  },
+  "381026": {
+    "name": "Flawless Spine: Elongated",
+    "type": "Special Organ - Other"
+  },
+  "381027": {
+    "name": "Flawless Spine: Hyperostosis",
+    "type": "Special Organ - Other"
+  },
+  "381028": {
+    "name": "Flawless Nerve: Compelling",
+    "type": "Special Organ - Other"
+  },
+  "381029": {
+    "name": "Flawless Nerve: Entwined",
+    "type": "Special Organ - Other"
+  },
+  "381030": {
+    "name": "Flawless Nerve: Unsealed (Pre-fix)",
+    "type": "Special Organ - Other"
+  },
+  "381031": {
+    "name": "Flawless Ears: Resonant",
+    "type": "Special Organ - Other"
+  },
+  "381032": {
+    "name": "Flawless Spine: Extended",
+    "type": "Special Organ - Other"
+  },
+  "381033": {
+    "name": "Flawless Spine: Fractured",
+    "type": "Special Organ - Other"
+  },
+  "381034": {
+    "name": "Flawless Ears: Echoing",
+    "type": "Special Organ - Other"
+  },
+  "381035": {
+    "name": "Flawless Ears: Prolonged",
+    "type": "Special Organ - Other"
+  },
+  "381036": {
+    "name": "Flawless Ears: Partitioned",
+    "type": "Special Organ - Other"
+  },
+  "381037": {
+    "name": "Flawless Spine: Fragmented",
+    "type": "Special Organ - Other"
+  },
+  "381038": {
+    "name": "Flawless Ears: Clairaudient",
+    "type": "Special Organ - Other"
+  },
+  "381039": {
+    "name": "Flawless Nerve: Excited",
+    "type": "Special Organ - Other"
+  },
+  "381040": {
+    "name": "Flawless Spine: Torqued",
+    "type": "Special Organ - Other"
+  },
+  "381041": {
+    "name": "Flawless Ears: Prostrate",
+    "type": "Special Organ - Other"
+  },
+  "381042": {
+    "name": "Flawless Nerve: Conductive",
+    "type": "Special Organ - Other"
+  },
+  "381043": {
+    "name": "Flawless Spine: Malleable",
+    "type": "Special Organ - Other"
+  },
+  "381044": {
+    "name": "Flawless Spine: Vermicular",
+    "type": "Special Organ - Other"
+  },
+  "381045": {
+    "name": "Flawless Nerve: Ruptured",
+    "type": "Special Organ - Other"
+  },
+  "381046": {
+    "name": "Flawless Embryo: Distended",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381047": {
+    "name": "Flawless Embryo: Lacerated",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381048": {
+    "name": "Flawless Embryo: Gnawed",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381049": {
+    "name": "Flawless Embryo: Aberrant",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381050": {
+    "name": "Flawless Embryo: Didymous",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381051": {
+    "name": "Flawless Embryo: Voracious",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381052": {
+    "name": "Flawless Embryo: Compliant",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381053": {
+    "name": "Flawless Embryo: Polyembryonic",
+    "type": "Flawless Embryo - Summon"
+  },
+  "381054": {
+    "name": "Flawless Heart: Clangorous",
+    "type": "Flawless Heart - Buff"
+  },
+  "381055": {
+    "name": "Flawless Heart: Bellicose",
+    "type": "Flawless Heart - Buff"
+  },
+  "381056": {
+    "name": "Flawless Heart: Perplexed",
+    "type": "Flawless Heart - Buff"
+  },
+  "381057": {
+    "name": "Flawless Heart: Exuberant",
+    "type": "Flawless Heart - Buff"
+  },
+  "381058": {
+    "name": "Flawless Heart: Unmoored",
+    "type": "Flawless Heart - Buff"
+  },
+  "381059": {
+    "name": "Flawless Heart: Anginal",
+    "type": "Flawless Heart - Buff"
+  },
+  "381060": {
+    "name": "Flawless Heart: Arrested",
+    "type": "Flawless Heart - Buff"
+  },
+  "381061": {
+    "name": "Flawless Heart: Extrasystolic",
+    "type": "Flawless Heart - Buff"
+  },
+  "381062": {
+    "name": "Flawless Heart: Solidified",
+    "type": "Flawless Heart - Buff"
+  },
+  "381063": {
+    "name": "Flawless Heart: Vaporized",
+    "type": "Flawless Heart - Buff"
+  },
+  "381064": {
+    "name": "Flawless Heart: Liquefied",
+    "type": "Flawless Heart - Buff"
+  },
+  "381065": {
+    "name": "Flawless Tongue: Glib",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381066": {
+    "name": "Flawless Tongue: Supple",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381067": {
+    "name": "Flawless Tongue: Dexterous",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381068": {
+    "name": "Flawless Tongue: Eloquent",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381069": {
+    "name": "Flawless Tongue: Ursine",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381070": {
+    "name": "Flawless Tongue: Feline",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381071": {
+    "name": "Flawless Tongue: Vulpine",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381072": {
+    "name": "Flawless Tongue: Ardent",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381073": {
+    "name": "Flawless Tongue: Inscribed",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381074": {
+    "name": "Flawless Tongue: Apathetic",
+    "type": "Flawless Tongue - Blessing"
+  },
+  "381075": {
+    "name": "Flawless Liver: Scorched",
+    "type": "Flawless Liver - Damage Conversion"
+  },
+  "381076": {
+    "name": "Flawless Liver: Combusted",
+    "type": "Flawless Liver - Damage Conversion"
+  },
+  "381077": {
+    "name": "Flawless Liver: Thunderclap",
+    "type": "Flawless Liver - Damage Conversion"
+  },
+  "381078": {
+    "name": "Flawless Liver: Dazzling",
+    "type": "Flawless Liver - Damage Conversion"
+  },
+  "381079": {
+    "name": "Flawless Liver: Iced",
+    "type": "Flawless Liver - Damage Conversion"
+  },
+  "381080": {
+    "name": "Flawless Liver: Frosted",
+    "type": "Flawless Liver - Damage Conversion"
+  },
+  "381081": {
+    "name": "Flawless Nerve: Unsealed (Suffix)",
+    "type": "Special Organ - Other"
+  },
+  "381082": {
+    "name": "Flawless Spine: Impalement",
+    "type": "Special Organ - Other"
+  },
+  "381083": {
+    "name": "Flawless Nerve: Dominant",
+    "type": "Special Organ - Other"
+  },
+  "381084": {
+    "name": "Flawless Nerve: Parasitism",
+    "type": "Special Organ - Other"
+  },
+  "381085": {
+    "name": "完美心脏：茫然",
+    "type": "Flawless Heart - Buff"
+  },
+  "382001": {
+    "name": "Organ: Rock Lizard's Skull",
+    "type": "Core Organ - Helmet"
+  },
+  "382002": {
+    "name": "Organ: Siren Faceguard",
+    "type": "Core Organ - Helmet"
+  },
+  "382003": {
+    "name": "Organ: Scarlet Decree",
+    "type": "Core Organ - Helmet"
+  },
+  "382004": {
+    "name": "Organ: Corrupted Marrow",
+    "type": "Core Organ - Helmet"
+  },
+  "382005": {
+    "name": "Organ: Brainwave Emitter",
+    "type": "Core Organ - Helmet"
+  },
+  "382006": {
+    "name": "Organ: Last Words of Chaos",
+    "type": "Core Organ - Helmet"
+  },
+  "382007": {
+    "name": "Organ: Opening Heart",
+    "type": "Core Organ - Helmet"
+  },
+  "382008": {
+    "name": "Organ: Cold Breath",
+    "type": "Core Organ - Helmet"
+  },
+  "382009": {
+    "name": "Organ: Fiend Crown",
+    "type": "Core Organ - Helmet"
+  },
+  "382010": {
+    "name": "Organ: Webbed Arcane Headscarf",
+    "type": "Core Organ - Helmet"
+  },
+  "382011": {
+    "name": "Organ: Blind Vision",
+    "type": "Core Organ - Helmet"
+  },
+  "382012": {
+    "name": "Organ: Awakening Skull",
+    "type": "Core Organ - Helmet"
+  },
+  "382013": {
+    "name": "Organ: Thunder Jawbone",
+    "type": "Core Organ - Helmet"
+  },
+  "382014": {
+    "name": "Organ: When Winter Comes",
+    "type": "Core Organ - Helmet"
+  },
+  "382015": {
+    "name": "Organ: Divine Ember",
+    "type": "Core Organ - Helmet"
+  },
+  "382016": {
+    "name": "Organ: Hekate's Vision",
+    "type": "Core Organ - Helmet"
+  },
+  "382017": {
+    "name": "Organ: Hunting the Eye of the Kraken",
+    "type": "Core Organ - Helmet"
+  },
+  "382018": {
+    "name": "Organ: Flying Light at Daybreak",
+    "type": "Core Organ - Helmet"
+  },
+  "382019": {
+    "name": "Organ: Hanging Two-Tone Mask",
+    "type": "Core Organ - Helmet"
+  },
+  "382021": {
+    "name": "Organ: Headless Crown",
+    "type": "Core Organ - Helmet"
+  },
+  "382022": {
+    "name": "Organ: Surging Inspiration",
+    "type": "Core Organ - Helmet"
+  },
+  "382023": {
+    "name": "Organ: Imperial Iron Sentry",
+    "type": "Core Organ - Helmet"
+  },
+  "382024": {
+    "name": "Organ: Tide of the Styx",
+    "type": "Core Organ - Helmet"
+  },
+  "382025": {
+    "name": "Organ: Sun's Embrace",
+    "type": "Core Organ - Helmet"
+  },
+  "382026": {
+    "name": "Organ: Fool's Crown",
+    "type": "Core Organ - Helmet"
+  },
+  "382027": {
+    "name": "Organ: Troublemaker",
+    "type": "Core Organ - Helmet"
+  },
+  "382028": {
+    "name": "Organ: Legless Bird's Lament",
+    "type": "Core Organ - Helmet"
+  },
+  "382029": {
+    "name": "Organ: Solid River",
+    "type": "Core Organ - Helmet"
+  },
+  "382030": {
+    "name": "Organ: Mask of Infernal Iron",
+    "type": "Core Organ - Helmet"
+  },
+  "382031": {
+    "name": "Organ: Kragol's Roar",
+    "type": "Core Organ - Helmet"
+  },
+  "382032": {
+    "name": "Organ: Glorious Journey",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382033": {
+    "name": "Organ: Vestment of Song",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382034": {
+    "name": "Organ: Phantasm",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382035": {
+    "name": "Organ: Sarituya",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382036": {
+    "name": "Organ: Aslan",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382037": {
+    "name": "Organ: Furious Man's Body",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382038": {
+    "name": "Organ: Gauze of Phantom Sin",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382039": {
+    "name": "Organ: Genius Battlegear",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382040": {
+    "name": "Organ: Unbreakable Armor",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382041": {
+    "name": "Organ: Dragon Breath Armor",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382042": {
+    "name": "Organ: Kingly Armor",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382043": {
+    "name": "Organ: Undying Faith",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382044": {
+    "name": "Organ: Endless Fortress",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382045": {
+    "name": "Organ: Martyr's Staff",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382046": {
+    "name": "Organ: Corrupted Bulwark",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382047": {
+    "name": "Organ: Void Embankment",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382048": {
+    "name": "Organ: Heavyware",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382049": {
+    "name": "Organ: Twilight Vestment",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382050": {
+    "name": "Organ: Devouring Tide",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382051": {
+    "name": "Organ: Arrival of the Polar Night",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382052": {
+    "name": "Organ: Mad Doctor's Silver-Plated Lung",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382053": {
+    "name": "Organ: Imperious Verdict",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382054": {
+    "name": "Organ: Agony of Lost Self",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382055": {
+    "name": "Organ: Varagon's Lament",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382056": {
+    "name": "Organ: Shattered Moonlight",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382057": {
+    "name": "Organ: Agony's Embrace",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382058": {
+    "name": "Organ: Lightning Striker's Sacrum",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382059": {
+    "name": "Organ: Evil Heart Armor",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382060": {
+    "name": "Organ: Crimson King",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382061": {
+    "name": "Organ: Iced Drinker's Cage",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382062": {
+    "name": "Organ: Royal Cycle",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382063": {
+    "name": "Organ: Double Rainbow",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382064": {
+    "name": "Organ: Flaming Evil",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382065": {
+    "name": "Organ: Frozen Path",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382066": {
+    "name": "Organ: Fleeting Sky",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382067": {
+    "name": "Organ: Cicada Shell",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382068": {
+    "name": "Organ: Stellar Vestment of Eminence",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382069": {
+    "name": "Organ: Mere Eternity",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382070": {
+    "name": "Organ: Friend Nemesis",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382071": {
+    "name": "Organ: Magnus' Jealousy",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382072": {
+    "name": "Organ: Ralph's Burial",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382073": {
+    "name": "Organ: Israfel's Sorrow",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382074": {
+    "name": "Organ: Blight",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382075": {
+    "name": "Organ: Trinity",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382076": {
+    "name": "Organ: Berserker Bracer",
+    "type": "Core Organ - Gloves"
+  },
+  "382077": {
+    "name": "Organ: Ice and Fire",
+    "type": "Core Organ - Gloves"
+  },
+  "382078": {
+    "name": "Organ: Boom Gloves",
+    "type": "Core Organ - Gloves"
+  },
+  "382079": {
+    "name": "Organ: Feline Gloves",
+    "type": "Core Organ - Gloves"
+  },
+  "382080": {
+    "name": "Organ: Ice Pulse",
+    "type": "Core Organ - Gloves"
+  },
+  "382081": {
+    "name": "Organ: Marksman Bracers",
+    "type": "Core Organ - Gloves"
+  },
+  "382082": {
+    "name": "Organ: Blinding Bracers",
+    "type": "Core Organ - Gloves"
+  },
+  "382083": {
+    "name": "Organ: Praise for Injury",
+    "type": "Core Organ - Gloves"
+  },
+  "382084": {
+    "name": "Organ: Ardor",
+    "type": "Core Organ - Gloves"
+  },
+  "382085": {
+    "name": "Organ: Varagon Shroud",
+    "type": "Core Organ - Gloves"
+  },
+  "382086": {
+    "name": "Organ: Sea Splitter",
+    "type": "Core Organ - Gloves"
+  },
+  "382087": {
+    "name": "Organ: Vow's Grasp",
+    "type": "Core Organ - Gloves"
+  },
+  "382088": {
+    "name": "Organ: Tyrant's Smoldering Hold",
+    "type": "Core Organ - Gloves"
+  },
+  "382089": {
+    "name": "Organ: Alloy Covenant",
+    "type": "Core Organ - Gloves"
+  },
+  "382090": {
+    "name": "Organ: Hand of Malice",
+    "type": "Core Organ - Gloves"
+  },
+  "382091": {
+    "name": "Organ: Grandmaster's Hands",
+    "type": "Core Organ - Gloves"
+  },
+  "382092": {
+    "name": "Organ: Grasp of Truth",
+    "type": "Core Organ - Gloves"
+  },
+  "382093": {
+    "name": "Organ: Providential Grace",
+    "type": "Core Organ - Gloves"
+  },
+  "382094": {
+    "name": "Organ: Blade-Dancer's Edges",
+    "type": "Core Organ - Gloves"
+  },
+  "382095": {
+    "name": "Organ: Vajra Handguards",
+    "type": "Core Organ - Gloves"
+  },
+  "382096": {
+    "name": "Organ: Chaos Abyss",
+    "type": "Core Organ - Gloves"
+  },
+  "382097": {
+    "name": "Organ: Sage's Insight",
+    "type": "Core Organ - Gloves"
+  },
+  "382098": {
+    "name": "Organ: Thunder Manipulator",
+    "type": "Core Organ - Gloves"
+  },
+  "382099": {
+    "name": "Organ: Tyrant's Iron Fist",
+    "type": "Core Organ - Gloves"
+  },
+  "382100": {
+    "name": "Organ: Ghost Slaughter",
+    "type": "Core Organ - Gloves"
+  },
+  "382101": {
+    "name": "Organ: Torturer's Touch",
+    "type": "Core Organ - Gloves"
+  },
+  "382102": {
+    "name": "Organ: Miniature Void Sea",
+    "type": "Core Organ - Gloves"
+  },
+  "382103": {
+    "name": "Organ: Wings of Light",
+    "type": "Core Organ - Gloves"
+  },
+  "382104": {
+    "name": "Organ: Clenched Spring",
+    "type": "Core Organ - Gloves"
+  },
+  "382105": {
+    "name": "Organ: Blade-dancer's Fingers",
+    "type": "Core Organ - Gloves"
+  },
+  "382106": {
+    "name": "Organ: Aeterna Martyr",
+    "type": "Core Organ - Gloves"
+  },
+  "382107": {
+    "name": "Organ: Archmage's Hands",
+    "type": "Core Organ - Gloves"
+  },
+  "382108": {
+    "name": "Organ: Stray Bird's Return",
+    "type": "Core Organ - Gloves"
+  },
+  "382109": {
+    "name": "Organ: Death's Touch",
+    "type": "Core Organ - Gloves"
+  },
+  "382110": {
+    "name": "Organ: Quantum Convergence",
+    "type": "Core Organ - Gloves"
+  },
+  "382111": {
+    "name": "Organ: Demons' Touch",
+    "type": "Core Organ - Gloves"
+  },
+  "382112": {
+    "name": "Organ: Dragon Scale Shoes",
+    "type": "Core Organ - Boots"
+  },
+  "382113": {
+    "name": "Organ: Boots of Sinned Fire",
+    "type": "Core Organ - Boots"
+  },
+  "382114": {
+    "name": "Organ: Final Bastion",
+    "type": "Core Organ - Boots"
+  },
+  "382115": {
+    "name": "Organ: Royal Guard's Boots",
+    "type": "Core Organ - Boots"
+  },
+  "382116": {
+    "name": "Organ: Grace Boots",
+    "type": "Core Organ - Boots"
+  },
+  "382117": {
+    "name": "Organ: Awaiting",
+    "type": "Core Organ - Boots"
+  },
+  "382118": {
+    "name": "Organ: Fighting Stompers",
+    "type": "Core Organ - Boots"
+  },
+  "382119": {
+    "name": "Organ: Fire Shielding Prosthetics",
+    "type": "Core Organ - Boots"
+  },
+  "382120": {
+    "name": "Organ: Thunder Channeling Prosthetics",
+    "type": "Core Organ - Boots"
+  },
+  "382121": {
+    "name": "Organ: Cold Sanctuary Prosthetics",
+    "type": "Core Organ - Boots"
+  },
+  "382122": {
+    "name": "Organ: Wind Chasers",
+    "type": "Core Organ - Boots"
+  },
+  "382123": {
+    "name": "Organ: Resolution Steps",
+    "type": "Core Organ - Boots"
+  },
+  "382124": {
+    "name": "Organ: Powered Battle Greaves",
+    "type": "Core Organ - Boots"
+  },
+  "382125": {
+    "name": "Organ: Guild Guard Boots",
+    "type": "Core Organ - Boots"
+  },
+  "382126": {
+    "name": "Organ: Blade-dancer's Steps",
+    "type": "Core Organ - Boots"
+  },
+  "382127": {
+    "name": "Organ: King's Boon",
+    "type": "Core Organ - Boots"
+  },
+  "382128": {
+    "name": "Organ: Mind Infusion",
+    "type": "Core Organ - Boots"
+  },
+  "382129": {
+    "name": "Organ: Crow's Plume",
+    "type": "Core Organ - Boots"
+  },
+  "382130": {
+    "name": "Organ: Wriggling Tango",
+    "type": "Core Organ - Boots"
+  },
+  "382131": {
+    "name": "Organ: Heels of Hands",
+    "type": "Core Organ - Boots"
+  },
+  "382132": {
+    "name": "Organ: Boots of Devastation",
+    "type": "Core Organ - Boots"
+  },
+  "382133": {
+    "name": "Organ: Pathfinder's Path",
+    "type": "Core Organ - Boots"
+  },
+  "382134": {
+    "name": "Organ: Frozen Ripples",
+    "type": "Core Organ - Boots"
+  },
+  "382136": {
+    "name": "Organ: Valerie's Night Stroll",
+    "type": "Core Organ - Boots"
+  },
+  "382137": {
+    "name": "Organ: Feline Steps",
+    "type": "Core Organ - Boots"
+  },
+  "382138": {
+    "name": "Organ: Rat King's Escape Show",
+    "type": "Core Organ - Boots"
+  },
+  "382139": {
+    "name": "Organ: Verdant Steps",
+    "type": "Core Organ - Boots"
+  },
+  "382140": {
+    "name": "Organ: Lone Walker's Boots",
+    "type": "Core Organ - Boots"
+  },
+  "382141": {
+    "name": "Organ: Born in Fire",
+    "type": "Core Organ - Ring"
+  },
+  "382142": {
+    "name": "Organ: Chaotic Ending",
+    "type": "Core Organ - Ring"
+  },
+  "382143": {
+    "name": "Organ: Searing Finger Bone",
+    "type": "Core Organ - Ring"
+  },
+  "382144": {
+    "name": "Organ: Frozen Lightning",
+    "type": "Core Organ - Ring"
+  },
+  "382145": {
+    "name": "Organ: Lone Survivor",
+    "type": "Core Organ - Ring"
+  },
+  "382146": {
+    "name": "Organ: Lonesome",
+    "type": "Core Organ - Ring"
+  },
+  "382147": {
+    "name": "Organ: Clay Doll's Broken Finger",
+    "type": "Core Organ - Ring"
+  },
+  "382148": {
+    "name": "Organ: Unholy Prayer",
+    "type": "Core Organ - Ring"
+  },
+  "382149": {
+    "name": "Organ: Unholy Prayer",
+    "type": "Core Organ - Ring"
+  },
+  "382150": {
+    "name": "Organ: Unholy Prayer",
+    "type": "Core Organ - Ring"
+  },
+  "382151": {
+    "name": "Organ: Silver Frost",
+    "type": "Core Organ - Ring"
+  },
+  "382152": {
+    "name": "Organ: Revered Light",
+    "type": "Core Organ - Ring"
+  },
+  "382153": {
+    "name": "Organ: Fury Heart",
+    "type": "Core Organ - Ring"
+  },
+  "382154": {
+    "name": "Organ: Horn Ring",
+    "type": "Core Organ - Ring"
+  },
+  "382155": {
+    "name": "Organ: Decayed Mind",
+    "type": "Core Organ - Ring"
+  },
+  "382156": {
+    "name": "Organ: Restless Glacier",
+    "type": "Core Organ - Ring"
+  },
+  "382157": {
+    "name": "Organ: Exemption Thunderhell",
+    "type": "Core Organ - Ring"
+  },
+  "382158": {
+    "name": "Organ: Stream of Steel",
+    "type": "Core Organ - Ring"
+  },
+  "382159": {
+    "name": "Organ: Traceless Pain",
+    "type": "Core Organ - Ring"
+  },
+  "382160": {
+    "name": "Organ: Kaleidoscope",
+    "type": "Core Organ - Ring"
+  },
+  "382161": {
+    "name": "Organ: Folklore of Locking Fingers",
+    "type": "Core Organ - Ring"
+  },
+  "382162": {
+    "name": "Organ: Passing of Time",
+    "type": "Core Organ - Ring"
+  },
+  "382163": {
+    "name": "Organ: Time of Vow",
+    "type": "Core Organ - Ring"
+  },
+  "382164": {
+    "name": "Organ: Heart of Rock",
+    "type": "Core Organ - Ring"
+  },
+  "382165": {
+    "name": "Organ: Heart of Magic",
+    "type": "Core Organ - Ring"
+  },
+  "382166": {
+    "name": "Organ: Frozen Flame",
+    "type": "Core Organ - Ring"
+  },
+  "382167": {
+    "name": "Organ: Burning Ice",
+    "type": "Core Organ - Ring"
+  },
+  "382168": {
+    "name": "Organ: Windbreath Convergence",
+    "type": "Core Organ - Ring"
+  },
+  "382169": {
+    "name": "Organ: Windbreath Dispersion",
+    "type": "Core Organ - Ring"
+  },
+  "382170": {
+    "name": "Organ: Despised Shadow",
+    "type": "Core Organ - Necklace"
+  },
+  "382171": {
+    "name": "Organ: Chain of Resistance",
+    "type": "Core Organ - Necklace"
+  },
+  "382172": {
+    "name": "Organ: Blessing Pendant",
+    "type": "Core Organ - Necklace"
+  },
+  "382173": {
+    "name": "Organ: Pentagram Astrolabe",
+    "type": "Core Organ - Necklace"
+  },
+  "382174": {
+    "name": "Organ: Ownerless",
+    "type": "Core Organ - Necklace"
+  },
+  "382175": {
+    "name": "Organ: Sage's Shackle",
+    "type": "Core Organ - Necklace"
+  },
+  "382176": {
+    "name": "Organ: Rat King's Megagon Dice",
+    "type": "Core Organ - Necklace"
+  },
+  "382177": {
+    "name": "Organ: Photophobia",
+    "type": "Core Organ - Necklace"
+  },
+  "382178": {
+    "name": "Organ: Lady's Tears",
+    "type": "Core Organ - Necklace"
+  },
+  "382179": {
+    "name": "Organ: Prayer Bead of Evil",
+    "type": "Core Organ - Necklace"
+  },
+  "382180": {
+    "name": "Organ: Mercurial Torment",
+    "type": "Core Organ - Necklace"
+  },
+  "382181": {
+    "name": "Organ: Vortex Heart",
+    "type": "Core Organ - Necklace"
+  },
+  "382182": {
+    "name": "Organ: Master Defender Pendant",
+    "type": "Core Organ - Necklace"
+  },
+  "382183": {
+    "name": "Organ: Magnus' Mindflame",
+    "type": "Core Organ - Necklace"
+  },
+  "382184": {
+    "name": "Organ: Ocean of Rock",
+    "type": "Core Organ - Necklace"
+  },
+  "382185": {
+    "name": "Organ: Illusory Ocean Silk - Iron Rain",
+    "type": "Core Organ - Necklace"
+  },
+  "382186": {
+    "name": "Organ: Illusory Ocean Silk - Ash",
+    "type": "Core Organ - Necklace"
+  },
+  "382187": {
+    "name": "Organ: Illusory Ocean Silk - Thunder",
+    "type": "Core Organ - Necklace"
+  },
+  "382188": {
+    "name": "Organ: Illusory Ocean Silk - Chilly",
+    "type": "Core Organ - Necklace"
+  },
+  "382189": {
+    "name": "Organ: Illusory Ocean Silk - Unreal",
+    "type": "Core Organ - Necklace"
+  },
+  "382190": {
+    "name": "Organ: Chain behind the Curtain",
+    "type": "Core Organ - Necklace"
+  },
+  "382191": {
+    "name": "Organ: Strange Snow",
+    "type": "Core Organ - Necklace"
+  },
+  "382192": {
+    "name": "Organ: False God's Skin",
+    "type": "Core Organ - Necklace"
+  },
+  "382193": {
+    "name": "Organ: Howling Wind",
+    "type": "Core Organ - Necklace"
+  },
+  "382194": {
+    "name": "Organ: Decaying Blessing",
+    "type": "Core Organ - Necklace"
+  },
+  "382195": {
+    "name": "Organ: Necklace of Inverse",
+    "type": "Core Organ - Necklace"
+  },
+  "382196": {
+    "name": "Organ: Frostbolt",
+    "type": "Core Organ - Necklace"
+  },
+  "382197": {
+    "name": "Organ: Forlorn Crystal",
+    "type": "Core Organ - Necklace"
+  },
+  "382198": {
+    "name": "Organ: Truth",
+    "type": "Core Organ - Necklace"
+  },
+  "382199": {
+    "name": "Organ: Warden's Breastpin",
+    "type": "Core Organ - Necklace"
+  },
+  "382200": {
+    "name": "Organ: Phantom",
+    "type": "Core Organ - Necklace"
+  },
+  "382201": {
+    "name": "Organ: Broken Sun Ring",
+    "type": "Core Organ - Necklace"
+  },
+  "382202": {
+    "name": "Organ: Mother Goddess' Paddock",
+    "type": "Core Organ - Necklace"
+  },
+  "382203": {
+    "name": "Organ: Elegy of Immortality",
+    "type": "Core Organ - Necklace"
+  },
+  "382206": {
+    "name": "Organ: Heart of the Storm",
+    "type": "Core Organ - Necklace"
+  },
+  "382207": {
+    "name": "Organ: Heart of Animitta",
+    "type": "Core Organ - Necklace"
+  },
+  "382208": {
+    "name": "Organ: Law of Greed",
+    "type": "Core Organ - Necklace"
+  },
+  "382209": {
+    "name": "Organ: Steel's Lament",
+    "type": "Core Organ - Belt"
+  },
+  "382210": {
+    "name": "Organ: Insulation",
+    "type": "Core Organ - Belt"
+  },
+  "382211": {
+    "name": "Organ: Elemental Whisper Belt",
+    "type": "Core Organ - Belt"
+  },
+  "382212": {
+    "name": "Organ: Pale Mist's Embrace",
+    "type": "Core Organ - Belt"
+  },
+  "382213": {
+    "name": "Organ: Witchdoctor's Herb Bag",
+    "type": "Core Organ - Belt"
+  },
+  "382214": {
+    "name": "Organ: Desire of Survival",
+    "type": "Core Organ - Belt"
+  },
+  "382215": {
+    "name": "Organ: Cry of Divinity",
+    "type": "Core Organ - Belt"
+  },
+  "382216": {
+    "name": "Organ: Corrosion of Manifolds",
+    "type": "Core Organ - Belt"
+  },
+  "382217": {
+    "name": "Organ: Enamor",
+    "type": "Core Organ - Belt"
+  },
+  "382218": {
+    "name": "Organ: Call of Souls",
+    "type": "Core Organ - Belt"
+  },
+  "382219": {
+    "name": "Organ: Strayed Healer's Waistguard",
+    "type": "Core Organ - Belt"
+  },
+  "382220": {
+    "name": "Organ: Confusion Elemental Belt",
+    "type": "Core Organ - Belt"
+  },
+  "382221": {
+    "name": "Organ: Everburn Thunderfire",
+    "type": "Core Organ - Belt"
+  },
+  "382222": {
+    "name": "Organ: Embrace of the Dark Surge",
+    "type": "Core Organ - Belt"
+  },
+  "382223": {
+    "name": "Organ: Polygonal Enclosure",
+    "type": "Core Organ - Belt"
+  },
+  "382224": {
+    "name": "Organ: Eternal Sea Fog",
+    "type": "Core Organ - Belt"
+  },
+  "382225": {
+    "name": "Organ: Formation Breaker",
+    "type": "Core Organ - Belt"
+  },
+  "382226": {
+    "name": "Organ: Rat Herder's Golden Rein",
+    "type": "Core Organ - Belt"
+  },
+  "382227": {
+    "name": "Organ: Hot Night's Embrace",
+    "type": "Core Organ - Belt"
+  },
+  "382228": {
+    "name": "Organ: Entangled Root",
+    "type": "Core Organ - Belt"
+  },
+  "382229": {
+    "name": "Organ: Bodhi Girdle",
+    "type": "Core Organ - Belt"
+  },
+  "382230": {
+    "name": "Organ: Silent Observer",
+    "type": "Core Organ - Belt"
+  },
+  "382231": {
+    "name": "Organ: Tranquil Stir",
+    "type": "Core Organ - Belt"
+  },
+  "382232": {
+    "name": "Organ: Dawn Break",
+    "type": "Core Organ - Belt"
+  },
+  "382233": {
+    "name": "Organ: Eternal Sun",
+    "type": "Core Organ - Belt"
+  },
+  "382234": {
+    "name": "Organ: Winter of Origin",
+    "type": "Core Organ - Belt"
+  },
+  "382235": {
+    "name": "Organ: Compensatory Life",
+    "type": "Core Organ - Belt"
+  },
+  "382236": {
+    "name": "Organ: Light Hunter Belt",
+    "type": "Core Organ - Belt"
+  },
+  "382237": {
+    "name": "Organ: Eternity",
+    "type": "Core Organ - Belt"
+  },
+  "382238": {
+    "name": "Organ: Vendetta's Sleeve-Blade",
+    "type": "Core Organ - Gloves"
+  },
+  "382239": {
+    "name": "Organ: Trickster's Tread",
+    "type": "Core Organ - Boots"
+  },
+  "382240": {
+    "name": "Organ: Futile Tradeoff",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382241": {
+    "name": "Organ: Iron and Bloom",
+    "type": "Core Organ - Helmet"
+  },
+  "382242": {
+    "name": "Organ: Malign Embrace",
+    "type": "Core Organ - Helmet"
+  },
+  "382243": {
+    "name": "Organ: Old Grudge",
+    "type": "Core Organ - Necklace"
+  },
+  "382244": {
+    "name": "Organ: Silent Avowal",
+    "type": "Core Organ - Chest Armor"
+  },
+  "382245": {
+    "name": "Organ: Boor's Iron Crown",
+    "type": "Core Organ - Helmet"
+  },
+  "382246": {
+    "name": "Organ: Coldness Tracer's Tear",
+    "type": "Core Organ - Necklace"
+  },
+  "382247": {
+    "name": "Organ: Iron Nest",
+    "type": "Core Organ - Necklace"
+  },
+  "382248": {
+    "name": "Organ: Golden Touch",
+    "type": "Core Organ - Gloves"
+  },
+  "382249": {
+    "name": "Organ: Magmaskull",
+    "type": "Core Organ - Helmet"
+  },
+  "382250": {
+    "name": "Organ: Ralph's Dreadcrest",
+    "type": "Core Organ - Helmet"
+  },
+  "382251": {
+    "name": "Organ: Omni-Elixir Notes",
+    "type": "Core Organ - Belt"
+  },
+  "383000": {
+    "name": "Grandiose Conception",
+    "type": "The Frozen Canvas"
+  },
+  "384000": {
+    "name": "Crude Magnetic Pointer",
+    "type": "Universal Items"
+  },
+  "384001": {
+    "name": "Fine Magnetic Pointer",
+    "type": "Universal Items"
+  },
+  "384002": {
+    "name": "Perfect Magnetic Pointer",
+    "type": "Universal Items"
+  },
+  "391000": {
+    "name": "Crude Lunar Dust",
+    "type": "Revival Material"
+  },
+  "391001": {
+    "name": "Luminous Lunar Dust",
+    "type": "Revival Material"
+  },
+  "391002": {
+    "name": "Flawless Lunar Dust",
+    "type": "Revival Material"
+  },
+  "392000": {
+    "name": "Omni-Elixir Side Effect",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392001": {
+    "name": "Basic Pharmacology Manuscript",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392002": {
+    "name": "Hero's Resourcefulness",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392003": {
+    "name": "Furious Roar",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392004": {
+    "name": "Ancestral Hate",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392005": {
+    "name": "Starfall Wasteland",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392006": {
+    "name": "Between the Holy Land and Hell",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392007": {
+    "name": "Apathy Blade",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392008": {
+    "name": "Mercury Purged",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392009": {
+    "name": "Royal Arsenal",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392010": {
+    "name": "Into the Night",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392011": {
+    "name": "Self-Imposed Shackles",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392012": {
+    "name": "Three-Chambered Heart",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392013": {
+    "name": "First Flake of Strange Snow",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392014": {
+    "name": "Sweet Pain",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392015": {
+    "name": "Cat's Night Safari",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392016": {
+    "name": "Charging Tail",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392017": {
+    "name": "Vengeful Wraith",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392018": {
+    "name": "Bing's Big Bang Pack",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392019": {
+    "name": "Genius Idea Generator",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392020": {
+    "name": "Telepathy Expert",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392021": {
+    "name": "Fifth Cosmic Velocity",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392022": {
+    "name": "To Myself in Another Spacetime",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392023": {
+    "name": "Private Universe",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392024": {
+    "name": "Immolating World",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392025": {
+    "name": "The Place of Oracle",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392026": {
+    "name": "Crossing the Divine Threshold",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392027": {
+    "name": "Inverted Shrine",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392028": {
+    "name": "Neural Synchronization Training",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392029": {
+    "name": "Machine's Joy",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392030": {
+    "name": "Peril of Synthetic Troops",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392031": {
+    "name": "Nourishing Spring Rain",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392032": {
+    "name": "Nature's Party",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392033": {
+    "name": "Soft Storm",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392034": {
+    "name": "Blowing Breeze",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392035": {
+    "name": "Ceaseless Tide",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392036": {
+    "name": "Artificial Moon: Origin",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392037": {
+    "name": "Artificial Moon: Discipline",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392038": {
+    "name": "Artificial Moon: Progress",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392039": {
+    "name": "Radical Evolution Theory: Cruelty",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392040": {
+    "name": "Radical Evolution Theory: Spell Amplification",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392041": {
+    "name": "Radical Evolution Theory: Radical Order",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392042": {
+    "name": "Radical Evolution Theory: Deep Pain",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392043": {
+    "name": "Discord of the Second Will",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "392044": {
+    "name": "Reactive Rainbow",
+    "type": "Revival Material (Lunar Phase)"
+  },
+  "393000": {
+    "name": "Moonlit Thread - Epic",
+    "type": "Moonlit Thread"
+  },
+  "393003": {
+    "name": "Lunar Fragment",
+    "type": "Universal Items"
+  },
+  "400000": {
+    "name": "Glacial Abyss Beacon (Timemark 1)",
+    "type": "Beacon"
+  },
+  "400001": {
+    "name": "Glacial Abyss Beacon (Timemark 2)",
+    "type": "Beacon"
+  },
+  "400002": {
+    "name": "Glacial Abyss Beacon (Timemark 3)",
+    "type": "Beacon"
+  },
+  "400003": {
+    "name": "Glacial Abyss Beacon (Timemark 4)",
+    "type": "Beacon"
+  },
+  "400004": {
+    "name": "Glacial Abyss Beacon (Timemark 5)",
+    "type": "Beacon"
+  },
+  "400005": {
+    "name": "Glacial Abyss Beacon (Timemark 6)",
+    "type": "Beacon"
+  },
+  "400006": {
+    "name": "Glacial Abyss Beacon (Timemark 7)",
+    "type": "Beacon"
+  },
+  "400007": {
+    "name": "Glacial Abyss Beacon (Timemark 8)",
+    "type": "Beacon"
+  },
+  "400008": {
+    "name": "Deep Space Beacon",
+    "type": "Beacon"
+  },
+  "400009": {
+    "name": "Blistering Lava Sea Beacon (Timemark 2)",
+    "type": "Beacon"
+  },
+  "400010": {
+    "name": "Blistering Lava Sea Beacon (Timemark 3)",
+    "type": "Beacon"
+  },
+  "400011": {
+    "name": "Blistering Lava Sea Beacon (Timemark 4)",
+    "type": "Beacon"
+  },
+  "400012": {
+    "name": "Blistering Lava Sea Beacon (Timemark 5)",
+    "type": "Beacon"
+  },
+  "400013": {
+    "name": "Blistering Lava Sea Beacon (Timemark 6)",
+    "type": "Beacon"
+  },
+  "400014": {
+    "name": "Blistering Lava Sea Beacon (Timemark 7)",
+    "type": "Beacon"
+  },
+  "400015": {
+    "name": "Blistering Lava Sea Beacon (Timemark 8)",
+    "type": "Beacon"
+  },
+  "400017": {
+    "name": "Steel Forge Beacon (Timemark 3)",
+    "type": "Beacon"
+  },
+  "400018": {
+    "name": "Steel Forge Beacon (Timemark 4)",
+    "type": "Beacon"
+  },
+  "400019": {
+    "name": "Steel Forge Beacon (Timemark 5)",
+    "type": "Beacon"
+  },
+  "400020": {
+    "name": "Steel Forge Beacon (Timemark 6)",
+    "type": "Beacon"
+  },
+  "400021": {
+    "name": "Steel Forge Beacon (Timemark 7)",
+    "type": "Beacon"
+  },
+  "400022": {
+    "name": "Steel Forge Beacon (Timemark 8)",
+    "type": "Beacon"
+  },
+  "400024": {
+    "name": "Thunder Wastes Beacon (Timemark 4)",
+    "type": "Beacon"
+  },
+  "400025": {
+    "name": "Thunder Wastes Beacon (Timemark 5)",
+    "type": "Beacon"
+  },
+  "400026": {
+    "name": "Thunder Wastes Beacon (Timemark 6)",
+    "type": "Beacon"
+  },
+  "400027": {
+    "name": "Thunder Wastes Beacon (Timemark 7)",
+    "type": "Beacon"
+  },
+  "400028": {
+    "name": "Thunder Wastes Beacon (Timemark 8)",
+    "type": "Beacon"
+  },
+  "400030": {
+    "name": "Voidlands Beacon (Timemark 5)",
+    "type": "Beacon"
+  },
+  "400031": {
+    "name": "Voidlands Beacon (Timemark 6)",
+    "type": "Beacon"
+  },
+  "400032": {
+    "name": "Voidlands Beacon (Timemark 7)",
+    "type": "Beacon"
+  },
+  "400033": {
+    "name": "Voidlands Beacon (Timemark 8)",
+    "type": "Beacon"
+  },
+  "410101": {
+    "name": "Edict: Dart",
+    "type": "Dark Surge Edict"
+  },
+  "410102": {
+    "name": "Edict: Dive",
+    "type": "Dark Surge Edict"
+  },
+  "410103": {
+    "name": "Edict: Ruin",
+    "type": "Dark Surge Edict"
+  },
+  "410104": {
+    "name": "Edict: Doom",
+    "type": "Dark Surge Edict"
+  },
+  "410201": {
+    "name": "Void Sea Invitation - Craving",
+    "type": "Void Sea Invitation"
+  },
+  "410202": {
+    "name": "Void Sea Invitation - Ecstasy",
+    "type": "Void Sea Invitation"
+  },
+  "410203": {
+    "name": "Void Sea Invitation - Sorrow",
+    "type": "Void Sea Invitation"
+  },
+  "410301": {
+    "name": "Desire Core - Record",
+    "type": "Desire Core"
+  },
+  "410302": {
+    "name": "Desire Core - Creation",
+    "type": "Desire Core"
+  },
+  "410303": {
+    "name": "Desire Core - Devastation",
+    "type": "Desire Core"
+  },
+  "410401": {
+    "name": "Queen's Wick - Imprisoned",
+    "type": "Queen's Wick"
+  },
+  "410402": {
+    "name": "Queen's Wick - Pursuit",
+    "type": "Queen's Wick"
+  },
+  "410403": {
+    "name": "Queen's Wick - Revenge",
+    "type": "Queen's Wick"
+  },
+  "410501": {
+    "name": "Queen's Grace - Slaughter",
+    "type": "Queen's Grace"
+  },
+  "410502": {
+    "name": "Queen's Grace - Authority",
+    "type": "Queen's Grace"
+  },
+  "410503": {
+    "name": "Queen's Grace - Lust",
+    "type": "Queen's Grace"
+  },
+  "430000": {
+    "name": "The Beginning",
+    "type": "Primeval Core"
+  },
+  "430001": {
+    "name": "The End",
+    "type": "Primeval Core"
+  },
+  "430002": {
+    "name": "Beginning of the End",
+    "type": "Primeval Core"
+  },
+  "440001": {
+    "name": "Divinity Emblem - Machine",
+    "type": "Divinity Emblems"
+  },
+  "440002": {
+    "name": "Divinity Emblem - Might",
+    "type": "Divinity Emblems"
+  },
+  "440003": {
+    "name": "Divinity Emblem - War",
+    "type": "Divinity Emblems"
+  },
+  "440004": {
+    "name": "Divinity Emblem - Hunting",
+    "type": "Divinity Emblems"
+  },
+  "990004": {
+    "name": "Mistville Intel",
+    "type": "Whispering Mist"
+  },
+  "990005": {
+    "name": "Mist Essence",
+    "type": "Whispering Mist"
+  },
+  "990007": {
+    "name": "Resident's Eye",
+    "type": "Whispering Mist"
+  },
+  "990091": {
+    "name": "Conquest Insignia",
+    "type": "Universal Items"
+  },
+  "3000001": {
+    "name": "Proof of the Brave I",
+    "type": "Proof of the Brave"
+  },
+  "3000002": {
+    "name": "Proof of the Brave II",
+    "type": "Proof of the Brave"
+  },
+  "3000003": {
+    "name": "Proof of the Brave III",
+    "type": "Proof of the Brave"
+  },
+  "3000004": {
+    "name": "Proof of the Brave IV",
+    "type": "Proof of the Brave"
+  },
+  "3000005": {
+    "name": "Proof of the Brave V",
+    "type": "Proof of the Brave"
+  }
+}

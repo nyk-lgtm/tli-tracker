@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -158,6 +159,14 @@ def test_apply_downloaded_update_uses_silent_installer_flags(
         return object()
 
     monkeypatch.setattr("app.updater.subprocess.Popen", fake_popen)
+    # these constants only exist on Windows
+    if not hasattr(subprocess, "DETACHED_PROCESS"):
+        monkeypatch.setattr(
+            "app.updater.subprocess.DETACHED_PROCESS", 0x00000008, raising=False
+        )
+        monkeypatch.setattr(
+            "app.updater.subprocess.CREATE_NEW_PROCESS_GROUP", 0x00000200, raising=False
+        )
 
     result = updater.apply_downloaded_update()
 
