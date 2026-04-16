@@ -11,7 +11,7 @@ import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners } from './settings.js';
 import { loadHistory } from './history.js';
-import { checkForUpdates, checkForUpdatesOnStartup } from './updates.js';
+import { checkForUpdates, checkForUpdatesOnStartup, handleUpdateState, loadUpdateState } from './updates.js';
 import { updateState, renderUI, renderDrops, updateTimedStats } from './renderers.js';
 import {
     applyPriceHistoryUpdate,
@@ -108,6 +108,9 @@ window.onPythonEvent = function(eventType, data) {
             state.inMap = false;
             renderUI();
             syncInitPolling();
+            break;
+        case 'update_state':
+            handleUpdateState(data);
             break;
     }
 };
@@ -312,7 +315,11 @@ function init() {
     elements.btnReset.addEventListener('click', resetSession);
     elements.btnModeValue.addEventListener('click', () => setDisplayMode('value'));
     elements.btnModeItems.addEventListener('click', () => setDisplayMode('items'));
-    elements.btnSettings.addEventListener('click', () => { openModal('settings'); loadSettings(); });
+    elements.btnSettings.addEventListener('click', () => {
+        openModal('settings');
+        void loadSettings();
+        void loadUpdateState();
+    });
     elements.btnHistory.addEventListener('click', () => { openModal('history'); loadHistory(); });
     elements.btnOverlay.addEventListener('click', toggleOverlay);
     elements.btnResetSettings.addEventListener('click', resetDefaults);
@@ -344,7 +351,8 @@ function init() {
     });
 
     // Load settings
-    loadSettings();
+    void loadSettings();
+    void loadUpdateState();
 
     // Start timer loop
     startTimerLoop();

@@ -40,10 +40,28 @@ class DummySessions:
         return self._session
 
 
+class DummyUpdater:
+    def __init__(self) -> None:
+        self.trigger_calls: list[str] = []
+        self.state = {"status": "idle", "current_version": "0.2.2"}
+        self.apply_result = {"status": "ok"}
+
+    def get_update_state(self) -> dict:
+        return self.state
+
+    def start_update_flow(self, trigger: str) -> dict:
+        self.trigger_calls.append(trigger)
+        return {"status": "checking", "trigger": trigger}
+
+    def apply_downloaded_update(self) -> dict:
+        return self.apply_result
+
+
 def make_api_stub(session: dict | None = None) -> Api:
     api = Api.__new__(Api)
     api.tracker = DummyTracker()
     api.sessions = DummySessions(session)
+    api.updater = DummyUpdater()
     api._main_window = None
     return api
 
@@ -96,3 +114,28 @@ def test_export_flushes_before_loading_session(tmp_path: Path, monkeypatch) -> N
     assert result["status"] == "ok"
     assert export_path.exists()
     assert api.tracker.flush_calls == 1
+
+
+def test_get_update_state_delegates_to_updater() -> None:
+    api = make_api_stub()
+
+    assert api.get_update_state() == {"status": "idle", "current_version": "0.2.2"}
+
+
+def test_start_update_flow_delegates_to_updater() -> None:
+    api = make_api_stub()
+
+    result = api.start_update_flow("manual")
+
+    assert result == {"status": "checking", "trigger": "manual"}
+    assert api.updater.trigger_calls == ["manual"]
+
+
+def test_apply_downloaded_update_delegates_to_updater() -> None:
+    api = make_api_stub()
+    api.updater.apply_result = {"status": "error", "error": "missing installer"}
+
+    assert api.apply_downloaded_update() == {
+        "status": "error",
+        "error": "missing installer",
+    }

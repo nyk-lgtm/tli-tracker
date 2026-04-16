@@ -1,162 +1,188 @@
 /**
- * Update checking functionality
+ * Background update state management and rendering.
  */
 
 import { elements } from './elements.js';
-import { showConfirmDialog, showConfirmLoading, hideConfirmLoading, updateConfirmLoading } from './modals.js';
-import { showStatus, hideStatus } from './utils.js';
 
-// ============ Updates ============
+const DEFAULT_UPDATE_STATE = Object.freeze({
+    status: 'idle',
+    current_version: '',
+    new_version: '',
+    progress_percent: 0,
+    error: '',
+    trigger: ''
+});
 
-export function showUpdateStatus(message, type = 'info') {
+let currentUpdateState = { ...DEFAULT_UPDATE_STATE };
+let applyInFlight = false;
+
+export function normalizeUpdateState(snapshot = {}) {
+    return {
+        ...DEFAULT_UPDATE_STATE,
+        ...snapshot,
+        status: typeof snapshot?.status === 'string' ? snapshot.status : 'idle',
+        current_version: typeof snapshot?.current_version === 'string' ? snapshot.current_version : '',
+        new_version: typeof snapshot?.new_version === 'string' ? snapshot.new_version : '',
+        progress_percent: Number.isFinite(snapshot?.progress_percent)
+            ? Math.max(0, Math.min(100, Math.round(snapshot.progress_percent)))
+            : 0,
+        error: typeof snapshot?.error === 'string' ? snapshot.error : '',
+        trigger: typeof snapshot?.trigger === 'string' ? snapshot.trigger : ''
+    };
+}
+
+export function buildUpdateViewModel(snapshot, { applyPending = false } = {}) {
+    const state = normalizeUpdateState(snapshot);
+    const view = {
+        buttonText: 'Check Now',
+        buttonDisabled: false,
+        statusMessage: '',
+        statusType: 'info'
+    };
+
+    if (applyPending) {
+        view.buttonText = 'Restarting...';
+        view.buttonDisabled = true;
+        view.statusMessage = state.new_version
+            ? `Applying v${state.new_version}...`
+            : 'Applying update...';
+        return view;
+    }
+
+    switch (state.status) {
+        case 'checking':
+            view.buttonText = 'Checking...';
+            view.buttonDisabled = true;
+            break;
+        case 'downloading':
+            view.buttonText = 'Downloading...';
+            view.buttonDisabled = true;
+            view.statusMessage = state.new_version
+                ? `Downloading v${state.new_version}... ${state.progress_percent}%`
+                : `Downloading update... ${state.progress_percent}%`;
+            break;
+        case 'downloaded':
+            view.buttonText = 'Restart to Update';
+            view.statusMessage = state.new_version
+                ? `Update ready: v${state.new_version}`
+                : 'Update ready to install';
+            view.statusType = 'success';
+            break;
+        case 'up_to_date':
+            if (state.trigger === 'manual') {
+                view.statusMessage = "You're running the latest version!";
+                view.statusType = 'success';
+            }
+            break;
+        case 'error':
+            if (state.trigger === 'manual' && state.error) {
+                view.statusMessage = state.error;
+                view.statusType = 'error';
+            }
+            break;
+    }
+
+    return view;
+}
+
+function renderUpdateStatus(message = '', type = 'info') {
     const el = elements.updateStatus;
-    const row = elements.updateRow;
     if (!el) return;
+
+    if (!message) {
+        el.textContent = '';
+        el.classList.add('hidden');
+        el.classList.remove('status-info', 'status-success', 'status-error');
+        return;
+    }
+
     el.textContent = message;
     el.classList.remove('hidden', 'status-info', 'status-success', 'status-error');
     el.classList.add(`status-${type}`);
-    if (row) row.classList.add('hidden');
 }
 
-export function hideUpdateStatus() {
-    const el = elements.updateStatus;
-    const row = elements.updateRow;
-    if (!el) return;
-    el.classList.add('hidden');
-    el.classList.remove('status-info', 'status-success', 'status-error');
-    if (row) row.classList.remove('hidden');
+function renderUpdateControls() {
+    const button = elements.btnCheckUpdates;
+    if (!button) return;
+
+    const view = buildUpdateViewModel(currentUpdateState, { applyPending: applyInFlight });
+    button.textContent = view.buttonText;
+    button.disabled = view.buttonDisabled;
+    renderUpdateStatus(view.statusMessage, view.statusType);
 }
 
-/**
- * Shared download and install logic
- * @param {object} result - The update check result with download_url and new_version
- * @param {function} onError - Callback for error display (message, type)
- */
-async function downloadAndInstall(result, onError) {
-    // Start download - show loading in dialog
-    showConfirmLoading('Downloading update...');
-
-    // Let the browser render the spinner before starting download
-    await new Promise(r => setTimeout(r, 50));
-
-    const downloadResult = await api('download_update', result.download_url, result.new_version);
-
-    if (downloadResult.status === 'error') {
-        hideConfirmLoading();
-        onError(`Download failed: ${downloadResult.error}`);
-        return false;
+export function handleUpdateState(snapshot) {
+    currentUpdateState = normalizeUpdateState(snapshot);
+    if (currentUpdateState.status !== 'downloaded') {
+        applyInFlight = false;
     }
+    renderUpdateControls();
+}
 
-    // Launch installer
-    updateConfirmLoading('Launching installer...');
-
-    const launchResult = await api('launch_installer', downloadResult.download_path);
-
-    if (launchResult.status === 'error') {
-        hideConfirmLoading();
-        onError(`Failed to launch installer: ${launchResult.error}`);
-        return false;
+export async function loadUpdateState() {
+    try {
+        const snapshot = await api('get_update_state');
+        handleUpdateState(snapshot);
+        return currentUpdateState;
+    } catch (error) {
+        console.error('Failed to load update state:', error);
+        return currentUpdateState;
     }
+}
 
-    // App will quit after launching installer
-    updateConfirmLoading('Closing app...');
+async function startUpdateFlow(trigger) {
+    const snapshot = await api('start_update_flow', trigger);
+    handleUpdateState(snapshot);
+    return snapshot;
+}
 
-    setTimeout(() => {
+async function applyDownloadedUpdate() {
+    applyInFlight = true;
+    renderUpdateControls();
+
+    try {
+        const result = await api('apply_downloaded_update');
+        if (result.status === 'error') {
+            applyInFlight = false;
+            await loadUpdateState();
+            return;
+        }
+
         window.bridge.quit_app();
-    }, 1000);
-
-    return true;
-}
-
-/**
- * Show update confirmation dialog
- * @param {object} result - The update check result
- * @returns {Promise<boolean>} - Whether user confirmed
- */
-async function showUpdateDialog(result) {
-    return showConfirmDialog(
-        'Update Available',
-        `A new version is available!\n\nCurrent: v${result.current_version}\nNew: v${result.new_version}\n\nWould you like to download and install the update?`,
-        'Update',
-        'Later',
-        { showLoadingOnConfirm: true }
-    );
+    } catch (error) {
+        console.error('Failed to apply update:', error);
+        applyInFlight = false;
+        await loadUpdateState();
+    }
 }
 
 export async function checkForUpdates() {
-    const btn = elements.btnCheckUpdates;
-    if (!btn) return;
+    if (applyInFlight) {
+        return;
+    }
 
-    const originalText = btn.textContent;
-    btn.textContent = 'Checking...';
-    btn.disabled = true;
-    hideUpdateStatus();
+    if (currentUpdateState.status === 'downloaded') {
+        await applyDownloadedUpdate();
+        return;
+    }
 
     try {
-        const result = await api('check_for_update');
-
-        if (result.status === 'error') {
-            showUpdateStatus(`Update check failed: ${result.error}`, 'error');
-            return;
-        }
-
-        if (!result.update_available) {
-            showUpdateStatus("You're running the latest version!", 'success');
-            setTimeout(() => hideUpdateStatus(), 3000);
-            return;
-        }
-
-        // Update available - show confirmation
-        hideUpdateStatus();
-        const confirmed = await showUpdateDialog(result);
-
-        if (!confirmed) return;
-
-        const success = await downloadAndInstall(result, (msg) => showUpdateStatus(msg, 'error'));
-        if (success) return; // Skip the finally block's button reset
-
-    } catch (e) {
-        console.error('Update check failed:', e);
-        hideConfirmLoading();
-        showUpdateStatus('Update check failed', 'error');
-    } finally {
-        btn.textContent = originalText;
-        btn.disabled = false;
+        await startUpdateFlow('manual');
+    } catch (error) {
+        console.error('Update flow failed:', error);
+        handleUpdateState({
+            ...currentUpdateState,
+            status: 'error',
+            error: 'Update check failed',
+            trigger: 'manual'
+        });
     }
 }
 
-/**
- * Silent startup check - only shows notification if update available
- */
 export async function checkForUpdatesOnStartup() {
     try {
-        const result = await api('check_for_update');
-
-        if (result.status === 'error') {
-            showStatus(`Update check failed: ${result.error}`, 'error', 5000);
-            return;
-        }
-
-        if (!result.update_available) {
-            showStatus("You're running the latest version!", 'success', 3000);
-            return;
-        }
-
-        // Update available - show in main status banner
-        showStatus(`Update available: v${result.new_version}`, 'info');
-
-        // Show confirmation dialog
-        const confirmed = await showUpdateDialog(result);
-
-        hideStatus();
-
-        if (!confirmed) return;
-
-        await downloadAndInstall(result, (msg) => showStatus(msg, 'error', 5000));
-
-    } catch (e) {
-        console.error('Startup update check failed:', e);
-        hideConfirmLoading();
-        showStatus('Update check failed', 'error', 5000);
+        await startUpdateFlow('startup');
+    } catch (error) {
+        console.error('Startup update check failed:', error);
     }
 }

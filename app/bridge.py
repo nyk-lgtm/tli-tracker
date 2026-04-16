@@ -239,19 +239,19 @@ class ApiBridge(QObject):
         return json.dumps(self.api.get_version(), default=str)
 
     @Slot(result=str)
-    def check_for_update(self) -> str:
-        """Check GitHub for a newer version."""
-        return json.dumps(self.api.check_for_update(), default=str)
-
-    @Slot(str, str, result=str)
-    def download_update(self, download_url: str, version: str) -> str:
-        """Download update installer."""
-        return json.dumps(self.api.download_update(download_url, version), default=str)
+    def get_update_state(self) -> str:
+        """Get the current updater snapshot."""
+        return json.dumps(self.api.get_update_state(), default=str)
 
     @Slot(str, result=str)
-    def launch_installer(self, download_path: str) -> str:
-        """Launch the downloaded installer."""
-        return json.dumps(self.api.launch_installer(download_path), default=str)
+    def start_update_flow(self, trigger: str) -> str:
+        """Start a background update check/download cycle."""
+        return json.dumps(self.api.start_update_flow(trigger), default=str)
+
+    @Slot(result=str)
+    def apply_downloaded_update(self) -> str:
+        """Apply a downloaded update."""
+        return json.dumps(self.api.apply_downloaded_update(), default=str)
 
     @Slot()
     def quit_app(self) -> None:

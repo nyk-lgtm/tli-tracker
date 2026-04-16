@@ -25,7 +25,7 @@ from .storage import (
     save_config,
 )
 from .tracker import Tracker
-from .updater import UpdateInfo, Updater
+from .updater import Updater
 from .version import VERSION
 
 
@@ -51,7 +51,9 @@ class Api:
         self.cloud_prices = CloudPriceManager()
         self.price_history = PriceHistoryManager()
         self.sessions = SessionManager()
-        self.updater = Updater()
+        self.updater = Updater(
+            on_state_change=lambda payload: self._push_to_ui("update_state", payload)
+        )
 
         # Initialize tracker with update callback
         self.tracker = Tracker(
@@ -481,81 +483,14 @@ class Api:
         """Get current application version."""
         return VERSION
 
-    def check_for_update(self) -> dict:
-        """
-        Check GitHub for a newer version.
+    def get_update_state(self) -> dict:
+        """Return the current updater snapshot."""
+        return self.updater.get_update_state()
 
-        Returns dict with:
-        - status: "ok" | "error"
-        - update_available: bool
-        - current_version: str
-        - new_version: str (if available)
-        - release_notes: str (if available)
-        - download_url: str (if available)
-        - error: str (if error)
-        """
-        available, info, error = self.updater.check_for_update()
+    def start_update_flow(self, trigger: str) -> dict:
+        """Start a background update check/download cycle."""
+        return self.updater.start_update_flow(trigger)
 
-        if error:
-            return {
-                "status": "error",
-                "error": error,
-                "current_version": VERSION,
-            }
-
-        if not available:
-            return {
-                "status": "ok",
-                "update_available": False,
-                "current_version": VERSION,
-            }
-
-        return {
-            "status": "ok",
-            "update_available": True,
-            "current_version": VERSION,
-            "new_version": info.version,
-            "release_notes": info.release_notes,
-            "download_url": info.download_url,
-        }
-
-    def download_update(self, download_url: str, version: str) -> dict:
-        """
-        Download update installer.
-
-        Args:
-            download_url: URL to download the installer from
-            version: Version string for the update
-
-        Returns dict with:
-        - status: "ok" | "error"
-        - download_path: str (if successful)
-        - error: str (if error)
-        """
-        info = UpdateInfo(version=version, download_url=download_url, release_notes="")
-
-        path, error = self.updater.download_update(info)
-
-        if error:
-            return {"status": "error", "error": error}
-
-        return {"status": "ok", "download_path": path}
-
-    def launch_installer(self, download_path: str) -> dict:
-        """
-        Launch the downloaded installer and quit the app.
-
-        Args:
-            download_path: Path to the downloaded installer
-
-        Returns dict with:
-        - status: "ok" | "error"
-        - error: str (if error)
-        """
-        success, error = self.updater.launch_installer(download_path)
-
-        if not success:
-            return {"status": "error", "error": error}
-
-        # Signal app to quit (handled by the caller)
-        return {"status": "ok", "should_quit": True}
+    def apply_downloaded_update(self) -> dict:
+        """Launch the downloaded installer in silent mode."""
+        return self.updater.apply_downloaded_update()

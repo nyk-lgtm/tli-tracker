@@ -109,6 +109,7 @@ DEFAULT_CONFIG = {
     "game_log_path": "",  # manual override for UE_game.log location
     "cached_log_path": "",  # auto-cached from last successful detection
     "cloud_prices_enabled": False,  # opt-in cloud price fallback
+    "auto_download_updates": True,  # background update downloads on startup
     # Widget-based overlay
     "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode
     "widgets": [],  # Widget instances (populated on first load if empty)

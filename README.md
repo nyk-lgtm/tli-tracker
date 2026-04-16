@@ -3,7 +3,7 @@
 🚨 ALERT 🚨 idk if tos 🚨
 
 However, this app doesn't read or write any data outside of ur machine.
-Only time it connects to the internet is to check for updates on this page.
+Only time it connects to the internet is to check for updates and, if enabled, download an update installer from releases.
 
 gl 👍
 
