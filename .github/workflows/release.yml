@@ -43,6 +43,10 @@ jobs:
         shell: bash
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
+          # checkout creates a lightweight tag from the trigger SHA; re-fetch the
+          # annotated object so %(contents) returns the release notes, not the
+          # commit subject
+          git fetch origin --force "refs/tags/${TAG}:refs/tags/${TAG}"
           BODY=$(git tag -l --format='%(contents)' "$TAG")
           {
             echo "body<<TAG_EOF"
