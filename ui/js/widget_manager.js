@@ -762,7 +762,10 @@ if (typeof waitForApi !== 'undefined') {
         await WidgetManager.init();
         if (window.__PREVIEW__?.enabled) {
             WidgetManager.updateState(window.__PREVIEW__.state);
-            window.onPythonEvent = () => {};
+            const _orig = window.onPythonEvent;
+            window.onPythonEvent = (eventType, data) => {
+                if (eventType !== 'state') _orig(eventType, data);
+            };
         }
     });
 } else {
