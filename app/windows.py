@@ -8,7 +8,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from PySide6.QtCore import Qt, QTimer, QUrl
+from PySide6.QtCore import QRect, Qt, QTimer, QUrl
+from PySide6.QtGui import QCursor
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEngineSettings
 from PySide6.QtWebEngineWidgets import QWebEngineView
@@ -297,7 +298,9 @@ class OverlayWindow(QMainWindow):
         super().__init__()
         self.bridge = bridge
         self._click_through_enabled = True
+        self._applied_click_through: Optional[bool] = None
         self._edit_mode = False  # Edit mode state
+        self._edit_hint_rect: Optional[QRect] = None
         self._current_monitor = None  # Track current monitor geometry
 
         self.setWindowTitle("TLI Overlay")
@@ -341,6 +344,10 @@ class OverlayWindow(QMainWindow):
         self._monitor_timer = QTimer()
         self._monitor_timer.timeout.connect(self._check_monitor_change)
         self._monitor_timer.start(5000)  # Check every 5 seconds
+
+        self._hint_hover_timer = QTimer(self)
+        self._hint_hover_timer.timeout.connect(self._sync_click_through_state)
+        self._hint_hover_timer.start(16)
 
         self.hide()
 
@@ -402,24 +409,58 @@ class OverlayWindow(QMainWindow):
     def showEvent(self, event) -> None:
         """Called when the window is shown."""
         super().showEvent(event)
-
-        # Apply click-through on show
-        if self._click_through_enabled:
-            self._apply_click_through(True)
+        self._sync_click_through_state()
 
     def _apply_click_through(self, enabled: bool) -> None:
         """Apply click-through using Win32 API."""
+        if self._applied_click_through == enabled:
+            return
+
         try:
             hwnd = int(self.winId())
             set_click_through(hwnd, enabled)
+            self._applied_click_through = enabled
         except Exception as e:
             print(f"Failed to apply click-through: {e}")
 
     def set_click_through(self, enabled: bool) -> None:
         """Enable or disable click-through."""
         self._click_through_enabled = enabled
-        if self.isVisible():
-            self._apply_click_through(enabled)
+        self._sync_click_through_state()
+
+    def set_edit_hint_region(self, payload: dict) -> None:
+        """Store the interactive screen region for the edit hint badge."""
+        rect_data = payload.get("rect") if payload.get("visible") else None
+        if rect_data:
+            self._edit_hint_rect = QRect(
+                int(rect_data.get("x", 0)),
+                int(rect_data.get("y", 0)),
+                int(rect_data.get("width", 0)),
+                int(rect_data.get("height", 0)),
+            )
+        else:
+            self._edit_hint_rect = None
+
+        self._sync_click_through_state()
+
+    def _is_cursor_over_edit_hint(self) -> bool:
+        if not self._edit_hint_rect or not self.isVisible():
+            return False
+
+        local_pos = self.mapFromGlobal(QCursor.pos())
+        return self._edit_hint_rect.contains(local_pos)
+
+    def _sync_click_through_state(self) -> None:
+        """Apply the effective click-through state for edit mode and hint hover."""
+        if not self.isVisible():
+            return
+
+        should_click_through = self._click_through_enabled
+
+        if self._edit_mode or self._is_cursor_over_edit_hint():
+            should_click_through = False
+
+        self._apply_click_through(should_click_through)
 
     def toggle_edit_mode(self) -> None:
         """Toggle edit mode on/off."""
@@ -440,8 +481,8 @@ class OverlayWindow(QMainWindow):
         self._edit_mode = enabled
         print(f"[Overlay] Edit mode: {'enabled' if enabled else 'disabled'}")
 
-        # Toggle click-through (disabled in edit mode)
-        self._apply_click_through(not enabled)
+        # Edit mode always keeps the overlay interactive.
+        self._sync_click_through_state()
 
         # Notify JavaScript
         self.bridge.emit_event("edit_mode", {"enabled": enabled})

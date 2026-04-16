@@ -265,6 +265,7 @@ const EditMode = {
 
         // Clear snap guides
         SnapEngine.clearGuides();
+        WidgetManager.scheduleEditHintLayoutUpdate();
     },
 
     /**
@@ -481,6 +482,7 @@ const EditMode = {
 
         // Clear snap guides
         SnapEngine.clearGuides();
+        WidgetManager.scheduleEditHintLayoutUpdate();
     },
 
     /**
@@ -498,6 +500,7 @@ const EditMode = {
             widget.remove();
         }
         this.selected.clear();
+        WidgetManager.scheduleEditHintLayoutUpdate();
     },
 
     /**

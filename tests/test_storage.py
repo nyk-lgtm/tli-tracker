@@ -115,6 +115,7 @@ def test_build_default_config_includes_full_widget_defaults() -> None:
     for key in storage.DEFAULT_CONFIG:
         assert key in config
     assert config["widgets"]
+    assert config["overlay_edit_hint_dismissed"] is False
 
 
 def test_load_config_keeps_invalid_file_on_disk_and_records_error(

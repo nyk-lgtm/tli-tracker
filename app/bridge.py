@@ -224,6 +224,19 @@ class ApiBridge(QObject):
         """Update the edit mode hotkey at runtime."""
         return json.dumps(self.api.update_edit_mode_hotkey(hotkey), default=str)
 
+    @Slot(str, result=str)
+    def update_overlay_hint_region(self, payload_json: str) -> str:
+        """Update the interactive region for the overlay edit hint."""
+        payload = json.loads(payload_json)
+        return json.dumps(self.api.update_overlay_hint_region(payload), default=str)
+
+    @Slot(bool, result=str)
+    def set_overlay_edit_hint_dismissed(self, dismissed: bool) -> str:
+        """Persist the first-run overlay edit hint dismissal state."""
+        return json.dumps(
+            self.api.set_overlay_edit_hint_dismissed(dismissed), default=str
+        )
+
     # === Utility ===
 
     @Slot(result=str)

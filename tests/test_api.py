@@ -57,12 +57,21 @@ class DummyUpdater:
         return self.apply_result
 
 
+class DummyOverlayWindow:
+    def __init__(self) -> None:
+        self.hint_region_payload = None
+
+    def set_edit_hint_region(self, payload: dict) -> None:
+        self.hint_region_payload = payload
+
+
 def make_api_stub(session: dict | None = None) -> Api:
     api = Api.__new__(Api)
     api.tracker = DummyTracker()
     api.sessions = DummySessions(session)
     api.updater = DummyUpdater()
     api._main_window = None
+    api._overlay_window = None
     return api
 
 
@@ -139,3 +148,30 @@ def test_apply_downloaded_update_delegates_to_updater() -> None:
         "status": "error",
         "error": "missing installer",
     }
+
+
+def test_update_overlay_hint_region_delegates_to_overlay_window() -> None:
+    api = make_api_stub()
+    overlay = DummyOverlayWindow()
+    api._overlay_window = overlay
+
+    payload = {"visible": True, "rect": {"x": 10, "y": 20, "width": 30, "height": 40}}
+    result = api.update_overlay_hint_region(payload)
+
+    assert result == {"status": "ok"}
+    assert overlay.hint_region_payload == payload
+
+
+def test_set_overlay_edit_hint_dismissed_persists_config_value(monkeypatch) -> None:
+    api = make_api_stub()
+    recorded: list[tuple[str, bool]] = []
+
+    monkeypatch.setattr(
+        "app.api.set_config_value",
+        lambda key, value: recorded.append((key, value)) or True,
+    )
+
+    result = api.set_overlay_edit_hint_dismissed(True)
+
+    assert result == {"status": "ok", "dismissed": True}
+    assert recorded == [("overlay_edit_hint_dismissed", True)]

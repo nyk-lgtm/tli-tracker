@@ -23,6 +23,7 @@ from .storage import (
     load_config,
     load_items,
     save_config,
+    set_config_value,
 )
 from .tracker import Tracker
 from .updater import Updater
@@ -379,6 +380,25 @@ class Api:
             self._overlay_window.set_click_through(enabled)
 
             return {"status": "ok" if success else "error"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def update_overlay_hint_region(self, payload: dict) -> dict:
+        """Update the interactive screen region for the overlay edit hint."""
+        if not self._overlay_window:
+            return {"status": "error", "message": "No overlay window"}
+
+        try:
+            self._overlay_window.set_edit_hint_region(payload)
+            return {"status": "ok"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+    def set_overlay_edit_hint_dismissed(self, dismissed: bool) -> dict:
+        """Persist the first-run overlay edit hint dismissal state."""
+        try:
+            success = set_config_value("overlay_edit_hint_dismissed", dismissed)
+            return {"status": "ok" if success else "error", "dismissed": dismissed}
         except Exception as e:
             return {"status": "error", "message": str(e)}
 

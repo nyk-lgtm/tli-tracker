@@ -88,13 +88,13 @@
 
 .edit-hint-badge {
     position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 24px;
+    left: 24px;
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 10px 12px 10px 16px;
+    max-width: min(420px, calc(100vw - 32px));
     background: rgba(0, 0, 0, 0.85);
     border: 1px solid rgba(45, 212, 191, 0.6);
     border-radius: 999px;
@@ -106,7 +106,7 @@
     font-size: 13px;
     font-weight: 500;
     pointer-events: auto;
-    z-index: 9997;
+    z-index: 10000;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     animation: edit-hint-fade-in 0.3s ease-out;

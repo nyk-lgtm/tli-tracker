@@ -111,6 +111,7 @@ DEFAULT_CONFIG = {
     "cloud_prices_enabled": False,  # opt-in cloud price fallback
     "auto_download_updates": True,  # background update downloads on startup
     # Widget-based overlay
+    "overlay_edit_hint_dismissed": False,  # First-run overlay edit hint
     "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode
     "widgets": [],  # Widget instances (populated on first load if empty)
 }

@@ -6,6 +6,9 @@
  */
 
 const WidgetManager = {
+    EDIT_HINT_MARGIN: 16,
+    EDIT_HINT_GAP: 14,
+
     // Widget type definitions (mirrors Python widget_registry.py)
     WIDGET_TYPES: {
         stats_bar: {
@@ -53,8 +56,13 @@ const WidgetManager = {
         opacity: 0.9,
         showMapValue: true,
         efficiencyPerMap: false,
+        editHintDismissed: false,
         editModeHotkey: 'Ctrl+F9',
     },
+
+    editHintLayoutFrame: null,
+    lastEditHintRegion: null,
+    editHintResizeBound: false,
 
     /**
      * Initialize the widget manager
@@ -73,6 +81,11 @@ const WidgetManager = {
 
         // Show first-run edit-mode hint if not yet dismissed
         this.maybeShowEditHint();
+
+        if (!this.editHintResizeBound) {
+            this.editHintResizeBound = true;
+            window.addEventListener('resize', () => this.scheduleEditHintLayoutUpdate());
+        }
 
         // Start timer loop for live updates
         this.startTimerLoop();
@@ -95,6 +108,7 @@ const WidgetManager = {
             this.settings.opacity = settings.overlay_opacity ?? 0.9;
             this.settings.showMapValue = settings.show_map_value ?? true;
             this.settings.efficiencyPerMap = settings.efficiency_per_map ?? false;
+            this.settings.editHintDismissed = settings.overlay_edit_hint_dismissed ?? false;
             this.settings.editModeHotkey = settings.overlay_edit_mode_hotkey ?? 'Ctrl+F9';
 
             // Apply opacity
@@ -121,6 +135,8 @@ const WidgetManager = {
                 this.renderWidget(widget);
             }
         }
+
+        this.scheduleEditHintLayoutUpdate();
     },
 
     /**
@@ -452,6 +468,8 @@ const WidgetManager = {
         this.renderAll();
         this.updateAllWidgets();
         this.updateHotkeyLabel();
+        this.maybeShowEditHint();
+        this.scheduleEditHintLayoutUpdate();
     },
 
     /**
@@ -468,7 +486,6 @@ const WidgetManager = {
         }
     },
 
-    // localStorage key for the first-run edit-hint dismissal flag
     EDIT_HINT_STORAGE_KEY: 'tli_overlay_edit_hint_dismissed',
 
     /**
@@ -478,18 +495,28 @@ const WidgetManager = {
         const badge = document.getElementById('edit-hint-badge');
         if (!badge) return;
 
-        let dismissed = false;
+        let dismissed = this.settings.editHintDismissed;
         try {
-            dismissed = localStorage.getItem(this.EDIT_HINT_STORAGE_KEY) === '1';
+            const legacyDismissed = localStorage.getItem(this.EDIT_HINT_STORAGE_KEY) === '1';
+            if (legacyDismissed && !dismissed) {
+                dismissed = true;
+                this.settings.editHintDismissed = true;
+                this.persistEditHintDismissal(true);
+            }
         } catch (e) {
-            // private mode / storage unavailable — treat as not dismissed
+            // storage unavailable — rely on config-backed dismissal state
         }
 
-        // No widgets means nothing for the user to edit yet
         const hasWidgets = this.widgets.some(w => w.enabled);
-        if (dismissed || !hasWidgets) return;
+        if (dismissed || !hasWidgets) {
+            badge.classList.add('hidden');
+            this.lastEditHintRegion = null;
+            this.syncEditHintRegion(null);
+            return;
+        }
 
         badge.classList.remove('hidden');
+        this.scheduleEditHintLayoutUpdate();
 
         const close = document.getElementById('edit-hint-close');
         if (close && !close.dataset.bound) {
@@ -504,11 +531,195 @@ const WidgetManager = {
     dismissEditHint() {
         const badge = document.getElementById('edit-hint-badge');
         if (badge) badge.classList.add('hidden');
+        this.settings.editHintDismissed = true;
+        this.lastEditHintRegion = null;
+        this.syncEditHintRegion(null);
+        this.persistEditHintDismissal(true);
         try {
             localStorage.setItem(this.EDIT_HINT_STORAGE_KEY, '1');
         } catch (e) {
-            // storage unavailable — badge will reappear next session, acceptable
+            // storage unavailable — badge will reappear next session
         }
+    },
+
+    persistEditHintDismissal(dismissed) {
+        if (typeof api === 'undefined') return;
+
+        api('set_overlay_edit_hint_dismissed', dismissed).catch((error) => {
+            console.error('[WidgetManager] Failed to persist edit hint dismissal:', error);
+        });
+    },
+
+    /**
+     * Reposition the edit hint near the active widget cluster.
+     */
+    scheduleEditHintLayoutUpdate() {
+        if (this.editHintLayoutFrame) return;
+
+        this.editHintLayoutFrame = window.requestAnimationFrame(() => {
+            this.editHintLayoutFrame = null;
+            this.updateEditHintLayout();
+        });
+    },
+
+    updateEditHintLayout() {
+        const badge = document.getElementById('edit-hint-badge');
+        if (!badge || badge.classList.contains('hidden')) {
+            this.syncEditHintRegion(null);
+            return;
+        }
+
+        const anchor = this.getEnabledWidgetBounds();
+        if (!anchor) {
+            badge.classList.add('hidden');
+            this.lastEditHintRegion = null;
+            this.syncEditHintRegion(null);
+            return;
+        }
+
+        const badgeSize = this.measureEditHintBadge(badge);
+        const placement = this.computeEditHintPlacement(anchor, badgeSize, {
+            width: window.innerWidth,
+            height: window.innerHeight,
+        });
+
+        badge.style.left = `${placement.x}px`;
+        badge.style.top = `${placement.y}px`;
+        badge.style.bottom = 'auto';
+        badge.style.transform = 'none';
+        badge.dataset.placement = placement.placement;
+
+        this.syncEditHintRegion({
+            x: placement.x,
+            y: placement.y,
+            width: badgeSize.width,
+            height: badgeSize.height,
+        });
+    },
+
+    measureEditHintBadge(badge) {
+        const prevLeft = badge.style.left;
+        const prevTop = badge.style.top;
+        const prevBottom = badge.style.bottom;
+        const prevTransform = badge.style.transform;
+        const prevVisibility = badge.style.visibility;
+
+        badge.style.left = '0px';
+        badge.style.top = '0px';
+        badge.style.bottom = 'auto';
+        badge.style.transform = 'none';
+        badge.style.visibility = 'hidden';
+
+        const rect = badge.getBoundingClientRect();
+
+        badge.style.left = prevLeft;
+        badge.style.top = prevTop;
+        badge.style.bottom = prevBottom;
+        badge.style.transform = prevTransform;
+        badge.style.visibility = prevVisibility;
+
+        return {
+            width: Math.ceil(rect.width),
+            height: Math.ceil(rect.height),
+        };
+    },
+
+    getEnabledWidgetBounds() {
+        const elements = this.widgets
+            .filter(widget => widget.enabled)
+            .map(widget => document.getElementById(widget.id))
+            .filter(Boolean);
+
+        if (elements.length === 0) return null;
+
+        return elements.reduce((bounds, el) => {
+            const rect = el.getBoundingClientRect();
+            return {
+                left: Math.min(bounds.left, rect.left),
+                top: Math.min(bounds.top, rect.top),
+                right: Math.max(bounds.right, rect.right),
+                bottom: Math.max(bounds.bottom, rect.bottom),
+            };
+        }, {
+            left: Number.POSITIVE_INFINITY,
+            top: Number.POSITIVE_INFINITY,
+            right: Number.NEGATIVE_INFINITY,
+            bottom: Number.NEGATIVE_INFINITY,
+        });
+    },
+
+    computeEditHintPlacement(anchor, badgeSize, viewport) {
+        const margin = this.EDIT_HINT_MARGIN;
+        const gap = this.EDIT_HINT_GAP;
+        const anchorCenterX = (anchor.left + anchor.right) / 2;
+        const anchorCenterY = (anchor.top + anchor.bottom) / 2;
+
+        const candidates = [
+            {
+                placement: 'above',
+                x: anchorCenterX - (badgeSize.width / 2),
+                y: anchor.top - badgeSize.height - gap,
+            },
+            {
+                placement: 'below',
+                x: anchorCenterX - (badgeSize.width / 2),
+                y: anchor.bottom + gap,
+            },
+            {
+                placement: 'right',
+                x: anchor.right + gap,
+                y: anchorCenterY - (badgeSize.height / 2),
+            },
+            {
+                placement: 'left',
+                x: anchor.left - badgeSize.width - gap,
+                y: anchorCenterY - (badgeSize.height / 2),
+            },
+        ];
+
+        const fits = (candidate) => (
+            candidate.x >= margin
+            && candidate.y >= margin
+            && (candidate.x + badgeSize.width) <= (viewport.width - margin)
+            && (candidate.y + badgeSize.height) <= (viewport.height - margin)
+        );
+
+        const chosen = candidates.find(fits) || candidates[0];
+
+        return {
+            placement: chosen.placement,
+            x: this.clampEditHintCoordinate(chosen.x, margin, viewport.width - badgeSize.width - margin),
+            y: this.clampEditHintCoordinate(chosen.y, margin, viewport.height - badgeSize.height - margin),
+        };
+    },
+
+    clampEditHintCoordinate(value, min, max) {
+        if (max < min) return min;
+        return Math.max(min, Math.min(max, value));
+    },
+
+    syncEditHintRegion(rect) {
+        const payload = rect
+            ? {
+                visible: true,
+                rect: {
+                    x: Math.round(rect.x),
+                    y: Math.round(rect.y),
+                    width: Math.round(rect.width),
+                    height: Math.round(rect.height),
+                },
+            }
+            : { visible: false };
+
+        const nextRegion = JSON.stringify(payload);
+        if (this.lastEditHintRegion === nextRegion) return;
+        this.lastEditHintRegion = nextRegion;
+
+        if (typeof api === 'undefined') return;
+
+        api('update_overlay_hint_region', payload).catch((error) => {
+            console.error('[WidgetManager] Failed to sync edit hint region:', error);
+        });
     },
 
     /**
