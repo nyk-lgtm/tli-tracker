@@ -27,7 +27,6 @@ from .storage import (
 )
 from .tracker import Tracker
 from .updater import Updater
-from .version import VERSION
 
 
 class Api:
@@ -498,10 +497,6 @@ class Api:
         return {"status": "ok", "message": "pong"}
 
     # === Update API ===
-
-    def get_version(self) -> str:
-        """Get current application version."""
-        return VERSION
 
     def get_update_state(self) -> dict:
         """Return the current updater snapshot."""

@@ -247,11 +247,6 @@ class ApiBridge(QObject):
     # === Update API ===
 
     @Slot(result=str)
-    def get_version(self) -> str:
-        """Get current application version."""
-        return json.dumps(self.api.get_version(), default=str)
-
-    @Slot(result=str)
     def get_update_state(self) -> str:
         """Get the current updater snapshot."""
         return json.dumps(self.api.get_update_state(), default=str)
