@@ -1281,8 +1281,8 @@ button[data-tooltip]:hover::before {
 /* Main window update notification */
 .update-notification {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.5rem;
     padding: 0.5rem 0.75rem;
     margin-bottom: 0.75rem;
     border-radius: 0.5rem;
@@ -1291,8 +1291,70 @@ button[data-tooltip]:hover::before {
     box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
 }
 
+.update-notification-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .update-notification.hidden {
     display: none;
+}
+
+.update-notification-notes {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.update-notification-notes.hidden {
+    display: none;
+}
+
+.update-notification-notes summary {
+    cursor: pointer;
+    user-select: none;
+    padding: 0.25rem 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+}
+
+.update-notification-notes summary:hover {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.update-notification-notes-body {
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 0.5rem 0.25rem 0.25rem;
+    line-height: 1.4;
+}
+
+.update-notification-notes-body strong {
+    color: rgba(255, 255, 255, 1);
+    font-weight: 600;
+}
+
+.update-notification-notes-body .notes-heading {
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.update-notification-notes-body .notes-heading:first-child {
+    margin-top: 0;
+}
+
+.update-notification-notes-body ul {
+    list-style: disc;
+    margin: 0 0 0.25rem 1.1rem;
+    padding: 0;
+}
+
+.update-notification-notes-body li {
+    margin-bottom: 0.15rem;
+}
+
+.update-notification-notes-body p {
+    margin: 0 0 0.25rem;
 }
 
 .update-notification-close {

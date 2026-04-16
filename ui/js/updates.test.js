@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildUpdateViewModel, formatRelativeTime, normalizeUpdateState } from './updates.js';
+import { buildUpdateViewModel, formatRelativeTime, normalizeUpdateState, parseReleaseNotes } from './updates.js';
 
 test('normalizeUpdateState fills in defaults', () => {
     const state = normalizeUpdateState({ status: 'checking' });
@@ -79,6 +79,41 @@ test('formatRelativeTime buckets seconds, minutes, hours, days', () => {
 test('normalizeUpdateState carries last_checked_at through', () => {
     const state = normalizeUpdateState({ last_checked_at: '2026-04-16T12:00:00Z' });
     assert.equal(state.last_checked_at, '2026-04-16T12:00:00Z');
+});
+
+test('normalizeUpdateState carries release_notes through', () => {
+    const state = normalizeUpdateState({ release_notes: '**New**\n- Feature' });
+    assert.equal(state.release_notes, '**New**\n- Feature');
+});
+
+test('parseReleaseNotes returns empty string for empty or missing input', () => {
+    assert.equal(parseReleaseNotes(''), '');
+    assert.equal(parseReleaseNotes(null), '');
+    assert.equal(parseReleaseNotes(undefined), '');
+});
+
+test('parseReleaseNotes renders headings, bullets, and inline bold', () => {
+    const html = parseReleaseNotes('**New**\n- Adds **shiny** feature\n- And another\n\n**Fixes**\n- One fix');
+    assert.equal(
+        html,
+        '<div class="notes-heading"><strong>New</strong></div>'
+        + '<ul><li>Adds <strong>shiny</strong> feature</li><li>And another</li></ul>'
+        + '<div class="notes-heading"><strong>Fixes</strong></div>'
+        + '<ul><li>One fix</li></ul>'
+    );
+});
+
+test('parseReleaseNotes escapes HTML to prevent injection', () => {
+    const html = parseReleaseNotes('- <script>alert(1)</script>\n- a & b');
+    assert.equal(
+        html,
+        '<ul><li>&lt;script&gt;alert(1)&lt;/script&gt;</li><li>a &amp; b</li></ul>'
+    );
+});
+
+test('parseReleaseNotes wraps non-heading, non-bullet lines in paragraphs', () => {
+    const html = parseReleaseNotes('Just some prose.\n\nAnother line.');
+    assert.equal(html, '<p>Just some prose.</p><p>Another line.</p>');
 });
 
 test('startup errors stay quiet while manual errors surface', () => {

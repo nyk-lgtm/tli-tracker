@@ -105,11 +105,17 @@
 
         <!-- Update Notification (main window) -->
         <div id="update-notification" class="update-notification hidden">
-            <span id="update-notification-text" class="text-sm font-medium"></span>
-            <div class="flex items-center gap-2">
-                <button id="btn-update-restart" class="btn-primary text-xs">Restart to Update</button>
-                <button id="btn-update-dismiss" class="update-notification-close" aria-label="Dismiss until next restart" data-tooltip="Dismiss until next restart">×</button>
+            <div class="update-notification-row">
+                <span id="update-notification-text" class="text-sm font-medium"></span>
+                <div class="flex items-center gap-2">
+                    <button id="btn-update-restart" class="btn-primary text-xs">Restart to Update</button>
+                    <button id="btn-update-dismiss" class="update-notification-close" aria-label="Dismiss until next restart" data-tooltip="Dismiss until next restart">×</button>
+                </div>
             </div>
+            <details id="update-notification-notes" class="update-notification-notes hidden">
+                <summary>What's new</summary>
+                <div id="update-notification-notes-body" class="update-notification-notes-body"></div>
+            </details>
         </div>
 
         <!-- Action Buttons -->

@@ -11,7 +11,8 @@ const DEFAULT_UPDATE_STATE = Object.freeze({
     progress_percent: 0,
     error: '',
     trigger: '',
-    last_checked_at: ''
+    last_checked_at: '',
+    release_notes: ''
 });
 
 let currentUpdateState = { ...DEFAULT_UPDATE_STATE };
@@ -36,8 +37,58 @@ export function normalizeUpdateState(snapshot = {}) {
             : 0,
         error: typeof snapshot?.error === 'string' ? snapshot.error : '',
         trigger: typeof snapshot?.trigger === 'string' ? snapshot.trigger : '',
-        last_checked_at: typeof snapshot?.last_checked_at === 'string' ? snapshot.last_checked_at : ''
+        last_checked_at: typeof snapshot?.last_checked_at === 'string' ? snapshot.last_checked_at : '',
+        release_notes: typeof snapshot?.release_notes === 'string' ? snapshot.release_notes : ''
     };
+}
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[c]));
+}
+
+export function parseReleaseNotes(text) {
+    if (!text) return '';
+    const lines = escapeHtml(text).split('\n');
+    const html = [];
+    let inList = false;
+
+    const applyBold = (s) => s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    const closeList = () => {
+        if (inList) {
+            html.push('</ul>');
+            inList = false;
+        }
+    };
+
+    for (const raw of lines) {
+        const line = raw.trim();
+        if (line.startsWith('- ')) {
+            if (!inList) {
+                html.push('<ul>');
+                inList = true;
+            }
+            html.push(`<li>${applyBold(line.slice(2))}</li>`);
+            continue;
+        }
+
+        closeList();
+        if (line === '') continue;
+
+        const content = applyBold(line);
+        if (/^<strong>.*<\/strong>$/.test(content)) {
+            html.push(`<div class="notes-heading">${content}</div>`);
+        } else {
+            html.push(`<p>${content}</p>`);
+        }
+    }
+    closeList();
+    return html.join('');
 }
 
 export function formatRelativeTime(iso, now = Date.now()) {
@@ -212,6 +263,21 @@ function renderUpdateControls() {
     }
 }
 
+function renderReleaseNotes(show) {
+    const notes = elements.updateNotificationNotes;
+    const body = elements.updateNotificationNotesBody;
+    if (!notes || !body) return;
+
+    const html = show ? parseReleaseNotes(currentUpdateState.release_notes) : '';
+    if (!html) {
+        notes.classList.add('hidden');
+        body.innerHTML = '';
+        return;
+    }
+    body.innerHTML = html;
+    notes.classList.remove('hidden');
+}
+
 function renderUpdateNotification() {
     const el = elements.updateNotification;
     const text = elements.updateNotificationText;
@@ -222,6 +288,7 @@ function renderUpdateNotification() {
     // manual checks stay entirely in the settings modal
     if (currentUpdateState.trigger === 'manual') {
         el.classList.add('hidden');
+        renderReleaseNotes(false);
         return;
     }
 
@@ -235,12 +302,14 @@ function renderUpdateNotification() {
             : 'Applying update...';
         btn.textContent = 'Restarting...';
         btn.disabled = true;
+        renderReleaseNotes(false);
         return;
     }
 
     if (currentUpdateState.status === 'downloaded') {
         if (dismissedForVersion && dismissedForVersion === currentUpdateState.new_version) {
             el.classList.add('hidden');
+            renderReleaseNotes(false);
             return;
         }
         el.classList.remove('hidden');
@@ -249,10 +318,12 @@ function renderUpdateNotification() {
             : 'Update ready to install';
         btn.textContent = 'Restart to Update';
         btn.disabled = false;
+        renderReleaseNotes(true);
         return;
     }
 
     el.classList.add('hidden');
+    renderReleaseNotes(false);
 }
 
 export function handleUpdateState(snapshot) {
