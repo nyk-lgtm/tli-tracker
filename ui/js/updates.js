@@ -285,8 +285,11 @@ function renderUpdateNotification() {
     const dismissBtn = elements.btnUpdateDismiss;
     if (!el || !text || !btn) return;
 
-    // manual checks stay entirely in the settings modal
-    if (currentUpdateState.trigger === 'manual') {
+    // manual intermediate states stay in the settings modal; the banner only
+    // surfaces once there's a terminal update ready to install
+    if (currentUpdateState.trigger === 'manual'
+        && currentUpdateState.status !== 'downloaded'
+        && !applyInFlight) {
         el.classList.add('hidden');
         renderReleaseNotes(false);
         return;
