@@ -10,7 +10,8 @@ const DEFAULT_UPDATE_STATE = Object.freeze({
     new_version: '',
     progress_percent: 0,
     error: '',
-    trigger: ''
+    trigger: '',
+    last_checked_at: ''
 });
 
 let currentUpdateState = { ...DEFAULT_UPDATE_STATE };
@@ -34,8 +35,23 @@ export function normalizeUpdateState(snapshot = {}) {
             ? Math.max(0, Math.min(100, Math.round(snapshot.progress_percent)))
             : 0,
         error: typeof snapshot?.error === 'string' ? snapshot.error : '',
-        trigger: typeof snapshot?.trigger === 'string' ? snapshot.trigger : ''
+        trigger: typeof snapshot?.trigger === 'string' ? snapshot.trigger : '',
+        last_checked_at: typeof snapshot?.last_checked_at === 'string' ? snapshot.last_checked_at : ''
     };
+}
+
+export function formatRelativeTime(iso, now = Date.now()) {
+    if (!iso) return '';
+    const ts = Date.parse(iso);
+    if (Number.isNaN(ts)) return '';
+    const diffSec = Math.max(0, Math.floor((now - ts) / 1000));
+    if (diffSec < 60) return 'just now';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `${diffHr}h ago`;
+    const diffDay = Math.floor(diffHr / 24);
+    return `${diffDay}d ago`;
 }
 
 export function buildUpdateViewModel(snapshot, { applyPending = false } = {}) {
@@ -140,9 +156,28 @@ function renderUpdateStatus(message = '', type = 'info') {
     el.classList.add(`status-${type}`);
 }
 
+function renderCheckUpdatesTooltip() {
+    const label = elements.checkUpdatesLabel;
+    if (!label) return;
+
+    const version = currentUpdateState.current_version;
+    const parts = [];
+    if (version) parts.push(`Current: v${version}`);
+    const rel = formatRelativeTime(currentUpdateState.last_checked_at);
+    if (rel) parts.push(`Last checked ${rel}`);
+
+    if (parts.length === 0) {
+        delete label.dataset.tooltip;
+    } else {
+        label.dataset.tooltip = parts.join(' · ');
+    }
+}
+
 function renderUpdateControls() {
     const button = elements.btnCheckUpdates;
     if (!button) return;
+
+    renderCheckUpdatesTooltip();
 
     const view = buildUpdateViewModel(currentUpdateState, { applyPending: applyInFlight });
     button.textContent = view.buttonText;

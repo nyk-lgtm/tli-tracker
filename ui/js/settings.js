@@ -274,18 +274,6 @@ export async function loadSettings() {
             updateHotkeyHint();
         }
 
-        // Version tooltip on check-updates label
-        if (elements.checkUpdatesLabel) {
-            try {
-                const version = await api('get_version');
-                if (version) {
-                    elements.checkUpdatesLabel.dataset.tooltip = `Current: v${version}`;
-                }
-            } catch (e) {
-                // non-critical, ignore
-            }
-        }
-
         updateAllToggleVisuals();
         applyMapValueVisibility();
     } catch (e) {

@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from PySide6.QtCore import QCoreApplication
+from PySide6.QtNetwork import QNetworkReply
 
 from app import storage
 from app.updater import Updater
@@ -180,6 +181,29 @@ def test_apply_downloaded_update_uses_silent_installer_flags(
             "/NORESTART",
         ]
     ]
+
+
+def test_check_completion_records_last_checked_at(
+    qt_app: QCoreApplication,
+) -> None:
+    updater = Updater()
+    assert updater.get_update_state()["last_checked_at"] == ""
+
+    class FakeReply:
+        def error(self) -> QNetworkReply.NetworkError:
+            return QNetworkReply.NetworkError.TimeoutError
+
+        def errorString(self) -> str:
+            return "timeout"
+
+        def deleteLater(self) -> None:
+            pass
+
+    updater._on_check_finished(FakeReply())
+
+    snapshot = updater.get_update_state()
+    assert snapshot["last_checked_at"]
+    assert "T" in snapshot["last_checked_at"]
 
 
 def test_config_migration_backfills_auto_download_updates() -> None:

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildUpdateViewModel, normalizeUpdateState } from './updates.js';
+import { buildUpdateViewModel, formatRelativeTime, normalizeUpdateState } from './updates.js';
 
 test('normalizeUpdateState fills in defaults', () => {
     const state = normalizeUpdateState({ status: 'checking' });
@@ -63,6 +63,22 @@ test('busy states stay disabled while checking', () => {
     assert.equal(view.buttonText, 'Checking...');
     assert.equal(view.buttonDisabled, true);
     assert.equal(view.statusMessage, '');
+});
+
+test('formatRelativeTime buckets seconds, minutes, hours, days', () => {
+    const now = Date.parse('2026-04-16T12:00:00Z');
+
+    assert.equal(formatRelativeTime('', now), '');
+    assert.equal(formatRelativeTime('not-a-date', now), '');
+    assert.equal(formatRelativeTime('2026-04-16T11:59:30Z', now), 'just now');
+    assert.equal(formatRelativeTime('2026-04-16T11:55:00Z', now), '5m ago');
+    assert.equal(formatRelativeTime('2026-04-16T09:00:00Z', now), '3h ago');
+    assert.equal(formatRelativeTime('2026-04-14T12:00:00Z', now), '2d ago');
+});
+
+test('normalizeUpdateState carries last_checked_at through', () => {
+    const state = normalizeUpdateState({ last_checked_at: '2026-04-16T12:00:00Z' });
+    assert.equal(state.last_checked_at, '2026-04-16T12:00:00Z');
 });
 
 test('startup errors stay quiet while manual errors surface', () => {
