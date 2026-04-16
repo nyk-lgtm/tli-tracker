@@ -1278,6 +1278,23 @@ button[data-tooltip]:hover::before {
     border-color: #ef4444;
 }
 
+/* Main window update notification */
+.update-notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #22c55e;
+    background: linear-gradient(135deg, #134e4a 0%, #166534 100%);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.update-notification.hidden {
+    display: none;
+}
+
 /* Inline update status in settings modal */
 #update-row.hidden,
 #update-status.hidden {

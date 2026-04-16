@@ -44,6 +44,10 @@ export function initElements() {
         btnCheckUpdates: document.getElementById('btn-check-updates'),
         updateStatus: document.getElementById('update-status'),
         updateRow: document.getElementById('update-row'),
+        // Main window update notification
+        updateNotification: document.getElementById('update-notification'),
+        updateNotificationText: document.getElementById('update-notification-text'),
+        btnUpdateRestart: document.getElementById('btn-update-restart'),
         // Settings tabs
         settingsTabs: document.querySelectorAll('.settings-tab'),
         tabGeneral: document.getElementById('tab-general'),

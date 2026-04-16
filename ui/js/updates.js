@@ -106,9 +106,47 @@ function renderUpdateControls() {
     if (!button) return;
 
     const view = buildUpdateViewModel(currentUpdateState, { applyPending: applyInFlight });
+
+    // settings section never shows "Restart to Update" — the main window handles that
+    if (currentUpdateState.status === 'downloaded' && !applyInFlight) {
+        button.textContent = 'Check Now';
+        button.disabled = false;
+        renderUpdateStatus('', 'info');
+        return;
+    }
+
     button.textContent = view.buttonText;
     button.disabled = view.buttonDisabled;
     renderUpdateStatus(view.statusMessage, view.statusType);
+}
+
+function renderUpdateNotification() {
+    const el = elements.updateNotification;
+    const text = elements.updateNotificationText;
+    const btn = elements.btnUpdateRestart;
+    if (!el || !text || !btn) return;
+
+    if (applyInFlight) {
+        el.classList.remove('hidden');
+        text.textContent = currentUpdateState.new_version
+            ? `Applying v${currentUpdateState.new_version}...`
+            : 'Applying update...';
+        btn.textContent = 'Restarting...';
+        btn.disabled = true;
+        return;
+    }
+
+    if (currentUpdateState.status === 'downloaded') {
+        el.classList.remove('hidden');
+        text.textContent = currentUpdateState.new_version
+            ? `Update ready: v${currentUpdateState.new_version}`
+            : 'Update ready to install';
+        btn.textContent = 'Restart to Update';
+        btn.disabled = false;
+        return;
+    }
+
+    el.classList.add('hidden');
 }
 
 export function handleUpdateState(snapshot) {
@@ -117,6 +155,7 @@ export function handleUpdateState(snapshot) {
         applyInFlight = false;
     }
     renderUpdateControls();
+    renderUpdateNotification();
 }
 
 export async function loadUpdateState() {
@@ -136,9 +175,10 @@ async function startUpdateFlow(trigger) {
     return snapshot;
 }
 
-async function applyDownloadedUpdate() {
+export async function applyDownloadedUpdate() {
     applyInFlight = true;
     renderUpdateControls();
+    renderUpdateNotification();
 
     try {
         const result = await api('apply_downloaded_update');
@@ -161,8 +201,8 @@ export async function checkForUpdates() {
         return;
     }
 
+    // downloaded state is handled by the main window notification
     if (currentUpdateState.status === 'downloaded') {
-        await applyDownloadedUpdate();
         return;
     }
 

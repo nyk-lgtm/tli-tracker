@@ -11,7 +11,7 @@ import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners } from './settings.js';
 import { loadHistory } from './history.js';
-import { checkForUpdates, checkForUpdatesOnStartup, handleUpdateState, loadUpdateState } from './updates.js';
+import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, handleUpdateState, loadUpdateState } from './updates.js';
 import { updateState, renderUI, renderDrops, updateTimedStats } from './renderers.js';
 import {
     applyPriceHistoryUpdate,
@@ -336,9 +336,14 @@ function init() {
     // History modal
     elements.btnCloseHistory.addEventListener('click', () => closeModal('history'));
 
-    // Update check button
+    // Update check button (settings)
     if (elements.btnCheckUpdates) {
         elements.btnCheckUpdates.addEventListener('click', checkForUpdates);
+    }
+
+    // Update restart button (main window)
+    if (elements.btnUpdateRestart) {
+        elements.btnUpdateRestart.addEventListener('click', applyDownloadedUpdate);
     }
 
     // Close modals on backdrop click
