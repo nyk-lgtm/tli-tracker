@@ -62,7 +62,7 @@ export function buildUpdateViewModel(snapshot, { applyPending = false } = {}) {
                 : `Downloading update... ${state.progress_percent}%`;
             break;
         case 'downloaded':
-            view.buttonText = 'Restart to Update';
+            view.buttonText = 'Update';
             view.statusMessage = state.new_version
                 ? `Update ready: v${state.new_version}`
                 : 'Update ready to install';
@@ -106,17 +106,22 @@ function renderUpdateControls() {
     if (!button) return;
 
     const view = buildUpdateViewModel(currentUpdateState, { applyPending: applyInFlight });
+    button.textContent = view.buttonText;
+    button.disabled = view.buttonDisabled;
 
-    // settings section never shows "Restart to Update" — the main window handles that
     if (currentUpdateState.status === 'downloaded' && !applyInFlight) {
-        button.textContent = 'Check Now';
-        button.disabled = false;
+        button.setAttribute('data-tooltip', 'Restarts the app to install the update');
+    } else {
+        button.removeAttribute('data-tooltip');
+    }
+
+    // auto-download status is surfaced on the main window, not settings
+    if (currentUpdateState.trigger !== 'manual'
+        && (currentUpdateState.status === 'downloaded' || applyInFlight)) {
         renderUpdateStatus('', 'info');
         return;
     }
 
-    button.textContent = view.buttonText;
-    button.disabled = view.buttonDisabled;
     renderUpdateStatus(view.statusMessage, view.statusType);
 }
 
@@ -125,6 +130,12 @@ function renderUpdateNotification() {
     const text = elements.updateNotificationText;
     const btn = elements.btnUpdateRestart;
     if (!el || !text || !btn) return;
+
+    // manual checks stay entirely in the settings modal
+    if (currentUpdateState.trigger === 'manual') {
+        el.classList.add('hidden');
+        return;
+    }
 
     if (applyInFlight) {
         el.classList.remove('hidden');
@@ -201,8 +212,8 @@ export async function checkForUpdates() {
         return;
     }
 
-    // downloaded state is handled by the main window notification
     if (currentUpdateState.status === 'downloaded') {
+        await applyDownloadedUpdate();
         return;
     }
 
