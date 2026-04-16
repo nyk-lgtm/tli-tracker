@@ -51,6 +51,7 @@ def compile_nuitka() -> int:
         f"--include-data-file={ROOT / 'data' / 'item_ids.json'}=data/item_ids.json",
         f"--windows-icon-from-ico={ROOT / 'ui' / 'assets' / 'logo.ico'}",
         "--windows-console-mode=disable",
+        "--assume-yes-for-downloads",
         f"--output-dir={ROOT / 'dist'}",
         "--mingw64",
         str(ROOT / "app" / "main.py"),
