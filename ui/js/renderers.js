@@ -348,6 +348,7 @@ function renderHistoryPanel(itemId) {
 function renderDropRow(item, trailingHtml) {
     const itemId = String(item.item_id || '');
     const isExpanded = getExpandedPriceHistoryItemId() === itemId;
+    const isIgnored = !!item.ignored;
     const statusClass = item.price_status || 'unknown';
     const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
     const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
@@ -355,13 +356,17 @@ function renderDropRow(item, trailingHtml) {
     const badgeHtml = itemId
         ? `<span class="drop-item-history-badge">${activeRange.label}</span>`
         : '';
+    const ignoredBadge = isIgnored
+        ? '<span class="drop-item-ignored-badge">IGNORED</span>'
+        : '';
 
     return `
-        <div class="drop-row${isExpanded ? ' expanded' : ''}">
+        <div class="drop-row${isExpanded ? ' expanded' : ''}${isIgnored ? ' ignored' : ''}">
             <div
                 class="drop-item drop-item-toggle"
                 data-drop-row
                 data-item-id="${escapeHtml(itemId)}"
+                data-ignored="${isIgnored ? 'true' : 'false'}"
                 aria-expanded="${isExpanded ? 'true' : 'false'}"
             >
                 <div class="drop-item-name">
@@ -369,6 +374,7 @@ function renderDropRow(item, trailingHtml) {
                     ${trailingHtml.nameHtml}
                 </div>
                 <div class="drop-item-end">
+                    ${ignoredBadge}
                     ${badgeHtml}
                     ${trailingHtml.valueHtml}
                 </div>

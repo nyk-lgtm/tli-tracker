@@ -57,6 +57,7 @@ def test_tracker_initializes_and_tracks_drop_during_map() -> None:
             "price_status": "unknown",
             "quantity": 2,
             "value": 0.0,
+            "ignored": False,
         },
         {
             "item_id": "3001",
@@ -66,10 +67,53 @@ def test_tracker_initializes_and_tracks_drop_during_map() -> None:
             "price_status": "unknown",
             "quantity": 1,
             "value": 0.0,
+            "ignored": False,
         },
     ]
     assert stats["session"]["category_totals"] == []
     assert any(event_type == "state" for event_type, _ in events)
+
+
+def test_tracker_toggle_ignore_item_excludes_from_aggregates() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(read_fixture("bag_modify.log"))
+    tracker.prices.set_price("2001", 10.0)
+    tracker.prices.set_price("3001", 5.0)
+    tracker._backfill_prices("2001")
+    tracker._backfill_prices("3001")
+
+    stats = tracker.get_stats()
+    assert stats["session"]["value"] == 25.0
+    assert stats["current_map"]["items"] == 3
+
+    result = tracker.toggle_ignore_item("2001")
+    assert result == {"status": "ok", "item_id": "2001", "ignored": True}
+
+    stats = tracker.get_stats()
+    assert stats["session"]["value"] == 5.0
+    assert stats["current_map"]["items"] == 1
+    row_2001 = next(r for r in stats["session"]["item_rows"] if r["item_id"] == "2001")
+    assert row_2001["ignored"] is True
+    assert row_2001["quantity"] == 2
+    assert row_2001["value"] == 20.0
+
+    result = tracker.toggle_ignore_item("2001")
+    assert result == {"status": "ok", "item_id": "2001", "ignored": False}
+    stats = tracker.get_stats()
+    assert stats["session"]["value"] == 25.0
+    assert stats["current_map"]["items"] == 3
+
+
+def test_tracker_toggle_ignore_item_no_session() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    result = tracker.toggle_ignore_item("2001")
+    assert result["status"] == "error"
 
 
 def test_tracker_reset_session_saves_completed_session() -> None:
@@ -165,6 +209,7 @@ def test_tracker_get_stats_includes_completed_and_current_map_drops() -> None:
             "price_status": "fresh",
             "quantity": 4,
             "value": 40.0,
+            "ignored": False,
         }
     ]
     assert stats["session"]["category_totals"] == [
@@ -271,6 +316,7 @@ def test_resync_inside_map_tracks_future_drops_after_init_settles(
             "price_status": "unknown",
             "quantity": 1,
             "value": 0.0,
+            "ignored": False,
         }
     ]
 
@@ -311,6 +357,7 @@ def test_bootstrap_mid_map_start_allows_sync_and_drop_tracking(monkeypatch) -> N
             "price_status": "unknown",
             "quantity": 1,
             "value": 0.0,
+            "ignored": False,
         }
     ]
 

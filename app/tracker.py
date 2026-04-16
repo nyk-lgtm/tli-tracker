@@ -256,16 +256,17 @@ class Tracker:
         if not session:
             return
 
+        ignored = session.ignored_item_ids
         for index, map_run in enumerate(session.maps):
-            self._live_completed_value += map_run.net_value
-            self._live_completed_items += map_run.total_items
+            self._live_completed_value += map_run.net_value_excluding(ignored)
+            self._live_completed_items += map_run.total_items_excluding(ignored)
             self._live_completed_duration += map_run.duration_seconds
             if map_run.ended_at and not map_run.is_league_zone:
                 self._live_completed_map_count += 1
                 self._live_maps.append(
                     {
                         "index": index,
-                        "total_value": map_run.net_value,
+                        "total_value": map_run.net_value_excluding(ignored),
                         "duration_seconds": map_run.duration_seconds,
                         "ended_at_offset": (
                             map_run.ended_at - session.started_at
@@ -274,22 +275,28 @@ class Tracker:
                 )
 
             for drop in map_run.drops:
-                self._accumulate_drop(drop, include_current_map=False)
+                self._accumulate_drop(drop, include_current_map=False, ignored=ignored)
 
         if self.state.current_map and (
             not session.maps or session.maps[-1] is not self.state.current_map
         ):
             for drop in self.state.current_map.drops:
-                self._accumulate_drop(drop, include_current_map=True)
+                self._accumulate_drop(drop, include_current_map=True, ignored=ignored)
 
         self._refresh_item_metadata()
 
-    def _accumulate_drop(self, drop: Drop, include_current_map: bool) -> None:
+    def _accumulate_drop(
+        self,
+        drop: Drop,
+        include_current_map: bool,
+        ignored: set[str] | None = None,
+    ) -> None:
         """Accumulate a raw drop into aggregate live state."""
         item_name = get_item_name(drop.item_id)
         if item_name.startswith("Unknown ("):
             return
 
+        is_ignored = bool(ignored) and drop.item_id in ignored
         item_type = get_item_type(drop.item_id) or "Other"
         entry = self._live_items.setdefault(
             drop.item_id,
@@ -301,18 +308,20 @@ class Tracker:
                 "value": 0.0,
                 "price_status": "unknown",
                 "price_source": "local",
+                "ignored": is_ignored,
             },
         )
+        entry["ignored"] = is_ignored
 
         entry["quantity"] += drop.quantity
         if drop.value is not None:
             entry["value"] += drop.value
-            if drop.value > 0:
+            if not is_ignored and drop.value > 0:
                 self._live_category_totals[item_type] = (
                     self._live_category_totals.get(item_type, 0.0) + drop.value
                 )
 
-        if include_current_map:
+        if include_current_map and not is_ignored:
             if drop.value is not None:
                 self._live_current_value += drop.value
             if drop.quantity > 0:
@@ -337,6 +346,8 @@ class Tracker:
     ) -> None:
         """Incrementally apply a new live drop to aggregate state."""
         normalized_type = item_type or "Other"
+        session = self.state.current_session
+        is_ignored = bool(session) and item_id in session.ignored_item_ids
         entry = self._live_items.setdefault(
             item_id,
             {
@@ -347,21 +358,24 @@ class Tracker:
                 "value": 0.0,
                 "price_status": price_status,
                 "price_source": price_source,
+                "ignored": is_ignored,
             },
         )
 
         entry["item_name"] = item_name
         entry["item_type"] = normalized_type
+        entry["ignored"] = is_ignored
         entry["quantity"] += quantity
         if value is not None:
             entry["value"] += value
-            self._live_current_value += value
-            if value > 0:
-                self._live_category_totals[normalized_type] = (
-                    self._live_category_totals.get(normalized_type, 0.0) + value
-                )
+            if not is_ignored:
+                self._live_current_value += value
+                if value > 0:
+                    self._live_category_totals[normalized_type] = (
+                        self._live_category_totals.get(normalized_type, 0.0) + value
+                    )
 
-        if quantity > 0:
+        if not is_ignored and quantity > 0:
             self._live_current_items += quantity
 
         entry["price_status"] = price_status
@@ -502,7 +516,13 @@ class Tracker:
             if self._live_dirty:
                 self._rebuild_live_cache()
             else:
-                self._live_completed_value += self.state.current_map.net_value
+                ignored = (
+                    self.state.current_session.ignored_item_ids
+                    if self.state.current_session
+                    else set()
+                )
+                completed_net = self.state.current_map.net_value_excluding(ignored)
+                self._live_completed_value += completed_net
                 self._live_completed_items += self._live_current_items
                 self._live_completed_duration += self.state.current_map.duration_seconds
                 if (
@@ -515,7 +535,7 @@ class Tracker:
                             "index": len(self.state.current_session.maps) - 1
                             if self.state.current_session
                             else 0,
-                            "total_value": self.state.current_map.net_value,
+                            "total_value": completed_net,
                             "duration_seconds": self.state.current_map.duration_seconds,
                             "ended_at_offset": (
                                 self.state.current_map.ended_at
@@ -774,6 +794,25 @@ class Tracker:
         self.state.is_initialized = False
 
         return {"status": "waiting", "message": "Sort your bag in-game to initialize"}
+
+    def toggle_ignore_item(self, item_id: str) -> dict:
+        """Toggle whether an item id is excluded from session aggregates."""
+        session = self.state.current_session
+        if not session:
+            return {"status": "error", "message": "no active session"}
+
+        if item_id in session.ignored_item_ids:
+            session.ignored_item_ids.discard(item_id)
+            now_ignored = False
+        else:
+            session.ignored_item_ids.add(item_id)
+            now_ignored = True
+
+        self._mark_live_dirty()
+        self._mark_session_dirty()
+        self.flush_current_session()
+        self._notify_state()
+        return {"status": "ok", "item_id": item_id, "ignored": now_ignored}
 
     def set_display_mode(self, mode: str) -> None:
         """Set the display mode (value or items)."""

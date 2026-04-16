@@ -103,6 +103,10 @@ class Api:
         """Toggle pause state for the current session."""
         return self.tracker.toggle_pause()
 
+    def toggle_ignore_item(self, item_id: str) -> dict:
+        """Toggle whether an item id is excluded from session aggregates."""
+        return self.tracker.toggle_ignore_item(item_id)
+
     def reset_session(self) -> dict:
         """Reset the current tracking session."""
         self.tracker.reset_session()

@@ -153,6 +153,67 @@ function loadPriceHistoryForRange(itemId, rangeKey) {
     return fetchPromise;
 }
 
+let contextMenuEl = null;
+
+function ensureContextMenu() {
+    if (contextMenuEl) return contextMenuEl;
+    contextMenuEl = document.createElement('div');
+    contextMenuEl.className = 'context-menu hidden';
+    document.body.appendChild(contextMenuEl);
+    return contextMenuEl;
+}
+
+function hideContextMenu() {
+    if (contextMenuEl) contextMenuEl.classList.add('hidden');
+}
+
+function togglePreviewIgnore(itemId) {
+    const session = window.__PREVIEW__?.state?.session;
+    if (!session) return;
+    const row = (session.item_rows || []).find((r) => r.item_id === itemId);
+    if (!row) return;
+    const delta = row.value || 0;
+    row.ignored = !row.ignored;
+    session.value = (session.value || 0) + (row.ignored ? -delta : delta);
+    applyTrackerState(window.__PREVIEW__.state);
+}
+
+function showDropContextMenu(event, itemId, isIgnored) {
+    event.preventDefault();
+    const menu = ensureContextMenu();
+    const label = isIgnored ? 'Un-ignore' : 'Ignore';
+    menu.innerHTML = `<button type="button" class="context-menu-item" data-action="toggle-ignore">${label}</button>`;
+    menu.style.left = `${event.clientX}px`;
+    menu.style.top = `${event.clientY}px`;
+    menu.classList.remove('hidden');
+
+    const btn = menu.querySelector('[data-action="toggle-ignore"]');
+    btn.onclick = async () => {
+        hideContextMenu();
+        if (window.__PREVIEW__?.enabled) {
+            togglePreviewIgnore(itemId);
+            return;
+        }
+        try {
+            await api('toggle_ignore_item', itemId);
+        } catch (e) {
+            showStatus('Failed to toggle ignore', 'error', 2000);
+        }
+    };
+}
+
+function handleDropRowContextMenu(event) {
+    const row = event.target.closest('[data-drop-row]');
+    if (!row || !elements.dropsList.contains(row)) {
+        hideContextMenu();
+        return;
+    }
+    const itemId = row.dataset.itemId;
+    if (!itemId) return;
+    const isIgnored = row.dataset.ignored === 'true';
+    showDropContextMenu(event, itemId, isIgnored);
+}
+
 async function handleDropRowClick(event) {
     const rangeButton = event.target.closest('[data-price-history-range]');
     if (rangeButton && elements.dropsList.contains(rangeButton)) {
@@ -324,6 +385,15 @@ function init() {
     elements.btnOverlay.addEventListener('click', toggleOverlay);
     elements.btnResetSettings.addEventListener('click', resetDefaults);
     elements.dropsList.addEventListener('click', handleDropRowClick);
+    elements.dropsList.addEventListener('contextmenu', handleDropRowContextMenu);
+    document.addEventListener('click', (e) => {
+        if (!contextMenuEl || contextMenuEl.classList.contains('hidden')) return;
+        if (!contextMenuEl.contains(e.target)) hideContextMenu();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') hideContextMenu();
+    });
+    window.addEventListener('blur', hideContextMenu);
 
     // Settings modal
     elements.btnCloseSettings.addEventListener('click', () => closeModal('settings'));

@@ -236,6 +236,62 @@ def test_session_to_dict_includes_maps() -> None:
     assert d["total_value"] == 50.0
 
 
+def test_map_run_total_value_excluding_skips_ignored_items() -> None:
+    run = MapRun(
+        started_at=BASE,
+        drops=[
+            _drop(item_id="2001", value=10.0),
+            _drop(item_id="3001", value=25.0),
+            _drop(item_id="2001", value=5.0),
+        ],
+    )
+    assert run.total_value_excluding({"2001"}) == 25.0
+    assert run.net_value_excluding({"2001"}) == 25.0
+
+
+def test_map_run_total_items_excluding_skips_ignored_items() -> None:
+    run = MapRun(
+        started_at=BASE,
+        drops=[
+            _drop(item_id="2001", quantity=3),
+            _drop(item_id="3001", quantity=2),
+        ],
+    )
+    assert run.total_items_excluding({"2001"}) == 2
+
+
+def test_session_aggregates_skip_ignored_item_ids() -> None:
+    session = Session(
+        id="s1",
+        started_at=BASE,
+        maps=[
+            MapRun(
+                started_at=BASE,
+                ended_at=BASE + timedelta(minutes=5),
+                drops=[
+                    _drop(item_id="2001", quantity=2, value=20.0),
+                    _drop(item_id="3001", quantity=1, value=15.0),
+                ],
+                investment=5.0,
+            ),
+        ],
+        ignored_item_ids={"2001"},
+    )
+    assert session.total_value == 15.0
+    assert session.total_items == 1
+    assert session.net_value == 10.0
+
+
+def test_session_to_dict_round_trips_ignored_item_ids() -> None:
+    session = Session(
+        id="s1",
+        started_at=BASE,
+        ignored_item_ids={"3001", "2001"},
+    )
+    d = session.to_dict()
+    assert d["ignored_item_ids"] == ["2001", "3001"]
+
+
 def test_session_to_summary_dict_excludes_maps() -> None:
     session = Session(
         id="s1",

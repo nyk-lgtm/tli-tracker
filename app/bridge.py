@@ -53,6 +53,11 @@ class ApiBridge(QObject):
         """Toggle pause state for the current session."""
         return json.dumps(self.api.toggle_pause(), default=str)
 
+    @Slot(str, result=str)
+    def toggle_ignore_item(self, item_id: str) -> str:
+        """Toggle whether an item id is excluded from session aggregates."""
+        return json.dumps(self.api.toggle_ignore_item(item_id), default=str)
+
     @Slot(result=str)
     def reset_session(self) -> str:
         """Reset the current tracking session."""

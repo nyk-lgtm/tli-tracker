@@ -88,15 +88,33 @@ class MapRun:
         """Sum of all drop values."""
         return sum(d.value or 0 for d in self.drops)
 
+    def total_value_excluding(self, ignored_item_ids: set[str]) -> float:
+        """Sum of drop values, skipping ignored items."""
+        return sum(
+            d.value or 0 for d in self.drops if d.item_id not in ignored_item_ids
+        )
+
     @property
     def total_items(self) -> int:
         """Count of items gained (positive quantities only)."""
         return sum(d.quantity for d in self.drops if d.quantity > 0)
 
+    def total_items_excluding(self, ignored_item_ids: set[str]) -> int:
+        """Count of gained items, skipping ignored items."""
+        return sum(
+            d.quantity
+            for d in self.drops
+            if d.quantity > 0 and d.item_id not in ignored_item_ids
+        )
+
     @property
     def net_value(self) -> float:
         """Total value minus investment."""
         return self.total_value - self.investment
+
+    def net_value_excluding(self, ignored_item_ids: set[str]) -> float:
+        """Net value with ignored items excluded from earnings."""
+        return self.total_value_excluding(ignored_item_ids) - self.investment
 
     def to_dict(self) -> dict:
         """Convert to dictionary for JSON serialization."""
@@ -124,6 +142,7 @@ class Session:
     maps: list[MapRun] = field(default_factory=list)
     paused_at: Optional[datetime] = None
     paused_seconds: float = 0.0
+    ignored_item_ids: set[str] = field(default_factory=set)
 
     def pause(self, now: datetime) -> None:
         if not self.paused_at:
@@ -140,8 +159,8 @@ class Session:
 
     @property
     def total_value(self) -> float:
-        """Sum of gross value from all maps (before investment)."""
-        return sum(m.total_value for m in self.maps)
+        """Sum of gross value from all maps, excluding ignored items."""
+        return sum(m.total_value_excluding(self.ignored_item_ids) for m in self.maps)
 
     @property
     def total_investment(self) -> float:
@@ -155,8 +174,8 @@ class Session:
 
     @property
     def total_items(self) -> int:
-        """Sum of items from all maps."""
-        return sum(m.total_items for m in self.maps)
+        """Sum of items from all maps, excluding ignored items."""
+        return sum(m.total_items_excluding(self.ignored_item_ids) for m in self.maps)
 
     @property
     def total_duration(self) -> float:
@@ -215,6 +234,7 @@ class Session:
             "value_per_hour": self.value_per_hour,
             "maps_per_hour": self.maps_per_hour,
             "paused_seconds": self.paused_seconds,
+            "ignored_item_ids": sorted(self.ignored_item_ids),
             "maps": [m.to_dict() for m in self.maps],
         }
 
