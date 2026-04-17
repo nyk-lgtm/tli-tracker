@@ -55,6 +55,13 @@ export function initElements() {
         settingsTabs: document.querySelectorAll('.settings-tab'),
         tabGeneral: document.getElementById('tab-general'),
         tabOverlay: document.getElementById('tab-overlay'),
+        tabAppearance: document.getElementById('tab-appearance'),
+        // Appearance tab
+        settingTheme: document.getElementById('setting-theme'),
+        btnOpenThemesFolder: document.getElementById('btn-open-themes-folder'),
+        btnDuplicateTheme: document.getElementById('btn-duplicate-theme'),
+        btnDeleteTheme: document.getElementById('btn-delete-theme'),
+        appearanceDeleteRow: document.getElementById('appearance-delete-row'),
         // Overlay settings
         settingWidgetOpacity: document.getElementById('setting-widget-opacity'),
         widgetOpacityValue: document.getElementById('widget-opacity-value'),

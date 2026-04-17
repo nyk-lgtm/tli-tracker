@@ -165,6 +165,7 @@
                     <button class="settings-tab active" data-tab="general">General</button>
                     <button class="settings-tab" data-tab="calcs">Calcs</button>
                     <button class="settings-tab" data-tab="overlay">Overlay</button>
+                    <button class="settings-tab" data-tab="appearance">Appearance</button>
                 </div>
 
                 <!-- Tab Content -->
@@ -319,6 +320,37 @@
                                     <input type="text" id="setting-hotkey-key" class="key-capture-input" readonly value="F9" placeholder="Press key">
                                 </div>
                                 <p class="text-xs text-gray-500 text-center">Press <span id="edit-hotkey-hint" class="text-gray-400">Ctrl+F9</span> with overlay visible</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Tab -->
+                    <div id="tab-appearance" class="settings-panel">
+                        <div class="space-y-4">
+                            <!-- Theme Picker -->
+                            <div class="setting-row">
+                                <span class="setting-label">Theme</span>
+                                <select id="setting-theme" class="select-input"></select>
+                            </div>
+
+                            <hr>
+
+                            <!-- Custom themes folder -->
+                            <div class="setting-row">
+                                <span class="setting-label" data-tooltip="Drop *.json theme files here to apply edits.">Custom themes folder</span>
+                                <button id="btn-open-themes-folder" class="btn-secondary text-xs">Open</button>
+                            </div>
+
+                            <!-- Duplicate active theme -->
+                            <div class="setting-row">
+                                <span class="setting-label" data-tooltip="Saves an editable copy in your custom themes folder and switches to it">Duplicate active theme</span>
+                                <button id="btn-duplicate-theme" class="btn-secondary text-xs">Duplicate</button>
+                            </div>
+
+                            <!-- Delete custom theme -->
+                            <div id="appearance-delete-row" class="setting-row hidden pt-4 border-t border-dark-border">
+                                <span class="setting-label">Delete this theme</span>
+                                <button id="btn-delete-theme" class="btn-secondary btn-destructive text-xs">Delete</button>
                             </div>
                         </div>
                     </div>

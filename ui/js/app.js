@@ -9,7 +9,7 @@ import { state } from './state.js';
 import { elements, initElements } from './elements.js';
 import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
-import { loadSettings, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners } from './settings.js';
+import { loadSettings, loadThemesList, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners, initAppearanceListeners } from './settings.js';
 import { loadHistory } from './history.js';
 import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, dismissUpdateBanner, handleUpdateState, loadUpdateState } from './updates.js';
 import { updateState, renderUI, renderDrops, updateTimedStats } from './renderers.js';
@@ -111,6 +111,11 @@ window.onPythonEvent = function(eventType, data) {
             break;
         case 'update_state':
             handleUpdateState(data);
+            break;
+        case 'themes_update':
+            // theme_manager.js re-applies the active theme; refresh the
+            // appearance dropdown so the list/active selection stays in sync.
+            void loadThemesList();
             break;
     }
 };
@@ -402,6 +407,7 @@ function init() {
     initSettingsTabs();
     initWidgetOverlayListeners();
     initGamePathListeners();
+    initAppearanceListeners();
 
     // History modal
     elements.btnCloseHistory.addEventListener('click', () => closeModal('history'));
@@ -432,6 +438,7 @@ function init() {
 
     // Load settings
     void loadSettings();
+    void loadThemesList();
     void loadUpdateState();
 
     // Start timer loop
@@ -445,7 +452,13 @@ function init() {
 
     if (window.__PREVIEW__?.enabled) {
         applyTrackerState(window.__PREVIEW__.state);
-        window.onPythonEvent = () => {};
+        // Block live state pushes (would overwrite preview state) but let
+        // everything else through so themes_update etc. still works.
+        const originalHandler = window.onPythonEvent;
+        window.onPythonEvent = (eventType, data) => {
+            if (eventType === 'state') return;
+            if (originalHandler) originalHandler(eventType, data);
+        };
     }
 
     console.log('TLI Tracker UI initialized');

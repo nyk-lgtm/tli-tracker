@@ -21,12 +21,29 @@ const ThemeManager = {
 
     /**
      * Apply a flat { '--tli-palette-bg': '#xxx', ... } map onto :root.
+     *
+     * Clears any --tli-* inline style left over from the previous apply so
+     * that vars present in the OLD theme's overrides but ABSENT in the new
+     * one fall back to the theme-vars.css defaults instead of sticking.
+     * Without this, e.g. switching from a theme with chart_palette to one
+     * without would keep the previous palette's chart colors.
      */
     applyVars(cssVars) {
         if (!cssVars || typeof cssVars !== 'object') return;
         const root = document.documentElement;
+        const style = root.style;
+
+        // Walk the inline style declarations backward so removeProperty
+        // doesn't shift indices we haven't visited yet.
+        for (let i = style.length - 1; i >= 0; i--) {
+            const propName = style[i];
+            if (propName && propName.startsWith('--tli-')) {
+                style.removeProperty(propName);
+            }
+        }
+
         for (const [key, value] of Object.entries(cssVars)) {
-            root.style.setProperty(key, value);
+            style.setProperty(key, value);
         }
     },
 
@@ -69,22 +86,26 @@ const ThemeManager = {
     },
 
     /**
-     * Wrap the existing onPythonEvent handler so we re-apply on push.
+     * Subscribe directly to the bridge signal. We deliberately do NOT wrap
+     * window.onPythonEvent because consumers (preview mode, widget_manager,
+     * edit_mode) reassign it at various points and would clobber our hook.
+     * Qt signals support multiple connected slots, so attaching here is
+     * independent of whatever else listens.
      */
     _hookEvents() {
-        const previous = window.onPythonEvent;
-        window.onPythonEvent = (eventType, data) => {
-            if (eventType === 'themes_update') {
-                void this.loadAndApply();
-            }
-            if (previous) {
-                try {
-                    previous(eventType, data);
-                } catch (e) {
-                    console.error('[ThemeManager] downstream handler threw:', e);
+        if (!window.bridge || !window.bridge.pythonEvent) {
+            console.warn('[ThemeManager] bridge.pythonEvent unavailable, cannot subscribe');
+            return;
+        }
+        try {
+            window.bridge.pythonEvent.connect((eventType, jsonData) => {
+                if (eventType === 'themes_update') {
+                    void this.loadAndApply();
                 }
-            }
-        };
+            });
+        } catch (e) {
+            console.error('[ThemeManager] failed to connect bridge.pythonEvent:', e);
+        }
     },
 
     /**

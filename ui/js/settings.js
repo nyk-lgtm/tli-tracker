@@ -5,7 +5,7 @@
 import { elements } from './elements.js';
 import { settings, updateSettings } from './state.js';
 import { showStatus, hideStatus } from './utils.js';
-import { closeModal } from './modals.js';
+import { closeModal, showConfirmDialog } from './modals.js';
 
 // Query all toggles with data-setting attribute
 const getToggles = () => document.querySelectorAll('.toggle-checkbox[data-setting]');
@@ -354,5 +354,157 @@ export async function resetDefaults() {
     } catch (e) {
         console.error('Reset defaults failed:', e);
         showStatus('Failed to reset settings', 'error');
+    }
+}
+
+// ============ Appearance / Themes ============
+
+let _themesCache = [];
+let _activeThemeId = null;
+
+function applyAppearanceMeta(themes, activeId) {
+    _themesCache = Array.isArray(themes) ? themes : [];
+    _activeThemeId = activeId || null;
+
+    const active = _themesCache.find((t) => t.id === activeId);
+    if (elements.appearanceDeleteRow) {
+        const isCustomActive = !!active && !active.builtin;
+        elements.appearanceDeleteRow.classList.toggle('hidden', !isCustomActive);
+    }
+}
+
+export async function loadThemesList() {
+    if (!elements.settingTheme) return;
+    try {
+        const [themes, activeBundle] = await Promise.all([
+            api('list_themes'),
+            api('get_active_theme'),
+        ]);
+        const activeId = activeBundle?.theme?.id || 'default';
+
+        elements.settingTheme.innerHTML = themes
+            .map((t) => {
+                const suffix = t.builtin ? '' : ' (custom)';
+                return `<option value="${t.id}">${t.name}${suffix}</option>`;
+            })
+            .join('');
+        elements.settingTheme.value = activeId;
+        applyAppearanceMeta(themes, activeId);
+    } catch (e) {
+        console.error('Failed to load themes:', e);
+    }
+}
+
+async function onThemeSelect(event) {
+    const themeId = event.target.value;
+    try {
+        const result = await api('set_active_theme', themeId);
+        if (result?.status !== 'ok') {
+            showStatus(result?.message || 'Failed to switch theme', 'error');
+            return;
+        }
+        applyAppearanceMeta(_themesCache, themeId);
+    } catch (e) {
+        console.error('Failed to set active theme:', e);
+        showStatus('Failed to switch theme', 'error');
+    }
+}
+
+async function onOpenThemesFolder() {
+    try {
+        const result = await api('open_themes_folder');
+        if (result?.status !== 'ok') {
+            showStatus(result?.message || 'Failed to open folder', 'error');
+        }
+    } catch (e) {
+        console.error('Open themes folder failed:', e);
+        showStatus('Failed to open folder', 'error');
+    }
+}
+
+async function onDuplicateTheme() {
+    try {
+        const activeBundle = await api('get_active_theme');
+        const source = activeBundle?.theme;
+        if (!source) {
+            showStatus('No active theme to duplicate', 'error');
+            return;
+        }
+
+        const baseId = source.id.replace(/-copy(-\d+)?$/, '');
+        const existing = new Set(_themesCache.map((t) => t.id));
+        let candidate = `${baseId}-copy`;
+        let n = 2;
+        while (existing.has(candidate)) {
+            candidate = `${baseId}-copy-${n++}`;
+        }
+
+        const copy = {
+            id: candidate,
+            name: `${source.name} (copy)`,
+            description: source.description || '',
+            mode: source.mode || 'dark',
+            palette: { ...source.palette },
+        };
+        if (source.chart_palette) copy.chart_palette = [...source.chart_palette];
+        if (source.overrides && Object.keys(source.overrides).length) {
+            copy.overrides = { ...source.overrides };
+        }
+
+        const saved = await api('save_custom_theme', copy);
+        if (saved?.status !== 'ok') {
+            showStatus(saved?.message || 'Failed to duplicate theme', 'error');
+            return;
+        }
+
+        await api('set_active_theme', candidate);
+        // Eager refresh so the dropdown + delete button update immediately,
+        // independent of the themes_update push round-trip.
+        await loadThemesList();
+        showStatus(`Saved as "${candidate}". Edit the JSON to customize.`, 'success', 4000);
+    } catch (e) {
+        console.error('Duplicate theme failed:', e);
+        showStatus('Failed to duplicate theme', 'error');
+    }
+}
+
+async function onDeleteTheme() {
+    const active = _themesCache.find((t) => t.id === _activeThemeId);
+    if (!active || active.builtin) return;
+
+    const confirmed = await showConfirmDialog(
+        'Delete theme',
+        `Delete custom theme "${active.name}"?\nThis removes data/themes/custom/${active.id}.json. The default theme will become active.`,
+        'Delete',
+        'Cancel'
+    );
+    if (!confirmed) return;
+
+    try {
+        const result = await api('delete_custom_theme', active.id);
+        if (result?.status !== 'ok') {
+            showStatus(result?.message || 'Failed to delete theme', 'error');
+            return;
+        }
+        await loadThemesList();
+        showStatus(`Deleted "${active.id}"`, 'success', 2500);
+    } catch (e) {
+        console.error('Delete theme failed:', e);
+        showStatus('Failed to delete theme', 'error');
+    }
+}
+
+export function initAppearanceListeners() {
+    if (elements.settingTheme) {
+        elements.settingTheme.addEventListener('change', onThemeSelect);
+    }
+    if (elements.btnOpenThemesFolder) {
+        elements.btnOpenThemesFolder.addEventListener('click', onOpenThemesFolder);
+    }
+    if (elements.btnDuplicateTheme) {
+        elements.btnDuplicateTheme.addEventListener('click', onDuplicateTheme);
+    }
+    if (elements.btnDeleteTheme) {
+        elements.btnDeleteTheme.addEventListener('click', onDeleteTheme);
     }
 }
