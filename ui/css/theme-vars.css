@@ -45,40 +45,50 @@
 
     /* ============================================
        Semantic layer - surfaces
+       Derivable vars use color-mix so any theme that overrides foundation
+       gets a coherent surface scale. The default theme overrides these
+       back to their original literal values (see default.json) so the
+       pre-themes appearance is preserved bit-for-bit.
        ============================================ */
     --tli-color-bg:                 var(--tli-palette-bg);
-    --tli-color-bg-elevated:        #111827;
+    --tli-color-bg-elevated:        color-mix(in srgb, var(--tli-palette-bg) 65%, var(--tli-palette-surface));
     --tli-color-surface:            var(--tli-palette-surface);
     --tli-color-card:               var(--tli-palette-surface);
-    --tli-color-card-hover:         #1a2535;
-    --tli-color-bg-accent:          #1a2744;
+    --tli-color-card-hover:         color-mix(in srgb, var(--tli-palette-surface) 70%, var(--tli-palette-border));
+    --tli-color-bg-accent:          color-mix(in srgb, var(--tli-palette-bg) 80%, var(--tli-palette-accent));
 
     /* ============================================
        Semantic layer - borders
        ============================================ */
     --tli-color-border:             var(--tli-palette-border);
-    --tli-color-border-subtle:      #1f2937;
+    --tli-color-border-subtle:      color-mix(in srgb, var(--tli-palette-border) 50%, var(--tli-palette-bg));
 
     /* ============================================
        Semantic layer - text
        ============================================ */
     --tli-color-text:               var(--tli-palette-text);
     --tli-color-text-muted:         var(--tli-palette-text-muted);
-    --tli-color-text-dim:           #64748b;
-    --tli-color-text-legend:        #cbd5e1;
+    --tli-color-text-dim:           color-mix(in srgb, var(--tli-palette-text-muted) 65%, var(--tli-palette-bg));
+    --tli-color-text-legend:        color-mix(in srgb, var(--tli-palette-text) 70%, var(--tli-palette-text-muted));
 
     /* ============================================
        Semantic layer - brand
        ============================================ */
     --tli-color-primary:            var(--tli-palette-primary);
-    --tli-color-primary-light:      #14b8a6;
-    --tli-color-secondary:          #64748b;
+    --tli-color-primary-light:      color-mix(in srgb, var(--tli-palette-primary) 70%, white);
+    /* Text color that goes on top of primary fills (filled buttons, toggle-btn.active).
+       Light themes can override to a dark color for legibility. */
+    --tli-color-on-primary:         white;
+    /* Toggle checked-state background. Defaults to primary, but pale themes
+       can override to a darker shade so the white knob remains visible. */
+    --tli-color-toggle-on:          var(--tli-color-primary);
+    --tli-color-secondary:          var(--tli-color-text-dim);
     --tli-color-success:            var(--tli-palette-success);
     --tli-color-warning:            var(--tli-palette-warning);
     --tli-color-danger:             var(--tli-palette-danger);
-    --tli-color-danger-dark:        #dc2626;
+    --tli-color-danger-dark:        color-mix(in srgb, var(--tli-palette-danger) 65%, black);
     --tli-color-accent:             var(--tli-palette-accent);
-    --tli-color-inactive:           #4b5563;
+    --tli-color-inactive:           color-mix(in srgb, var(--tli-palette-text-muted) 50%, var(--tli-palette-bg));
 
     /* ============================================
        Glows (alpha tints derived from foundation)
@@ -139,19 +149,19 @@
     --tli-color-update-bg-soft:         rgba(255, 255, 255, 0.1);
 
     /* ============================================
-       Drop item history (independent green family for "growth" semantics)
+       Drop item history (derived from success palette so it themes)
        ============================================ */
-    --tli-color-history-line:           #4ade80;
-    --tli-color-history-dot:            #bbf7d0;
-    --tli-color-history-dot-stroke:     rgba(187, 247, 208, 0.35);
-    --tli-color-history-chip-bg:        rgba(34, 197, 94, 0.12);
-    --tli-color-history-chip-text:      #bbf7d0;
-    --tli-color-history-chip-text-bold: #dcfce7;
-    --tli-color-history-chip-border:    rgba(34, 197, 94, 0.28);
-    --tli-color-history-toggle-bg:      rgba(34, 197, 94, 0.16);
-    --tli-color-history-toggle-shadow:  rgba(134, 239, 172, 0.18);
-    --tli-color-history-badge-text:     #86efac;
-    --tli-color-history-badge-border:   rgba(34, 197, 94, 0.28);
+    --tli-color-history-line:           var(--tli-color-success);
+    --tli-color-history-dot:            color-mix(in srgb, var(--tli-palette-success) 55%, white);
+    --tli-color-history-dot-stroke:     rgb(var(--tli-palette-success-rgb) / 0.35);
+    --tli-color-history-chip-bg:        rgb(var(--tli-palette-success-rgb) / 0.12);
+    --tli-color-history-chip-text:      color-mix(in srgb, var(--tli-palette-success) 55%, white);
+    --tli-color-history-chip-text-bold: color-mix(in srgb, var(--tli-palette-success) 35%, white);
+    --tli-color-history-chip-border:    rgb(var(--tli-palette-success-rgb) / 0.28);
+    --tli-color-history-toggle-bg:      rgb(var(--tli-palette-success-rgb) / 0.16);
+    --tli-color-history-toggle-shadow:  rgb(var(--tli-palette-success-rgb) / 0.2);
+    --tli-color-history-badge-text:     color-mix(in srgb, var(--tli-palette-success) 65%, white);
+    --tli-color-history-badge-border:   rgb(var(--tli-palette-success-rgb) / 0.28);
 
     /* ============================================
        Drop item panel & spinner
@@ -167,6 +177,9 @@
     --tli-color-bar-to:                 var(--tli-color-primary);
     --tli-color-bar-hover-from:         var(--tli-color-success);
     --tli-color-bar-hover-to:           var(--tli-color-primary-light);
+    --tli-color-bar-negative-from:      var(--tli-color-danger-dark);
+    --tli-color-bar-negative-to:        var(--tli-color-danger);
+    --tli-color-bar-negative-glow:      var(--tli-color-danger-glow);
     --tli-color-chart-zero-line:        rgba(100, 116, 139, 0.4);
 
     /* ============================================
@@ -184,20 +197,26 @@
     --tli-color-donut-center-text:      var(--tli-color-text);
 
     /* ============================================
-       Chart palette (9-color rainbow used by donut)
+       Chart palette (9 distinct colors derived from the foundation).
+       Slots 0-3 are ordered by guaranteed hue separation - primary,
+       warning, danger, success - so the donut's top categories never
+       collapse into the same hue family even when a theme picks an
+       accent close to its primary. Accent and shade-mixes follow.
        ============================================ */
     --tli-color-chart-0:                var(--tli-palette-primary);
-    --tli-color-chart-1:                var(--tli-palette-success);
-    --tli-color-chart-2:                var(--tli-palette-accent);
-    --tli-color-chart-3:                #818cf8;
-    --tli-color-chart-4:                #a78bfa;
-    --tli-color-chart-5:                #f472b6;
-    --tli-color-chart-6:                #fb7185;
-    --tli-color-chart-7:                var(--tli-palette-warning);
+    --tli-color-chart-1:                var(--tli-palette-warning);
+    --tli-color-chart-2:                var(--tli-palette-danger);
+    --tli-color-chart-3:                var(--tli-palette-success);
+    --tli-color-chart-4:                var(--tli-palette-accent);
+    --tli-color-chart-5:                color-mix(in oklch, var(--tli-palette-primary), var(--tli-palette-danger));
+    --tli-color-chart-6:                color-mix(in oklch, var(--tli-palette-warning), var(--tli-palette-success));
+    --tli-color-chart-7:                color-mix(in oklch, var(--tli-palette-accent), var(--tli-palette-danger));
     --tli-color-chart-8:                var(--tli-palette-text-muted);
 
     /* ============================================
-       Edit mode (widgets) - distinct teal-400 family
+       Edit mode (widgets) - derived from primary-light so it follows the
+       active theme. Default theme can override --tli-color-editmode to
+       restore a specific shade.
        ============================================ */
-    --tli-palette-editmode-rgb:         45 212 191;
+    --tli-color-editmode:               var(--tli-color-primary-light);
 }

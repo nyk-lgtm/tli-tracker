@@ -39,6 +39,8 @@
     </script>
     <link rel="stylesheet" href="css/theme-vars.css">
     <link rel="stylesheet" href="css/styles.css">
+    <!-- FOUC guard: theme_manager.js adds .theme-ready on <html> after applying CSS vars -->
+    <style>html:not(.theme-ready) body { visibility: hidden; }</style>
 </head>
 <body class="dark bg-dark-bg text-gray-100 h-screen overflow-hidden font-sans antialiased">
     <div id="app" class="p-4 max-w-2xl mx-auto h-screen flex flex-col">
@@ -393,6 +395,7 @@
     <script src="js/shared-charts.js"></script>
     <script src="js/qwebchannel.js"></script>
     <script src="js/qt_bridge.js"></script>
+    <script src="js/theme_manager.js"></script>
     <script src="js/preview_inject.js" onerror="void 0"></script>
     <script type="module" src="js/app.js"></script>
 </body>

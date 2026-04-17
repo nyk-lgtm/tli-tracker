@@ -15,5 +15,16 @@
         "warning":    "#f59e0b",
         "danger":     "#ef4444",
         "accent":     "#e4e4e7"
-    }
+    },
+    "overrides": {
+        "--tli-color-on-primary":        "#18181b",
+        "--tli-color-toggle-on":         "#52525b",
+        "--tli-color-bar-negative-from": "#3f3f46",
+        "--tli-color-bar-negative-to":   "#71717a",
+        "--tli-color-bar-negative-glow": "rgba(82, 82, 91, 0.4)"
+    },
+    "chart_palette": [
+        "#fafafa", "#3f3f46", "#d4d4d8", "#71717a",
+        "#27272a", "#a1a1aa", "#52525b", "#e4e4e7", "#18181b"
+    ]
 }

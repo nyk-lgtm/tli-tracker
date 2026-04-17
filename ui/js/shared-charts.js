@@ -6,11 +6,10 @@
 window.TLI = window.TLI || {};
 TLI.charts = {};
 
-// Chart color palette
-TLI.charts.COLORS = [
-    '#0d9488', '#22d3ee', '#38bdf8', '#818cf8',
-    '#a78bfa', '#f472b6', '#fb7185', '#f59e0b', '#64748b'
-];
+// Chart color palette: theme-driven CSS variables. Resolves live so theme
+// switches re-color existing charts on next render. Length must match
+// theme-vars.css :root --tli-color-chart-N declarations.
+TLI.charts.COLORS = Array.from({ length: 9 }, (_, i) => `var(--tli-color-chart-${i})`);
 
 /**
  * Render Pulse Chart (bar chart showing value per map)
@@ -163,8 +162,8 @@ TLI.charts.renderEfficiency = function(container, maps, sessionDuration, current
             <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#14b8a6" stop-opacity="0.4"/>
-                        <stop offset="100%" stop-color="#14b8a6" stop-opacity="0"/>
+                        <stop offset="0%" class="efficiency-area-stop-top"/>
+                        <stop offset="100%" class="efficiency-area-stop-bottom"/>
                     </linearGradient>
                 </defs>
                 <path class="efficiency-area" d="${areaPath}" fill="url(#${gradientId})"/>

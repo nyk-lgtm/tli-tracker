@@ -40,7 +40,7 @@ hr {
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: white;
+    color: var(--tli-color-on-primary);
     cursor: pointer;
     transition: all var(--tli-transition-base);
     box-shadow: 0 0 0 0 var(--tli-color-primary-glow);
@@ -122,7 +122,7 @@ hr {
 .btn-ghost.active {
     background: var(--tli-color-primary);
     border-color: var(--tli-color-primary);
-    color: white;
+    color: var(--tli-color-on-primary);
 }
 
 .btn-ghost.active:hover {
@@ -140,7 +140,7 @@ hr {
 .btn-secondary.active {
     background: var(--tli-color-primary);
     border-color: var(--tli-color-primary);
-    color: white;
+    color: var(--tli-color-on-primary);
 }
 
 .btn-secondary.active:hover {
@@ -265,7 +265,7 @@ hr {
 
 .toggle-btn.active {
     background: var(--tli-color-primary);
-    color: white;
+    color: var(--tli-color-on-primary);
     box-shadow: var(--tli-shadow-sm);
 }
 
@@ -1056,7 +1056,7 @@ button[data-tooltip]:hover::before {
 
 /* Checked state - CSS pseudo-selector */
 .toggle-checkbox:checked + .toggle-track {
-    background: var(--tli-color-primary);
+    background: var(--tli-color-toggle-on);
 }
 
 .toggle-checkbox:checked + .toggle-track::after {
@@ -1065,7 +1065,7 @@ button[data-tooltip]:hover::before {
 
 /* Checked state - JS class fallback (for programmatic updates) */
 .toggle-track.checked {
-    background: var(--tli-color-primary);
+    background: var(--tli-color-toggle-on);
 }
 
 .toggle-track.checked::after {

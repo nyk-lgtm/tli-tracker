@@ -15,5 +15,15 @@
         "warning":    "#f59e0b",
         "danger":     "#f87171",
         "accent":     "#38bdf8"
-    }
+    },
+    "overrides": {
+        "--tli-color-primary-light": "#14b8a6",
+        "--tli-color-danger-dark":   "#dc2626",
+        "--tli-color-bg-accent":     "#1a2744",
+        "--tli-color-editmode":      "#2dd4bf"
+    },
+    "chart_palette": [
+        "#0d9488", "#22d3ee", "#38bdf8", "#818cf8",
+        "#a78bfa", "#f472b6", "#fb7185", "#f59e0b", "#64748b"
+    ]
 }

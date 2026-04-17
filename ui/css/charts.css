@@ -176,31 +176,31 @@
     }
 }
 
-/* Negative value bar (red, grows downward from zero line) */
+/* Negative value bar (grows downward from zero line) */
 .pulse-bar-negative {
     top: calc(100% - var(--zero-line, 50%));
     bottom: auto;
     border-radius: 0 0 2px 2px;
-    background: linear-gradient(180deg, var(--tli-color-danger-dark) 0%, var(--tli-color-danger) 100%);
+    background: linear-gradient(180deg, var(--tli-color-bar-negative-from) 0%, var(--tli-color-bar-negative-to) 100%);
 }
 
 .pulse-bar-negative:hover {
-    background: linear-gradient(180deg, var(--tli-color-danger-dark) 0%, var(--tli-color-danger) 100%);
+    background: linear-gradient(180deg, var(--tli-color-bar-negative-from) 0%, var(--tli-color-bar-negative-to) 100%);
     filter: brightness(1.15);
 }
 
 /* Negative live bar */
 .pulse-bar-live.pulse-bar-negative {
-    background: linear-gradient(180deg, var(--tli-color-danger-dark) 0%, var(--tli-color-danger) 100%);
+    background: linear-gradient(180deg, var(--tli-color-bar-negative-from) 0%, var(--tli-color-bar-negative-to) 100%);
     animation: pulse-glow-negative 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse-glow-negative {
     0%, 100% {
-        box-shadow: 0 0 4px var(--tli-color-danger-glow);
+        box-shadow: 0 0 4px var(--tli-color-bar-negative-glow);
     }
     50% {
-        box-shadow: 0 0 8px var(--tli-color-danger-glow);
+        box-shadow: 0 0 8px var(--tli-color-bar-negative-glow);
     }
 }
 
@@ -236,6 +236,17 @@
 
 .efficiency-area {
     opacity: 0.3;
+}
+
+/* Efficiency area gradient stops (set via CSS so they follow the theme) */
+.efficiency-area-stop-top {
+    stop-color: var(--tli-color-eff-line);
+    stop-opacity: 0.4;
+}
+
+.efficiency-area-stop-bottom {
+    stop-color: var(--tli-color-eff-line);
+    stop-opacity: 0;
 }
 
 .efficiency-dot {

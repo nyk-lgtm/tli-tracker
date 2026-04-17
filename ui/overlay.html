@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="css/overlay.css">
     <link rel="stylesheet" href="css/charts.css">
     <link rel="stylesheet" href="css/widgets.css">
+    <!-- FOUC guard: theme_manager.js adds .theme-ready on <html> after applying CSS vars -->
+    <style>html:not(.theme-ready) body { visibility: hidden; }</style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -65,5 +67,6 @@
     <script src="js/widget_manager.js"></script>
     <script src="js/snap_engine.js"></script>
     <script src="js/edit_mode.js"></script>
+    <script src="js/theme_manager.js"></script>
 </body>
 </html>
