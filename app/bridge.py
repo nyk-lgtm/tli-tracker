@@ -242,6 +242,55 @@ class ApiBridge(QObject):
             self.api.set_overlay_edit_hint_dismissed(dismissed), default=str
         )
 
+    # === Themes API ===
+
+    @Slot(result=str)
+    def list_themes(self) -> str:
+        """Return summary metadata for every available theme."""
+        return json.dumps(self.api.list_themes(), default=str)
+
+    @Slot(result=str)
+    def get_active_theme(self) -> str:
+        """Return the active theme plus its CSS-var apply map."""
+        return json.dumps(self.api.get_active_theme(), default=str)
+
+    @Slot(str, result=str)
+    def set_active_theme(self, theme_id: str) -> str:
+        """Switch the active theme."""
+        return json.dumps(self.api.set_active_theme(theme_id), default=str)
+
+    @Slot(str, result=str)
+    def set_theme_overrides(self, overrides_json: str) -> str:
+        """Replace per-var overrides on top of the active theme."""
+        overrides = json.loads(overrides_json)
+        return json.dumps(self.api.set_theme_overrides(overrides), default=str)
+
+    @Slot(str, result=str)
+    def save_custom_theme(self, theme_json: str) -> str:
+        """Persist a user-authored theme."""
+        theme = json.loads(theme_json)
+        return json.dumps(self.api.save_custom_theme(theme), default=str)
+
+    @Slot(str, result=str)
+    def delete_custom_theme(self, theme_id: str) -> str:
+        """Delete a custom theme by id."""
+        return json.dumps(self.api.delete_custom_theme(theme_id), default=str)
+
+    @Slot(result=str)
+    def import_theme_from_file(self) -> str:
+        """Open a file dialog to import a theme JSON."""
+        return json.dumps(self.api.import_theme_from_file(), default=str)
+
+    @Slot(str, result=str)
+    def export_theme_to_file(self, theme_id: str) -> str:
+        """Open a save dialog to export a theme JSON to disk."""
+        return json.dumps(self.api.export_theme_to_file(theme_id), default=str)
+
+    @Slot(result=str)
+    def open_themes_folder(self) -> str:
+        """Open the user's custom themes directory in the OS file browser."""
+        return json.dumps(self.api.open_themes_folder(), default=str)
+
     # === Utility ===
 
     @Slot(result=str)

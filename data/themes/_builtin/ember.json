@@ -1,0 +1,19 @@
+{
+    "id": "ember",
+    "name": "Ember",
+    "description": "Warm dark palette built around a glowing orange brand color.",
+    "builtin": true,
+    "mode": "dark",
+    "palette": {
+        "bg":         "#1a0f0a",
+        "surface":    "#241612",
+        "border":     "#3a2521",
+        "text":       "#fdf3ec",
+        "text-muted": "#d1a89a",
+        "primary":    "#ea580c",
+        "success":    "#84cc16",
+        "warning":    "#facc15",
+        "danger":     "#dc2626",
+        "accent":     "#f97316"
+    }
+}

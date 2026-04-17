@@ -1,0 +1,19 @@
+{
+    "id": "forest",
+    "name": "Forest",
+    "description": "Deep woodland palette with a saturated leaf-green brand color.",
+    "builtin": true,
+    "mode": "dark",
+    "palette": {
+        "bg":         "#0a1410",
+        "surface":    "#10201a",
+        "border":     "#1f3a2e",
+        "text":       "#e8f5ec",
+        "text-muted": "#9cb59f",
+        "primary":    "#16a34a",
+        "success":    "#84cc16",
+        "warning":    "#eab308",
+        "danger":     "#dc2626",
+        "accent":     "#22c55e"
+    }
+}

@@ -25,6 +25,7 @@ from .storage import (
     save_config,
     set_config_value,
 )
+from .themes import ThemeError, ThemeManager
 from .tracker import Tracker
 from .updater import Updater
 
@@ -51,6 +52,9 @@ class Api:
         self.cloud_prices = CloudPriceManager()
         self.price_history = PriceHistoryManager()
         self.sessions = SessionManager()
+        self.themes = ThemeManager(
+            on_themes_changed=lambda: self._push_to_ui("themes_update", {}),
+        )
         self.updater = Updater(
             on_state_change=lambda payload: self._push_to_ui("update_state", payload)
         )
@@ -396,6 +400,116 @@ class Api:
             return {"status": "ok"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
+
+    # === Themes API ===
+
+    def list_themes(self) -> list[dict]:
+        """Return summary metadata for every available theme."""
+        return self.themes.list_themes()
+
+    def get_active_theme(self) -> dict:
+        """Return the active theme plus its flattened CSS-var apply map."""
+        theme = self.themes.get_active_theme()
+        return {
+            "theme": theme,
+            "css_vars": self.themes.resolve_css_vars(theme),
+        }
+
+    def set_active_theme(self, theme_id: str) -> dict:
+        """Switch the active theme. Persists to config and pushes themes_update."""
+        if self.themes.get_theme(theme_id) is None:
+            return {"status": "error", "message": f"unknown theme {theme_id!r}"}
+        config = load_config()
+        config["theme"] = theme_id
+        save_config(config)
+        self._push_to_ui("themes_update", {})
+        return {"status": "ok", "theme": theme_id}
+
+    def set_theme_overrides(self, overrides: dict) -> dict:
+        """Replace the user's per-var overrides on top of the active theme."""
+        if not isinstance(overrides, dict):
+            return {"status": "error", "message": "overrides must be an object"}
+        for key in overrides:
+            if not isinstance(key, str) or not key.startswith("--tli-"):
+                return {
+                    "status": "error",
+                    "message": f"override key {key!r} must be a --tli- CSS var name",
+                }
+        config = load_config()
+        config["theme_overrides"] = dict(overrides)
+        save_config(config)
+        self._push_to_ui("themes_update", {})
+        return {"status": "ok"}
+
+    def save_custom_theme(self, theme_data: dict) -> dict:
+        """Persist a user-authored theme JSON."""
+        try:
+            theme = self.themes.save_custom_theme(theme_data)
+        except ThemeError as e:
+            return {"status": "error", "message": str(e)}
+        self._push_to_ui("themes_update", {})
+        return {"status": "ok", "theme": theme}
+
+    def delete_custom_theme(self, theme_id: str) -> dict:
+        """Delete a custom theme. Built-ins cannot be deleted."""
+        try:
+            ok = self.themes.delete_custom_theme(theme_id)
+        except ThemeError as e:
+            return {"status": "error", "message": str(e)}
+        if not ok:
+            return {"status": "error", "message": f"unknown theme {theme_id!r}"}
+        # if we just deleted the active theme, fall back to default
+        config = load_config()
+        if config.get("theme") == theme_id:
+            config["theme"] = "default"
+            save_config(config)
+        self._push_to_ui("themes_update", {})
+        return {"status": "ok"}
+
+    def import_theme_from_file(self) -> dict:
+        """Open a file dialog to import a theme JSON into the custom dir."""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self._main_window,
+            "Import theme",
+            "",
+            "Theme files (*.json);;All Files (*.*)",
+        )
+        if not file_path:
+            return {"status": "cancelled"}
+        try:
+            theme = self.themes.import_theme(file_path)
+        except ThemeError as e:
+            return {"status": "error", "message": str(e)}
+        self._push_to_ui("themes_update", {})
+        return {"status": "ok", "theme": theme}
+
+    def export_theme_to_file(self, theme_id: str) -> dict:
+        """Open a save dialog to export a theme JSON to disk."""
+        if self.themes.get_theme(theme_id) is None:
+            return {"status": "error", "message": f"unknown theme {theme_id!r}"}
+        file_path, _ = QFileDialog.getSaveFileName(
+            self._main_window,
+            "Export theme",
+            f"{theme_id}.json",
+            "Theme files (*.json);;All Files (*.*)",
+        )
+        if not file_path:
+            return {"status": "cancelled"}
+        try:
+            self.themes.export_theme(theme_id, file_path)
+        except ThemeError as e:
+            return {"status": "error", "message": str(e)}
+        return {"status": "ok", "path": file_path}
+
+    def open_themes_folder(self) -> dict:
+        """Open the OS file explorer at the user's custom themes directory."""
+        import os
+
+        try:
+            os.startfile(str(self.themes.custom_dir))
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+        return {"status": "ok"}
 
     def set_overlay_edit_hint_dismissed(self, dismissed: bool) -> dict:
         """Persist the first-run overlay edit hint dismissal state."""

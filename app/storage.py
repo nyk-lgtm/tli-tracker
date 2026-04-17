@@ -114,6 +114,9 @@ DEFAULT_CONFIG = {
     "overlay_edit_hint_dismissed": False,  # First-run overlay edit hint
     "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode
     "widgets": [],  # Widget instances (populated on first load if empty)
+    # Theme
+    "theme": "default",  # active theme id (matches a file under data/themes/)
+    "theme_overrides": {},  # ad-hoc semantic var overrides on top of active theme
 }
 
 CONFIG_FILE = "config.json"

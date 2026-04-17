@@ -1,0 +1,19 @@
+{
+    "id": "monochrome",
+    "name": "Monochrome",
+    "description": "Neutral grayscale chrome. Status colors retained so warnings and errors stay legible at a glance.",
+    "builtin": true,
+    "mode": "dark",
+    "palette": {
+        "bg":         "#0d0d10",
+        "surface":    "#18181b",
+        "border":     "#2c2c30",
+        "text":       "#f4f4f5",
+        "text-muted": "#a1a1aa",
+        "primary":    "#d4d4d8",
+        "success":    "#10b981",
+        "warning":    "#f59e0b",
+        "danger":     "#ef4444",
+        "accent":     "#e4e4e7"
+    }
+}

@@ -30,6 +30,9 @@ Thumbs.db
 temp_docs/
 data/*
 !data/item_ids.json
+!data/themes/
+data/themes/*
+!data/themes/_builtin/
 tmp/
 
 # Build/Installer output

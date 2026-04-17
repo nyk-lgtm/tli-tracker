@@ -1,0 +1,19 @@
+{
+    "id": "default",
+    "name": "Default",
+    "description": "The original TLI Tracker palette: cool teal accent on a slate background.",
+    "builtin": true,
+    "mode": "dark",
+    "palette": {
+        "bg":         "#0c1220",
+        "surface":    "#151e2c",
+        "border":     "#2a3441",
+        "text":       "#f1f5f9",
+        "text-muted": "#94a3b8",
+        "primary":    "#0d9488",
+        "success":    "#22d3ee",
+        "warning":    "#f59e0b",
+        "danger":     "#f87171",
+        "accent":     "#38bdf8"
+    }
+}
