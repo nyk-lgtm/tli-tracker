@@ -1,15 +1,9 @@
 /* TLI Tracker - Overlay Styles */
 
 :root {
+    /* Overlay translucency, set at runtime by widget_manager.js. Color vars
+       (theme tokens) live in theme-vars.css. */
     --bg-opacity: 0.9;
-
-    /* Colors (shared with styles.css) */
-    --color-primary: #0d9488;
-    --color-primary-light: #14b8a6;
-    --color-success: #22d3ee;
-    --color-danger: #f87171;
-    --color-danger-dark: #dc2626;
-    --color-danger-glow: rgba(248, 113, 113, 0.4);
 }
 
 * {
@@ -29,8 +23,8 @@ html, body {
 }
 
 .overlay-wrapper {
-    background: rgb(12 18 32 / var(--bg-opacity));
-    border: 1px solid rgb(13 148 136 / calc(var(--bg-opacity) * 0.67));
+    background: rgb(var(--tli-palette-bg-rgb) / var(--bg-opacity));
+    border: 1px solid rgb(var(--tli-palette-primary-rgb) / calc(var(--bg-opacity) * 0.67));
     border-radius: 8px;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -79,13 +73,13 @@ html, body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 18px;
     font-weight: 500;
-    color: #f1f5f9;
+    color: var(--tli-color-text);
     font-feature-settings: 'tnum' on, 'lnum' on;
 }
 
 .stat-label {
     font-size: 12px;
-    /* Lighten from gray to white as opacity decreases */
+    /* Lighten from text-dim slate to white as overlay opacity decreases */
     color: rgb(
         calc(100 + 155 * (1 - var(--bg-opacity))),
         calc(116 + 139 * (1 - var(--bg-opacity))),
@@ -95,17 +89,17 @@ html, body {
 }
 
 .stat-value.positive {
-    color: #22d3ee;
+    color: var(--tli-color-success);
 }
 
 .stat-value.negative {
-    color: #f87171;
+    color: var(--tli-color-danger);
 }
 
 .divider {
     width: 1px;
     height: 24px;
-    background: rgba(42, 52, 65, 0.8);
+    background: rgb(var(--tli-palette-border-rgb) / 0.8);
     justify-self: center;
 }
 
@@ -113,13 +107,13 @@ html, body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #0d9488;
-    box-shadow: 0 0 8px rgba(13, 148, 136, 0.6);
+    background: var(--tli-color-primary);
+    box-shadow: 0 0 8px rgb(var(--tli-palette-primary-rgb) / 0.6);
     animation: pulse 2s infinite;
 }
 
 .in-map-dot.inactive {
-    background: #4b5563;
+    background: var(--tli-color-inactive);
     box-shadow: none;
     animation: none;
 }
@@ -127,10 +121,10 @@ html, body {
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
-        box-shadow: 0 0 8px rgba(13, 148, 136, 0.6);
+        box-shadow: 0 0 8px rgb(var(--tli-palette-primary-rgb) / 0.6);
     }
     50% {
         opacity: 0.6;
-        box-shadow: 0 0 4px rgba(13, 148, 136, 0.3);
+        box-shadow: 0 0 4px rgb(var(--tli-palette-primary-rgb) / 0.3);
     }
 }

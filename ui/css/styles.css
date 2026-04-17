@@ -1,60 +1,21 @@
 /* TLI Tracker - Refined Design System */
 
-/* ============================================
-   CSS Variables
-   ============================================ */
-:root {
-    /* Colors - Teal/Slate palette */
-    --color-primary: #0d9488;
-    --color-primary-light: #14b8a6;
-    --color-primary-glow: rgba(13, 148, 136, 0.4);
-    --color-secondary: #64748b;
-    --color-success: #22d3ee;
-    --color-success-glow: rgba(34, 211, 238, 0.3);
-    --color-warning: #f59e0b;
-    --color-danger: #f87171;
-    --color-danger-dark: #dc2626;
-    --color-danger-glow: rgba(248, 113, 113, 0.4);
-    --color-accent: #38bdf8;
-
-    /* Dark theme */
-    --color-bg: #0c1220;
-    --color-bg-elevated: #111827;
-    --color-card: #151e2c;
-    --color-card-hover: #1a2535;
-    --color-border: #2a3441;
-    --color-border-subtle: #1f2937;
-
-    /* Text */
-    --color-text: #f1f5f9;
-    --color-text-muted: #94a3b8;
-    --color-text-dim: #64748b;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-    --shadow-glow: 0 0 20px var(--color-primary-glow);
-
-    /* Transitions */
-    --transition-fast: 150ms ease;
-    --transition-base: 200ms ease;
-    --transition-slow: 300ms ease;
-}
+/* CSS variables (foundation palette + semantic layer) live in theme-vars.css.
+   Themes override foundation vars at runtime; semantic derivations follow. */
 
 /* ============================================
    Base & Background
    ============================================ */
 body {
     background:
-        radial-gradient(ellipse at top left, #1a2744 0%, var(--color-bg) 50%),
-        var(--color-bg);
+        radial-gradient(ellipse at top left, var(--tli-color-bg-accent) 0%, var(--tli-color-bg) 50%),
+        var(--tli-color-bg);
     background-attachment: fixed;
 }
 
 hr {
     border: none;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--tli-color-border);
     margin: 1rem 0;
 }
 
@@ -74,20 +35,20 @@ hr {
     align-items: center;
     justify-content: center;
     padding: 0.5rem 1rem;
-    background: var(--color-primary);
-    border: 1px solid var(--color-primary-light);
+    background: var(--tli-color-primary);
+    border: 1px solid var(--tli-color-primary-light);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
     color: white;
     cursor: pointer;
-    transition: all var(--transition-base);
-    box-shadow: 0 0 0 0 var(--color-primary-glow);
+    transition: all var(--tli-transition-base);
+    box-shadow: 0 0 0 0 var(--tli-color-primary-glow);
 }
 
 .btn-primary:hover {
-    background: var(--color-primary-light);
-    box-shadow: var(--shadow-glow);
+    background: var(--tli-color-primary-light);
+    box-shadow: var(--tli-shadow-glow);
     transform: translateY(-1px);
 }
 
@@ -101,20 +62,20 @@ hr {
     justify-content: center;
     gap: 0.375rem;
     padding: 0.375rem 0.75rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.5rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: var(--color-text-muted);
+    color: var(--tli-color-text-muted);
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: all var(--tli-transition-base);
 }
 
 .btn-secondary:hover {
-    background: var(--color-card-hover);
-    border-color: var(--color-text-dim);
-    color: var(--color-text);
+    background: var(--tli-color-card-hover);
+    border-color: var(--tli-color-text-dim);
+    color: var(--tli-color-text);
 }
 
 .btn-secondary:active {
@@ -130,7 +91,7 @@ hr {
     width: 16px;
     height: 16px;
     opacity: 0.7;
-    transition: opacity var(--transition-fast);
+    transition: opacity var(--tli-transition-fast);
 }
 
 .btn-secondary:hover .icon {
@@ -143,59 +104,59 @@ hr {
     justify-content: center;
     padding: 0.5rem 1rem;
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-muted);
+    color: var(--tli-color-text-muted);
     cursor: pointer;
-    transition: all var(--transition-base);
+    transition: all var(--tli-transition-base);
 }
 
 .btn-ghost:hover {
-    background: var(--color-card);
-    border-color: var(--color-text-dim);
-    color: var(--color-text);
+    background: var(--tli-color-card);
+    border-color: var(--tli-color-text-dim);
+    color: var(--tli-color-text);
 }
 
 .btn-ghost.active {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: var(--tli-color-primary);
+    border-color: var(--tli-color-primary);
     color: white;
 }
 
 .btn-ghost.active:hover {
-    background: var(--color-primary-light);
-    border-color: var(--color-primary-light);
+    background: var(--tli-color-primary-light);
+    border-color: var(--tli-color-primary-light);
 }
 
 /* Destructive action button - shows danger color on hover */
 .btn-destructive:hover {
-    border-color: var(--color-danger);
-    color: var(--color-danger);
+    border-color: var(--tli-color-danger);
+    color: var(--tli-color-danger);
 }
 
 /* Active state for toggle buttons (e.g., overlay on/off) */
 .btn-secondary.active {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
+    background: var(--tli-color-primary);
+    border-color: var(--tli-color-primary);
     color: white;
 }
 
 .btn-secondary.active:hover {
-    background: var(--color-primary-light);
-    border-color: var(--color-primary-light);
+    background: var(--tli-color-primary-light);
+    border-color: var(--tli-color-primary-light);
 }
 
 /* ============================================
    Stat Cards
    ============================================ */
 .stat-card {
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.75rem;
     padding: 1rem;
-    transition: all var(--transition-base);
+    transition: all var(--tli-transition-base);
     position: relative;
     overflow: hidden;
 }
@@ -204,23 +165,23 @@ hr {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 50%);
+    background: linear-gradient(135deg, var(--tli-color-shine) 0%, transparent 50%);
     pointer-events: none;
 }
 
 .stat-card:hover {
-    border-color: rgba(13, 148, 136, 0.3);
-    box-shadow: 0 0 20px rgba(13, 148, 136, 0.1);
+    border-color: rgb(var(--tli-palette-primary-rgb) / 0.3);
+    box-shadow: 0 0 20px rgb(var(--tli-palette-primary-rgb) / 0.1);
 }
 
 .stat-card-featured {
-    border-color: rgba(13, 148, 136, 0.4);
-    background: linear-gradient(135deg, var(--color-card) 0%, rgba(13, 148, 136, 0.08) 100%);
+    border-color: rgb(var(--tli-palette-primary-rgb) / 0.4);
+    background: linear-gradient(135deg, var(--tli-color-card) 0%, rgb(var(--tli-palette-primary-rgb) / 0.08) 100%);
 }
 
 .stat-card-featured:hover {
-    border-color: rgba(13, 148, 136, 0.6);
-    box-shadow: 0 0 30px rgba(13, 148, 136, 0.15);
+    border-color: rgb(var(--tli-palette-primary-rgb) / 0.6);
+    box-shadow: 0 0 30px rgb(var(--tli-palette-primary-rgb) / 0.15);
 }
 
 .paused-badge {
@@ -232,9 +193,9 @@ hr {
     font-size: 0.625rem;
     font-weight: 600;
     letter-spacing: 0.08em;
-    color: var(--color-warning);
-    background: rgba(245, 158, 11, 0.1);
-    border-top: 1px solid rgba(245, 158, 11, 0.25);
+    color: var(--tli-color-warning);
+    background: rgb(var(--tli-palette-warning-rgb) / 0.1);
+    border-top: 1px solid rgb(var(--tli-palette-warning-rgb) / 0.25);
     padding: 0.2rem 0;
     line-height: 1;
     animation: pulse 2s infinite;
@@ -245,7 +206,7 @@ hr {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     margin-bottom: 0.25rem;
 }
 
@@ -253,14 +214,14 @@ hr {
     font-size: 2rem;
     font-weight: 600;
     line-height: 1.2;
-    color: var(--color-text);
+    color: var(--tli-color-text);
 }
 
 .stat-value-lg {
     font-size: 1.5rem;
     font-weight: 600;
     line-height: 1.2;
-    color: var(--color-text);
+    color: var(--tli-color-text);
 }
 
 .stat-value-md {
@@ -279,8 +240,8 @@ hr {
    ============================================ */
 .toggle-group {
     display: flex;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.5rem;
     padding: 0.1875rem;
     gap: 0.125rem;
@@ -290,30 +251,30 @@ hr {
     padding: 0.375rem 0.75rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     background: transparent;
     border: none;
     border-radius: 0.375rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--tli-transition-fast);
 }
 
 .toggle-btn:hover:not(.active) {
-    color: var(--color-text-muted);
+    color: var(--tli-color-text-muted);
 }
 
 .toggle-btn.active {
-    background: var(--color-primary);
+    background: var(--tli-color-primary);
     color: white;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--tli-shadow-sm);
 }
 
 /* ============================================
    Drops List
    ============================================ */
 .drops-container {
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.75rem;
     overflow-x: hidden;
     overflow-y: auto;
@@ -323,7 +284,7 @@ hr {
 }
 
 .drop-row {
-    border-bottom: 1px solid var(--color-border-subtle);
+    border-bottom: 1px solid var(--tli-color-border-subtle);
 }
 
 .drop-row:last-child {
@@ -332,15 +293,15 @@ hr {
 
 .drop-row.expanded {
     background:
-        linear-gradient(180deg, rgba(13, 148, 136, 0.08) 0%, rgba(13, 148, 136, 0.03) 100%);
+        linear-gradient(180deg, rgb(var(--tli-palette-primary-rgb) / 0.08) 0%, rgb(var(--tli-palette-primary-rgb) / 0.03) 100%);
 }
 
 .drop-row.ignored .drop-item-label,
 .drop-row.ignored .stat-value,
 .drop-row.ignored .drop-item-quantity {
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     text-decoration: line-through;
-    text-decoration-color: rgba(148, 163, 184, 0.4);
+    text-decoration-color: rgb(var(--tli-palette-text-muted-rgb) / 0.4);
 }
 
 .drop-row.ignored .drop-item {
@@ -348,8 +309,8 @@ hr {
 }
 
 .drop-item-ignored-badge {
-    border: 1px solid rgba(248, 113, 113, 0.35);
-    color: var(--color-danger);
+    border: 1px solid rgb(var(--tli-palette-danger-rgb) / 0.35);
+    color: var(--tli-color-danger);
     border-radius: 999px;
     padding: 0.125rem 0.45rem;
     font-size: 0.625rem;
@@ -362,10 +323,10 @@ hr {
     z-index: 2000;
     min-width: 140px;
     padding: 0.25rem;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
     border-radius: 6px;
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--tli-shadow-lg);
 }
 
 .context-menu.hidden {
@@ -378,7 +339,7 @@ hr {
     padding: 0.4rem 0.75rem;
     background: transparent;
     border: none;
-    color: var(--color-text);
+    color: var(--tli-color-text);
     font-size: 0.8125rem;
     text-align: left;
     cursor: pointer;
@@ -386,7 +347,7 @@ hr {
 }
 
 .context-menu-item:hover {
-    background: var(--color-card-hover);
+    background: var(--tli-color-card-hover);
 }
 
 .drop-item {
@@ -394,7 +355,7 @@ hr {
     justify-content: space-between;
     align-items: center;
     padding: 0.625rem 1rem;
-    transition: background-color var(--transition-fast);
+    transition: background-color var(--tli-transition-fast);
 }
 
 .drop-item-toggle {
@@ -408,7 +369,7 @@ hr {
 }
 
 .drop-item:hover {
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: var(--tli-color-shine);
 }
 
 .drop-row.expanded .drop-item:hover,
@@ -444,10 +405,10 @@ hr {
 }
 
 .drop-item-history-badge {
-    border: 1px solid rgba(34, 197, 94, 0.28);
+    border: 1px solid var(--tli-color-history-badge-border);
     border-radius: 999px;
     padding: 0.125rem 0.45rem;
-    color: #86efac;
+    color: var(--tli-color-history-badge-text);
     font-size: 0.625rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -462,25 +423,25 @@ hr {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    border: 1px solid rgba(148, 163, 184, 0.16);
+    border: 1px solid rgb(var(--tli-palette-text-muted-rgb) / 0.16);
     border-radius: 0.7rem;
-    background: rgba(15, 23, 42, 0.35);
-    color: var(--color-text-dim);
+    background: rgb(15 23 42 / 0.35);
+    color: var(--tli-color-text-dim);
     font-size: 0.8125rem;
     padding: 0.875rem 1rem;
 }
 
 .drop-item-panel-state.error {
-    color: #fca5a5;
-    border-color: rgba(239, 68, 68, 0.24);
+    color: var(--tli-color-panel-error-text);
+    border-color: var(--tli-color-panel-error-border);
 }
 
 .drop-item-panel-spinner {
     width: 0.875rem;
     height: 0.875rem;
     border-radius: 50%;
-    border: 2px solid rgba(148, 163, 184, 0.3);
-    border-top-color: #5eead4;
+    border: 2px solid rgb(var(--tli-palette-text-muted-rgb) / 0.3);
+    border-top-color: var(--tli-color-panel-spinner-tip);
     animation: dropSpinner 0.8s linear infinite;
     flex-shrink: 0;
 }
@@ -516,15 +477,15 @@ hr {
     align-items: center;
     border-radius: 999px;
     padding: 0.2rem 0.55rem;
-    background: rgba(34, 197, 94, 0.12);
-    color: #bbf7d0;
+    background: var(--tli-color-history-chip-bg);
+    color: var(--tli-color-history-chip-text);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.08em;
 }
 
 .drop-item-history-range {
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     font-size: 0.75rem;
     white-space: nowrap;
 }
@@ -533,9 +494,9 @@ hr {
     display: inline-flex;
     align-items: center;
     gap: 0.2rem;
-    border: 1px solid rgba(148, 163, 184, 0.16);
+    border: 1px solid rgb(var(--tli-palette-text-muted-rgb) / 0.16);
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.45);
+    background: rgb(15 23 42 / 0.45);
     padding: 0.2rem;
 }
 
@@ -543,20 +504,20 @@ hr {
     border: none;
     border-radius: 999px;
     background: transparent;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     cursor: pointer;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     padding: 0.28rem 0.68rem;
     transition:
-        background-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast);
+        background-color var(--tli-transition-fast),
+        color var(--tli-transition-fast),
+        transform var(--tli-transition-fast);
 }
 
 .drop-item-history-toggle-btn:hover {
-    color: var(--color-text);
+    color: var(--tli-color-text);
 }
 
 .drop-item-history-toggle-btn:active {
@@ -564,9 +525,9 @@ hr {
 }
 
 .drop-item-history-toggle-btn.active {
-    background: rgba(34, 197, 94, 0.16);
-    color: #dcfce7;
-    box-shadow: inset 0 0 0 1px rgba(134, 239, 172, 0.18);
+    background: var(--tli-color-history-toggle-bg);
+    color: var(--tli-color-history-chip-text-bold);
+    box-shadow: inset 0 0 0 1px var(--tli-color-history-toggle-shadow);
 }
 
 .drop-item-history-stats {
@@ -582,12 +543,12 @@ hr {
     gap: 0.15rem;
     padding: 0.55rem 0.65rem;
     border-radius: 0.65rem;
-    background: rgba(15, 23, 42, 0.45);
-    border: 1px solid rgba(148, 163, 184, 0.1);
+    background: rgb(15 23 42 / 0.45);
+    border: 1px solid rgb(var(--tli-palette-text-muted-rgb) / 0.1);
 }
 
 .drop-item-history-label {
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -596,21 +557,21 @@ hr {
 .drop-item-history-value {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.8rem;
-    color: var(--color-text);
+    color: var(--tli-color-text);
 }
 
 .drop-item-history-value.positive {
-    color: var(--color-success);
+    color: var(--tli-color-success);
 }
 
 .drop-item-history-value.negative {
-    color: var(--color-danger);
+    color: var(--tli-color-danger);
 }
 
 .price-history-visual {
-    border: 1px solid rgba(148, 163, 184, 0.14);
+    border: 1px solid rgb(var(--tli-palette-text-muted-rgb) / 0.14);
     border-radius: 0.85rem;
-    background: rgba(15, 23, 42, 0.45);
+    background: rgb(15 23 42 / 0.45);
     padding: 0.75rem 0.75rem 0.6rem;
     display: grid;
     grid-template-columns: auto 1fr;
@@ -626,7 +587,7 @@ hr {
     position: relative;
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.68rem;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
 }
 
 .price-history-yaxis-sizer {
@@ -660,7 +621,7 @@ hr {
 }
 
 .price-history-guide {
-    stroke: rgba(148, 163, 184, 0.22);
+    stroke: rgb(var(--tli-palette-text-muted-rgb) / 0.22);
     stroke-width: 1;
     stroke-dasharray: 3 4;
     vector-effect: non-scaling-stroke;
@@ -668,7 +629,7 @@ hr {
 
 .price-history-line {
     fill: none;
-    stroke: #4ade80;
+    stroke: var(--tli-color-history-line);
     stroke-width: 2.2;
     stroke-linejoin: round;
     stroke-linecap: round;
@@ -676,8 +637,8 @@ hr {
 }
 
 .price-history-dot {
-    fill: #bbf7d0;
-    stroke: rgba(187, 247, 208, 0.35);
+    fill: var(--tli-color-history-dot);
+    stroke: var(--tli-color-history-dot-stroke);
     stroke-width: 3;
     vector-effect: non-scaling-stroke;
     opacity: 0;
@@ -699,8 +660,8 @@ hr {
     align-items: center;
     gap: 0.1rem;
     padding: 0.35rem 0.55rem;
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgb(15 23 42 / 0.95);
+    border: 1px solid rgb(var(--tli-palette-text-muted-rgb) / 0.25);
     border-radius: 0.4rem;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
@@ -716,13 +677,13 @@ hr {
 
 .price-history-tooltip-value {
     font-size: 0.78rem;
-    color: #bbf7d0;
+    color: var(--tli-color-history-chip-text);
     font-weight: 600;
 }
 
 .price-history-tooltip-date {
     font-size: 0.65rem;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
 }
 
 .price-history-axis {
@@ -732,7 +693,7 @@ hr {
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     font-size: 0.72rem;
 }
 
@@ -754,22 +715,22 @@ hr {
 
 /* Value display with glow for high values */
 .stat-value.positive {
-    color: var(--color-success);
+    color: var(--tli-color-success);
 }
 
 .stat-value.negative {
-    color: var(--color-danger);
+    color: var(--tli-color-danger);
 }
 
 .stat-value.high-value {
-    text-shadow: 0 0 10px var(--color-success-glow);
+    text-shadow: 0 0 10px var(--tli-color-success-glow);
 }
 
 /* Empty state */
 .empty-state {
     padding: 2rem 1rem;
     text-align: center;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     font-size: 0.875rem;
 }
 
@@ -784,20 +745,20 @@ hr {
     flex-shrink: 0;
 }
 
-.price-status.fresh { background-color: var(--color-success); }
-.price-status.stale { background-color: var(--color-warning); }
-.price-status.old { background-color: var(--color-danger); }
-.price-status.unknown { background-color: var(--color-text-dim); }
+.price-status.fresh { background-color: var(--tli-color-success); }
+.price-status.stale { background-color: var(--tli-color-warning); }
+.price-status.old { background-color: var(--tli-color-danger); }
+.price-status.unknown { background-color: var(--tli-color-text-dim); }
 
 /* Cloud price indicator (hollow ring) */
 .price-status.cloud {
     background-color: transparent !important;
     border: 1.5px solid;
 }
-.price-status.cloud.fresh { border-color: var(--color-success); }
-.price-status.cloud.stale { border-color: var(--color-warning); }
-.price-status.cloud.old { border-color: var(--color-danger); }
-.price-status.cloud.unknown { border-color: var(--color-text-dim); }
+.price-status.cloud.fresh { border-color: var(--tli-color-success); }
+.price-status.cloud.stale { border-color: var(--tli-color-warning); }
+.price-status.cloud.old { border-color: var(--tli-color-danger); }
+.price-status.cloud.unknown { border-color: var(--tli-color-text-dim); }
 
 /* ============================================
    Modals
@@ -805,7 +766,7 @@ hr {
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--tli-color-modal-backdrop);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -815,8 +776,8 @@ hr {
 }
 
 .modal-content {
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.75rem;
     padding: 1.5rem;
     max-width: calc(100% - 2rem);
@@ -849,7 +810,7 @@ hr {
 .modal-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--tli-color-text);
 }
 
 .modal-close {
@@ -861,15 +822,15 @@ hr {
     background: transparent;
     border: none;
     border-radius: 0.375rem;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     font-size: 1.25rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--tli-transition-fast);
 }
 
 .modal-close:hover {
-    background: var(--color-bg);
-    color: var(--color-text);
+    background: var(--tli-color-bg);
+    color: var(--tli-color-text);
 }
 
 .modal-footer {
@@ -877,7 +838,7 @@ hr {
     gap: 0.75rem;
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--tli-color-border);
 }
 
 /* ============================================
@@ -892,7 +853,7 @@ hr {
 .settings-sidebar {
     width: 100px;
     flex-shrink: 0;
-    border-right: 1px solid var(--color-border);
+    border-right: 1px solid var(--tli-color-border);
     padding-right: 0;
     display: flex;
     flex-direction: column;
@@ -908,21 +869,21 @@ hr {
     border-radius: 0.375rem 0 0 0.375rem;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     cursor: pointer;
     text-align: left;
-    transition: all var(--transition-fast);
+    transition: all var(--tli-transition-fast);
 }
 
 .settings-tab:hover {
-    color: var(--color-text-muted);
-    background: rgba(255, 255, 255, 0.02);
+    color: var(--tli-color-text-muted);
+    background: var(--tli-color-shine);
 }
 
 .settings-tab.active {
-    background: var(--color-bg);
-    color: var(--color-primary-light);
-    border-right: 2px solid var(--color-primary);
+    background: var(--tli-color-bg);
+    color: var(--tli-color-primary-light);
+    border-right: 2px solid var(--tli-color-primary);
 }
 
 .settings-content {
@@ -953,14 +914,14 @@ hr {
 
 .setting-label {
     font-size: 0.875rem;
-    color: var(--color-text);
+    color: var(--tli-color-text);
     position: relative;
 }
 
 .setting-label[data-tooltip] {
     cursor: help;
     text-decoration: underline dotted;
-    text-decoration-color: var(--color-text-dim);
+    text-decoration-color: var(--tli-color-text-dim);
     text-underline-offset: 3px;
 }
 
@@ -969,8 +930,8 @@ hr {
     position: absolute;
     left: 0;
     top: calc(100% + 8px);
-    background: var(--color-card);
-    color: var(--color-text-dim);
+    background: var(--tli-color-card);
+    color: var(--tli-color-text-dim);
     padding: 0.5rem 0.75rem;
     border-radius: 0.375rem;
     font-size: 0.75rem;
@@ -979,8 +940,8 @@ hr {
     white-space: normal;
     line-height: 1.4;
     z-index: 1000;
-    border: 1px solid var(--color-border);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--tli-color-border);
+    box-shadow: var(--tli-shadow-md);
 }
 
 .setting-label[data-tooltip]:hover::before {
@@ -989,7 +950,7 @@ hr {
     left: 12px;
     top: calc(100% + 2px);
     border: 6px solid transparent;
-    border-bottom-color: var(--color-card);
+    border-bottom-color: var(--tli-color-card);
     z-index: 1001;
 }
 
@@ -1003,8 +964,8 @@ button[data-tooltip]::after {
     left: 50%;
     bottom: calc(100% + 8px);
     transform: translateX(-50%);
-    background: var(--color-card);
-    color: var(--color-text-dim);
+    background: var(--tli-color-card);
+    color: var(--tli-color-text-dim);
     padding: 0.5rem 0.75rem;
     border-radius: 0.375rem;
     font-size: 0.75rem;
@@ -1015,8 +976,8 @@ button[data-tooltip]::after {
     white-space: normal;
     text-align: center;
     z-index: 1000;
-    border: 1px solid var(--color-border);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--tli-color-border);
+    box-shadow: var(--tli-shadow-md);
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -1031,7 +992,7 @@ button[data-tooltip]::before {
     bottom: calc(100% + 2px);
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-top-color: var(--color-card);
+    border-top-color: var(--tli-color-card);
     z-index: 1001;
     pointer-events: none;
     opacity: 0;
@@ -1049,7 +1010,7 @@ button[data-tooltip]:hover::before {
 
 .setting-hint {
     font-size: 0.75rem;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     margin-top: 0.125rem;
 }
 
@@ -1073,9 +1034,9 @@ button[data-tooltip]:hover::before {
 .toggle-track {
     width: 2.5rem;
     height: 1.375rem;
-    background: var(--color-border);
+    background: var(--tli-color-border);
     border-radius: 999px;
-    transition: background-color var(--transition-base);
+    transition: background-color var(--tli-transition-base);
     position: relative;
     pointer-events: none; /* Allow clicks to pass through to checkbox */
 }
@@ -1089,13 +1050,13 @@ button[data-tooltip]:hover::before {
     height: 1.125rem;
     background: white;
     border-radius: 50%;
-    transition: transform var(--transition-base);
-    box-shadow: var(--shadow-sm);
+    transition: transform var(--tli-transition-base);
+    box-shadow: var(--tli-shadow-sm);
 }
 
 /* Checked state - CSS pseudo-selector */
 .toggle-checkbox:checked + .toggle-track {
-    background: var(--color-primary);
+    background: var(--tli-color-primary);
 }
 
 .toggle-checkbox:checked + .toggle-track::after {
@@ -1104,7 +1065,7 @@ button[data-tooltip]:hover::before {
 
 /* Checked state - JS class fallback (for programmatic updates) */
 .toggle-track.checked {
-    background: var(--color-primary);
+    background: var(--tli-color-primary);
 }
 
 .toggle-track.checked::after {
@@ -1112,7 +1073,7 @@ button[data-tooltip]:hover::before {
 }
 
 .toggle-checkbox:focus-visible + .toggle-track {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--tli-color-primary);
     outline-offset: 2px;
 }
 
@@ -1121,7 +1082,7 @@ button[data-tooltip]:hover::before {
     width: calc(100% - 8px);
     margin: 0 4px;
     height: 6px;
-    background: var(--color-border);
+    background: var(--tli-color-border);
     border-radius: 3px;
     appearance: none;
     -webkit-appearance: none;
@@ -1132,21 +1093,21 @@ button[data-tooltip]:hover::before {
     -webkit-appearance: none;
     width: 16px;
     height: 16px;
-    background: var(--color-primary);
+    background: var(--tli-color-primary);
     border-radius: 50%;
     cursor: pointer;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition: transform var(--tli-transition-fast), box-shadow var(--tli-transition-fast);
 }
 
 .range-slider::-webkit-slider-thumb:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 10px var(--color-primary-glow);
+    box-shadow: 0 0 10px var(--tli-color-primary-glow);
 }
 
 .range-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
-    background: var(--color-primary);
+    background: var(--tli-color-primary);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -1162,19 +1123,19 @@ button[data-tooltip]:hover::before {
 .number-input {
     width: 80px;
     padding: 0.375rem 0.5rem;
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-bg);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.375rem;
-    color: var(--color-text);
+    color: var(--tli-color-text);
     font-size: 0.875rem;
     text-align: right;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--tli-transition-fast), box-shadow var(--tli-transition-fast);
 }
 
 .number-input:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary-glow);
+    border-color: var(--tli-color-primary);
+    box-shadow: 0 0 0 2px var(--tli-color-primary-glow);
 }
 
 .number-input::-webkit-inner-spin-button,
@@ -1184,78 +1145,78 @@ button[data-tooltip]:hover::before {
 }
 
 .number-input-unit {
-    color: var(--color-text-muted);
+    color: var(--tli-color-text-muted);
     font-size: 0.75rem;
 }
 
 .select-input {
     padding: 0.375rem 0.5rem;
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-bg);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.375rem;
-    color: var(--color-text);
+    color: var(--tli-color-text);
     font-size: 0.875rem;
     cursor: pointer;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--tli-transition-fast), box-shadow var(--tli-transition-fast);
 }
 
 .select-input:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary-glow);
+    border-color: var(--tli-color-primary);
+    box-shadow: 0 0 0 2px var(--tli-color-primary-glow);
 }
 
 .key-capture-input {
     padding: 0.375rem 0.5rem;
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
+    background: var(--tli-color-bg);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.375rem;
-    color: var(--color-text);
+    color: var(--tli-color-text);
     font-size: 0.875rem;
     text-align: center;
     cursor: pointer;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    transition: border-color var(--tli-transition-fast), box-shadow var(--tli-transition-fast);
     min-width: 60px;
 }
 
 .key-capture-input:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px var(--color-primary-glow);
+    border-color: var(--tli-color-primary);
+    box-shadow: 0 0 0 2px var(--tli-color-primary-glow);
 }
 
 .key-capture-input.listening {
-    border-color: var(--color-warning);
-    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3);
+    border-color: var(--tli-color-warning);
+    box-shadow: 0 0 0 2px rgb(var(--tli-palette-warning-rgb) / 0.3);
 }
 
 .key-capture-input::placeholder {
-    color: var(--color-text-muted);
+    color: var(--tli-color-text-muted);
 }
 
 /* ============================================
    History
    ============================================ */
 .history-stat-card {
-    background: var(--color-bg);
+    background: var(--tli-color-bg);
     border-radius: 0.5rem;
     padding: 0.75rem;
     text-align: center;
 }
 
 .session-item {
-    background: var(--color-bg);
+    background: var(--tli-color-bg);
     border-radius: 0.5rem;
     padding: 0.75rem 1rem;
     display: grid;
     grid-template-columns: 1fr auto auto auto;
     gap: 1rem;
     align-items: center;
-    transition: background-color var(--transition-fast);
+    transition: background-color var(--tli-transition-fast);
 }
 
 .session-item:hover {
-    background: var(--color-card-hover);
+    background: var(--tli-color-card-hover);
 }
 
 .session-export-btn {
@@ -1266,22 +1227,22 @@ button[data-tooltip]:hover::before {
     height: 1.75rem;
     padding: 0;
     background: transparent;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--tli-color-border);
     border-radius: 0.375rem;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all var(--tli-transition-fast);
 }
 
 .session-export-btn:hover {
-    background: var(--color-card);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
+    background: var(--tli-color-card);
+    border-color: var(--tli-color-primary);
+    color: var(--tli-color-primary);
 }
 
 .session-item-date {
     font-size: 0.875rem;
-    color: var(--color-text);
+    color: var(--tli-color-text);
 }
 
 .session-item-stats {
@@ -1289,13 +1250,13 @@ button[data-tooltip]:hover::before {
     gap: 1rem;
     font-size: 0.8125rem;
     font-family: 'JetBrains Mono', monospace;
-    color: var(--color-text-dim);
+    color: var(--tli-color-text-dim);
 }
 
 .session-item-value {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
-    color: var(--color-success);
+    color: var(--tli-color-success);
 }
 
 /* ============================================
@@ -1313,23 +1274,23 @@ button[data-tooltip]:hover::before {
 }
 
 .status-info {
-    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 100%);
-    border-color: #3b82f6;
+    background: linear-gradient(135deg, var(--tli-color-status-info-from) 0%, var(--tli-color-status-info-to) 100%);
+    border-color: var(--tli-color-status-info-border);
 }
 
 .status-success {
-    background: linear-gradient(135deg, #134e4a 0%, #166534 100%);
-    border-color: #22c55e;
+    background: linear-gradient(135deg, var(--tli-color-status-success-from) 0%, var(--tli-color-status-success-to) 100%);
+    border-color: var(--tli-color-status-success-border);
 }
 
 .status-warning {
-    background: linear-gradient(135deg, #78350f 0%, #854d0e 100%);
-    border-color: #f59e0b;
+    background: linear-gradient(135deg, var(--tli-color-status-warning-from) 0%, var(--tli-color-status-warning-to) 100%);
+    border-color: var(--tli-color-status-warning-border);
 }
 
 .status-error {
-    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
-    border-color: #ef4444;
+    background: linear-gradient(135deg, var(--tli-color-status-error-from) 0%, var(--tli-color-status-error-to) 100%);
+    border-color: var(--tli-color-status-error-border);
 }
 
 /* Main window update notification */
@@ -1340,9 +1301,9 @@ button[data-tooltip]:hover::before {
     padding: 0.5rem 0.75rem;
     margin-bottom: 0.75rem;
     border-radius: 0.5rem;
-    border: 1px solid #22c55e;
-    background: linear-gradient(135deg, #134e4a 0%, #166534 100%);
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+    border: 1px solid var(--tli-color-update-border);
+    background: linear-gradient(135deg, var(--tli-color-update-from) 0%, var(--tli-color-update-to) 100%);
+    box-shadow: 0 4px 12px var(--tli-color-update-shadow);
 }
 
 .update-notification-row {
@@ -1357,7 +1318,7 @@ button[data-tooltip]:hover::before {
 
 .update-notification-notes {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--tli-color-update-text);
 }
 
 .update-notification-notes.hidden {
@@ -1368,12 +1329,12 @@ button[data-tooltip]:hover::before {
     cursor: pointer;
     user-select: none;
     padding: 0.25rem 0;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--tli-color-update-text-soft);
     font-weight: 500;
 }
 
 .update-notification-notes summary:hover {
-    color: rgba(255, 255, 255, 0.95);
+    color: var(--tli-color-update-text-bright);
 }
 
 .update-notification-notes-body {
@@ -1384,7 +1345,7 @@ button[data-tooltip]:hover::before {
 }
 
 .update-notification-notes-body strong {
-    color: rgba(255, 255, 255, 1);
+    color: var(--tli-color-update-text-strong);
     font-weight: 600;
 }
 
@@ -1421,7 +1382,7 @@ button[data-tooltip]:hover::before {
     border: none;
     border-radius: 0.25rem;
     background: transparent;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--tli-color-update-text-faint);
     font-size: 1.125rem;
     line-height: 1;
     cursor: pointer;
@@ -1429,8 +1390,8 @@ button[data-tooltip]:hover::before {
 }
 
 .update-notification-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.95);
+    background: var(--tli-color-update-bg-soft);
+    color: var(--tli-color-update-text-bright);
 }
 
 .update-notification-close.hidden {
@@ -1458,8 +1419,8 @@ button[data-tooltip]:hover::before {
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-accent);
+    border: 3px solid var(--tli-color-border);
+    border-top-color: var(--tli-color-accent);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -1475,7 +1436,7 @@ button[data-tooltip]:hover::before {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--color-surface);
+    background: var(--tli-color-surface);
     border-radius: inherit;
     z-index: 10;
 }
@@ -1496,12 +1457,12 @@ button[data-tooltip]:hover::before {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--color-border);
+    background: var(--tli-color-border);
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-dim);
+    background: var(--tli-color-text-dim);
 }
 
 /* ============================================
@@ -1509,7 +1470,7 @@ button[data-tooltip]:hover::before {
    ============================================ */
 button:focus-visible,
 input:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--tli-color-primary);
     outline-offset: 2px;
 }
 
@@ -1518,18 +1479,18 @@ input:focus-visible {
    ============================================ */
 
 /* Background colors */
-.bg-dark-bg { background-color: var(--color-bg); }
-.bg-dark-card { background-color: var(--color-card); }
-.bg-dark-hover { background-color: var(--color-card-hover); }
-.bg-primary { background-color: var(--color-primary); }
+.bg-dark-bg { background-color: var(--tli-color-bg); }
+.bg-dark-card { background-color: var(--tli-color-card); }
+.bg-dark-hover { background-color: var(--tli-color-card-hover); }
+.bg-primary { background-color: var(--tli-color-primary); }
 
 /* Border colors */
-.border-dark-border { border-color: var(--color-border); }
-.border-primary { border-color: var(--color-primary); }
+.border-dark-border { border-color: var(--tli-color-border); }
+.border-primary { border-color: var(--tli-color-primary); }
 
 /* Text colors */
-.text-success { color: var(--color-success) !important; }
-.text-danger { color: var(--color-danger) !important; }
+.text-success { color: var(--tli-color-success) !important; }
+.text-danger { color: var(--tli-color-danger) !important; }
 
 /* Animation utilities */
 @keyframes pulse {

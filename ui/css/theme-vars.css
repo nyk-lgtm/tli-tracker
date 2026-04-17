@@ -1,0 +1,203 @@
+/* TLI Tracker - Theme Variables
+ *
+ * Two-tier system:
+ *   1. Foundation palette (--tli-palette-*) - 10 named slots, what a theme
+ *      JSON file defines. Includes RGB-channel mirrors (...-rgb) so other
+ *      vars can compose alpha on top of them.
+ *   2. Semantic layer (--tli-color-*) - either a direct alias to a foundation
+ *      slot, or a literal value for colors that don't belong to the palette
+ *      (e.g. status-banner gradient stops, donut chart extras, history greens).
+ *
+ * At runtime, the theme apply pipeline overrides foundation vars via
+ * setProperty on :root. Semantic vars that reference foundation re-evaluate
+ * automatically through the CSS var() chain. Semantic vars with literal
+ * values are theme-fixed unless a theme overrides them explicitly.
+ *
+ * Default values below match the original teal/slate palette exactly.
+ */
+
+:root {
+    /* ============================================
+       Foundation palette (theme-defined)
+       ============================================ */
+    --tli-palette-bg:               #0c1220;
+    --tli-palette-surface:          #151e2c;
+    --tli-palette-border:           #2a3441;
+    --tli-palette-text:             #f1f5f9;
+    --tli-palette-text-muted:       #94a3b8;
+    --tli-palette-primary:          #0d9488;
+    --tli-palette-success:          #22d3ee;
+    --tli-palette-warning:          #f59e0b;
+    --tli-palette-danger:           #f87171;
+    --tli-palette-accent:           #38bdf8;
+
+    /* RGB channels for opacity composition - keep in sync with the hex above */
+    --tli-palette-bg-rgb:           12 18 32;
+    --tli-palette-surface-rgb:      21 30 44;
+    --tli-palette-border-rgb:       42 52 65;
+    --tli-palette-text-rgb:         241 245 249;
+    --tli-palette-text-muted-rgb:   148 163 184;
+    --tli-palette-primary-rgb:      13 148 136;
+    --tli-palette-success-rgb:      34 211 238;
+    --tli-palette-warning-rgb:      245 158 11;
+    --tli-palette-danger-rgb:       248 113 113;
+    --tli-palette-accent-rgb:       56 189 248;
+
+    /* ============================================
+       Semantic layer - surfaces
+       ============================================ */
+    --tli-color-bg:                 var(--tli-palette-bg);
+    --tli-color-bg-elevated:        #111827;
+    --tli-color-surface:            var(--tli-palette-surface);
+    --tli-color-card:               var(--tli-palette-surface);
+    --tli-color-card-hover:         #1a2535;
+    --tli-color-bg-accent:          #1a2744;
+
+    /* ============================================
+       Semantic layer - borders
+       ============================================ */
+    --tli-color-border:             var(--tli-palette-border);
+    --tli-color-border-subtle:      #1f2937;
+
+    /* ============================================
+       Semantic layer - text
+       ============================================ */
+    --tli-color-text:               var(--tli-palette-text);
+    --tli-color-text-muted:         var(--tli-palette-text-muted);
+    --tli-color-text-dim:           #64748b;
+    --tli-color-text-legend:        #cbd5e1;
+
+    /* ============================================
+       Semantic layer - brand
+       ============================================ */
+    --tli-color-primary:            var(--tli-palette-primary);
+    --tli-color-primary-light:      #14b8a6;
+    --tli-color-secondary:          #64748b;
+    --tli-color-success:            var(--tli-palette-success);
+    --tli-color-warning:            var(--tli-palette-warning);
+    --tli-color-danger:             var(--tli-palette-danger);
+    --tli-color-danger-dark:        #dc2626;
+    --tli-color-accent:             var(--tli-palette-accent);
+    --tli-color-inactive:           #4b5563;
+
+    /* ============================================
+       Glows (alpha tints derived from foundation)
+       ============================================ */
+    --tli-color-primary-glow:       rgb(var(--tli-palette-primary-rgb) / 0.4);
+    --tli-color-success-glow:       rgb(var(--tli-palette-success-rgb) / 0.3);
+    --tli-color-danger-glow:        rgb(var(--tli-palette-danger-rgb) / 0.4);
+
+    /* ============================================
+       Shadows
+       ============================================ */
+    --tli-shadow-sm:                0 1px 2px rgba(0, 0, 0, 0.3);
+    --tli-shadow-md:                0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --tli-shadow-lg:                0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --tli-shadow-glow:              0 0 20px var(--tli-color-primary-glow);
+
+    /* ============================================
+       Transitions
+       ============================================ */
+    --tli-transition-fast:          150ms ease;
+    --tli-transition-base:          200ms ease;
+    --tli-transition-slow:          300ms ease;
+
+    /* ============================================
+       Backdrops & shines
+       ============================================ */
+    --tli-color-modal-backdrop:     rgba(0, 0, 0, 0.6);
+    --tli-color-shine:              rgba(255, 255, 255, 0.02);
+
+    /* ============================================
+       Status banners (info/success/warning/error)
+       ============================================ */
+    --tli-color-status-info-from:       #1e3a5f;
+    --tli-color-status-info-to:         #1e40af;
+    --tli-color-status-info-border:     #3b82f6;
+    --tli-color-status-success-from:    #134e4a;
+    --tli-color-status-success-to:      #166534;
+    --tli-color-status-success-border:  #22c55e;
+    --tli-color-status-warning-from:    #78350f;
+    --tli-color-status-warning-to:      #854d0e;
+    --tli-color-status-warning-border:  #f59e0b;
+    --tli-color-status-error-from:      #7f1d1d;
+    --tli-color-status-error-to:        #991b1b;
+    --tli-color-status-error-border:    #ef4444;
+
+    /* ============================================
+       Update notification (mirrors status-success palette)
+       ============================================ */
+    --tli-color-update-from:            #134e4a;
+    --tli-color-update-to:              #166534;
+    --tli-color-update-border:          #22c55e;
+    --tli-color-update-shadow:          rgba(34, 197, 94, 0.15);
+    --tli-color-update-text-strong:     rgba(255, 255, 255, 1);
+    --tli-color-update-text-bright:     rgba(255, 255, 255, 0.95);
+    --tli-color-update-text:            rgba(255, 255, 255, 0.85);
+    --tli-color-update-text-soft:       rgba(255, 255, 255, 0.7);
+    --tli-color-update-text-faint:      rgba(255, 255, 255, 0.6);
+    --tli-color-update-bg-soft:         rgba(255, 255, 255, 0.1);
+
+    /* ============================================
+       Drop item history (independent green family for "growth" semantics)
+       ============================================ */
+    --tli-color-history-line:           #4ade80;
+    --tli-color-history-dot:            #bbf7d0;
+    --tli-color-history-dot-stroke:     rgba(187, 247, 208, 0.35);
+    --tli-color-history-chip-bg:        rgba(34, 197, 94, 0.12);
+    --tli-color-history-chip-text:      #bbf7d0;
+    --tli-color-history-chip-text-bold: #dcfce7;
+    --tli-color-history-chip-border:    rgba(34, 197, 94, 0.28);
+    --tli-color-history-toggle-bg:      rgba(34, 197, 94, 0.16);
+    --tli-color-history-toggle-shadow:  rgba(134, 239, 172, 0.18);
+    --tli-color-history-badge-text:     #86efac;
+    --tli-color-history-badge-border:   rgba(34, 197, 94, 0.28);
+
+    /* ============================================
+       Drop item panel & spinner
+       ============================================ */
+    --tli-color-panel-error-text:       #fca5a5;
+    --tli-color-panel-error-border:     rgba(239, 68, 68, 0.24);
+    --tli-color-panel-spinner-tip:      #5eead4;
+
+    /* ============================================
+       Pulse chart (bar gradients)
+       ============================================ */
+    --tli-color-bar-from:               var(--tli-color-primary-light);
+    --tli-color-bar-to:                 var(--tli-color-primary);
+    --tli-color-bar-hover-from:         var(--tli-color-success);
+    --tli-color-bar-hover-to:           var(--tli-color-primary-light);
+    --tli-color-chart-zero-line:        rgba(100, 116, 139, 0.4);
+
+    /* ============================================
+       Efficiency chart
+       ============================================ */
+    --tli-color-eff-line:               var(--tli-color-primary-light);
+    --tli-color-eff-dot:                var(--tli-color-success);
+    --tli-color-eff-dot-stroke:         var(--tli-color-bg);
+    --tli-color-eff-current-text:       var(--tli-color-success);
+
+    /* ============================================
+       Donut chart center
+       ============================================ */
+    --tli-color-donut-center-bg:        var(--tli-color-bg);
+    --tli-color-donut-center-text:      var(--tli-color-text);
+
+    /* ============================================
+       Chart palette (9-color rainbow used by donut)
+       ============================================ */
+    --tli-color-chart-0:                var(--tli-palette-primary);
+    --tli-color-chart-1:                var(--tli-palette-success);
+    --tli-color-chart-2:                var(--tli-palette-accent);
+    --tli-color-chart-3:                #818cf8;
+    --tli-color-chart-4:                #a78bfa;
+    --tli-color-chart-5:                #f472b6;
+    --tli-color-chart-6:                #fb7185;
+    --tli-color-chart-7:                var(--tli-palette-warning);
+    --tli-color-chart-8:                var(--tli-palette-text-muted);
+
+    /* ============================================
+       Edit mode (widgets) - distinct teal-400 family
+       ============================================ */
+    --tli-palette-editmode-rgb:         45 212 191;
+}

@@ -8,10 +8,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/theme-vars.css">
     <link rel="stylesheet" href="css/overlay.css">
     <link rel="stylesheet" href="css/charts.css">
     <link rel="stylesheet" href="css/widgets.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'theme-bg':      'var(--tli-color-bg)',
+                        'theme-card':    'var(--tli-color-card)',
+                        'theme-border':  'var(--tli-color-border)',
+                        'theme-text':    'var(--tli-color-text)',
+                        'theme-muted':   'var(--tli-color-text-muted)',
+                        'theme-dim':     'var(--tli-color-text-dim)',
+                        'theme-primary': 'var(--tli-color-primary)',
+                        'theme-success': 'var(--tli-color-success)',
+                        'theme-warning': 'var(--tli-color-warning)',
+                        'theme-danger':  'var(--tli-color-danger)',
+                        'theme-accent':  'var(--tli-color-accent)'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body>
     <!-- Full-screen widget canvas -->
