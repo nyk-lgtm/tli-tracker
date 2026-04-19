@@ -326,7 +326,13 @@ export async function saveSettings() {
     }
 
     try {
-        await api('save_settings', settings);
+        // Theme + theme_overrides are managed by the Appearance tab via
+        // dedicated bridge methods; the bulk save path would otherwise
+        // overwrite them with the stale value cached at last loadSettings().
+        const payload = { ...settings };
+        delete payload.theme;
+        delete payload.theme_overrides;
+        await api('save_settings', payload);
         const bc = new BroadcastChannel('tli_settings_channel');
         bc.postMessage('update');
         bc.close();
@@ -381,6 +387,10 @@ export async function loadThemesList() {
             api('get_active_theme'),
         ]);
         const activeId = activeBundle?.theme?.id || 'default';
+        // Keep the bulk-save cache in sync with what the backend considers
+        // the active theme so saveSettings (even if it stops stripping
+        // theme keys someday) never reverts the user's selection.
+        settings.theme = activeId;
 
         elements.settingTheme.innerHTML = themes
             .map((t) => {
@@ -403,6 +413,7 @@ async function onThemeSelect(event) {
             showStatus(result?.message || 'Failed to switch theme', 'error');
             return;
         }
+        settings.theme = themeId;
         applyAppearanceMeta(_themesCache, themeId);
     } catch (e) {
         console.error('Failed to set active theme:', e);
