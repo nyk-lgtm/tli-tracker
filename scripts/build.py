@@ -41,6 +41,7 @@ def sync_version() -> str:
 
 def compile_nuitka() -> int:
     """Compile with Nuitka"""
+    builtin_themes_src = ROOT / "data" / "themes" / "_builtin"
     cmd = [
         sys.executable,
         "-m",
@@ -49,6 +50,7 @@ def compile_nuitka() -> int:
         "--enable-plugin=pyside6",
         f"--include-data-dir={ROOT / 'ui'}=ui",
         f"--include-data-file={ROOT / 'data' / 'item_ids.json'}=data/item_ids.json",
+        f"--include-data-dir={builtin_themes_src}=data/themes/_builtin",
         f"--windows-icon-from-ico={ROOT / 'ui' / 'assets' / 'logo.ico'}",
         "--windows-console-mode=disable",
         "--assume-yes-for-downloads",
