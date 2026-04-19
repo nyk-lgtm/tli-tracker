@@ -57,6 +57,26 @@ class DummyUpdater:
         return self.apply_result
 
 
+class DummyThemes:
+    def __init__(self) -> None:
+        self.entries = [
+            {
+                "id": "default",
+                "name": "Default",
+                "description": "",
+                "builtin": True,
+                "mode": "dark",
+            }
+        ]
+        self.active_id = "default"
+
+    def list_themes(self) -> list[dict]:
+        return list(self.entries)
+
+    def get_active_theme_id(self) -> str:
+        return self.active_id
+
+
 class DummyOverlayWindow:
     def __init__(self) -> None:
         self.hint_region_payload = None
@@ -147,6 +167,24 @@ def test_apply_downloaded_update_delegates_to_updater() -> None:
     assert api.apply_downloaded_update() == {
         "status": "error",
         "error": "missing installer",
+    }
+
+
+def test_list_themes_includes_active_id() -> None:
+    api = make_api_stub()
+    api.themes = DummyThemes()
+
+    assert api.list_themes() == {
+        "themes": [
+            {
+                "id": "default",
+                "name": "Default",
+                "description": "",
+                "builtin": True,
+                "mode": "dark",
+            }
+        ],
+        "active_id": "default",
     }
 
 

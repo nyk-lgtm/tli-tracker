@@ -220,13 +220,29 @@ class ThemeManager:
             theme = self._themes.get(theme_id)
             return dict(theme) if theme else None
 
+    def _resolve_active_theme_id(self, config: Optional[dict] = None) -> str:
+        """Resolve the effective active theme id, falling back to default."""
+        config = load_config() if config is None else config
+        active_id = config.get("theme", "default")
+        if self.get_theme(active_id) is not None:
+            return active_id
+        if self.get_theme("default") is not None:
+            return "default"
+        raise ThemeError("default theme is missing - bundle is broken")
+
+    def get_active_theme_id(self) -> str:
+        """Return the effective active theme id, falling back to default."""
+        return self._resolve_active_theme_id()
+
     def get_active_theme(self) -> dict:
         """Resolve the active theme from config, falling back to default."""
         config = load_config()
-        active_id = config.get("theme", "default")
-        theme = self.get_theme(active_id) or self.get_theme("default")
+        active_id = self._resolve_active_theme_id(config)
+        theme = self.get_theme(active_id)
         if theme is None:
-            raise ThemeError("default theme is missing - bundle is broken")
+            raise ThemeError(
+                f"active theme {active_id!r} is missing - bundle is broken"
+            )
 
         config_overrides = config.get("theme_overrides", {})
         if isinstance(config_overrides, dict) and config_overrides:
@@ -274,8 +290,8 @@ class ThemeManager:
         )
         # watchdog will trigger _reload, but reload synchronously so callers see
         # the new theme immediately
-        self._reload()
-        self._notify_changed()
+        if self._reload():
+            self._notify_changed()
         return normalized
 
     def delete_custom_theme(self, theme_id: str) -> bool:
@@ -290,8 +306,8 @@ class ThemeManager:
         path = self.custom_dir / f"{theme_id}.json"
         if path.exists():
             path.unlink()
-        self._reload()
-        self._notify_changed()
+        if self._reload():
+            self._notify_changed()
         return True
 
     def import_theme(self, src: Path) -> dict:
@@ -327,7 +343,7 @@ class ThemeManager:
 
     # === Internals ===
 
-    def _reload(self) -> None:
+    def _reload(self) -> bool:
         loaded: dict[str, dict] = {}
 
         builtin_files = (
@@ -354,7 +370,10 @@ class ThemeManager:
             print("[ThemeManager] WARNING: 'default' theme missing from bundle")
 
         with self._lock:
-            self._themes = loaded
+            changed = loaded != self._themes
+            if changed:
+                self._themes = loaded
+        return changed
 
     def _load_file(self, path: Path, *, builtin: bool) -> Optional[dict]:
         try:
@@ -378,8 +397,8 @@ class ThemeManager:
             print(f"[ThemeManager] failed to start watcher: {e}")
 
     def _on_custom_change(self) -> None:
-        self._reload()
-        self._notify_changed()
+        if self._reload():
+            self._notify_changed()
 
     def _notify_changed(self) -> None:
         if self._on_themes_changed is None:

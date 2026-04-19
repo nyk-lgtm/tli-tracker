@@ -382,11 +382,9 @@ function applyAppearanceMeta(themes, activeId) {
 export async function loadThemesList() {
     if (!elements.settingTheme) return;
     try {
-        const [themes, activeBundle] = await Promise.all([
-            api('list_themes'),
-            api('get_active_theme'),
-        ]);
-        const activeId = activeBundle?.theme?.id || 'default';
+        const themeBundle = await api('list_themes');
+        const themes = Array.isArray(themeBundle?.themes) ? themeBundle.themes : [];
+        const activeId = themeBundle?.active_id || 'default';
         // Keep the bulk-save cache in sync with what the backend considers
         // the active theme so saveSettings (even if it stops stripping
         // theme keys someday) never reverts the user's selection.

@@ -246,7 +246,7 @@ class ApiBridge(QObject):
 
     @Slot(result=str)
     def list_themes(self) -> str:
-        """Return summary metadata for every available theme."""
+        """Return summary metadata plus the effective active theme id."""
         return json.dumps(self.api.list_themes(), default=str)
 
     @Slot(result=str)

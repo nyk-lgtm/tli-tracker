@@ -7,6 +7,7 @@ and directly by other Python components.
 
 import csv
 import json
+import os
 from typing import Any, Optional
 
 from PySide6.QtWidgets import QFileDialog
@@ -403,9 +404,12 @@ class Api:
 
     # === Themes API ===
 
-    def list_themes(self) -> list[dict]:
-        """Return summary metadata for every available theme."""
-        return self.themes.list_themes()
+    def list_themes(self) -> dict:
+        """Return summary metadata plus the effective active theme id."""
+        return {
+            "themes": self.themes.list_themes(),
+            "active_id": self.themes.get_active_theme_id(),
+        }
 
     def get_active_theme(self) -> dict:
         """Return the active theme plus its flattened CSS-var apply map."""
@@ -447,7 +451,6 @@ class Api:
             theme = self.themes.save_custom_theme(theme_data)
         except ThemeError as e:
             return {"status": "error", "message": str(e)}
-        self._push_to_ui("themes_update", {})
         return {"status": "ok", "theme": theme}
 
     def delete_custom_theme(self, theme_id: str) -> dict:
@@ -463,7 +466,6 @@ class Api:
         if config.get("theme") == theme_id:
             config["theme"] = "default"
             save_config(config)
-        self._push_to_ui("themes_update", {})
         return {"status": "ok"}
 
     def import_theme_from_file(self) -> dict:
@@ -480,7 +482,6 @@ class Api:
             theme = self.themes.import_theme(file_path)
         except ThemeError as e:
             return {"status": "error", "message": str(e)}
-        self._push_to_ui("themes_update", {})
         return {"status": "ok", "theme": theme}
 
     def export_theme_to_file(self, theme_id: str) -> dict:
@@ -503,8 +504,6 @@ class Api:
 
     def open_themes_folder(self) -> dict:
         """Open the OS file explorer at the user's custom themes directory."""
-        import os
-
         try:
             os.startfile(str(self.themes.custom_dir))
         except Exception as e:
