@@ -794,6 +794,8 @@ hr {
     animation: fadeIn 0.15s ease;
 }
 
+#confirm-modal { z-index: 60; }
+
 .modal-content {
     background: var(--tli-color-card);
     border: 1px solid var(--tli-color-border);
@@ -1228,7 +1230,7 @@ button[data-tooltip]:hover::before {
     border-radius: 0.5rem;
     padding: 0.75rem 1rem;
     display: grid;
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 1fr auto auto auto auto;
     gap: 1rem;
     align-items: center;
     cursor: pointer;
@@ -1273,6 +1275,27 @@ button[data-tooltip]:hover::before {
     background: var(--tli-color-card);
     border-color: var(--tli-color-primary);
     color: var(--tli-color-primary);
+}
+
+.session-delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--tli-color-border);
+    border-radius: 0.375rem;
+    color: var(--tli-color-text-dim);
+    cursor: pointer;
+    transition: all var(--tli-transition-fast);
+}
+
+.session-delete-btn:hover {
+    background: var(--tli-color-card);
+    border-color: var(--tli-color-danger);
+    color: var(--tli-color-danger);
 }
 
 .session-item-date {

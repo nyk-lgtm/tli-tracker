@@ -5,7 +5,7 @@
 import { elements } from './elements.js';
 import { state, settings } from './state.js';
 import { formatValue, formatTime, formatRate, formatDate, showStatus } from './utils.js';
-import { closeModal } from './modals.js';
+import { closeModal, showConfirmDialog } from './modals.js';
 import { updateState } from './renderers.js';
 
 // ============ History ============
@@ -45,6 +45,15 @@ export async function loadHistory() {
                         <line x1="12" y1="15" x2="12" y2="3"/>
                     </svg>
                 </button>
+                <button class="session-delete-btn" data-session-id="${session.id}" title="Delete session">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/>
+                        <path d="M14 11v6"/>
+                        <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
             </div>
         `).join('');
 
@@ -53,6 +62,16 @@ export async function loadHistory() {
                 e.stopPropagation();
                 const sessionId = btn.dataset.sessionId;
                 await exportSession(sessionId);
+            });
+        });
+
+        elements.historyList.querySelectorAll('.session-delete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const sessionId = btn.dataset.sessionId;
+                const item = btn.closest('.session-item');
+                const date = item?.dataset.sessionDate || '';
+                await deleteSession(sessionId, date);
             });
         });
 
@@ -95,6 +114,36 @@ export function exitSessionViewing() {
         elements.sessionViewerBanner.classList.add('hidden');
     }
     void api('get_stats').then(updateState);
+}
+
+async function deleteSession(sessionId, date) {
+    const confirmed = await showConfirmDialog(
+        'Delete Session',
+        `Delete the session from ${date || 'this date'}? This cannot be undone.`,
+        'Delete',
+        'Cancel'
+    );
+    if (!confirmed) return;
+
+    try {
+        const result = await api('delete_session', sessionId);
+        if (result.status !== 'ok') {
+            showStatus('Delete failed', 'error', 3000);
+            return;
+        }
+        if (state.viewingSessionId === sessionId) {
+            state.viewingSessionId = null;
+            if (elements.sessionViewerBanner) {
+                elements.sessionViewerBanner.classList.add('hidden');
+            }
+            void api('get_stats').then(updateState);
+        }
+        await loadHistory();
+        showStatus('Session deleted', 'success', 2000);
+    } catch (e) {
+        console.error('Delete error:', e);
+        showStatus('Delete failed', 'error', 3000);
+    }
 }
 
 async function exportSession(sessionId) {
