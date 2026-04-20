@@ -16,6 +16,7 @@ export function initElements() {
         statSessionValue: document.getElementById('stat-session-value'),
         statRate: document.getElementById('stat-rate'),
         statMapCount: document.getElementById('stat-map-count'),
+        statCardEfficiency: document.getElementById('stat-card-efficiency'),
         dropsList: document.getElementById('drops-list'),
         btnInitialize: document.getElementById('btn-initialize'),
         btnPause: document.getElementById('btn-pause'),

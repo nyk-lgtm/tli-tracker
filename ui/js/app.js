@@ -5,7 +5,7 @@
  * The api() and waitForApi() functions are provided by qt_bridge.js.
  */
 
-import { state } from './state.js';
+import { state, settings } from './state.js';
 import { elements, initElements } from './elements.js';
 import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
@@ -321,6 +321,22 @@ function setDisplayMode(mode) {
     renderDrops();
 }
 
+async function toggleEfficiencyUnit() {
+    const next = !settings.efficiency_per_map;
+    settings.efficiency_per_map = next;
+    renderUI();
+    const checkbox = document.getElementById('setting-efficiency-per-map');
+    if (checkbox) checkbox.checked = next;
+    try {
+        await api('set_setting', 'efficiency_per_map', JSON.stringify(next));
+        const bc = new BroadcastChannel('tli_settings_channel');
+        bc.postMessage('update');
+        bc.close();
+    } catch (e) {
+        console.error('Failed to persist efficiency unit:', e);
+    }
+}
+
 let overlayVisible = false;
 
 async function toggleOverlay() {
@@ -376,6 +392,9 @@ function init() {
     elements.btnReset.addEventListener('click', resetSession);
     elements.btnModeSession.addEventListener('click', () => setDisplayMode('session'));
     elements.btnModeMap.addEventListener('click', () => setDisplayMode('map'));
+    if (elements.statCardEfficiency) {
+        elements.statCardEfficiency.addEventListener('click', toggleEfficiencyUnit);
+    }
     elements.btnSettings.addEventListener('click', () => {
         openModal('settings');
         void loadSettings();

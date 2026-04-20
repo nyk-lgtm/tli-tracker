@@ -184,6 +184,25 @@ hr {
     box-shadow: 0 0 30px rgb(var(--tli-palette-primary-rgb) / 0.15);
 }
 
+#stat-card-efficiency .stat-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: bottom;
+}
+
+#stat-card-efficiency .stat-label::after {
+    content: '⇄';
+    font-size: 0.9rem;
+    line-height: 1;
+    color: var(--tli-color-text-muted, #9ca3af);
+    opacity: 0.5;
+    transition: opacity var(--tli-transition-base);
+}
+
+#stat-card-efficiency:hover .stat-label::after {
+    opacity: 1;
+}
+
 .paused-badge {
     position: absolute;
     bottom: 0;
