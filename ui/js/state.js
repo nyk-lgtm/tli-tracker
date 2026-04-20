@@ -6,8 +6,9 @@ export const state = {
     initialized: false,
     awaitingInit: false,
     inMap: false,
-    displayMode: 'value',
+    displayMode: 'session',
     currentMap: null,
+    displayMap: null,
     session: null
 };
 

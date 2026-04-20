@@ -100,7 +100,7 @@ class Api:
         return self.tracker.request_initialization()
 
     def set_display_mode(self, mode: str) -> dict:
-        """Set display mode ('value' or 'items')."""
+        """Set display mode ('session' or 'map')."""
         self.tracker.set_display_mode(mode)
         return {"status": "ok", "mode": mode}
 

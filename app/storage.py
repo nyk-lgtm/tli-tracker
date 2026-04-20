@@ -98,7 +98,7 @@ def save_json(filename: str, data: Any) -> bool:
 # === Configuration ===
 
 DEFAULT_CONFIG = {
-    "display_mode": "value",
+    "display_mode": "session",
     "overlay_opacity": 0.9,
     "tax_enabled": False,
     "tax_rate": 0.125,  # 12.5% AH fee

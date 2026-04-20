@@ -9,10 +9,10 @@ from typing import Optional
 
 
 class DisplayMode(Enum):
-    """Display mode for the UI."""
+    """Which drop list the main window renders."""
 
-    VALUE = "value"  # Show gold values
-    ITEMS = "items"  # Show item quantities
+    SESSION = "session"  # session-wide aggregate
+    MAP = "map"  # current or most-recent map only
 
 
 @dataclass
@@ -265,4 +265,4 @@ class TrackerState:
     is_in_map: bool = False
     current_map: Optional[MapRun] = None
     current_session: Optional[Session] = None
-    display_mode: DisplayMode = DisplayMode.VALUE
+    display_mode: DisplayMode = DisplayMode.SESSION

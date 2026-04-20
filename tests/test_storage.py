@@ -126,7 +126,7 @@ def test_load_config_keeps_invalid_file_on_disk_and_records_error(
 
     config = storage.load_config()
 
-    assert config["display_mode"] == "value"
+    assert config["display_mode"] == "session"
     assert config["widgets"]
     assert isinstance(storage.get_config_load_error(), json.JSONDecodeError)
     assert config_path.read_text(encoding="utf-8") == "{not valid"

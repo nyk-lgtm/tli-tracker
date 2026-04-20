@@ -24,10 +24,12 @@ export function updateState(data) {
     state.inMap = data.in_map;
     state.displayMode = data.display_mode;
     state.currentMap = data.current_map;
+    state.displayMap = data.display_map;
     state.session = data.session;
 
     renderUI();
     renderPauseButton();
+    syncDisplayModeUI();
 }
 
 export function renderUI() {
@@ -161,51 +163,62 @@ export function updateInitStatus() {
 // ============ Drop Rendering ============
 
 export function renderDrops() {
-    const itemRows = state.session?.item_rows || [];
+    const isMapMode = state.displayMode === 'map';
+    const source = isMapMode ? state.displayMap : state.session;
+    const itemRows = source?.item_rows || [];
     syncExpandedPriceHistory(itemRows.map((item) => item.item_id));
 
     if (itemRows.length === 0) {
-        let emptyHtml = '';
-
-        if (state.awaitingInit) {
-            // Scenario: Waiting for re-sync
-            emptyHtml = `
-                <div class="empty-state py-10">
-                    <div class="text-base font-semibold text-gray-300 mb-2">Waiting for Re-sync</div>
-                    <p class="text-sm text-gray-500">
-                        Sort your inventory in-game to re-sync.
-                    </p>
-                </div>
-            `;
-        } else if (!state.initialized) {
-            // Scenario: Not Initialized (Onboarding)
-            emptyHtml = `
-                <div class="empty-state py-10">
-                    <div class="text-base font-semibold text-gray-300 mb-2">Inventory Not Tracked</div>
-                    <p class="text-sm text-gray-500">
-                        In-game: Settings -> Enable Log<br>Then sort your inventory to start tracking.
-                    </p>
-                </div>
-            `;
-        } else {
-            // Scenario: Initialized but empty (No drops)
-            emptyHtml = `
-                <div class="empty-state">
-                    No drops detected in this session
-                </div>
-            `;
-        }
-
-        elements.dropsList.innerHTML = emptyHtml;
+        elements.dropsList.innerHTML = renderDropsEmptyState(isMapMode);
         return;
     }
 
-    // Render aggregate rows - the backend already collapsed raw drops into
-    // one row per item, so only a cheap display sort remains here.
-    if (state.displayMode === 'items') {
-        renderItemsMode(itemRows);
-    } else {
-        renderValueMode(itemRows);
+    renderValueMode(itemRows);
+}
+
+function renderDropsEmptyState(isMapMode) {
+    if (state.awaitingInit) {
+        return `
+            <div class="empty-state py-10">
+                <div class="text-base font-semibold text-gray-300 mb-2">Waiting for Re-sync</div>
+                <p class="text-sm text-gray-500">
+                    Sort your inventory in-game to re-sync.
+                </p>
+            </div>
+        `;
+    }
+    if (!state.initialized) {
+        return `
+            <div class="empty-state py-10">
+                <div class="text-base font-semibold text-gray-300 mb-2">Inventory Not Tracked</div>
+                <p class="text-sm text-gray-500">
+                    In-game: Settings -> Enable Log<br>Then sort your inventory to start tracking.
+                </p>
+            </div>
+        `;
+    }
+    if (isMapMode) {
+        if (!state.displayMap) {
+            return `<div class="empty-state">No completed maps yet</div>`;
+        }
+        if (state.displayMap.is_live) {
+            return `<div class="empty-state">No drops in this map yet</div>`;
+        }
+        return `<div class="empty-state">Last map had no drops</div>`;
+    }
+    return `<div class="empty-state">No drops detected in this session</div>`;
+}
+
+export function syncDisplayModeUI() {
+    const isMapMode = state.displayMode === 'map';
+    if (elements.btnModeSession) {
+        elements.btnModeSession.classList.toggle('active', !isMapMode);
+    }
+    if (elements.btnModeMap) {
+        elements.btnModeMap.classList.toggle('active', isMapMode);
+        // label reflects whether we're showing the in-progress map or the last finished one
+        const isLive = state.displayMap?.is_live !== false;
+        elements.btnModeMap.textContent = isLive ? 'Current Map' : 'Last Map';
     }
 }
 
@@ -438,19 +451,3 @@ function renderValueMode(itemRows) {
     mountPriceHistoryCharts();
 }
 
-function renderItemsMode(itemRows) {
-    const sorted = [...itemRows]
-        .sort((a, b) => b.quantity - a.quantity)
-        .slice(0, 50);
-
-    const html = sorted.map((item) => {
-        const valueClass = item.quantity >= 0 ? 'positive' : 'negative';
-        return renderDropRow(item, {
-            nameHtml: `<span class="drop-item-label">${escapeHtml(item.item_name)}</span>`,
-            valueHtml: `<div class="drop-item-quantity font-mono ${valueClass}">×${item.quantity}</div>`
-        });
-    }).join('');
-
-    elements.dropsList.innerHTML = html;
-    mountPriceHistoryCharts();
-}

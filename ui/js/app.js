@@ -12,7 +12,7 @@ import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, loadThemesList, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners, initAppearanceListeners } from './settings.js';
 import { loadHistory } from './history.js';
 import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, dismissUpdateBanner, handleUpdateState, loadUpdateState } from './updates.js';
-import { updateState, renderUI, renderDrops, updateTimedStats } from './renderers.js';
+import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI } from './renderers.js';
 import {
     applyPriceHistoryUpdate,
     collapseExpandedPriceHistory,
@@ -105,6 +105,7 @@ window.onPythonEvent = function(eventType, data) {
             collapseExpandedPriceHistory();
             state.session = null;
             state.currentMap = null;
+            state.displayMap = null;
             state.inMap = false;
             renderUI();
             syncInitPolling();
@@ -125,7 +126,9 @@ window.onPythonEvent = function(eventType, data) {
 function onReady() {
     showStatus('Connected to the game', 'success', 3000);
 
-    // Load initial state
+    // Preview mode owns state; skip the live fetch or it wipes the fixture.
+    if (window.__PREVIEW__?.enabled) return;
+
     api('get_stats').then(applyTrackerState);
 }
 
@@ -301,6 +304,7 @@ async function resetSession() {
         collapseExpandedPriceHistory();
         state.session = null;
         state.currentMap = null;
+        state.displayMap = null;
         state.inMap = false;
         renderUI();
         syncInitPolling();
@@ -312,16 +316,7 @@ async function resetSession() {
 
 function setDisplayMode(mode) {
     state.displayMode = mode;
-
-    // Update button styles
-    if (mode === 'value') {
-        elements.btnModeValue.classList.add('active');
-        elements.btnModeItems.classList.remove('active');
-    } else {
-        elements.btnModeItems.classList.add('active');
-        elements.btnModeValue.classList.remove('active');
-    }
-
+    syncDisplayModeUI();
     api('set_display_mode', mode);
     renderDrops();
 }
@@ -379,8 +374,8 @@ function init() {
     elements.btnInitialize.addEventListener('click', initialize);
     elements.btnPause.addEventListener('click', togglePause);
     elements.btnReset.addEventListener('click', resetSession);
-    elements.btnModeValue.addEventListener('click', () => setDisplayMode('value'));
-    elements.btnModeItems.addEventListener('click', () => setDisplayMode('items'));
+    elements.btnModeSession.addEventListener('click', () => setDisplayMode('session'));
+    elements.btnModeMap.addEventListener('click', () => setDisplayMode('map'));
     elements.btnSettings.addEventListener('click', () => {
         openModal('settings');
         void loadSettings();

@@ -45,7 +45,7 @@ class ApiBridge(QObject):
 
     @Slot(str, result=str)
     def set_display_mode(self, mode: str) -> str:
-        """Set display mode ('value' or 'items')."""
+        """Set display mode ('session' or 'map')."""
         return json.dumps(self.api.set_display_mode(mode), default=str)
 
     @Slot(result=str)

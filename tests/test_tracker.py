@@ -460,3 +460,113 @@ def test_reset_session_clears_pause_state() -> None:
 
     assert tracker._is_paused is False
     assert tracker._pause_started_at is None
+
+
+def test_display_map_is_live_while_in_map() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(read_fixture("bag_modify.log"))
+
+    stats = tracker.get_stats()
+    assert stats["display_map"] is not None
+    assert stats["display_map"]["is_live"] is True
+    assert stats["display_map"]["ended_at"] is None
+    assert stats["display_map"]["items"] == 3
+    item_ids = {row["item_id"] for row in stats["display_map"]["item_rows"]}
+    assert item_ids == {"2001", "3001"}
+
+
+def test_display_map_stays_after_map_exit() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(read_fixture("bag_modify.log"))
+    tracker.process_log_chunk(read_fixture("map_exit.log"))
+
+    stats = tracker.get_stats()
+    assert stats["current_map"] is None
+    assert stats["display_map"] is not None
+    assert stats["display_map"]["is_live"] is False
+    assert stats["display_map"]["ended_at"] is not None
+    item_ids = {row["item_id"] for row in stats["display_map"]["item_rows"]}
+    assert item_ids == {"2001", "3001"}
+
+
+def test_display_map_cleared_on_session_reset() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(read_fixture("bag_modify.log"))
+    tracker.process_log_chunk(read_fixture("map_exit.log"))
+
+    assert tracker._last_map_run is not None
+
+    tracker.reset_session()
+
+    assert tracker._last_map_run is None
+    assert tracker.get_stats()["display_map"] is None
+
+
+def test_display_map_filters_ignored_items() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(read_fixture("bag_modify.log"))
+    tracker.prices.set_price("2001", 10.0)
+    tracker.prices.set_price("3001", 5.0)
+    tracker._backfill_prices("2001")
+    tracker._backfill_prices("3001")
+
+    tracker.toggle_ignore_item("2001")
+    stats = tracker.get_stats()
+
+    row_2001 = next(
+        r for r in stats["display_map"]["item_rows"] if r["item_id"] == "2001"
+    )
+    assert row_2001["ignored"] is True
+    # ignored items excluded from the item count like the session view does
+    assert stats["display_map"]["items"] == 1
+
+
+def test_resync_midmap_preserves_last_map_run() -> None:
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.process_log_chunk(read_fixture("bag_init.log"))
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+    tracker.process_log_chunk(read_fixture("bag_modify.log"))
+    map_ref = tracker._last_map_run
+    assert map_ref is not None
+
+    tracker.request_initialization()
+
+    # re-sync wipes live drops but must leave the sticky reference intact
+    assert tracker._last_map_run is map_ref
+
+
+def test_set_display_mode_accepts_legacy_values() -> None:
+    from app.models import DisplayMode
+
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    tracker.set_display_mode("value")
+    assert tracker.state.display_mode is DisplayMode.SESSION
+
+    tracker.set_display_mode("items")
+    assert tracker.state.display_mode is DisplayMode.MAP
+
+    tracker.set_display_mode("session")
+    assert tracker.state.display_mode is DisplayMode.SESSION
+
+    tracker.set_display_mode("map")
+    assert tracker.state.display_mode is DisplayMode.MAP

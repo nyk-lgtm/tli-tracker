@@ -52,6 +52,9 @@ class Tracker:
         self._pending_init_old_baseline: dict[str, int] = {}
         self._pending_init_existing_state = False
         self._pending_init_last_seen_at: float | None = None
+        # sticky reference to the most recent map - keeps map-view drops visible
+        # between runs so the user doesn't lose context the moment they exit
+        self._last_map_run: MapRun | None = None
         self._reset_live_cache(mark_dirty=True)
         self._reset_drop_index(mark_dirty=True)
         self.refresh_runtime_config()
@@ -327,6 +330,36 @@ class Tracker:
             if drop.quantity > 0:
                 self._live_current_items += drop.quantity
 
+    def _build_map_item_rows(self, map_run: MapRun, ignored: set[str]) -> list[dict]:
+        """Aggregate a map's drops into display rows (same shape as session rows)."""
+        rows: dict[str, dict] = {}
+        for drop in map_run.drops:
+            item_name = get_item_name(drop.item_id)
+            if item_name.startswith("Unknown ("):
+                continue
+            item_type = get_item_type(drop.item_id) or "Other"
+            entry = rows.setdefault(
+                drop.item_id,
+                {
+                    "item_id": drop.item_id,
+                    "item_name": item_name,
+                    "item_type": item_type,
+                    "quantity": 0,
+                    "value": 0.0,
+                    "price_status": "unknown",
+                    "price_source": "local",
+                    "ignored": drop.item_id in ignored,
+                },
+            )
+            entry["quantity"] += drop.quantity
+            if drop.value is not None:
+                entry["value"] += drop.value
+        for item_id, entry in rows.items():
+            _, price_status, price_source = self._resolve_price(item_id)
+            entry["price_status"] = price_status
+            entry["price_source"] = price_source
+        return list(rows.values())
+
     def _refresh_item_metadata(self) -> None:
         """Refresh price status/source metadata for aggregate rows."""
         for item_id, entry in self._live_items.items():
@@ -496,6 +529,7 @@ class Tracker:
     def _on_map_enter(self, is_league_zone: bool = False) -> None:
         """Handle entering a map."""
         self._start_current_map(is_league_zone=is_league_zone, notify=True)
+        self._last_map_run = self.state.current_map
 
     def _on_map_exit(self, is_league_zone: bool = False) -> None:
         """Handle exiting a map."""
@@ -736,6 +770,39 @@ class Tracker:
                 "items": self._live_current_items,
             }
 
+        ignored_ids = (
+            self.state.current_session.ignored_item_ids
+            if self.state.current_session
+            else set()
+        )
+
+        # display_map drives the main-window "Current Map / Last Map" drop list.
+        # Falls back to the previous map so users don't lose context between runs.
+        display_map = None
+        display_map_run = self.state.current_map or self._last_map_run
+        if display_map_run:
+            is_live = display_map_run is self.state.current_map
+            if is_live:
+                map_value = current_map_net_value
+                map_duration = current_map_duration
+                map_items = self._live_current_items
+            else:
+                map_value = display_map_run.net_value_excluding(ignored_ids)
+                map_duration = display_map_run.duration_seconds
+                map_items = display_map_run.total_items_excluding(ignored_ids)
+            display_map = {
+                "duration": map_duration,
+                "value": map_value,
+                "items": map_items,
+                "is_live": is_live,
+                "ended_at": (
+                    display_map_run.ended_at.isoformat()
+                    if display_map_run.ended_at
+                    else None
+                ),
+                "item_rows": self._build_map_item_rows(display_map_run, ignored_ids),
+            }
+
         session = None
         if self.state.current_session:
             # session.net_value already includes completed-map investment;
@@ -779,6 +846,7 @@ class Tracker:
             "in_map": self.state.is_in_map,
             "display_mode": self.state.display_mode.value,
             "current_map": current_map,
+            "display_map": display_map,
             "session": session,
         }
 
@@ -815,9 +883,12 @@ class Tracker:
         return {"status": "ok", "item_id": item_id, "ignored": now_ignored}
 
     def set_display_mode(self, mode: str) -> None:
-        """Set the display mode (value or items)."""
+        """Set the display mode (session or map)."""
+        # legacy values stored in older configs before the session/map split
+        legacy = {"value": "session", "items": "map"}
+        resolved = legacy.get(mode, mode)
         try:
-            self.state.display_mode = DisplayMode(mode)
+            self.state.display_mode = DisplayMode(resolved)
             self._notify_state()
         except ValueError:
             pass
@@ -881,6 +952,7 @@ class Tracker:
                 started_at=now,
                 is_league_zone=self._paused_live_is_league_zone,
             )
+            self._last_map_run = self.state.current_map
             if not self.state.current_session:
                 self.state.current_session = self.sessions.create_session()
                 self._session_dirty = False
@@ -921,6 +993,7 @@ class Tracker:
         self.state.current_session = None
         self.state.current_map = None
         self.state.is_in_map = False
+        self._last_map_run = None
         self._session_dirty = False
         self._session_persisted = False
         self._reset_live_cache()
@@ -938,6 +1011,7 @@ class Tracker:
         self.state = TrackerState()
         self._awaiting_init = False
         self._clear_pending_init_buffer()
+        self._last_map_run = None
         self._session_dirty = False
         self._session_persisted = False
         self._reset_live_cache()
