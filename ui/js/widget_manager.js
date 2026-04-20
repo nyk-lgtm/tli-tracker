@@ -209,7 +209,7 @@ const WidgetManager = {
                         <span class="stat-value" data-el="map-time">-:-</span>
                     </div>
                     <div class="stat" data-el="map-value-container">
-                        <span class="stat-value" data-el="map-value">+0</span>
+                        <span class="stat-value" data-el="map-value">0</span>
                     </div>
                 </div>
                 <div class="divider"></div>
@@ -245,7 +245,7 @@ const WidgetManager = {
         const valueContainer = container.querySelector('[data-el="map-value-container"]');
         if (valueEl) {
             const value = currentMap?.value ?? 0;
-            valueEl.textContent = currentMap ? TLI.formatValue(value) : '+0';
+            valueEl.textContent = currentMap ? TLI.formatValue(value) : '0';
             valueEl.classList.toggle('positive', value >= 0);
             valueEl.classList.toggle('negative', value < 0);
         }

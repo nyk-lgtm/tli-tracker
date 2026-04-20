@@ -26,23 +26,23 @@ TLI.formatTime = function(seconds) {
 };
 
 /**
- * Format value with +/- prefix and compact suffix (k, M)
+ * Format value with compact suffix (k, M); only negative values get a sign.
  * @param {number} value - Numeric value
- * @returns {string} Formatted value with sign prefix
+ * @returns {string} Formatted value
  */
 TLI.formatValue = function(value) {
-    if (value === null || value === undefined || Number.isNaN(value)) return '+0';
+    if (value === null || value === undefined || Number.isNaN(value)) return '0';
 
-    const prefix = value >= 0 ? '+' : '';
     const absValue = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
 
     if (absValue >= 1000000) {
-        return prefix + (value / 1000000).toFixed(1) + 'M';
+        return sign + (absValue / 1000000).toFixed(1) + 'M';
     } else if (absValue >= 1000) {
-        return prefix + (value / 1000).toFixed(1) + 'k';
+        return sign + (absValue / 1000).toFixed(1) + 'k';
     }
 
-    return prefix + Math.round(value);
+    return sign + Math.round(absValue);
 };
 
 /**

@@ -50,10 +50,8 @@ export function switchSettingsTab(tabName) {
 export function applyMapValueVisibility() {
     if (settings.show_map_value) {
         elements.statMapValue.classList.remove('hidden');
-        elements.statSessionValue.classList.remove('hidden');
     } else {
         elements.statMapValue.classList.add('hidden');
-        elements.statSessionValue.classList.add('hidden');
     }
 }
 

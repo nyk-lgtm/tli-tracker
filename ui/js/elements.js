@@ -14,6 +14,7 @@ export function initElements() {
         statSessionMapping: document.getElementById('stat-session-mapping'),
         statSessionTotal: document.getElementById('stat-session-total'),
         statSessionValue: document.getElementById('stat-session-value'),
+        statSessionTaxLabel: document.getElementById('stat-session-tax-label'),
         statRate: document.getElementById('stat-rate'),
         statMapCount: document.getElementById('stat-map-count'),
         statCardEfficiency: document.getElementById('stat-card-efficiency'),

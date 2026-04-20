@@ -47,7 +47,7 @@ export function renderUI() {
         }
     } else {
         elements.statMapTime.textContent = '-:-';
-        elements.statMapValue.textContent = '+0';
+        elements.statMapValue.textContent = '0';
         // Reset to default color
         elements.statMapValue.classList.remove('text-danger');
         elements.statMapValue.classList.add('text-success');
@@ -58,26 +58,18 @@ export function renderUI() {
         elements.statSessionMapping.textContent = formatTime(state.session.duration_mapping);
         elements.statSessionTotal.textContent = formatTime(state.session.duration_total);
         elements.statSessionValue.textContent = formatValue(state.session.value);
-        // Apply color based on positive/negative value
-        if (state.session.value >= 0) {
-            elements.statSessionValue.classList.remove('text-danger');
-            elements.statSessionValue.classList.add('text-success');
-        } else {
-            elements.statSessionValue.classList.remove('text-success');
-            elements.statSessionValue.classList.add('text-danger');
-        }
         const efficiencyValue = settings.efficiency_per_map
             ? state.session.value_per_map
             : state.session.value_per_hour;
         elements.statRate.innerHTML = formatRate(efficiencyValue, settings.efficiency_per_map);
         elements.statMapCount.textContent = state.session.map_count;
+        if (elements.statSessionTaxLabel) {
+            elements.statSessionTaxLabel.classList.toggle('hidden', !settings.tax_enabled);
+        }
     } else {
         elements.statSessionMapping.textContent = '0:00';
         elements.statSessionTotal.textContent = '0:00';
-        elements.statSessionValue.textContent = '+0';
-        // Reset to default color
-        elements.statSessionValue.classList.remove('text-danger');
-        elements.statSessionValue.classList.add('text-success');
+        elements.statSessionValue.textContent = '0';
         elements.statRate.innerHTML = formatRate(0, settings.efficiency_per_map);
         elements.statMapCount.textContent = '0';
     }
