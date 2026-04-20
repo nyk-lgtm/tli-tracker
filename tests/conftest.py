@@ -34,4 +34,7 @@ def isolated_data_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(storage, "_items_load_error", None)
     monkeypatch.setattr(storage, "_config_load_error", None)
 
+    # keep unrelated tests untouched by the tax default
+    monkeypatch.setitem(storage.DEFAULT_CONFIG, "tax_enabled", False)
+
     return data_dir

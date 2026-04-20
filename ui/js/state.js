@@ -13,7 +13,7 @@ export const state = {
 };
 
 export const settings = {
-    tax_enabled: false,
+    tax_enabled: true,
     overlay_opacity: 0.9,
     show_map_value: false,
     efficiency_per_map: false,

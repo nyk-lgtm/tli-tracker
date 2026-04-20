@@ -282,6 +282,7 @@ class Api:
         # check if cloud prices just got enabled
         old_config = load_config()
         was_enabled = old_config.get("cloud_prices_enabled", False)
+        was_tax_enabled = old_config.get("tax_enabled", False)
 
         success = save_config(settings)
         self.tracker.refresh_runtime_config()
@@ -294,6 +295,10 @@ class Api:
             self.cloud_prices.fetch()
         elif was_enabled and not now_enabled:
             # re-resolve all drops to local-only prices
+            self.tracker._backfill_cloud_prices()
+            self.tracker._notify_state()
+        elif settings.get("tax_enabled", False) != was_tax_enabled:
+            # tax toggled — recompute stored drop values so session totals match
             self.tracker._backfill_cloud_prices()
             self.tracker._notify_state()
 

@@ -100,7 +100,7 @@ def save_json(filename: str, data: Any) -> bool:
 DEFAULT_CONFIG = {
     "display_mode": "session",
     "overlay_opacity": 0.9,
-    "tax_enabled": False,
+    "tax_enabled": True,
     "tax_rate": 0.125,  # 12.5% AH fee
     "show_map_value": False,  # Show current map value
     "efficiency_per_map": False,  # False = FE/hr, True = FE/map
