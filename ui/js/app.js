@@ -10,7 +10,7 @@ import { elements, initElements } from './elements.js';
 import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, loadThemesList, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners, initAppearanceListeners } from './settings.js';
-import { loadHistory } from './history.js';
+import { loadHistory, exitSessionViewing } from './history.js';
 import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, dismissUpdateBanner, handleUpdateState, loadUpdateState } from './updates.js';
 import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI } from './renderers.js';
 import {
@@ -86,6 +86,7 @@ window.onPythonEvent = function(eventType, data) {
             showStatus(data.message, 'error');
             break;
         case 'state':
+            if (state.viewingSessionId) break;
             applyTrackerState(data);
             break;
         case 'map_enter':
@@ -103,6 +104,12 @@ window.onPythonEvent = function(eventType, data) {
             break;
         case 'session_reset':
             collapseExpandedPriceHistory();
+            if (state.viewingSessionId) {
+                state.viewingSessionId = null;
+                if (elements.sessionViewerBanner) {
+                    elements.sessionViewerBanner.classList.add('hidden');
+                }
+            }
             state.session = null;
             state.currentMap = null;
             state.displayMap = null;
@@ -198,6 +205,7 @@ function showDropContextMenu(event, itemId, isIgnored) {
     const btn = menu.querySelector('[data-action="toggle-ignore"]');
     btn.onclick = async () => {
         hideContextMenu();
+        if (state.viewingSessionId) return;
         if (window.__PREVIEW__?.enabled) {
             togglePreviewIgnore(itemId);
             return;
@@ -372,6 +380,7 @@ function startTimerLoop() {
     if (timerInterval) return;
 
     timerInterval = setInterval(() => {
+        if (state.viewingSessionId) return;
         const { mapTicked, sessionTicked } = tickTimers(state);
 
         if (mapTicked || sessionTicked) {
@@ -425,6 +434,11 @@ function init() {
 
     // History modal
     elements.btnCloseHistory.addEventListener('click', () => closeModal('history'));
+
+    // Session viewer banner exit
+    if (elements.btnSessionViewerExit) {
+        elements.btnSessionViewerExit.addEventListener('click', exitSessionViewing);
+    }
 
     // Update check button (settings)
     if (elements.btnCheckUpdates) {

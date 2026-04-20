@@ -1231,11 +1231,27 @@ button[data-tooltip]:hover::before {
     grid-template-columns: 1fr auto auto auto;
     gap: 1rem;
     align-items: center;
+    cursor: pointer;
     transition: background-color var(--tli-transition-fast);
 }
 
 .session-item:hover {
     background: var(--tli-color-card-hover);
+}
+
+.session-viewer-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.5rem 0.875rem;
+    margin-bottom: 0.75rem;
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
+    border-left: 3px solid var(--tli-color-accent, var(--tli-color-primary));
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--tli-color-text);
 }
 
 .session-export-btn {

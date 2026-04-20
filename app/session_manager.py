@@ -12,7 +12,13 @@ from pathlib import Path
 from typing import Optional
 
 from .models import Session
-from .storage import DATA_DIR, preserve_unreadable_file, save_json
+from .storage import (
+    DATA_DIR,
+    get_item_name,
+    get_item_type,
+    preserve_unreadable_file,
+    save_json,
+)
 
 
 class SessionManager:
@@ -156,6 +162,143 @@ class SessionManager:
         except (json.JSONDecodeError, IOError) as e:
             print(f"[SessionManager] Failed to load session {session_id}: {e}")
             return None
+
+    def session_as_stats(self, session_id: str) -> Optional[dict]:
+        """Render a stored session in the same shape as Tracker.get_stats()."""
+        stored = self.get_session(session_id)
+        if not stored:
+            return None
+
+        ignored_ids = set(stored.get("ignored_item_ids", []))
+        started_at = datetime.fromisoformat(stored["started_at"])
+
+        session_rows: dict[str, dict] = {}
+        category_totals: dict[str, float] = {}
+        maps_list: list[dict] = []
+        display_map = None
+        last_completed_map = None
+
+        for index, map_dict in enumerate(stored.get("maps", [])):
+            map_rows = self._aggregate_drops(
+                map_dict.get("drops", []), ignored_ids, track_categories=False
+            )
+            # Fold this map's drops into the session-wide aggregate.
+            self._aggregate_drops(
+                map_dict.get("drops", []),
+                ignored_ids,
+                track_categories=True,
+                rows=session_rows,
+                categories=category_totals,
+            )
+
+            ended_at_iso = map_dict.get("ended_at")
+            is_league = map_dict.get("is_league_zone", False)
+
+            if ended_at_iso and not is_league:
+                ended_at = datetime.fromisoformat(ended_at_iso)
+                maps_list.append(
+                    {
+                        "index": index,
+                        "total_value": map_dict.get("net_value", 0.0),
+                        "duration_seconds": map_dict.get("duration_seconds", 0.0),
+                        "ended_at_offset": (ended_at - started_at).total_seconds(),
+                    }
+                )
+                last_completed_map = (map_dict, map_rows)
+
+        if last_completed_map is not None:
+            map_dict, map_rows = last_completed_map
+            display_map = {
+                "duration": map_dict.get("duration_seconds", 0.0),
+                "value": map_dict.get("net_value", 0.0),
+                "items": map_dict.get("total_items", 0),
+                "is_live": False,
+                "ended_at": map_dict.get("ended_at"),
+                "item_rows": list(map_rows.values()),
+            }
+
+        map_count = stored.get("map_count", 0)
+        net_value = stored.get("net_value", 0.0)
+        value_per_map = net_value / map_count if map_count else 0
+
+        session = {
+            "id": stored["id"],
+            "paused": False,
+            "duration_mapping": stored.get("total_duration", 0.0),
+            "duration_total": stored.get("session_duration", 0.0),
+            "value": net_value,
+            "items": stored.get("total_items", 0),
+            "map_count": map_count,
+            "value_per_hour": stored.get("value_per_hour", 0),
+            "value_per_map": value_per_map,
+            "maps_per_hour": stored.get("maps_per_hour", 0),
+            "item_rows": list(session_rows.values()),
+            "category_totals": [
+                {"item_type": item_type, "value": value}
+                for item_type, value in sorted(
+                    category_totals.items(), key=lambda kv: kv[1], reverse=True
+                )
+            ],
+            "maps": maps_list,
+        }
+
+        return {
+            "initialized": True,
+            "awaiting_init": False,
+            "in_map": False,
+            "display_mode": "session",
+            "current_map": None,
+            "display_map": display_map,
+            "session": session,
+        }
+
+    @staticmethod
+    def _aggregate_drops(
+        drops: list[dict],
+        ignored_ids: set[str],
+        track_categories: bool,
+        rows: Optional[dict[str, dict]] = None,
+        categories: Optional[dict[str, float]] = None,
+    ) -> dict[str, dict]:
+        """Aggregate drops into item_rows; optionally roll into category totals."""
+        if rows is None:
+            rows = {}
+        for drop in drops:
+            item_id = drop.get("item_id")
+            if item_id is None:
+                continue
+            item_name = get_item_name(item_id)
+            if item_name.startswith("Unknown ("):
+                continue
+            item_type = get_item_type(item_id) or "Other"
+            is_ignored = item_id in ignored_ids
+            entry = rows.setdefault(
+                item_id,
+                {
+                    "item_id": item_id,
+                    "item_name": item_name,
+                    "item_type": item_type,
+                    "quantity": 0,
+                    "value": 0.0,
+                    "price_status": "confirmed",
+                    "price_source": "local",
+                    "ignored": is_ignored,
+                },
+            )
+            entry["ignored"] = is_ignored
+            entry["quantity"] += drop.get("quantity", 0)
+            value = drop.get("value")
+            if value is not None:
+                entry["value"] += value
+                rolls_up = (
+                    track_categories
+                    and categories is not None
+                    and not is_ignored
+                    and value > 0
+                )
+                if rolls_up:
+                    categories[item_type] = categories.get(item_type, 0.0) + value
+        return rows
 
     def get_all(self) -> list[dict]:
         """Get all sessions (most recent first)."""

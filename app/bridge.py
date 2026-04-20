@@ -91,6 +91,11 @@ class ApiBridge(QObject):
         return json.dumps(self.api.get_session_summary(), default=str)
 
     @Slot(str, result=str)
+    def get_session_as_stats(self, session_id: str) -> str:
+        """Load a stored session rendered in live-stats shape."""
+        return json.dumps(self.api.get_session_as_stats(session_id), default=str)
+
+    @Slot(str, result=str)
     def delete_session(self, session_id: str) -> str:
         """Delete a session by ID."""
         return json.dumps(self.api.delete_session(session_id), default=str)

@@ -3,8 +3,10 @@
  */
 
 import { elements } from './elements.js';
-import { settings } from './state.js';
-import { formatValue, formatTime, formatRate, formatDate } from './utils.js';
+import { state, settings } from './state.js';
+import { formatValue, formatTime, formatRate, formatDate, showStatus } from './utils.js';
+import { closeModal } from './modals.js';
+import { updateState } from './renderers.js';
 
 // ============ History ============
 
@@ -27,7 +29,7 @@ export async function loadHistory() {
         }
 
         elements.historyList.innerHTML = sessions.map(session => `
-            <div class="session-item">
+            <div class="session-item" data-session-id="${session.id}" data-session-date="${formatDate(session.started_at)}" title="Click to view this session">
                 <div class="session-item-date">
                     ${formatDate(session.started_at)}
                 </div>
@@ -46,7 +48,6 @@ export async function loadHistory() {
             </div>
         `).join('');
 
-        // Add click handlers for export buttons
         elements.historyList.querySelectorAll('.session-export-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
@@ -54,9 +55,46 @@ export async function loadHistory() {
                 await exportSession(sessionId);
             });
         });
+
+        elements.historyList.querySelectorAll('.session-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const sessionId = item.dataset.sessionId;
+                const date = item.dataset.sessionDate;
+                void viewSession(sessionId, date);
+            });
+        });
     } catch (e) {
         console.error('Failed to load history:', e);
     }
+}
+
+export async function viewSession(sessionId, date) {
+    try {
+        const stats = await api('get_session_as_stats', sessionId);
+        if (stats.status === 'error') {
+            showStatus(stats.message || 'Session not found', 'error', 3000);
+            return;
+        }
+        state.viewingSessionId = sessionId;
+        updateState(stats);
+        if (elements.sessionViewerBanner) {
+            elements.sessionViewerDate.textContent = date || '';
+            elements.sessionViewerBanner.classList.remove('hidden');
+        }
+        closeModal('history');
+    } catch (e) {
+        console.error('Failed to load session:', e);
+        showStatus('Failed to load session', 'error', 3000);
+    }
+}
+
+export function exitSessionViewing() {
+    if (!state.viewingSessionId) return;
+    state.viewingSessionId = null;
+    if (elements.sessionViewerBanner) {
+        elements.sessionViewerBanner.classList.add('hidden');
+    }
+    void api('get_stats').then(updateState);
 }
 
 async function exportSession(sessionId) {

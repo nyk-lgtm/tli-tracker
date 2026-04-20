@@ -9,7 +9,8 @@ export const state = {
     displayMode: 'session',
     currentMap: null,
     displayMap: null,
-    session: null
+    session: null,
+    viewingSessionId: null
 };
 
 export const settings = {

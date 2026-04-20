@@ -144,6 +144,14 @@ class Api:
         self.tracker.flush_current_session()
         return self.sessions.get_stats_summary()
 
+    def get_session_as_stats(self, session_id: str) -> dict:
+        """Load a stored session rendered in live-stats shape."""
+        self.tracker.flush_current_session()
+        result = self.sessions.session_as_stats(session_id)
+        if result is None:
+            return {"status": "error", "message": "Session not found"}
+        return result
+
     def delete_session(self, session_id: str) -> dict:
         """Delete a session by ID."""
         self.tracker.flush_current_session()

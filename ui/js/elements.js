@@ -35,6 +35,9 @@ export function initElements() {
         historyTotalMaps: document.getElementById('history-total-maps'),
         historyAvgRate: document.getElementById('history-avg-rate'),
         historyList: document.getElementById('history-list'),
+        sessionViewerBanner: document.getElementById('session-viewer-banner'),
+        sessionViewerDate: document.getElementById('session-viewer-date'),
+        btnSessionViewerExit: document.getElementById('btn-session-viewer-exit'),
         // Game path settings
         btnBrowseGamePath: document.getElementById('btn-browse-game-path'),
         gamePathStatus: document.getElementById('game-path-status'),
