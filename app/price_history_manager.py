@@ -381,10 +381,9 @@ class PriceHistoryManager(QObject):
 
         try:
             if reply.error() != QNetworkReply.NetworkError.NoError:
-                error_message = reply.errorString()
                 failure_message = (
                     "[PriceHistoryManager] Fetch failed for "
-                    f"{item_id} ({range_key}): {error_message}"
+                    f"{item_id} ({range_key}): {reply.errorString()}"
                 )
                 print(failure_message)
                 if not had_cache:
@@ -393,7 +392,7 @@ class PriceHistoryManager(QObject):
                             item_id,
                             range_key,
                             status="error",
-                            error_message=error_message,
+                            error_message="Price history unavailable right now.",
                         )
                     )
                 return

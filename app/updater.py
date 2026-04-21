@@ -192,7 +192,8 @@ class Updater(QObject):
 
         try:
             if reply.error() != QNetworkReply.NetworkError.NoError:
-                self._set_error(f"Update check failed: {reply.errorString()}")
+                print(f"[Updater] check failed: {reply.errorString()}")
+                self._set_error("Couldn't reach the update server.")
                 return
 
             payload = bytes(reply.readAll()).decode("utf-8")
@@ -283,8 +284,9 @@ class Updater(QObject):
                 self._download_file = None
 
             if reply.error() != QNetworkReply.NetworkError.NoError:
+                print(f"[Updater] download failed: {reply.errorString()}")
                 self._clear_download_artifacts()
-                self._set_error(f"Download failed: {reply.errorString()}")
+                self._set_error("Update download failed — please try again.")
                 return
 
             if not self._download_path or not self._download_path.exists():
