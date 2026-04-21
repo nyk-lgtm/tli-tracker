@@ -160,7 +160,7 @@ function onMapExit() {
 }
 
 function loadPriceHistoryForRange(itemId, rangeKey, panel = 'drops') {
-    setActivePriceHistoryRangeKey(rangeKey);
+    setActivePriceHistoryRangeKey(rangeKey, panel);
     const fetchPromise = ensurePriceHistory(itemId, rangeKey);
     // scoped render: only the panel the user clicked into gets touched.
     // keeps a cached chart on the other side from blanking/remounting while
@@ -266,7 +266,7 @@ async function handleDropRowClick(event) {
         const expandedItemId = toggleExpandedPriceHistoryItem(itemId, panel);
 
         if (expandedItemId === itemId) {
-            void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey(), panel);
+            void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey(panel), panel);
             return;
         }
 

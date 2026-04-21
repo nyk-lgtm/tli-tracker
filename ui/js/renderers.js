@@ -441,8 +441,8 @@ function renderHistoryRangeToggle(itemId, activeRangeKey) {
     `;
 }
 
-function renderHistoryPanel(itemId) {
-    const activeRange = getPriceHistoryRange();
+function renderHistoryPanel(itemId, panel = 'drops') {
+    const activeRange = getPriceHistoryRange(getActivePriceHistoryRangeKey(panel));
     const entry = getPriceHistoryEntry(itemId, activeRange.key);
 
     let contentHtml = '';
@@ -533,7 +533,7 @@ function renderDropRow(item, trailingHtml, panel = 'drops') {
     const statusClass = item.price_status || 'unknown';
     const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
     const priceIndicator = `<span class="price-status ${statusClass}${cloudClass}"></span>`;
-    const activeRange = getPriceHistoryRange();
+    const activeRange = getPriceHistoryRange(getActivePriceHistoryRangeKey(panel));
     const badgeHtml = itemId
         ? `<span class="drop-item-history-badge">${activeRange.label}</span>`
         : '';
@@ -560,7 +560,7 @@ function renderDropRow(item, trailingHtml, panel = 'drops') {
                     ${trailingHtml.valueHtml}
                 </div>
             </div>
-            ${isExpanded ? renderHistoryPanel(itemId) : ''}
+            ${isExpanded ? renderHistoryPanel(itemId, panel) : ''}
         </div>
     `;
 }
@@ -571,7 +571,9 @@ function mountPriceHistoryCharts(root) {
         return;
     }
 
-    const activeRangeKey = getActivePriceHistoryRangeKey();
+    // derive the panel from the scope so we mount at the right active range
+    const panel = scope === elements.dropsListMaps ? 'maps' : 'drops';
+    const activeRangeKey = getActivePriceHistoryRangeKey(panel);
     scope.querySelectorAll('[data-price-history-chart]').forEach((container) => {
         const itemId = container.getAttribute('data-price-history-chart');
         const entry = getPriceHistoryEntry(itemId, activeRangeKey);

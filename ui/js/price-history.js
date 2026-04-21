@@ -16,8 +16,17 @@ const historyState = {
     // user can have two charts open at once — e.g. an item scoped to a
     // specific map on the left and a different session-wide item on the right
     expandedByPanel: { drops: null, maps: null },
-    activeRangeKey: DEFAULT_PRICE_HISTORY_RANGE_KEY,
-    visibleEntry: null
+    // and each panel tracks its own active range (7d/30d) so switching
+    // ranges on one chart doesn't flip the other
+    activeRangeByPanel: {
+        drops: DEFAULT_PRICE_HISTORY_RANGE_KEY,
+        maps: DEFAULT_PRICE_HISTORY_RANGE_KEY
+    },
+    // cache of currently-visible chart entries keyed by `itemId:rangeKey`.
+    // multi-slot (was single) so two open charts don't overwrite each other:
+    // a post-fetch event for one panel must not knock the other panel's
+    // cached entry back to a default "missing" (loading) state.
+    visibleEntries: new Map()
 };
 
 function normalizeItemId(itemId) {
@@ -148,7 +157,7 @@ function buildHistoryStats(points) {
     };
 }
 
-function getDefaultEntry(itemId = null, rangeKey = historyState.activeRangeKey) {
+function getDefaultEntry(itemId = null, rangeKey = historyState.activeRangeByPanel.drops) {
     return {
         itemId: normalizeItemId(itemId),
         rangeKey: normalizeRangeKey(rangeKey),
@@ -165,12 +174,19 @@ function isValidEntryStatus(status) {
 
 function isVisibleHistoryTarget(itemId, rangeKey) {
     const id = normalizeItemId(itemId);
-    const expandedAnywhere = historyState.expandedByPanel.drops === id
-        || historyState.expandedByPanel.maps === id;
+    const normalizedRange = normalizeRangeKey(rangeKey);
+    // this entry is "visible" if either panel has it open at the same range.
+    // when the panels can diverge in range, only the matching panel counts.
     return (
-        expandedAnywhere
-        && historyState.activeRangeKey === normalizeRangeKey(rangeKey)
+        (historyState.expandedByPanel.drops === id
+            && historyState.activeRangeByPanel.drops === normalizedRange)
+        || (historyState.expandedByPanel.maps === id
+            && historyState.activeRangeByPanel.maps === normalizedRange)
     );
+}
+
+function visibleCacheKey(itemId, rangeKey) {
+    return `${normalizeItemId(itemId)}:${normalizeRangeKey(rangeKey)}`;
 }
 
 function storeVisibleEntry(itemId, rangeKey, entry) {
@@ -178,8 +194,12 @@ function storeVisibleEntry(itemId, rangeKey, entry) {
         return entry;
     }
 
-    historyState.visibleEntry = normalizePriceHistoryEntry(entry, itemId, rangeKey);
-    return historyState.visibleEntry;
+    const normalized = normalizePriceHistoryEntry(entry, itemId, rangeKey);
+    historyState.visibleEntries.set(
+        visibleCacheKey(normalized.itemId, normalized.rangeKey),
+        normalized
+    );
+    return normalized;
 }
 
 function requestPriceHistoryRefresh(itemId, rangeKey, apiCall) {
@@ -210,23 +230,26 @@ function requestPriceHistoryRefresh(itemId, rangeKey, apiCall) {
         });
 }
 
-export function getPriceHistoryRange(rangeKey = historyState.activeRangeKey) {
-    return getRangeConfig(rangeKey);
+export function getPriceHistoryRange(rangeKey) {
+    // resolves to drops-panel's active key when no explicit key is given.
+    // callers that know their panel should pass getActivePriceHistoryRangeKey(panel).
+    const key = rangeKey !== undefined
+        ? rangeKey
+        : historyState.activeRangeByPanel.drops;
+    return getRangeConfig(key);
 }
 
-export function getActivePriceHistoryRangeKey() {
-    return historyState.activeRangeKey;
+export function getActivePriceHistoryRangeKey(panel = 'drops') {
+    return historyState.activeRangeByPanel[normalizePanel(panel)];
 }
 
-export function setActivePriceHistoryRangeKey(rangeKey) {
+export function setActivePriceHistoryRangeKey(rangeKey, panel = 'drops') {
+    const key = normalizePanel(panel);
     const nextRangeKey = normalizeRangeKey(rangeKey);
-    historyState.activeRangeKey = nextRangeKey;
-
-    if (historyState.visibleEntry?.rangeKey !== nextRangeKey) {
-        historyState.visibleEntry = null;
-    }
-
-    return historyState.activeRangeKey;
+    historyState.activeRangeByPanel[key] = nextRangeKey;
+    // no cache invalidation — entries are keyed per (itemId, rangeKey)
+    // so a range switch simply surfaces a different already-cached entry
+    return nextRangeKey;
 }
 
 export function formatPriceHistoryValue(value) {
@@ -260,7 +283,7 @@ export function formatPriceHistoryValue(value) {
 export function normalizePriceHistoryResponse(
     payload,
     expectedItemId = null,
-    rangeKey = historyState.activeRangeKey
+    rangeKey = historyState.activeRangeByPanel.drops
 ) {
     const range = getRangeConfig(rangeKey);
     const rawPoints = pickRawPoints(payload);
@@ -293,7 +316,7 @@ export function normalizePriceHistoryResponse(
 export function normalizePriceHistoryEntry(
     entry,
     expectedItemId = null,
-    rangeKey = historyState.activeRangeKey
+    rangeKey = historyState.activeRangeByPanel.drops
 ) {
     const normalizedRangeKey = normalizeRangeKey(entry?.rangeKey ?? rangeKey);
     const itemId = normalizeItemId(entry?.itemId ?? expectedItemId);
@@ -326,21 +349,19 @@ export function toggleExpandedPriceHistoryItem(itemId, panel = 'drops') {
     const normalizedItemId = normalizeItemId(itemId);
     if (!normalizedItemId) {
         historyState.expandedByPanel[key] = null;
-        historyState.visibleEntry = null;
         return null;
     }
 
     historyState.expandedByPanel[key] = historyState.expandedByPanel[key] === normalizedItemId
         ? null
         : normalizedItemId;
-    historyState.visibleEntry = null;
     return historyState.expandedByPanel[key];
 }
 
 export function collapseExpandedPriceHistory() {
     historyState.expandedByPanel.drops = null;
     historyState.expandedByPanel.maps = null;
-    historyState.visibleEntry = null;
+    historyState.visibleEntries.clear();
 }
 
 export function syncExpandedPriceHistory(itemIds, panel = 'drops') {
@@ -356,19 +377,16 @@ export function syncExpandedPriceHistory(itemIds, panel = 'drops') {
     );
     if (!validItemIds.has(historyState.expandedByPanel[key])) {
         historyState.expandedByPanel[key] = null;
-        historyState.visibleEntry = null;
     }
 }
 
-export function getPriceHistoryEntry(itemId, rangeKey = historyState.activeRangeKey) {
-    if (
-        historyState.visibleEntry
-        && historyState.visibleEntry.itemId === normalizeItemId(itemId)
-        && historyState.visibleEntry.rangeKey === normalizeRangeKey(rangeKey)
-    ) {
-        return historyState.visibleEntry;
+export function getPriceHistoryEntry(itemId, rangeKey = historyState.activeRangeByPanel.drops) {
+    const cached = historyState.visibleEntries.get(
+        visibleCacheKey(itemId, rangeKey)
+    );
+    if (cached) {
+        return cached;
     }
-
     return getDefaultEntry(itemId, rangeKey);
 }
 
@@ -382,26 +400,30 @@ export function applyPriceHistoryUpdate(entry) {
         return normalizedEntry;
     }
 
-    historyState.visibleEntry = normalizedEntry;
+    historyState.visibleEntries.set(
+        visibleCacheKey(normalizedEntry.itemId, normalizedEntry.rangeKey),
+        normalizedEntry
+    );
     return normalizedEntry;
 }
 
 export function resetPriceHistoryState() {
     historyState.expandedByPanel.drops = null;
     historyState.expandedByPanel.maps = null;
-    historyState.activeRangeKey = DEFAULT_PRICE_HISTORY_RANGE_KEY;
-    historyState.visibleEntry = null;
+    historyState.activeRangeByPanel.drops = DEFAULT_PRICE_HISTORY_RANGE_KEY;
+    historyState.activeRangeByPanel.maps = DEFAULT_PRICE_HISTORY_RANGE_KEY;
+    historyState.visibleEntries.clear();
 }
 
 export async function ensurePriceHistory(
     itemId,
-    rangeKeyOrApiCall = historyState.activeRangeKey,
+    rangeKeyOrApiCall = historyState.activeRangeByPanel.drops,
     apiCall = globalThis.api
 ) {
     let rangeKey = rangeKeyOrApiCall;
     if (typeof rangeKeyOrApiCall === 'function') {
         apiCall = rangeKeyOrApiCall;
-        rangeKey = historyState.activeRangeKey;
+        rangeKey = historyState.activeRangeByPanel.drops;
     }
 
     const range = getRangeConfig(rangeKey);
