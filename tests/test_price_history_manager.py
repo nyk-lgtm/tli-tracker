@@ -198,7 +198,7 @@ def test_missing_cache_refresh_failure_emits_error_entry() -> None:
 
     emitted = manager.history_updated.emit.call_args.args[0]
     assert emitted["status"] == "error"
-    assert emitted["errorMessage"] == "upstream error"
+    assert emitted["errorMessage"] == "Price history unavailable right now."
     assert reply.deleted is True
 
 
