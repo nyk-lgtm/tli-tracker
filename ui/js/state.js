@@ -11,7 +11,10 @@ export const state = {
     displayMap: null,
     session: null,
     viewingSessionId: null,
-    selectedMapIndex: null
+    // session viewer only: 'drops' (session-wide list) or 'maps' (per-map accordion)
+    viewerSubView: 'drops',
+    // session viewer only: which map's drops are expanded in the accordion (null = none)
+    expandedMapIndex: null
 };
 
 export const settings = {

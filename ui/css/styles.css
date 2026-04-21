@@ -288,16 +288,81 @@ hr {
     box-shadow: var(--tli-shadow-sm);
 }
 
-.toggle-group-scroll {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    max-width: 70%;
-    scrollbar-width: thin;
+/* ============================================
+   Map Accordion (per-map breakdown in session viewer)
+   ============================================ */
+.map-accordion-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid var(--tli-color-border);
 }
 
-.toggle-group-scroll .toggle-btn {
-    flex-shrink: 0;
-    white-space: nowrap;
+.map-accordion-labels .stat-label {
+    margin-bottom: 0;
+}
+
+.map-accordion-row {
+    border-bottom: 1px solid var(--tli-color-border-subtle);
+}
+
+.map-accordion-row:last-child {
+    border-bottom: none;
+}
+
+.map-accordion-row.expanded {
+    background:
+        linear-gradient(180deg, rgb(var(--tli-palette-primary-rgb) / 0.08) 0%, rgb(var(--tli-palette-primary-rgb) / 0.03) 100%);
+}
+
+.map-accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    transition: background-color var(--tli-transition-fast);
+}
+
+.map-accordion-header:hover {
+    background: var(--tli-color-card-hover);
+}
+
+.map-accordion-name {
+    font-weight: 600;
+    color: var(--tli-color-text);
+}
+
+.map-accordion-stats {
+    display: flex;
+    align-items: center;
+    font-size: 0.8125rem;
+    color: var(--tli-color-text-muted);
+}
+
+.map-accordion-stats > * {
+    min-width: 5rem;
+    text-align: right;
+    padding-left: 0.75rem;
+}
+
+.map-accordion-stats > .positive {
+    color: var(--tli-color-success);
+}
+
+.map-accordion-stats > .negative {
+    color: var(--tli-color-danger);
+}
+
+.map-accordion-body {
+    border-top: 1px solid var(--tli-color-border-subtle);
 }
 
 /* ============================================

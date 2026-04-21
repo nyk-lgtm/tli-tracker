@@ -156,16 +156,15 @@ export function updateInitStatus() {
 
 export function renderDrops() {
     const isMapMode = state.displayMode === 'map';
-    const hasSelectedMap =
-        state.selectedMapIndex !== null
-        && Array.isArray(state.session?.maps)
-        && state.session.maps.find((m) => m.index === state.selectedMapIndex);
+    const viewingMaps = !!state.viewingSessionId && state.viewerSubView === 'maps';
+
+    if (viewingMaps) {
+        renderMapsAccordion();
+        return;
+    }
 
     let itemRows;
-    if (hasSelectedMap) {
-        const map = state.session.maps.find((m) => m.index === state.selectedMapIndex);
-        itemRows = map?.item_rows || [];
-    } else if (isMapMode) {
+    if (isMapMode) {
         itemRows = state.displayMap?.item_rows || [];
     } else {
         itemRows = state.session?.item_rows || [];
@@ -173,14 +172,14 @@ export function renderDrops() {
     syncExpandedPriceHistory(itemRows.map((item) => item.item_id));
 
     if (itemRows.length === 0) {
-        elements.dropsList.innerHTML = renderDropsEmptyState(isMapMode, hasSelectedMap);
+        elements.dropsList.innerHTML = renderDropsEmptyState(isMapMode);
         return;
     }
 
     renderValueMode(itemRows);
 }
 
-function renderDropsEmptyState(isMapMode, hasSelectedMap) {
+function renderDropsEmptyState(isMapMode) {
     if (state.awaitingInit) {
         return `
             <div class="empty-state py-10">
@@ -200,9 +199,6 @@ function renderDropsEmptyState(isMapMode, hasSelectedMap) {
                 </p>
             </div>
         `;
-    }
-    if (hasSelectedMap) {
-        return `<div class="empty-state">This map had no drops</div>`;
     }
     if (isMapMode) {
         if (!state.displayMap) {
@@ -226,7 +222,12 @@ export function syncDisplayModeUI() {
     }
 
     if (viewing) {
-        renderMapPicker();
+        if (elements.btnViewDrops) {
+            elements.btnViewDrops.classList.toggle('active', state.viewerSubView !== 'maps');
+        }
+        if (elements.btnViewMaps) {
+            elements.btnViewMaps.classList.toggle('active', state.viewerSubView === 'maps');
+        }
         return;
     }
 
@@ -242,27 +243,106 @@ export function syncDisplayModeUI() {
     }
 }
 
-export function setSelectedMapIndex(index) {
-    state.selectedMapIndex = index;
+export function setViewerSubView(view) {
+    state.viewerSubView = view === 'maps' ? 'maps' : 'drops';
+    if (state.viewerSubView !== 'maps') {
+        state.expandedMapIndex = null;
+    }
     renderDrops();
     syncDisplayModeUI();
 }
 
-function renderMapPicker() {
-    const container = elements.dropsModeViewer;
-    if (!container) return;
+export function toggleExpandedMap(index) {
+    state.expandedMapIndex = state.expandedMapIndex === index ? null : index;
+    renderDrops();
+}
+
+function sumGrossValue(itemRows) {
+    if (!Array.isArray(itemRows)) return 0;
+    return itemRows.reduce((acc, row) => acc + (row.value || 0), 0);
+}
+
+function renderMapsAccordion() {
     const maps = Array.isArray(state.session?.maps) ? state.session.maps : [];
-    const selected = state.selectedMapIndex;
-    const sessionActive = selected === null ? ' active' : '';
-    const pills = [
-        `<button class="toggle-btn${sessionActive}" data-map-index="session">Session</button>`,
-        ...maps.map((map, i) => {
-            const active = selected === map.index ? ' active' : '';
-            const label = `Map ${i + 1} · ${formatTime(map.duration_seconds)} · ${formatValue(map.total_value)}`;
-            return `<button class="toggle-btn${active}" data-map-index="${map.index}">${label}</button>`;
-        })
-    ];
-    container.innerHTML = pills.join('');
+    if (maps.length === 0) {
+        elements.dropsList.innerHTML = `<div class="empty-state">No completed maps in this session</div>`;
+        syncExpandedPriceHistory([]);
+        return;
+    }
+
+    // chronological order: most recent map at top
+    const ordered = [...maps].sort((a, b) => (b.index || 0) - (a.index || 0));
+
+    const expandedIndex = state.expandedMapIndex;
+    const expandedMap = expandedIndex !== null
+        ? maps.find((m) => m.index === expandedIndex)
+        : null;
+    syncExpandedPriceHistory((expandedMap?.item_rows || []).map((item) => item.item_id));
+
+    const headerHtml = `
+        <div class="map-accordion-labels">
+            <span class="stat-label">Map</span>
+            <span class="map-accordion-stats">
+                <span class="stat-label">Total</span>
+                <span class="stat-label">Profit</span>
+                <span class="stat-label">Duration</span>
+            </span>
+        </div>
+    `;
+
+    const rowsHtml = ordered.map((map) => {
+        const isExpanded = expandedIndex === map.index;
+        const mapLabel = `Map ${map.index + 1}`;
+        const gross = sumGrossValue(map.item_rows);
+        const profit = map.total_value || 0;
+        const profitClass = profit >= 0 ? 'positive' : 'negative';
+        const dropsHtml = isExpanded
+            ? renderMapAccordionDrops(map.item_rows || [])
+            : '';
+        return `
+            <div class="map-accordion-row${isExpanded ? ' expanded' : ''}">
+                <button
+                    type="button"
+                    class="map-accordion-header"
+                    data-map-row
+                    data-map-index="${map.index}"
+                    aria-expanded="${isExpanded ? 'true' : 'false'}"
+                >
+                    <span class="map-accordion-name">${escapeHtml(mapLabel)}</span>
+                    <span class="map-accordion-stats">
+                        <span title="Total value picked up">${formatValue(gross)}</span>
+                        <span class="${profitClass}" title="Profit (net)">${formatValue(profit)}</span>
+                        <span title="Duration">${formatTime(map.duration_seconds)}</span>
+                    </span>
+                </button>
+                ${isExpanded ? `<div class="map-accordion-body">${dropsHtml}</div>` : ''}
+            </div>
+        `;
+    }).join('');
+
+    elements.dropsList.innerHTML = headerHtml + rowsHtml;
+    mountPriceHistoryCharts();
+}
+
+function renderMapAccordionDrops(itemRows) {
+    if (itemRows.length === 0) {
+        return `<div class="empty-state">No drops in this map</div>`;
+    }
+    const sorted = [...itemRows]
+        .sort((itemA, itemB) => Math.abs(itemB.value || 0) - Math.abs(itemA.value || 0))
+        .slice(0, 50);
+    return sorted.map((item) => {
+        const valueClass = item.value >= 0 ? 'positive' : 'negative';
+        const highValueClass = Math.abs(item.value) >= 10000 ? 'high-value' : '';
+        const valueText = item.value !== 0 ? formatValue(item.value) : '(no price)';
+        return renderDropRow(item, {
+            nameHtml: `
+                <span class="drop-item-label">${escapeHtml(item.item_name)}</span>
+                <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
+            `,
+            valueHtml: `<div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>`
+        });
+    }).join('');
 }
 
 function escapeHtml(value) {

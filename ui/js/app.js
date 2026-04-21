@@ -12,7 +12,7 @@ import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, loadThemesList, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners, initAppearanceListeners } from './settings.js';
 import { loadHistory, exitSessionViewing } from './history.js';
 import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, dismissUpdateBanner, handleUpdateState, loadUpdateState } from './updates.js';
-import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI, setSelectedMapIndex } from './renderers.js';
+import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI, setViewerSubView, toggleExpandedMap } from './renderers.js';
 import {
     applyPriceHistoryUpdate,
     collapseExpandedPriceHistory,
@@ -106,7 +106,8 @@ window.onPythonEvent = function(eventType, data) {
             collapseExpandedPriceHistory();
             if (state.viewingSessionId) {
                 state.viewingSessionId = null;
-                state.selectedMapIndex = null;
+                state.viewerSubView = 'drops';
+                state.expandedMapIndex = null;
                 if (elements.sessionViewerBanner) {
                     elements.sessionViewerBanner.classList.add('hidden');
                 }
@@ -245,23 +246,31 @@ async function handleDropRowClick(event) {
     }
 
     const row = event.target.closest('[data-drop-row]');
-    if (!row || !elements.dropsList.contains(row)) {
+    if (row && elements.dropsList.contains(row)) {
+        const itemId = row.dataset.itemId;
+        if (!itemId) {
+            return;
+        }
+
+        const expandedItemId = toggleExpandedPriceHistoryItem(itemId);
+
+        if (expandedItemId === itemId) {
+            void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey());
+            return;
+        }
+
+        renderDrops();
         return;
     }
 
-    const itemId = row.dataset.itemId;
-    if (!itemId) {
-        return;
+    const mapRow = event.target.closest('[data-map-row]');
+    if (mapRow && elements.dropsList.contains(mapRow)) {
+        const raw = mapRow.dataset.mapIndex;
+        const index = Number(raw);
+        if (Number.isFinite(index)) {
+            toggleExpandedMap(index);
+        }
     }
-
-    const expandedItemId = toggleExpandedPriceHistoryItem(itemId);
-
-    if (expandedItemId === itemId) {
-        void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey());
-        return;
-    }
-
-    renderDrops();
 }
 
 // ============ UI Actions ============
@@ -402,13 +411,11 @@ function init() {
     elements.btnReset.addEventListener('click', resetSession);
     elements.btnModeSession.addEventListener('click', () => setDisplayMode('session'));
     elements.btnModeMap.addEventListener('click', () => setDisplayMode('map'));
-    if (elements.dropsModeViewer) {
-        elements.dropsModeViewer.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-map-index]');
-            if (!btn) return;
-            const raw = btn.dataset.mapIndex;
-            setSelectedMapIndex(raw === 'session' ? null : Number(raw));
-        });
+    if (elements.btnViewDrops) {
+        elements.btnViewDrops.addEventListener('click', () => setViewerSubView('drops'));
+    }
+    if (elements.btnViewMaps) {
+        elements.btnViewMaps.addEventListener('click', () => setViewerSubView('maps'));
     }
     if (elements.statCardEfficiency) {
         elements.statCardEfficiency.addEventListener('click', toggleEfficiencyUnit);

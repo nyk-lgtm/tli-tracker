@@ -26,6 +26,8 @@ export function initElements() {
         btnModeMap: document.getElementById('btn-mode-map'),
         dropsModeLive: document.getElementById('drops-mode-live'),
         dropsModeViewer: document.getElementById('drops-mode-viewer'),
+        btnViewDrops: document.getElementById('btn-view-drops'),
+        btnViewMaps: document.getElementById('btn-view-maps'),
         btnSettings: document.getElementById('btn-settings'),
         btnHistory: document.getElementById('btn-history'),
         btnOverlay: document.getElementById('btn-overlay'),
