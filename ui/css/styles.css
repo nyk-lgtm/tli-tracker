@@ -374,6 +374,19 @@ hr {
     flex: 1 1 auto;
 }
 
+.drops-panel-title {
+    padding: 0.6rem 1rem 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--tli-color-text-muted, #9ca3af);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    background: var(--tli-color-card);
+    z-index: 2;
+}
+
 .drops-panel-header {
     display: flex;
     justify-content: space-between;
@@ -381,7 +394,7 @@ hr {
     padding: 0.4rem 1rem;
     border-bottom: 1px solid var(--tli-color-border);
     position: sticky;
-    top: 0;
+    top: 2rem;
     background: var(--tli-color-card);
     z-index: 1;
 }
@@ -404,23 +417,24 @@ hr {
     display: none;
 }
 
-/* wide: when viewing a session, both panels sit side-by-side.
-   the viewer toggle disappears since there's nothing left to toggle. */
+/* wide: both panels sit side-by-side whether or not a session is active,
+   so new users see the map-breakdown column from boot. the narrow-mode
+   toggle disappears since there's nothing left to toggle. */
 @media (min-width: 900px) {
-    #app.session-active #drops-mode-toggle {
+    #drops-mode-toggle {
         display: none;
     }
 
-    #app.session-active .drops-container {
+    .drops-container {
         flex-direction: row;
     }
 
-    #app.session-active .drops-container > .drops-panel-maps {
+    .drops-container > .drops-panel-maps {
         display: block;
         flex: 0 0 calc(50% - 0.25rem);
     }
 
-    #app.session-active .drops-container > .drops-panel-drops {
+    .drops-container > .drops-panel-drops {
         display: block;
         flex: 1 1 auto;
     }

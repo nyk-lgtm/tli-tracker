@@ -158,10 +158,12 @@ export function renderDrops() {
     const hasSession = !!state.session;
 
     if (!hasSession) {
-        // no session yet — both panels empty, drops panel shows tracker status
+        // no session yet — both panels show header + empty state so wide-mode
+        // users can see the map-breakdown column exists before they start playing
         elements.dropsList.innerHTML = dropsPanelHeaderHtml() + renderDropsEmptyState();
         if (elements.dropsListMaps) {
-            elements.dropsListMaps.innerHTML = '';
+            elements.dropsListMaps.innerHTML = mapsPanelHeaderHtml()
+                + `<div class="empty-state">No maps yet</div>`;
         }
         syncExpandedPriceHistory([]);
         return;
@@ -193,9 +195,24 @@ function expandedMapVisibleItemIds() {
 
 function dropsPanelHeaderHtml() {
     return `
+        <div class="drops-panel-title">Session Drops</div>
         <div class="drops-panel-header">
             <span class="stat-label">Item</span>
             <span class="stat-label">Value</span>
+        </div>
+    `;
+}
+
+function mapsPanelHeaderHtml() {
+    return `
+        <div class="drops-panel-title">Drops Per Map</div>
+        <div class="drops-panel-header">
+            <span class="stat-label">Map</span>
+            <span class="map-accordion-stats">
+                <span class="stat-label">Total</span>
+                <span class="stat-label">Profit</span>
+                <span class="stat-label">Duration</span>
+            </span>
         </div>
     `;
 }
@@ -318,7 +335,8 @@ function renderMapsAccordion() {
     const maps = liveMap ? [...completed, liveMap] : completed;
 
     if (maps.length === 0) {
-        elements.dropsListMaps.innerHTML = `<div class="empty-state">No maps yet</div>`;
+        elements.dropsListMaps.innerHTML = mapsPanelHeaderHtml()
+            + `<div class="empty-state">No maps yet</div>`;
         return;
     }
 
@@ -328,16 +346,7 @@ function renderMapsAccordion() {
 
     const expandedIndex = state.expandedMapIndex;
 
-    const headerHtml = `
-        <div class="drops-panel-header">
-            <span class="stat-label">Map</span>
-            <span class="map-accordion-stats">
-                <span class="stat-label">Total</span>
-                <span class="stat-label">Profit</span>
-                <span class="stat-label">Duration</span>
-            </span>
-        </div>
-    `;
+    const headerHtml = mapsPanelHeaderHtml();
 
     const rowsHtml = ordered.map((map) => {
         const isExpanded = expandedIndex === map.index;
