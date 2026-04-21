@@ -407,20 +407,20 @@ hr {
 /* wide: when viewing a session, both panels sit side-by-side.
    the viewer toggle disappears since there's nothing left to toggle. */
 @media (min-width: 900px) {
-    #app.viewing-session #drops-mode-viewer {
+    #app.session-active #drops-mode-toggle {
         display: none;
     }
 
-    #app.viewing-session .drops-container {
+    #app.session-active .drops-container {
         flex-direction: row;
     }
 
-    #app.viewing-session .drops-container > .drops-panel-maps {
+    #app.session-active .drops-container > .drops-panel-maps {
         display: block;
         flex: 0 0 calc(50% - 0.25rem);
     }
 
-    #app.viewing-session .drops-container > .drops-panel-drops {
+    #app.session-active .drops-container > .drops-panel-drops {
         display: block;
         flex: 1 1 auto;
     }

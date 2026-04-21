@@ -274,6 +274,7 @@ class Tracker:
                         "ended_at_offset": (
                             map_run.ended_at - session.started_at
                         ).total_seconds(),
+                        "item_rows": self._build_map_item_rows(map_run, ignored),
                     }
                 )
 
@@ -577,6 +578,9 @@ class Tracker:
                             ).total_seconds()
                             if self.state.current_session
                             else 0,
+                            "item_rows": self._build_map_item_rows(
+                                self.state.current_map, ignored
+                            ),
                         }
                     )
 

@@ -12,7 +12,7 @@ import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, loadThemesList, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners, initAppearanceListeners } from './settings.js';
 import { loadHistory, exitSessionViewing } from './history.js';
 import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, dismissUpdateBanner, handleUpdateState, loadUpdateState } from './updates.js';
-import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI, setViewerSubView, toggleExpandedMap } from './renderers.js';
+import { updateState, renderUI, renderDrops, renderPanel, updateTimedStats, syncDisplayModeUI, setSubView, toggleExpandedMap } from './renderers.js';
 import {
     applyPriceHistoryUpdate,
     collapseExpandedPriceHistory,
@@ -106,7 +106,7 @@ window.onPythonEvent = function(eventType, data) {
             collapseExpandedPriceHistory();
             if (state.viewingSessionId) {
                 state.viewingSessionId = null;
-                state.viewerSubView = 'drops';
+                state.subView = 'drops';
                 state.expandedMapIndex = null;
                 if (elements.sessionViewerBanner) {
                     elements.sessionViewerBanner.classList.add('hidden');
@@ -147,25 +147,32 @@ function onInitialized(itemCount) {
 }
 
 function onMapEnter() {
-    // Drops are tracked at session level, no need to clear
-    renderDrops();
+    // auto-follow: expand the newly-started map in the accordion.
+    // session.maps holds only completed maps, so the new live map's
+    // synthesized index is one past the last completed one.
+    const completedCount = state.session?.maps?.length || 0;
+    state.expandedMapIndex = completedCount;
+    // the subsequent 'state' event will trigger the render
 }
 
 function onMapExit() {
     // State update will handle the UI
 }
 
-function loadPriceHistoryForRange(itemId, rangeKey) {
+function loadPriceHistoryForRange(itemId, rangeKey, panel = 'drops') {
     setActivePriceHistoryRangeKey(rangeKey);
     const fetchPromise = ensurePriceHistory(itemId, rangeKey);
-    renderDrops();
+    // scoped render: only the panel the user clicked into gets touched.
+    // keeps a cached chart on the other side from blanking/remounting while
+    // the user waits on this side's fetch.
+    renderPanel(panel);
     void fetchPromise.then((entry) => {
-        console.debug('[PriceHistory]', itemId, rangeKey, entry.status);
-        renderDrops();
+        console.debug('[PriceHistory]', itemId, rangeKey, panel, entry.status);
+        renderPanel(panel);
         return entry;
     }).catch((error) => {
         console.error('[PriceHistory] request failed:', itemId, rangeKey, error);
-        renderDrops();
+        renderPanel(panel);
     });
     return fetchPromise;
 }
@@ -241,7 +248,8 @@ async function handleDropRowClick(event) {
             return;
         }
 
-        void loadPriceHistoryForRange(itemId, rangeKey);
+        const rangePanel = rangeButton.closest('#drops-list-maps') ? 'maps' : 'drops';
+        void loadPriceHistoryForRange(itemId, rangeKey, rangePanel);
         return;
     }
 
@@ -252,14 +260,17 @@ async function handleDropRowClick(event) {
             return;
         }
 
-        const expandedItemId = toggleExpandedPriceHistoryItem(itemId);
+        // panel is inferred from ancestor container so clicks in the left
+        // accordion and right drop list expand into independent slots
+        const panel = row.closest('#drops-list-maps') ? 'maps' : 'drops';
+        const expandedItemId = toggleExpandedPriceHistoryItem(itemId, panel);
 
         if (expandedItemId === itemId) {
-            void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey());
+            void loadPriceHistoryForRange(itemId, getActivePriceHistoryRangeKey(), panel);
             return;
         }
 
-        renderDrops();
+        renderPanel(panel);
         return;
     }
 
@@ -332,13 +343,6 @@ async function resetSession() {
     }
 }
 
-function setDisplayMode(mode) {
-    state.displayMode = mode;
-    syncDisplayModeUI();
-    api('set_display_mode', mode);
-    renderDrops();
-}
-
 async function toggleEfficiencyUnit() {
     const next = !settings.efficiency_per_map;
     settings.efficiency_per_map = next;
@@ -409,13 +413,11 @@ function init() {
     elements.btnInitialize.addEventListener('click', initialize);
     elements.btnPause.addEventListener('click', togglePause);
     elements.btnReset.addEventListener('click', resetSession);
-    elements.btnModeSession.addEventListener('click', () => setDisplayMode('session'));
-    elements.btnModeMap.addEventListener('click', () => setDisplayMode('map'));
     if (elements.btnViewDrops) {
-        elements.btnViewDrops.addEventListener('click', () => setViewerSubView('drops'));
+        elements.btnViewDrops.addEventListener('click', () => setSubView('drops'));
     }
     if (elements.btnViewMaps) {
-        elements.btnViewMaps.addEventListener('click', () => setViewerSubView('maps'));
+        elements.btnViewMaps.addEventListener('click', () => setSubView('maps'));
     }
     if (elements.statCardEfficiency) {
         elements.statCardEfficiency.addEventListener('click', toggleEfficiencyUnit);

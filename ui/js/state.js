@@ -11,9 +11,12 @@ export const state = {
     displayMap: null,
     session: null,
     viewingSessionId: null,
-    // session viewer only: 'drops' (session-wide list) or 'maps' (per-map accordion)
-    viewerSubView: 'drops',
-    // session viewer only: which map's drops are expanded in the accordion (null = none)
+    // toggle between the session-wide drop list ('drops') and the per-map
+    // accordion ('maps'). shown whenever a session is active, in both live
+    // recording and the session viewer.
+    subView: 'drops',
+    // which map's drops are expanded in the accordion (null = none). in live
+    // mode this auto-follows the current map on map_enter.
     expandedMapIndex: null
 };
 

@@ -12,7 +12,10 @@ export const PRICE_HISTORY_RANGE_OPTIONS = Object.freeze([
 const VALID_ENTRY_STATUSES = new Set(['ready', 'empty', 'loading', 'error', 'missing']);
 
 const historyState = {
-    expandedItemId: null,
+    // each panel ('drops' or 'maps') tracks its own expanded item so the
+    // user can have two charts open at once — e.g. an item scoped to a
+    // specific map on the left and a different session-wide item on the right
+    expandedByPanel: { drops: null, maps: null },
     activeRangeKey: DEFAULT_PRICE_HISTORY_RANGE_KEY,
     visibleEntry: null
 };
@@ -161,8 +164,11 @@ function isValidEntryStatus(status) {
 }
 
 function isVisibleHistoryTarget(itemId, rangeKey) {
+    const id = normalizeItemId(itemId);
+    const expandedAnywhere = historyState.expandedByPanel.drops === id
+        || historyState.expandedByPanel.maps === id;
     return (
-        historyState.expandedItemId === normalizeItemId(itemId)
+        expandedAnywhere
         && historyState.activeRangeKey === normalizeRangeKey(rangeKey)
     );
 }
@@ -307,32 +313,39 @@ export function normalizePriceHistoryEntry(
     };
 }
 
-export function getExpandedPriceHistoryItemId() {
-    return historyState.expandedItemId;
+function normalizePanel(panel) {
+    return panel === 'maps' ? 'maps' : 'drops';
 }
 
-export function toggleExpandedPriceHistoryItem(itemId) {
+export function getExpandedPriceHistoryItemId(panel = 'drops') {
+    return historyState.expandedByPanel[normalizePanel(panel)] || null;
+}
+
+export function toggleExpandedPriceHistoryItem(itemId, panel = 'drops') {
+    const key = normalizePanel(panel);
     const normalizedItemId = normalizeItemId(itemId);
     if (!normalizedItemId) {
-        historyState.expandedItemId = null;
+        historyState.expandedByPanel[key] = null;
         historyState.visibleEntry = null;
         return null;
     }
 
-    historyState.expandedItemId = historyState.expandedItemId === normalizedItemId
+    historyState.expandedByPanel[key] = historyState.expandedByPanel[key] === normalizedItemId
         ? null
         : normalizedItemId;
     historyState.visibleEntry = null;
-    return historyState.expandedItemId;
+    return historyState.expandedByPanel[key];
 }
 
 export function collapseExpandedPriceHistory() {
-    historyState.expandedItemId = null;
+    historyState.expandedByPanel.drops = null;
+    historyState.expandedByPanel.maps = null;
     historyState.visibleEntry = null;
 }
 
-export function syncExpandedPriceHistory(itemIds) {
-    if (!historyState.expandedItemId) {
+export function syncExpandedPriceHistory(itemIds, panel = 'drops') {
+    const key = normalizePanel(panel);
+    if (!historyState.expandedByPanel[key]) {
         return;
     }
 
@@ -341,8 +354,8 @@ export function syncExpandedPriceHistory(itemIds) {
             .map((itemId) => normalizeItemId(itemId))
             .filter(Boolean)
     );
-    if (!validItemIds.has(historyState.expandedItemId)) {
-        historyState.expandedItemId = null;
+    if (!validItemIds.has(historyState.expandedByPanel[key])) {
+        historyState.expandedByPanel[key] = null;
         historyState.visibleEntry = null;
     }
 }
@@ -374,7 +387,8 @@ export function applyPriceHistoryUpdate(entry) {
 }
 
 export function resetPriceHistoryState() {
-    historyState.expandedItemId = null;
+    historyState.expandedByPanel.drops = null;
+    historyState.expandedByPanel.maps = null;
     historyState.activeRangeKey = DEFAULT_PRICE_HISTORY_RANGE_KEY;
     historyState.visibleEntry = null;
 }

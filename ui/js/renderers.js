@@ -155,37 +155,40 @@ export function updateInitStatus() {
 // ============ Drop Rendering ============
 
 export function renderDrops() {
-    const isMapMode = state.displayMode === 'map';
-    const viewing = !!state.viewingSessionId;
+    const hasSession = !!state.session;
 
-    if (viewing) {
-        // both panels rendered unconditionally; CSS controls visibility based on
-        // narrow/wide layout + toggle state, so a resize never shows an empty panel
-        const sessionRows = state.session?.item_rows || [];
-        syncExpandedPriceHistory(sessionRows.map((item) => item.item_id));
-        renderMapsAccordion();
-        renderSessionDropsPanel(sessionRows);
+    if (!hasSession) {
+        // no session yet — both panels empty, drops panel shows tracker status
+        elements.dropsList.innerHTML = dropsPanelHeaderHtml() + renderDropsEmptyState();
+        if (elements.dropsListMaps) {
+            elements.dropsListMaps.innerHTML = '';
+        }
+        syncExpandedPriceHistory([]);
         return;
     }
 
-    if (elements.dropsListMaps) {
-        elements.dropsListMaps.innerHTML = '';
-    }
+    // session active (live or viewer): both panels rendered unconditionally.
+    // CSS controls visibility based on narrow/wide layout + toggle state,
+    // so a resize never shows an empty panel.
+    const sessionRows = state.session?.item_rows || [];
+    syncExpandedPriceHistory(sessionRows.map((item) => item.item_id), 'drops');
+    syncExpandedPriceHistory(expandedMapVisibleItemIds(), 'maps');
+    renderMapsAccordion();
+    renderSessionDropsPanel(sessionRows);
+}
 
-    let itemRows;
-    if (isMapMode) {
-        itemRows = state.displayMap?.item_rows || [];
-    } else {
-        itemRows = state.session?.item_rows || [];
-    }
-    syncExpandedPriceHistory(itemRows.map((item) => item.item_id));
-
-    if (itemRows.length === 0) {
-        elements.dropsList.innerHTML = dropsPanelHeaderHtml() + renderDropsEmptyState(isMapMode);
-        return;
-    }
-
-    renderValueMode(itemRows);
+function expandedMapVisibleItemIds() {
+    // items visible inside whatever map the accordion currently has expanded.
+    // if nothing is expanded the set is empty, which lets the sync function
+    // clean up a stale maps-panel chart expansion from a previous render.
+    if (state.expandedMapIndex === null) return [];
+    const completed = Array.isArray(state.session?.maps) ? state.session.maps : [];
+    const liveMap = state.displayMap?.is_live
+        ? { index: completed.length, item_rows: state.displayMap.item_rows || [] }
+        : null;
+    const allMaps = liveMap ? [...completed, liveMap] : completed;
+    const map = allMaps.find((m) => m.index === state.expandedMapIndex);
+    return (map?.item_rows || []).map((item) => item.item_id);
 }
 
 function dropsPanelHeaderHtml() {
@@ -199,13 +202,13 @@ function dropsPanelHeaderHtml() {
 
 function renderSessionDropsPanel(itemRows) {
     if (itemRows.length === 0) {
-        elements.dropsList.innerHTML = dropsPanelHeaderHtml() + renderDropsEmptyState(false);
+        elements.dropsList.innerHTML = dropsPanelHeaderHtml() + renderDropsEmptyState();
         return;
     }
     renderValueMode(itemRows);
 }
 
-function renderDropsEmptyState(isMapMode) {
+function renderDropsEmptyState() {
     if (state.awaitingInit) {
         return `
             <div class="empty-state py-10">
@@ -226,66 +229,42 @@ function renderDropsEmptyState(isMapMode) {
             </div>
         `;
     }
-    if (isMapMode) {
-        if (!state.displayMap) {
-            return `<div class="empty-state">No completed maps yet</div>`;
-        }
-        if (state.displayMap.is_live) {
-            return `<div class="empty-state">No drops in this map yet</div>`;
-        }
-        return `<div class="empty-state">Last map had no drops</div>`;
-    }
     return `<div class="empty-state">No drops detected in this session</div>`;
 }
 
 export function syncDisplayModeUI() {
-    const viewing = !!state.viewingSessionId;
-    if (elements.dropsModeLive) {
-        elements.dropsModeLive.classList.toggle('hidden', viewing);
-    }
-    if (elements.dropsModeViewer) {
-        elements.dropsModeViewer.classList.toggle('hidden', !viewing);
+    const hasSession = !!state.session;
+
+    if (elements.dropsModeToggle) {
+        elements.dropsModeToggle.classList.toggle('hidden', !hasSession);
     }
 
-    // layout classes drive CSS: `viewing-session` flips the drops area into
-    // two-column when the viewport is wide; `mode-maps` picks which single
-    // panel shows when narrow + viewing
+    // layout classes drive CSS: `session-active` flips the drops area into
+    // two-column when the viewport is wide and hides the toggle (nothing
+    // left to switch since both panels are on screen). `mode-maps` picks
+    // which single panel shows in narrow mode.
     const appRoot = document.getElementById('app');
     if (appRoot) {
-        appRoot.classList.toggle('viewing-session', viewing);
+        appRoot.classList.toggle('session-active', hasSession);
     }
     if (elements.dropsContainer) {
         elements.dropsContainer.classList.toggle(
             'mode-maps',
-            viewing && state.viewerSubView === 'maps'
+            hasSession && state.subView === 'maps'
         );
     }
 
-    if (viewing) {
-        if (elements.btnViewDrops) {
-            elements.btnViewDrops.classList.toggle('active', state.viewerSubView !== 'maps');
-        }
-        if (elements.btnViewMaps) {
-            elements.btnViewMaps.classList.toggle('active', state.viewerSubView === 'maps');
-        }
-        return;
+    if (elements.btnViewDrops) {
+        elements.btnViewDrops.classList.toggle('active', state.subView !== 'maps');
     }
-
-    const isMapMode = state.displayMode === 'map';
-    if (elements.btnModeSession) {
-        elements.btnModeSession.classList.toggle('active', !isMapMode);
-    }
-    if (elements.btnModeMap) {
-        elements.btnModeMap.classList.toggle('active', isMapMode);
-        // label reflects whether we're showing the in-progress map or the last finished one
-        const isLive = state.displayMap?.is_live !== false;
-        elements.btnModeMap.textContent = isLive ? 'Current Map' : 'Last Map';
+    if (elements.btnViewMaps) {
+        elements.btnViewMaps.classList.toggle('active', state.subView === 'maps');
     }
 }
 
-export function setViewerSubView(view) {
-    state.viewerSubView = view === 'maps' ? 'maps' : 'drops';
-    if (state.viewerSubView !== 'maps') {
+export function setSubView(view) {
+    state.subView = view === 'maps' ? 'maps' : 'drops';
+    if (state.subView !== 'maps') {
         state.expandedMapIndex = null;
     }
     renderDrops();
@@ -294,7 +273,22 @@ export function setViewerSubView(view) {
 
 export function toggleExpandedMap(index) {
     state.expandedMapIndex = state.expandedMapIndex === index ? null : index;
-    renderDrops();
+    // only the maps panel changes — redraw the drops panel separately only
+    // if the sync needs to clean up a stale chart expansion there
+    syncExpandedPriceHistory(expandedMapVisibleItemIds(), 'maps');
+    renderPanel('maps');
+}
+
+// renders only the requested side so the other panel's DOM (including any
+// open price-history chart) stays untouched. used to avoid remounting a
+// cached chart on the unaffected side when the user clicks into just one.
+export function renderPanel(panel) {
+    if (panel === 'maps') {
+        renderMapsAccordion();
+        return;
+    }
+    const sessionRows = state.session?.item_rows || [];
+    renderSessionDropsPanel(sessionRows);
 }
 
 function sumGrossValue(itemRows) {
@@ -303,13 +297,29 @@ function sumGrossValue(itemRows) {
 }
 
 function renderMapsAccordion() {
-    const maps = Array.isArray(state.session?.maps) ? state.session.maps : [];
+    const completed = Array.isArray(state.session?.maps) ? state.session.maps : [];
+    // live view: synthesize a row for the in-progress map so it appears in
+    // the accordion while the player is still running it. session.maps only
+    // holds completed runs, so the live entry's index lines up with what
+    // its completed index will be once the map ends.
+    const liveMap = state.displayMap?.is_live
+        ? {
+            index: completed.length,
+            total_value: state.displayMap.value || 0,
+            duration_seconds: state.displayMap.duration || 0,
+            item_rows: state.displayMap.item_rows || [],
+            is_live: true
+        }
+        : null;
+    const maps = liveMap ? [...completed, liveMap] : completed;
+
     if (maps.length === 0) {
-        elements.dropsListMaps.innerHTML = `<div class="empty-state">No completed maps in this session</div>`;
+        elements.dropsListMaps.innerHTML = `<div class="empty-state">No maps yet</div>`;
         return;
     }
 
-    // chronological order: most recent map at top
+    // chronological order: most recent map at top (live map always sits
+    // first since its synthesized index is highest)
     const ordered = [...maps].sort((a, b) => (b.index || 0) - (a.index || 0));
 
     const expandedIndex = state.expandedMapIndex;
@@ -356,7 +366,7 @@ function renderMapsAccordion() {
     }).join('');
 
     elements.dropsListMaps.innerHTML = headerHtml + rowsHtml;
-    mountPriceHistoryCharts();
+    mountPriceHistoryCharts(elements.dropsListMaps);
 }
 
 function renderMapAccordionDrops(itemRows) {
@@ -376,7 +386,7 @@ function renderMapAccordionDrops(itemRows) {
                 <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
             `,
             valueHtml: `<div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>`
-        });
+        }, 'maps');
     }).join('');
 }
 
@@ -516,9 +526,9 @@ function renderHistoryPanel(itemId) {
     `;
 }
 
-function renderDropRow(item, trailingHtml) {
+function renderDropRow(item, trailingHtml, panel = 'drops') {
     const itemId = String(item.item_id || '');
-    const isExpanded = getExpandedPriceHistoryItemId() === itemId;
+    const isExpanded = getExpandedPriceHistoryItemId(panel) === itemId;
     const isIgnored = !!item.ignored;
     const statusClass = item.price_status || 'unknown';
     const cloudClass = item.price_source === 'cloud' ? ' cloud' : '';
@@ -555,14 +565,14 @@ function renderDropRow(item, trailingHtml) {
     `;
 }
 
-function mountPriceHistoryCharts() {
-    const root = elements.dropsContainer;
-    if (!root) {
+function mountPriceHistoryCharts(root) {
+    const scope = root || elements.dropsContainer;
+    if (!scope) {
         return;
     }
 
     const activeRangeKey = getActivePriceHistoryRangeKey();
-    root.querySelectorAll('[data-price-history-chart]').forEach((container) => {
+    scope.querySelectorAll('[data-price-history-chart]').forEach((container) => {
         const itemId = container.getAttribute('data-price-history-chart');
         const entry = getPriceHistoryEntry(itemId, activeRangeKey);
         if (entry.status === 'ready' && entry.data) {
@@ -607,6 +617,6 @@ function renderValueMode(itemRows) {
     }).join('');
 
     elements.dropsList.innerHTML = dropsPanelHeaderHtml() + html;
-    mountPriceHistoryCharts();
+    mountPriceHistoryCharts(elements.dropsList);
 }
 

@@ -95,7 +95,7 @@ export async function viewSession(sessionId, date) {
             return;
         }
         state.viewingSessionId = sessionId;
-        state.viewerSubView = 'drops';
+        state.subView = 'drops';
         state.expandedMapIndex = null;
         updateState(stats);
         if (elements.sessionViewerBanner) {
@@ -112,7 +112,7 @@ export async function viewSession(sessionId, date) {
 export function exitSessionViewing() {
     if (!state.viewingSessionId) return;
     state.viewingSessionId = null;
-    state.viewerSubView = 'drops';
+    state.subView = 'drops';
     state.expandedMapIndex = null;
     if (elements.sessionViewerBanner) {
         elements.sessionViewerBanner.classList.add('hidden');
@@ -137,7 +137,7 @@ async function deleteSession(sessionId, date) {
         }
         if (state.viewingSessionId === sessionId) {
             state.viewingSessionId = null;
-            state.viewerSubView = 'drops';
+            state.subView = 'drops';
             state.expandedMapIndex = null;
             if (elements.sessionViewerBanner) {
                 elements.sessionViewerBanner.classList.add('hidden');
