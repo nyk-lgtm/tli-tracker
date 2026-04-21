@@ -10,7 +10,8 @@ export const state = {
     currentMap: null,
     displayMap: null,
     session: null,
-    viewingSessionId: null
+    viewingSessionId: null,
+    selectedMapIndex: null
 };
 
 export const settings = {

@@ -24,6 +24,8 @@ export function initElements() {
         btnReset: document.getElementById('btn-reset'),
         btnModeSession: document.getElementById('btn-mode-session'),
         btnModeMap: document.getElementById('btn-mode-map'),
+        dropsModeLive: document.getElementById('drops-mode-live'),
+        dropsModeViewer: document.getElementById('drops-mode-viewer'),
         btnSettings: document.getElementById('btn-settings'),
         btnHistory: document.getElementById('btn-history'),
         btnOverlay: document.getElementById('btn-overlay'),

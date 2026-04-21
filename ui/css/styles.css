@@ -288,6 +288,18 @@ hr {
     box-shadow: var(--tli-shadow-sm);
 }
 
+.toggle-group-scroll {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    max-width: 70%;
+    scrollbar-width: thin;
+}
+
+.toggle-group-scroll .toggle-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 /* ============================================
    Drops List
    ============================================ */

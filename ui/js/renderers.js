@@ -156,19 +156,31 @@ export function updateInitStatus() {
 
 export function renderDrops() {
     const isMapMode = state.displayMode === 'map';
-    const source = isMapMode ? state.displayMap : state.session;
-    const itemRows = source?.item_rows || [];
+    const hasSelectedMap =
+        state.selectedMapIndex !== null
+        && Array.isArray(state.session?.maps)
+        && state.session.maps.find((m) => m.index === state.selectedMapIndex);
+
+    let itemRows;
+    if (hasSelectedMap) {
+        const map = state.session.maps.find((m) => m.index === state.selectedMapIndex);
+        itemRows = map?.item_rows || [];
+    } else if (isMapMode) {
+        itemRows = state.displayMap?.item_rows || [];
+    } else {
+        itemRows = state.session?.item_rows || [];
+    }
     syncExpandedPriceHistory(itemRows.map((item) => item.item_id));
 
     if (itemRows.length === 0) {
-        elements.dropsList.innerHTML = renderDropsEmptyState(isMapMode);
+        elements.dropsList.innerHTML = renderDropsEmptyState(isMapMode, hasSelectedMap);
         return;
     }
 
     renderValueMode(itemRows);
 }
 
-function renderDropsEmptyState(isMapMode) {
+function renderDropsEmptyState(isMapMode, hasSelectedMap) {
     if (state.awaitingInit) {
         return `
             <div class="empty-state py-10">
@@ -189,6 +201,9 @@ function renderDropsEmptyState(isMapMode) {
             </div>
         `;
     }
+    if (hasSelectedMap) {
+        return `<div class="empty-state">This map had no drops</div>`;
+    }
     if (isMapMode) {
         if (!state.displayMap) {
             return `<div class="empty-state">No completed maps yet</div>`;
@@ -202,6 +217,19 @@ function renderDropsEmptyState(isMapMode) {
 }
 
 export function syncDisplayModeUI() {
+    const viewing = !!state.viewingSessionId;
+    if (elements.dropsModeLive) {
+        elements.dropsModeLive.classList.toggle('hidden', viewing);
+    }
+    if (elements.dropsModeViewer) {
+        elements.dropsModeViewer.classList.toggle('hidden', !viewing);
+    }
+
+    if (viewing) {
+        renderMapPicker();
+        return;
+    }
+
     const isMapMode = state.displayMode === 'map';
     if (elements.btnModeSession) {
         elements.btnModeSession.classList.toggle('active', !isMapMode);
@@ -212,6 +240,29 @@ export function syncDisplayModeUI() {
         const isLive = state.displayMap?.is_live !== false;
         elements.btnModeMap.textContent = isLive ? 'Current Map' : 'Last Map';
     }
+}
+
+export function setSelectedMapIndex(index) {
+    state.selectedMapIndex = index;
+    renderDrops();
+    syncDisplayModeUI();
+}
+
+function renderMapPicker() {
+    const container = elements.dropsModeViewer;
+    if (!container) return;
+    const maps = Array.isArray(state.session?.maps) ? state.session.maps : [];
+    const selected = state.selectedMapIndex;
+    const sessionActive = selected === null ? ' active' : '';
+    const pills = [
+        `<button class="toggle-btn${sessionActive}" data-map-index="session">Session</button>`,
+        ...maps.map((map, i) => {
+            const active = selected === map.index ? ' active' : '';
+            const label = `Map ${i + 1} · ${formatTime(map.duration_seconds)} · ${formatValue(map.total_value)}`;
+            return `<button class="toggle-btn${active}" data-map-index="${map.index}">${label}</button>`;
+        })
+    ];
+    container.innerHTML = pills.join('');
 }
 
 function escapeHtml(value) {

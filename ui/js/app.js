@@ -12,7 +12,7 @@ import { openModal, closeModal, showConfirmDialog } from './modals.js';
 import { loadSettings, loadThemesList, saveSettings, resetDefaults, initToggleListeners, initSettingsTabs, initWidgetOverlayListeners, initGamePathListeners, initAppearanceListeners } from './settings.js';
 import { loadHistory, exitSessionViewing } from './history.js';
 import { applyDownloadedUpdate, checkForUpdates, checkForUpdatesOnStartup, dismissUpdateBanner, handleUpdateState, loadUpdateState } from './updates.js';
-import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI } from './renderers.js';
+import { updateState, renderUI, renderDrops, updateTimedStats, syncDisplayModeUI, setSelectedMapIndex } from './renderers.js';
 import {
     applyPriceHistoryUpdate,
     collapseExpandedPriceHistory,
@@ -106,6 +106,7 @@ window.onPythonEvent = function(eventType, data) {
             collapseExpandedPriceHistory();
             if (state.viewingSessionId) {
                 state.viewingSessionId = null;
+                state.selectedMapIndex = null;
                 if (elements.sessionViewerBanner) {
                     elements.sessionViewerBanner.classList.add('hidden');
                 }
@@ -401,6 +402,14 @@ function init() {
     elements.btnReset.addEventListener('click', resetSession);
     elements.btnModeSession.addEventListener('click', () => setDisplayMode('session'));
     elements.btnModeMap.addEventListener('click', () => setDisplayMode('map'));
+    if (elements.dropsModeViewer) {
+        elements.dropsModeViewer.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-map-index]');
+            if (!btn) return;
+            const raw = btn.dataset.mapIndex;
+            setSelectedMapIndex(raw === 'session' ? null : Number(raw));
+        });
+    }
     if (elements.statCardEfficiency) {
         elements.statCardEfficiency.addEventListener('click', toggleEfficiencyUnit);
     }
