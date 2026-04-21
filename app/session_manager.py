@@ -11,6 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from .map_naming import resolve_map_name
 from .models import Session
 from .storage import (
     DATA_DIR,
@@ -196,16 +197,20 @@ class SessionManager:
 
             if ended_at_iso and not is_league:
                 ended_at = datetime.fromisoformat(ended_at_iso)
+                map_item_ids = map_dict.get("map_item_ids", [])
+                level_id = map_dict.get("level_id")
                 maps_list.append(
                     {
                         "index": index,
                         "total_value": map_dict.get("net_value", 0.0),
                         "duration_seconds": map_dict.get("duration_seconds", 0.0),
                         "ended_at_offset": (ended_at - started_at).total_seconds(),
-                        "map_item_ids": map_dict.get("map_item_ids", []),
+                        "map_item_ids": map_item_ids,
                         "consumable_ids": map_dict.get("consumable_ids", []),
                         "map_cost_snapshot": map_dict.get("map_cost_snapshot", {}),
                         "item_rows": list(map_rows.values()),
+                        "map_name": resolve_map_name(map_item_ids, level_id),
+                        "level_id": level_id,
                     }
                 )
                 last_completed_map = (map_dict, map_rows)

@@ -462,6 +462,105 @@ def test_reset_session_clears_pause_state() -> None:
     assert tracker._pause_started_at is None
 
 
+def test_map_entry_captures_beacon_when_slot_empties_via_remove(
+    monkeypatch,
+) -> None:
+    # when a beacon stack hits zero, the game emits BagMgr@:RemoveBagItem
+    # (no ConfigBaseId on the line) instead of Modfy with Num=0. without
+    # the remove handler, the last of a stack silently slips out of the
+    # delta and the map lands without a captured beacon.
+    monkeypatch.setitem(
+        tracker_module.get_item_name.__globals__["_item_cache"],
+        "400006",
+        {"name": "Glacial Abyss Beacon (Timemark 7)", "type": "Beacon"},
+    )
+
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    # seed bag state with exactly one beacon so the consume will remove the slot
+    tracker.process_log_chunk(
+        "BagMgr@:InitBagData PageId = 103 SlotId = 4 ConfigBaseId = 400006 Num = 1\n"
+    )
+    import time
+
+    time.sleep(0.4)
+    tracker.process_log_chunk("\n")
+
+    # game emits RemoveBagItem because the stack hit zero; same tick, the
+    # LevelMgr line and the _UpdateGameEnd arrive in separate chunks like
+    # the watcher normally splits them.
+    tracker.process_log_chunk("BagMgr@:RemoveBagItem PageId = 103 SlotId = 4\n")
+    tracker.process_log_chunk(
+        "LevelMgr@ LevelUid, LevelType, LevelId = 1081205 3 4829\n"
+    )
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+
+    current_map = tracker.state.current_map
+    assert current_map is not None
+    assert current_map.map_item_ids == ["400006"]
+    assert current_map.level_id == 4829  # T7-2 range
+
+
+def test_map_entry_capture_tolerates_split_chunks(
+    monkeypatch,
+) -> None:
+    # the game-log watcher fires on every file modification event, so the
+    # beacon consumption, the LevelMgr line, and the _UpdateGameEnd line can
+    # arrive in separate chunks. this test drives the tracker with those
+    # three events split into three chunks (closest to real behavior) and
+    # verifies MapRun still captures beacon/consumable/level_id.
+    monkeypatch.setitem(
+        tracker_module.get_item_name.__globals__["_item_cache"],
+        "400007",
+        {"name": "Glacial Abyss Beacon (Timemark 8)", "type": "Beacon"},
+    )
+    monkeypatch.setitem(
+        tracker_module.get_item_name.__globals__["_item_cache"],
+        "10010",
+        {"name": "Novel Compass", "type": "Compass"},
+    )
+
+    events: list[tuple[str, dict]] = []
+    tracker = make_tracker(events)
+
+    # set initial bag state with one beacon and one compass in stock
+    tracker.process_log_chunk(
+        "BagMgr@:InitBagData PageId = 103 SlotId = 7 "
+        "ConfigBaseId = 400007 Num = 1\n"
+        "BagMgr@:InitBagData PageId = 103 SlotId = 8 "
+        "ConfigBaseId = 10010 Num = 1\n"
+    )
+    # give the init burst time to flush
+    import time
+
+    time.sleep(0.4)
+    tracker.process_log_chunk("\n")  # no-op to trigger idle flush
+
+    # chunk 1: bag decrements the beacon + compass (player applies them)
+    tracker.process_log_chunk(
+        "BagMgr@:Modfy BagItem PageId = 103 SlotId = 7 "
+        "ConfigBaseId = 400007 Num = 0\n"
+        "BagMgr@:Modfy BagItem PageId = 103 SlotId = 8 "
+        "ConfigBaseId = 10010 Num = 0\n"
+    )
+
+    # chunk 2: the LevelMgr line identifying the incoming map's level id.
+    # 5002 is in the T8-0 range per the tier table.
+    tracker.process_log_chunk(
+        "LevelMgr@ LevelUid, LevelType, LevelId = 1091002 3 5002\n"
+    )
+
+    # chunk 3: the actual scene transition (map enter)
+    tracker.process_log_chunk(read_fixture("map_enter.log"))
+
+    current_map = tracker.state.current_map
+    assert current_map is not None
+    assert current_map.map_item_ids == ["400007"]
+    assert current_map.consumable_ids == ["10010"]
+    assert current_map.level_id == 5002
+
+
 def test_display_map_is_live_while_in_map() -> None:
     events: list[tuple[str, dict]] = []
     tracker = make_tracker(events)

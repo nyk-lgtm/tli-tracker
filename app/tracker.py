@@ -6,10 +6,11 @@ Coordinates log parsing, bag state, price lookups, and session management.
 
 import time
 from datetime import datetime
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from .bag_state import BagState
 from .log_parser import BagModifyEvent, LogParser
+from .map_naming import resolve_map_name
 from .models import DisplayMode, Drop, MapRun, TrackerState
 from .price_manager import PriceManager
 from .session_manager import SessionManager
@@ -65,6 +66,18 @@ class Tracker:
         self._paused_live_in_map = False
         self._paused_live_is_league_zone = False
         self._paused_map_transitions = 0
+
+        # Rolling capture buffer for map-entry items. The log watcher fires on
+        # every file modification event, so the beacon consumption, LevelMgr
+        # line, and _UpdateGameEnd can each arrive in separate chunks. Each
+        # piece is stashed here when seen; the next entering map_event drains
+        # whatever's recent. Entries older than _PENDING_MAP_ENTRY_WINDOW seconds
+        # expire so a beacon sold on AH minutes earlier can't taint a later map.
+        self._pending_beacon: tuple[str, float] | None = None
+        self._pending_consumables: tuple[list[str], float] | None = None
+        self._pending_level_id: tuple[int, float] | None = None
+
+    _PENDING_MAP_ENTRY_WINDOW = 2.0
 
     def _reset_live_cache(self, mark_dirty: bool = False) -> None:
         """Reset cached aggregate state used by the live UI."""
@@ -275,6 +288,10 @@ class Tracker:
                             map_run.ended_at - session.started_at
                         ).total_seconds(),
                         "item_rows": self._build_map_item_rows(map_run, ignored),
+                        "map_name": resolve_map_name(
+                            map_run.map_item_ids, map_run.level_id
+                        ),
+                        "level_id": map_run.level_id,
                     }
                 )
 
@@ -429,7 +446,19 @@ class Tracker:
         skip_modfy = False
         init_items = self.parser.parse_bag_init(text)
         mods = self.parser.parse_bag_modifications(text)
+        removals = self.parser.parse_bag_removals(text)
+        # the game emits RemoveBagItem (no item id) when a slot goes to zero
+        # instead of a Modfy with Num=0. reconstruct as synthetic zero-qty
+        # mods so process_modifications sees the decrement normally; without
+        # this, consuming the last of any beacon/consumable silently drops
+        # out of the bag delta.
+        if removals:
+            mods = list(mods) + self._mods_from_removals(removals)
         map_event = self.parser.parse_map_change(text)
+        # filter to gameplay-map link events (level_type=3); skips the
+        # hideout (level_type=0) records that can land in the same chunk
+        # when the watcher batches an enter+exit together.
+        level_event = self.parser.parse_last_level_link(text, level_type=3)
         price_events = self.parser.parse_price_search(text)
 
         # Buffer InitBagData across watcher chunks so a split sort dump doesn't
@@ -443,18 +472,52 @@ class Tracker:
             finalized_skip_modfy = self._flush_pending_init(process_changes=True)
             skip_modfy = skip_modfy or finalized_skip_modfy
 
-        # Process bag modifications
+        # stash the map-level link if this chunk contains one; may arrive in
+        # its own chunk separate from the map_event
+        if level_event is not None:
+            self._pending_level_id = (level_event.level_id, time.monotonic())
+
         if self.state.is_initialized and not skip_modfy:
             if mods:
                 changes = self.bag.process_modifications(mods)
+                # capture beacon + consumable decrements while still in hideout —
+                # a beacon going down during an active map run is noise, ignore.
+                if changes and not self.state.is_in_map:
+                    found_beacon: Optional[str] = None
+                    found_consumables: list[str] = []
+                    for item_id, delta in changes.items():
+                        if delta >= 0:
+                            continue
+                        if get_item_type(item_id) == "Beacon":
+                            if found_beacon is None:
+                                found_beacon = item_id
+                        else:
+                            # repeat the id |delta| times so future cost math
+                            # can see how many of each modifier were applied
+                            found_consumables.extend([item_id] * abs(delta))
+                    now = time.monotonic()
+                    if found_beacon:
+                        self._pending_beacon = (found_beacon, now)
+                    if found_consumables:
+                        self._pending_consumables = (found_consumables, now)
                 if changes:
                     self._process_drops(changes)
 
         # Check for map changes
         if map_event:
             if map_event.entering:
-                self._on_map_enter(is_league_zone=map_event.is_league_zone)
+                beacon_id, consumable_ids, level_id = self._drain_map_entry_buffer()
+                self._on_map_enter(
+                    is_league_zone=map_event.is_league_zone,
+                    consumed_beacon_id=beacon_id,
+                    consumable_ids=consumable_ids,
+                    level_id=level_id,
+                )
             else:
+                # on exit: nothing outstanding should be held over for the next map
+                self._pending_beacon = None
+                self._pending_consumables = None
+                self._pending_level_id = None
                 self._on_map_exit(is_league_zone=map_event.is_league_zone)
 
         # Extract price data from AH searches
@@ -465,10 +528,38 @@ class Tracker:
                 "price_update", {"item_id": event.item_id, "price": final_price}
             )
 
+    def _mods_from_removals(self, removals) -> list[BagModifyEvent]:
+        """Translate BagRemoveEvents into zero-quantity BagModifyEvents.
+
+        The item id is absent from the RemoveBagItem log line but present
+        in the bag state's slot key, so we reconstruct it from whatever
+        the slot currently holds. If the slot isn't tracked (e.g. bag not
+        yet initialized, or a slot we never saw fill), the removal is a
+        no-op.
+        """
+        synthetic = []
+        for removal in removals:
+            prefix = f"{removal.page_id}:{removal.slot_id}:"
+            for slot_key in list(self.bag.slots.keys()):
+                if slot_key.startswith(prefix):
+                    item_id = slot_key.split(":", 2)[2]
+                    synthetic.append(
+                        BagModifyEvent(
+                            page_id=removal.page_id,
+                            slot_id=removal.slot_id,
+                            item_id=item_id,
+                            quantity=0,
+                        )
+                    )
+        return synthetic
+
     def _process_log_chunk_paused(self, text: str) -> None:
         """Process log while paused: silent bag, tracked transitions, live prices."""
         init_items = self.parser.parse_bag_init(text)
         mods = self.parser.parse_bag_modifications(text)
+        removals = self.parser.parse_bag_removals(text)
+        if removals:
+            mods = list(mods) + self._mods_from_removals(removals)
         map_event = self.parser.parse_map_change(text)
         price_events = self.parser.parse_price_search(text)
 
@@ -499,8 +590,43 @@ class Tracker:
                 "price_update", {"item_id": event.item_id, "price": final_price}
             )
 
+    def _drain_map_entry_buffer(
+        self,
+    ) -> tuple[Optional[str], list[str], Optional[int]]:
+        """Return any buffered beacon/consumable/level_id captures that are
+        still within the freshness window, then clear the buffer.
+
+        Entries older than _PENDING_MAP_ENTRY_WINDOW seconds are treated as
+        stale (e.g. a beacon sold on the AH minutes before this map entry)
+        and discarded rather than misattributed to the current map.
+        """
+        now = time.monotonic()
+        cutoff = now - self._PENDING_MAP_ENTRY_WINDOW
+
+        beacon_id: Optional[str] = None
+        if self._pending_beacon and self._pending_beacon[1] >= cutoff:
+            beacon_id = self._pending_beacon[0]
+
+        consumable_ids: list[str] = []
+        if self._pending_consumables and self._pending_consumables[1] >= cutoff:
+            consumable_ids = list(self._pending_consumables[0])
+
+        level_id: Optional[int] = None
+        if self._pending_level_id and self._pending_level_id[1] >= cutoff:
+            level_id = self._pending_level_id[0]
+
+        self._pending_beacon = None
+        self._pending_consumables = None
+        self._pending_level_id = None
+        return beacon_id, consumable_ids, level_id
+
     def _start_current_map(
-        self, is_league_zone: bool = False, notify: bool = True
+        self,
+        is_league_zone: bool = False,
+        notify: bool = True,
+        consumed_beacon_id: Optional[str] = None,
+        consumable_ids: Optional[list[str]] = None,
+        level_id: Optional[int] = None,
     ) -> None:
         """Start tracking a current map run without a fresh scene-change event."""
         self.state.is_in_map = True
@@ -508,9 +634,14 @@ class Tracker:
         # Reset bag baseline for this map
         self.bag.reset_baseline()
 
-        # Start new map run
+        # Start new map run, carrying any entry-cost items captured in the
+        # same log chunk as the map-enter event (see _process_log_chunk).
         self.state.current_map = MapRun(
-            started_at=datetime.now(), is_league_zone=is_league_zone
+            started_at=datetime.now(),
+            is_league_zone=is_league_zone,
+            map_item_ids=[consumed_beacon_id] if consumed_beacon_id else [],
+            consumable_ids=list(consumable_ids) if consumable_ids else [],
+            level_id=level_id,
         )
 
         # Ensure we have a session
@@ -527,9 +658,21 @@ class Tracker:
             self._notify("map_enter", {})
             self._notify_state()
 
-    def _on_map_enter(self, is_league_zone: bool = False) -> None:
+    def _on_map_enter(
+        self,
+        is_league_zone: bool = False,
+        consumed_beacon_id: Optional[str] = None,
+        consumable_ids: Optional[list[str]] = None,
+        level_id: Optional[int] = None,
+    ) -> None:
         """Handle entering a map."""
-        self._start_current_map(is_league_zone=is_league_zone, notify=True)
+        self._start_current_map(
+            is_league_zone=is_league_zone,
+            notify=True,
+            consumed_beacon_id=consumed_beacon_id,
+            consumable_ids=consumable_ids,
+            level_id=level_id,
+        )
         self._last_map_run = self.state.current_map
 
     def _on_map_exit(self, is_league_zone: bool = False) -> None:
@@ -581,6 +724,11 @@ class Tracker:
                             "item_rows": self._build_map_item_rows(
                                 self.state.current_map, ignored
                             ),
+                            "map_name": resolve_map_name(
+                                self.state.current_map.map_item_ids,
+                                self.state.current_map.level_id,
+                            ),
+                            "level_id": self.state.current_map.level_id,
                         }
                     )
 
@@ -805,6 +953,10 @@ class Tracker:
                     else None
                 ),
                 "item_rows": self._build_map_item_rows(display_map_run, ignored_ids),
+                "map_name": resolve_map_name(
+                    display_map_run.map_item_ids, display_map_run.level_id
+                ),
+                "level_id": display_map_run.level_id,
             }
 
         session = None

@@ -308,6 +308,10 @@ function renderMapsAccordion() {
             total_value: state.displayMap.value || 0,
             duration_seconds: state.displayMap.duration || 0,
             item_rows: state.displayMap.item_rows || [],
+            // carry through the backend-resolved name so the live row
+            // reads "Glacial Abyss (T8-0)" from the moment the map starts
+            // rather than staying on "Map N" until the run ends.
+            map_name: state.displayMap.map_name || '',
             is_live: true
         }
         : null;
@@ -337,7 +341,11 @@ function renderMapsAccordion() {
 
     const rowsHtml = ordered.map((map) => {
         const isExpanded = expandedIndex === map.index;
-        const mapLabel = `Map ${map.index + 1}`;
+        // backend-resolved name when PR#4 captured beacon + level_id; falls
+        // back to numbered placeholder for legacy sessions or any capture miss
+        const mapLabel = map.map_name && map.map_name.length > 0
+            ? map.map_name
+            : `Map ${map.index + 1}`;
         const gross = sumGrossValue(map.item_rows);
         const profit = map.total_value || 0;
         const profitClass = profit >= 0 ? 'positive' : 'negative';

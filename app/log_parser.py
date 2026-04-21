@@ -16,9 +16,36 @@ class BagModifyEvent:
 
 
 @dataclass
+class BagRemoveEvent:
+    """Emitted when a slot goes to zero and the game tears it down.
+
+    Unlike BagModifyEvent, the item id is not present in the log line;
+    callers reconstruct it from their current bag state (the slot's last
+    known occupant).
+    """
+
+    page_id: int
+    slot_id: int
+
+
+@dataclass
 class MapChangeEvent:
     entering: bool
     is_league_zone: bool = False
+
+
+@dataclass
+class LevelLinkEvent:
+    """Identifies the specific map instance being loaded.
+
+    level_type == 3 is a gameplay map; 0 is the hideout/refuge. level_id
+    falls in a tier-specific range (see tracker.resolve_map_name for the
+    table).
+    """
+
+    level_uid: int
+    level_type: int
+    level_id: int
 
 
 @dataclass
@@ -46,6 +73,13 @@ class LogParser:
         r"ConfigBaseId = (\d+) Num = (\d+)"
     )
 
+    # emitted when a slot's stack hits zero — the game tears the slot down
+    # instead of emitting a Modfy with Num=0. the ConfigBaseId isn't in the
+    # line, callers have to look it up from prior bag state.
+    PATTERN_BAG_REMOVE = re.compile(
+        r"BagMgr@:RemoveBagItem PageId = (\d+) SlotId = (\d+)"
+    )
+
     PATTERN_SCENE_CHANGE = re.compile(
         r"PageApplyBase@ _UpdateGameEnd:.*?"
         r"LastSceneName = World'/Game/Art/(?:Maps|Season/S\d+/Maps)/([^']+)'.*?"
@@ -57,6 +91,10 @@ class LogParser:
         r"PageApplyBase@ _UpdateGameEnd:.*?"
         r"NextSceneName = World'/Game/Art/(?:Maps/S2|Season/S9/Maps|Season/S13/Maps)/",
         re.DOTALL,
+    )
+
+    PATTERN_LEVEL_LINK = re.compile(
+        r"LevelMgr@ LevelUid, LevelType, LevelId = (\d+) (\d+) (\d+)"
     )
 
     # 1. Capture the Request Block: From "SendMessage STT" to "SendMessage End"
@@ -99,6 +137,18 @@ class LogParser:
             )
         return events
 
+    def parse_bag_removals(self, text: str) -> list[BagRemoveEvent]:
+        """Find slot-teardown events (stack went to zero)."""
+        events = []
+        for match in self.PATTERN_BAG_REMOVE.finditer(text):
+            events.append(
+                BagRemoveEvent(
+                    page_id=int(match.group(1)),
+                    slot_id=int(match.group(2)),
+                )
+            )
+        return events
+
     def parse_bag_init(self, text: str) -> list[BagModifyEvent]:
         events = []
         for match in self.PATTERN_BAG_INIT.finditer(text):
@@ -129,6 +179,28 @@ class LogParser:
             return MapChangeEvent(entering=False, is_league_zone=is_league_zone)
 
         return None
+
+    def parse_last_level_link(
+        self, text: str, level_type: Optional[int] = None
+    ) -> Optional[LevelLinkEvent]:
+        """Return the last LevelMgr level-link record in the chunk, if any.
+
+        The game emits this line milliseconds before the _UpdateGameEnd
+        scene change. When a chunk spans both a map entry and the
+        subsequent return-to-hideout, the last match is the hideout's
+        (level_type=0, level_id=110). Callers pairing with a map_enter
+        should pass ``level_type=3`` to skip the hideout entry and find
+        the incoming map's identity.
+        """
+        last = None
+        for match in self.PATTERN_LEVEL_LINK.finditer(text):
+            lt = int(match.group(2))
+            if level_type is not None and lt != level_type:
+                continue
+            last = (int(match.group(1)), lt, int(match.group(3)))
+        if last is None:
+            return None
+        return LevelLinkEvent(level_uid=last[0], level_type=last[1], level_id=last[2])
 
     def parse_last_map_change(self, text: str) -> Optional[MapChangeEvent]:
         """Return the most recent map transition found in a block of log text."""
