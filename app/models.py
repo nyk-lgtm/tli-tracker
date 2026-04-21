@@ -63,6 +63,10 @@ class MapRun:
     investment: float = 0  # FE cost for this map (captured at map end)
     paused_at: Optional[datetime] = None
     paused_seconds: float = 0.0
+    # populated by future parser work; empty on sessions recorded before that lands
+    map_item_ids: list[str] = field(default_factory=list)
+    consumable_ids: list[str] = field(default_factory=list)
+    map_cost_snapshot: dict[str, dict] = field(default_factory=dict)
 
     def pause(self, now: datetime) -> None:
         if not self.paused_at:
@@ -129,6 +133,9 @@ class MapRun:
             "drops": [d.to_dict() for d in self.drops],
             "is_league_zone": self.is_league_zone,
             "paused_seconds": self.paused_seconds,
+            "map_item_ids": list(self.map_item_ids),
+            "consumable_ids": list(self.consumable_ids),
+            "map_cost_snapshot": dict(self.map_cost_snapshot),
         }
 
 

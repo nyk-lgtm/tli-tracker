@@ -202,6 +202,10 @@ class SessionManager:
                         "total_value": map_dict.get("net_value", 0.0),
                         "duration_seconds": map_dict.get("duration_seconds", 0.0),
                         "ended_at_offset": (ended_at - started_at).total_seconds(),
+                        "map_item_ids": map_dict.get("map_item_ids", []),
+                        "consumable_ids": map_dict.get("consumable_ids", []),
+                        "map_cost_snapshot": map_dict.get("map_cost_snapshot", {}),
+                        "item_rows": list(map_rows.values()),
                     }
                 )
                 last_completed_map = (map_dict, map_rows)
