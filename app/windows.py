@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
         self._items_load_warning_shown = False
 
         self.setWindowTitle("TLI Tracker")
-        self.resize(500, 800)
+        self.resize(1024, 800)
         self.setMinimumSize(450, 600)
 
         # Create web view

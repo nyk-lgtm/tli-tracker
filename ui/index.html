@@ -43,7 +43,7 @@
     <style>html:not(.theme-ready) body { visibility: hidden; }</style>
 </head>
 <body class="dark bg-dark-bg text-gray-100 h-screen overflow-hidden font-sans antialiased">
-    <div id="app" class="p-4 max-w-2xl mx-auto h-screen flex flex-col">
+    <div id="app" class="p-4 max-w-5xl mx-auto h-screen flex flex-col">
         <!-- Header -->
         <header class="flex items-center justify-between mb-6">
             <img src="assets/logo.webp" alt="TLI Tracker" class="h-10 object-contain">
@@ -99,8 +99,7 @@
         </div>
 
         <!-- Mode Toggle -->
-        <div class="flex items-center justify-between mb-3">
-            <h2 class="text-base font-semibold text-gray-200">Drops</h2>
+        <div class="flex items-center justify-end mb-3">
             <div id="drops-mode-live" class="toggle-group">
                 <button id="btn-mode-session" class="toggle-btn active">
                     Session
@@ -117,7 +116,8 @@
 
         <!-- Drops List -->
         <div id="drops-container" class="drops-container">
-            <div id="drops-list" class="drops-list">
+            <div id="drops-list-maps" class="drops-panel drops-panel-maps"></div>
+            <div id="drops-list" class="drops-panel drops-panel-drops">
                 <!-- Drops will be inserted here -->
                 <div class="empty-state">
                     No drops yet

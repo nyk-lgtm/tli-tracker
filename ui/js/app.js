@@ -222,7 +222,7 @@ function showDropContextMenu(event, itemId, isIgnored) {
 
 function handleDropRowContextMenu(event) {
     const row = event.target.closest('[data-drop-row]');
-    if (!row || !elements.dropsList.contains(row)) {
+    if (!row || !elements.dropsContainer.contains(row)) {
         hideContextMenu();
         return;
     }
@@ -234,7 +234,7 @@ function handleDropRowContextMenu(event) {
 
 async function handleDropRowClick(event) {
     const rangeButton = event.target.closest('[data-price-history-range]');
-    if (rangeButton && elements.dropsList.contains(rangeButton)) {
+    if (rangeButton && elements.dropsContainer.contains(rangeButton)) {
         const itemId = rangeButton.dataset.itemId;
         const rangeKey = rangeButton.dataset.priceHistoryRange;
         if (!itemId || !rangeKey) {
@@ -246,7 +246,7 @@ async function handleDropRowClick(event) {
     }
 
     const row = event.target.closest('[data-drop-row]');
-    if (row && elements.dropsList.contains(row)) {
+    if (row && elements.dropsContainer.contains(row)) {
         const itemId = row.dataset.itemId;
         if (!itemId) {
             return;
@@ -264,7 +264,7 @@ async function handleDropRowClick(event) {
     }
 
     const mapRow = event.target.closest('[data-map-row]');
-    if (mapRow && elements.dropsList.contains(mapRow)) {
+    if (mapRow && elements.dropsContainer.contains(mapRow)) {
         const raw = mapRow.dataset.mapIndex;
         const index = Number(raw);
         if (Number.isFinite(index)) {
@@ -428,8 +428,8 @@ function init() {
     elements.btnHistory.addEventListener('click', () => { openModal('history'); loadHistory(); });
     elements.btnOverlay.addEventListener('click', toggleOverlay);
     elements.btnResetSettings.addEventListener('click', resetDefaults);
-    elements.dropsList.addEventListener('click', handleDropRowClick);
-    elements.dropsList.addEventListener('contextmenu', handleDropRowContextMenu);
+    elements.dropsContainer.addEventListener('click', handleDropRowClick);
+    elements.dropsContainer.addEventListener('contextmenu', handleDropRowContextMenu);
     document.addEventListener('click', (e) => {
         if (!contextMenuEl || contextMenuEl.classList.contains('hidden')) return;
         if (!contextMenuEl.contains(e.target)) hideContextMenu();

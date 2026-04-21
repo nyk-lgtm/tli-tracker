@@ -291,18 +291,6 @@ hr {
 /* ============================================
    Map Accordion (per-map breakdown in session viewer)
    ============================================ */
-.map-accordion-labels {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 1rem;
-    border-bottom: 1px solid var(--tli-color-border);
-}
-
-.map-accordion-labels .stat-label {
-    margin-bottom: 0;
-}
-
 .map-accordion-row {
     border-bottom: 1px solid var(--tli-color-border-subtle);
 }
@@ -336,7 +324,7 @@ hr {
 }
 
 .map-accordion-name {
-    font-weight: 600;
+    font-weight: 400;
     color: var(--tli-color-text);
 }
 
@@ -369,14 +357,73 @@ hr {
    Drops List
    ============================================ */
 .drops-container {
-    background: var(--tli-color-card);
-    border: 1px solid var(--tli-color-border);
-    border-radius: 0.75rem;
-    overflow-x: hidden;
-    overflow-y: auto;
     margin-bottom: 0.5rem;
     flex: 0 1 auto;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.drops-panel {
+    background: var(--tli-color-card);
+    border: 1px solid var(--tli-color-border);
+    border-radius: 0.75rem;
+    overflow-y: auto;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.drops-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid var(--tli-color-border);
+    position: sticky;
+    top: 0;
+    background: var(--tli-color-card);
+    z-index: 1;
+}
+
+.drops-panel-header .stat-label {
+    margin-bottom: 0;
+}
+
+/* narrow (default): only the drops panel shows; the maps panel is
+   revealed when the viewer's Maps toggle is active */
+.drops-panel-maps {
+    display: none;
+}
+
+.drops-container.mode-maps > .drops-panel-maps {
+    display: block;
+}
+
+.drops-container.mode-maps > .drops-panel-drops {
+    display: none;
+}
+
+/* wide: when viewing a session, both panels sit side-by-side.
+   the viewer toggle disappears since there's nothing left to toggle. */
+@media (min-width: 900px) {
+    #app.viewing-session #drops-mode-viewer {
+        display: none;
+    }
+
+    #app.viewing-session .drops-container {
+        flex-direction: row;
+    }
+
+    #app.viewing-session .drops-container > .drops-panel-maps {
+        display: block;
+        flex: 0 0 calc(50% - 0.25rem);
+    }
+
+    #app.viewing-session .drops-container > .drops-panel-drops {
+        display: block;
+        flex: 1 1 auto;
+    }
 }
 
 .drop-row {
