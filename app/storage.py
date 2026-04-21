@@ -110,6 +110,7 @@ DEFAULT_CONFIG = {
     "cached_log_path": "",  # auto-cached from last successful detection
     "cloud_prices_enabled": False,  # opt-in cloud price fallback
     "auto_download_updates": True,  # background update downloads on startup
+    "update_check_interval_hours": 1,  # periodic background update check cadence
     # Widget-based overlay
     "overlay_edit_hint_dismissed": False,  # First-run overlay edit hint
     "overlay_edit_mode_hotkey": "Ctrl+F9",  # Hotkey to toggle edit mode

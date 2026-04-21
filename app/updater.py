@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
-from PySide6.QtCore import QObject, QUrl
+from PySide6.QtCore import QObject, QTimer, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkReply, QNetworkRequest
 
 from .storage import load_config
@@ -47,6 +47,7 @@ class Updater(QObject):
         self,
         on_state_change: Callable[[dict], None] | None = None,
         parent: QObject | None = None,
+        periodic_timer: QTimer | None = None,
     ):
         super().__init__(parent)
         self._on_state_change = on_state_change
@@ -60,6 +61,13 @@ class Updater(QObject):
         self._pending_update: UpdateInfo | None = None
         self._state = self._build_state()
 
+        self._periodic_timer = (
+            periodic_timer if periodic_timer is not None else QTimer(self)
+        )
+        self._periodic_timer.timeout.connect(lambda: self.start_update_flow("periodic"))
+        hours = max(1, int(load_config().get("update_check_interval_hours", 1)))
+        self._periodic_timer.start(hours * 60 * 60 * 1000)
+
     def get_update_state(self) -> dict:
         """Return the current updater snapshot."""
         return dict(self._state)
@@ -71,16 +79,20 @@ class Updater(QObject):
         Busy and downloaded states are deduplicated by returning the current
         snapshot without issuing new network requests.
         """
-        if trigger not in {"startup", "manual"}:
+        if trigger not in {"startup", "manual", "periodic"}:
             trigger = "manual"
 
-        if trigger == "startup" and not load_config().get(
+        if trigger in {"startup", "periodic"} and not load_config().get(
             "auto_download_updates", True
         ):
             return self.get_update_state()
 
         status = self._state["status"]
         if status in self.BUSY_STATES or status == self.TERMINAL_PENDING_STATE:
+            # an in-flight periodic check shouldn't swallow the user's manual
+            # click — upgrade the trigger so the resolving state feeds manual UX
+            if trigger == "manual" and self._state.get("trigger") == "periodic":
+                self._set_state(trigger="manual")
             return self.get_update_state()
 
         self._clear_download_artifacts()

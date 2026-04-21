@@ -3,11 +3,16 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from PySide6.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication, QTimer
 from PySide6.QtNetwork import QNetworkReply
 
 from app import storage
 from app.updater import Updater
+
+
+def make_updater() -> Updater:
+    """Build an Updater with an inert timer so unit tests don't schedule real checks."""
+    return Updater(periodic_timer=QTimer())
 
 
 @pytest.fixture
@@ -28,7 +33,7 @@ def test_startup_flow_does_nothing_when_auto_download_disabled(
     qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     storage.save_config(build_config(auto_download_updates=False))
-    updater = Updater()
+    updater = make_updater()
     calls: list[str] = []
     monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
 
@@ -42,7 +47,7 @@ def test_startup_flow_begins_checking_when_auto_download_enabled(
     qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     storage.save_config(build_config(auto_download_updates=True))
-    updater = Updater()
+    updater = make_updater()
     calls: list[str] = []
     monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
 
@@ -56,7 +61,7 @@ def test_startup_flow_begins_checking_when_auto_download_enabled(
 def test_manual_flow_can_transition_into_downloading(
     qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
 
     def fake_check() -> None:
         updater._set_state(
@@ -86,7 +91,7 @@ def test_start_update_flow_deduplicates_busy_states(
     busy_state: str,
     progress: int,
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     updater._set_state(
         status=busy_state,
         trigger="manual",
@@ -106,7 +111,7 @@ def test_start_update_flow_deduplicates_busy_states(
 def test_start_update_flow_returns_downloaded_snapshot_without_rechecking(
     qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     updater._set_state(
         status="downloaded",
         trigger="manual",
@@ -129,7 +134,7 @@ def test_manual_checks_are_allowed_again_after_terminal_states(
     monkeypatch: pytest.MonkeyPatch,
     initial_state: str,
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     updater._set_state(status=initial_state, trigger="manual", error="boom")
     calls: list[str] = []
     monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
@@ -144,7 +149,7 @@ def test_manual_checks_are_allowed_again_after_terminal_states(
 def test_apply_downloaded_update_uses_silent_installer_flags(
     qt_app: QCoreApplication, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     installer_path = tmp_path / updater.INSTALLER_NAME
     installer_path.write_bytes(b"stub")
     updater._download_path = installer_path
@@ -187,7 +192,7 @@ def test_apply_downloaded_update_uses_silent_installer_flags(
 def test_check_completion_records_last_checked_at(
     qt_app: QCoreApplication,
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     assert updater.get_update_state()["last_checked_at"] == ""
 
     class FakeReply:
@@ -210,7 +215,7 @@ def test_check_completion_records_last_checked_at(
 def test_release_notes_surface_in_snapshot_on_successful_check(
     qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     monkeypatch.setattr(updater, "_start_download_request", lambda info: None)
 
     payload = json.dumps(
@@ -246,7 +251,7 @@ def test_release_notes_surface_in_snapshot_on_successful_check(
 def test_release_notes_cleared_when_up_to_date(
     qt_app: QCoreApplication,
 ) -> None:
-    updater = Updater()
+    updater = make_updater()
     payload = json.dumps(
         {
             "tag_name": f"v{updater.current_version}",
@@ -279,3 +284,85 @@ def test_config_migration_backfills_auto_download_updates() -> None:
 
     assert config["auto_download_updates"] is True
     assert storage.load_json("config.json")["auto_download_updates"] is True
+
+
+def test_periodic_flow_does_nothing_when_auto_download_disabled(
+    qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    storage.save_config(build_config(auto_download_updates=False))
+    updater = make_updater()
+    calls: list[str] = []
+    monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
+
+    snapshot = updater.start_update_flow("periodic")
+
+    assert calls == []
+    assert snapshot["status"] == "idle"
+
+
+def test_periodic_flow_begins_checking_when_auto_download_enabled(
+    qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    storage.save_config(build_config(auto_download_updates=True))
+    updater = make_updater()
+    calls: list[str] = []
+    monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
+
+    snapshot = updater.start_update_flow("periodic")
+
+    assert calls == ["check"]
+    assert snapshot["status"] == "checking"
+    assert snapshot["trigger"] == "periodic"
+
+
+@pytest.mark.parametrize(
+    "busy_state,progress",
+    [("checking", 0), ("downloading", 42), ("downloaded", 100)],
+)
+def test_periodic_flow_deduplicates_against_in_flight_and_cached(
+    qt_app: QCoreApplication,
+    monkeypatch: pytest.MonkeyPatch,
+    busy_state: str,
+    progress: int,
+) -> None:
+    updater = make_updater()
+    updater._set_state(
+        status=busy_state,
+        trigger="manual",
+        new_version="0.2.3" if busy_state != "checking" else "",
+        progress_percent=progress,
+    )
+    calls: list[str] = []
+    monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
+
+    snapshot = updater.start_update_flow("periodic")
+
+    assert calls == []
+    assert snapshot["status"] == busy_state
+
+
+def test_manual_upgrades_trigger_of_in_flight_periodic_check(
+    qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    updater = make_updater()
+    updater._set_state(status="checking", trigger="periodic")
+    calls: list[str] = []
+    monkeypatch.setattr(updater, "_start_check_request", lambda: calls.append("check"))
+
+    snapshot = updater.start_update_flow("manual")
+
+    assert calls == []
+    assert snapshot["status"] == "checking"
+    assert snapshot["trigger"] == "manual"
+
+
+def test_periodic_trigger_does_not_downgrade_manual_check(
+    qt_app: QCoreApplication, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    updater = make_updater()
+    updater._set_state(status="checking", trigger="manual")
+    monkeypatch.setattr(updater, "_start_check_request", lambda: None)
+
+    snapshot = updater.start_update_flow("periodic")
+
+    assert snapshot["trigger"] == "manual"
