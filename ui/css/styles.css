@@ -98,6 +98,36 @@ hr {
     opacity: 1;
 }
 
+/* Sprite-referenced inline SVG icons (see js/icons.js). Stroke inherits
+   from currentColor so CSS color themes the icon. */
+.tli-icon {
+    width: 16px;
+    height: 16px;
+    color: inherit;
+    flex-shrink: 0;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+/* Expand-indicator chevron on drop rows and map accordion rows.
+   No margin here because .drop-item-name is flex with gap; the map
+   accordion name (non-flex) adds spacing via its own rule below. */
+.tli-icon-chevron {
+    width: 10px;
+    height: 10px;
+    color: var(--tli-color-text-dim);
+    transition: transform var(--tli-transition-fast);
+}
+
+.map-accordion-name .tli-icon-chevron {
+    margin-right: 0.5rem;
+}
+
+.drop-row.expanded .tli-icon-chevron,
+.map-accordion-row.expanded .tli-icon-chevron {
+    transform: rotate(90deg);
+}
+
 .btn-ghost {
     display: inline-flex;
     align-items: center;

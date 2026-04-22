@@ -370,7 +370,7 @@ function renderMapsAccordion() {
                     data-map-index="${map.index}"
                     aria-expanded="${isExpanded ? 'true' : 'false'}"
                 >
-                    <span class="map-accordion-name">${escapeHtml(mapLabel)}</span>
+                    <span class="map-accordion-name">${window.TLI.icons.iconSvg('chevron-right', { className: 'tli-icon-chevron' })}${escapeHtml(mapLabel)}</span>
                     <span class="map-accordion-stats">
                         <span title="Total value picked up">${formatValue(gross)}</span>
                         <span class="${profitClass}" title="Profit (net)">${formatValue(profit)}</span>
@@ -558,6 +558,7 @@ function renderDropRow(item, trailingHtml, panel = 'drops') {
         ? '<span class="drop-item-ignored-badge">IGNORED</span>'
         : '';
 
+    const chevronHtml = window.TLI.icons.iconSvg('chevron-right', { className: 'tli-icon-chevron' });
     return `
         <div class="drop-row${isExpanded ? ' expanded' : ''}${isIgnored ? ' ignored' : ''}">
             <div
@@ -568,6 +569,7 @@ function renderDropRow(item, trailingHtml, panel = 'drops') {
                 aria-expanded="${isExpanded ? 'true' : 'false'}"
             >
                 <div class="drop-item-name">
+                    ${chevronHtml}
                     ${priceIndicator}
                     ${trailingHtml.nameHtml}
                 </div>
