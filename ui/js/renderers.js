@@ -134,19 +134,21 @@ export function updateTimedStats() {
 }
 
 export function updateInitStatus() {
+    const btn = elements.btnInitialize;
+    const label = btn.querySelector('.btn-label') || btn;
     if (state.awaitingInit) {
         // Waiting for user to sort bag
-        elements.btnInitialize.textContent = 'Waiting...';
-        elements.btnInitialize.disabled = true;
-        elements.btnInitialize.classList.remove('hidden');
+        label.textContent = 'Waiting...';
+        btn.disabled = true;
+        btn.classList.remove('hidden');
     } else if (state.initialized) {
         // Initialized - show re-sync option
-        elements.btnInitialize.textContent = 'Re-sync Bag';
-        elements.btnInitialize.disabled = false;
-        elements.btnInitialize.classList.remove('hidden');
+        label.textContent = 'Re-sync Bag';
+        btn.disabled = false;
+        btn.classList.remove('hidden');
     } else {
         // Not yet initialized - hide button
-        elements.btnInitialize.classList.add('hidden');
+        btn.classList.add('hidden');
     }
 
     // Re-render drops to update empty state
@@ -356,6 +358,12 @@ function renderMapsAccordion() {
         const mapLabel = map.map_name && map.map_name.length > 0
             ? map.map_name
             : `Map ${map.index + 1}`;
+        // lead with the tier ("T8-1", "T8 Profound", …) so it always stays
+        // visible even when the name has to truncate; fall back to just the
+        // name when the backend didn't resolve a tier (e.g. "Deep Space")
+        const tierMatch = mapLabel.match(/^(.*?)\s+\(([^)]+)\)$/);
+        const mapNamePart = tierMatch ? tierMatch[1] : mapLabel;
+        const mapTierPart = tierMatch ? tierMatch[2] : '';
         const gross = sumGrossValue(map.item_rows);
         const profit = map.total_value || 0;
         const profitClass = profit >= 0 ? 'positive' : 'negative';
@@ -371,7 +379,15 @@ function renderMapsAccordion() {
                     data-map-index="${map.index}"
                     aria-expanded="${isExpanded ? 'true' : 'false'}"
                 >
-                    <span class="map-accordion-name">${window.TLI.icons.iconSvg('chevron-right', { className: 'tli-icon-chevron' })}${escapeHtml(mapLabel)}</span>
+                    <span class="map-accordion-name">
+                        ${window.TLI.icons.iconSvg('chevron-right', { className: 'tli-icon-chevron' })}
+                        <span class="map-accordion-label">
+                            ${mapTierPart
+                                ? `<span class="map-accordion-label-tier">${escapeHtml(mapTierPart)}</span>
+                                   <span class="map-accordion-label-name">${escapeHtml(mapNamePart)}</span>`
+                                : `<span class="map-accordion-label-tier">${escapeHtml(mapNamePart)}</span>`}
+                        </span>
+                    </span>
                     <span class="map-accordion-stats">
                         <span title="Total value picked up">${formatValue(gross)}</span>
                         <span class="${profitClass}" title="Profit (net)">${formatValue(profit)}</span>
