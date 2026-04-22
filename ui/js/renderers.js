@@ -98,11 +98,12 @@ function renderPauseButton() {
 
     if (state.session) {
         btn.classList.remove('hidden');
+        const label = btn.querySelector('.btn-label') || btn;
         if (state.session.paused) {
-            btn.textContent = 'Resume';
+            label.textContent = 'Resume';
             btn.classList.add('active');
         } else {
-            btn.textContent = 'Pause';
+            label.textContent = 'Pause';
             btn.classList.remove('active');
         }
     } else {

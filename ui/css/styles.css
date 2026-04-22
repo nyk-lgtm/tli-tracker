@@ -421,6 +421,12 @@ hr {
     margin-bottom: 0;
 }
 
+/* column header's first label needs to line up with row text, which is
+   indented by the chevron (width + gap) */
+.drops-panel-header > .stat-label:first-child {
+    padding-left: calc(10px + 0.5rem);
+}
+
 /* narrow (default): only the drops panel shows; the maps panel is
    revealed when the viewer's Maps toggle is active */
 .drops-panel-maps {

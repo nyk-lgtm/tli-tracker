@@ -288,7 +288,7 @@ async function handleDropRowClick(event) {
 
 async function initialize() {
     elements.btnInitialize.disabled = true;
-    elements.btnInitialize.textContent = 'Waiting...';
+    setBtnLabel(elements.btnInitialize, 'Waiting...');
 
     try {
         const result = await api('request_initialization');
@@ -299,8 +299,14 @@ async function initialize() {
         stopInitPolling();
         // Reset button on error
         elements.btnInitialize.disabled = false;
-        elements.btnInitialize.textContent = 'Re-sync Bag';
+        setBtnLabel(elements.btnInitialize, 'Re-sync Bag');
     }
+}
+
+function setBtnLabel(btn, text) {
+    const label = btn.querySelector('.btn-label');
+    if (label) label.textContent = text;
+    else btn.textContent = text;
 }
 
 let pauseInFlight = false;
@@ -377,13 +383,7 @@ async function toggleOverlay() {
 }
 
 function updateOverlayButton() {
-    if (overlayVisible) {
-        elements.btnOverlay.textContent = 'Hide Overlay';
-        elements.btnOverlay.classList.add('active');
-    } else {
-        elements.btnOverlay.textContent = 'Overlay';
-        elements.btnOverlay.classList.remove('active');
-    }
+    elements.btnOverlay.classList.toggle('active', overlayVisible);
 }
 
 // ============ Timer Update Loop ============
