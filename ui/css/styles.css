@@ -170,6 +170,65 @@ hr {
 /* ============================================
    Stat Cards
    ============================================ */
+
+/* 3 cards in narrow mode; 4th (Best Map) joins in wide mode when both
+   the drops panel and the map breakdown are visible side-by-side. */
+.stat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (min-width: 900px) {
+    .stat-cards-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.stat-card-best-map {
+    display: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+@media (min-width: 900px) {
+    .stat-card-best-map {
+        display: block;
+    }
+}
+
+.stat-card-best-map:hover {
+    border-color: rgb(var(--tli-palette-primary-rgb) / 0.4);
+}
+
+.stat-card-best-map.disabled {
+    cursor: default;
+    opacity: 0.65;
+}
+
+.stat-card-best-map.disabled:hover {
+    border-color: var(--tli-color-border);
+}
+
+/* empty-state message ("No completed maps") reads lighter than the
+   regular mono profit/context numbers */
+.stat-card-best-map.disabled #stat-best-map-context {
+    font-weight: 400;
+    color: var(--tli-color-text-dim);
+}
+
+/* context row mirrors the map accordion label hierarchy: tier leads in
+   primary text, name and duration trail in muted */
+.stat-card-best-map .best-map-tier {
+    color: var(--tli-color-text);
+    font-weight: 500;
+}
+
+.stat-card-best-map .best-map-name,
+.stat-card-best-map .best-map-duration {
+    color: var(--tli-color-text-muted);
+}
+
 .stat-card {
     background: var(--tli-color-card);
     border: 1px solid var(--tli-color-border);

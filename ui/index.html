@@ -74,7 +74,7 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="stat-cards-grid mb-6">
             <!-- Current Map & Session Mapping -->
             <div class="stat-card">
                 <div class="stat-label">Current Map</div>
@@ -97,6 +97,13 @@
                 <div class="stat-label">Efficiency</div>
                 <div id="stat-rate" class="stat-value-xl font-mono">0<span class="text-sm text-gray-500">/hr</span></div>
                 <div class="stat-value-sm text-gray-400"><span id="stat-map-count" class="font-mono">0</span> maps</div>
+            </div>
+
+            <!-- Best Map (wide-mode only; click expands + scrolls that map in the map breakdown column) -->
+            <div id="stat-card-best-map" class="stat-card stat-card-best-map" role="button" tabindex="0">
+                <div class="stat-label">Best Map</div>
+                <div id="stat-best-map-profit" class="stat-value-xl font-mono">—</div>
+                <div id="stat-best-map-context" class="stat-value-sm"></div>
             </div>
         </div>
 

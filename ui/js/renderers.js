@@ -88,8 +88,51 @@ export function renderUI() {
         badge.remove();
     }
 
+    renderBestMapCard();
+
     // Update init status (this also re-renders drops)
     updateInitStatus();
+}
+
+function renderBestMapCard() {
+    const card = elements.statCardBestMap;
+    const profitEl = elements.statBestMapProfit;
+    const contextEl = elements.statBestMapContext;
+    if (!card || !profitEl || !contextEl) return;
+
+    const completedMaps = Array.isArray(state.session?.maps) ? state.session.maps : [];
+    if (completedMaps.length === 0) {
+        profitEl.textContent = '—';
+        contextEl.textContent = 'No completed maps';
+        card.classList.add('disabled');
+        delete card.dataset.mapIndex;
+        return;
+    }
+
+    // best = highest profit; stable for ties by preferring the earliest map
+    // (reduce keeps the accumulator unless the candidate strictly wins)
+    const best = completedMaps.reduce((acc, map) =>
+        (map.total_value || 0) > (acc.total_value || 0) ? map : acc,
+        completedMaps[0]
+    );
+
+    const label = best.map_name && best.map_name.length > 0
+        ? best.map_name
+        : `Map ${best.index + 1}`;
+    // split trailing "(tier)" — mirrors the map accordion rendering so the
+    // card's tier lead + muted name matches the row it points to
+    const tierMatch = label.match(/^(.*?)\s+\(([^)]+)\)$/);
+    const name = tierMatch ? tierMatch[1] : label;
+    const tier = tierMatch ? tierMatch[2] : '';
+
+    card.classList.remove('disabled');
+    card.dataset.mapIndex = String(best.index);
+    profitEl.textContent = formatValue(best.total_value || 0);
+
+    const duration = formatTime(best.duration_seconds || 0);
+    contextEl.innerHTML = tier
+        ? `<span class="best-map-tier">${escapeHtml(tier)}</span> <span class="best-map-name">${escapeHtml(name)}</span> <span class="best-map-duration">· ${escapeHtml(duration)}</span>`
+        : `<span class="best-map-tier">${escapeHtml(name)}</span> <span class="best-map-duration">· ${escapeHtml(duration)}</span>`;
 }
 
 function renderPauseButton() {

@@ -464,6 +464,48 @@ function init() {
     if (elements.statCardEfficiency) {
         elements.statCardEfficiency.addEventListener('click', toggleEfficiencyUnit);
     }
+
+    if (elements.statCardBestMap) {
+        const activate = () => {
+            if (elements.statCardBestMap.classList.contains('disabled')) return;
+            const raw = elements.statCardBestMap.dataset.mapIndex;
+            if (!raw) return;
+            const index = Number(raw);
+            if (!Number.isFinite(index)) return;
+
+            // card only renders in wide mode where both panels are visible,
+            // so no subView switching is needed — just expand + scroll
+            if (state.expandedMapIndex !== index) {
+                toggleExpandedMap(index);
+            }
+            // always scroll to the top of the map column so the expansion is
+            // unambiguous, even if the row was already in view. scrollIntoView
+            // ignores sticky headers so we compute the offset manually — pin
+            // the target just below the sticky titlerow + column-header stack.
+            requestAnimationFrame(() => {
+                const container = elements.dropsListMaps;
+                if (!container) return;
+                const target = container.querySelector(
+                    `[data-map-row][data-map-index="${index}"]`
+                );
+                if (!target) return;
+                const titlerow = container.querySelector('.drops-panel-titlerow');
+                const colHeader = container.querySelector('.drops-panel-header');
+                const headerOffset = (titlerow?.offsetHeight || 0) + (colHeader?.offsetHeight || 0);
+                const delta = target.getBoundingClientRect().top
+                    - container.getBoundingClientRect().top
+                    - headerOffset;
+                container.scrollTo({ top: container.scrollTop + delta, behavior: 'smooth' });
+            });
+        };
+        elements.statCardBestMap.addEventListener('click', activate);
+        elements.statCardBestMap.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                activate();
+            }
+        });
+    }
     elements.btnSettings.addEventListener('click', () => {
         openModal('settings');
         void loadSettings();
