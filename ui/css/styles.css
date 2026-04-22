@@ -679,12 +679,14 @@ hr {
         flex-direction: row;
     }
 
-    .drops-container > .drops-panel-maps {
+    .drops-container > .drops-panel-maps,
+    .drops-container.mode-maps > .drops-panel-maps {
         display: block;
         flex: 0 0 calc(50% - 0.25rem);
     }
 
-    .drops-container > .drops-panel-drops {
+    .drops-container > .drops-panel-drops,
+    .drops-container.mode-maps > .drops-panel-drops {
         display: block;
         flex: 1 1 auto;
     }
