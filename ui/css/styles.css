@@ -299,9 +299,8 @@ hr {
     border-bottom: none;
 }
 
-.map-accordion-row.expanded {
-    background:
-        linear-gradient(180deg, rgb(var(--tli-palette-primary-rgb) / 0.08) 0%, rgb(var(--tli-palette-primary-rgb) / 0.03) 100%);
+.map-accordion-row.expanded .map-accordion-body {
+    background: var(--tli-color-row-expanded-bg);
 }
 
 .map-accordion-header {
@@ -448,9 +447,8 @@ hr {
     border-bottom: none;
 }
 
-.drop-row.expanded {
-    background:
-        linear-gradient(180deg, rgb(var(--tli-palette-primary-rgb) / 0.08) 0%, rgb(var(--tli-palette-primary-rgb) / 0.03) 100%);
+.drop-row.expanded .drop-item-panel {
+    background: var(--tli-color-row-expanded-bg);
 }
 
 .drop-row.ignored .drop-item-label,
@@ -529,11 +527,6 @@ hr {
     background-color: var(--tli-color-shine);
 }
 
-.drop-row.expanded .drop-item:hover,
-.drop-row.expanded .drop-item {
-    background-color: transparent;
-}
-
 .drop-item-name {
     display: flex;
     align-items: center;
@@ -573,7 +566,7 @@ hr {
 }
 
 .drop-item-panel {
-    padding: 0 1rem 0.875rem;
+    padding: 0.625rem 1rem 0.875rem;
 }
 
 .drop-item-panel-state {

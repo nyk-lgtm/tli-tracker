@@ -149,6 +149,12 @@
     --tli-color-update-bg-soft:         rgba(255, 255, 255, 0.1);
 
     /* ============================================
+       Expanded row backdrop (map accordion, drops panel)
+       recessed/depth feel over card surface; themeable via palette bg
+       ============================================ */
+    --tli-color-row-expanded-bg:        rgb(var(--tli-palette-bg-rgb) / 0.55);
+
+    /* ============================================
        Drop item history (derived from success palette so it themes)
        ============================================ */
     --tli-color-history-line:           var(--tli-color-success);
