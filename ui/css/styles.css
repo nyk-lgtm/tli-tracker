@@ -1634,10 +1634,22 @@ button[data-tooltip]:hover::before {
     margin-bottom: 0.75rem;
     background: var(--tli-color-card);
     border: 1px solid var(--tli-color-border);
-    border-left: 3px solid var(--tli-color-accent, var(--tli-color-primary));
     border-radius: 0.5rem;
     font-size: 0.8125rem;
     color: var(--tli-color-text);
+}
+
+.session-viewer-banner-main {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+/* history/clock icon signals "special mode" role in place of the old
+   left-border accent; uses the same sprite as the History button */
+.session-viewer-banner .tli-icon {
+    color: var(--tli-color-primary);
 }
 
 .session-export-btn {
