@@ -422,17 +422,154 @@ hr {
     flex: 1 1 auto;
 }
 
-.drops-panel-title {
-    padding: 0.6rem 1rem 0.35rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--tli-color-text-muted, #9ca3af);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+/* title row: title + search/filter controls inline. sticky at top so
+   the affordances stay visible while scrolling the drops list. the
+   column header below pins at --drops-titlerow-h so there's no gap
+   when the list scrolls. */
+.drops-panel-titlerow {
+    --drops-titlerow-h: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem 0.25rem 1rem;
     position: sticky;
     top: 0;
     background: var(--tli-color-card);
     z-index: 2;
+    height: var(--drops-titlerow-h);
+}
+
+.drops-panel-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--tli-color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.drops-panel-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+/* inline-expandable search: icon ↔ input field on the same row */
+.drops-search {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    transition: background var(--tli-transition-fast),
+                box-shadow var(--tli-transition-fast);
+}
+
+.drops-search[data-expanded="true"] {
+    background: var(--tli-color-bg);
+}
+
+.drops-search-toggle,
+.drops-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0.25rem;
+    color: var(--tli-color-text-dim);
+    cursor: pointer;
+    transition: color var(--tli-transition-fast),
+                background var(--tli-transition-fast);
+}
+
+.drops-search-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.drops-search-toggle:hover,
+.drops-filter-toggle:hover {
+    color: var(--tli-color-text);
+    background: var(--tli-color-card-hover);
+}
+
+.drops-search-toggle.active,
+.drops-filter-toggle.active {
+    color: var(--tli-color-primary);
+}
+
+/* the input is hidden-via-zero-width when closed so layout stays stable
+   and the icon is the only interactive target. expansion animates via
+   width transition. */
+.drops-search-input {
+    width: 0;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--tli-color-text);
+    font-size: 0.8125rem;
+    font-family: inherit;
+    outline: none;
+    transition: width var(--tli-transition-base),
+                padding var(--tli-transition-base);
+}
+
+.drops-search-input::placeholder {
+    color: var(--tli-color-text-dim);
+}
+
+.drops-search[data-expanded="true"] .drops-search-input {
+    width: 10rem;
+    padding: 0.2rem 0.375rem 0.2rem 0;
+}
+
+/* filter chip strip: renders below the title row when the filter is
+   toggled open. not sticky — scrolls away with the list, which is fine
+   since the column header still pins below the title row. */
+.drops-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    padding: 0 1rem 0.5rem;
+    background: var(--tli-color-card);
+}
+
+.drops-filter-chip {
+    padding: 0.2rem 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--tli-color-text-muted);
+    background: transparent;
+    border: 1px solid var(--tli-color-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color var(--tli-transition-fast),
+                background var(--tli-transition-fast),
+                border-color var(--tli-transition-fast);
+    font-family: inherit;
+}
+
+.drops-filter-chip:hover {
+    color: var(--tli-color-text);
+    border-color: var(--tli-color-text-dim);
+}
+
+.drops-filter-chip.active {
+    color: var(--tli-color-on-primary);
+    background: var(--tli-color-primary);
+    border-color: var(--tli-color-primary);
 }
 
 .drops-panel-header {
@@ -442,7 +579,7 @@ hr {
     padding: 0.4rem 1rem;
     border-bottom: 1px solid var(--tli-color-border);
     position: sticky;
-    top: 2rem;
+    top: 2.5rem;
     background: var(--tli-color-card);
     z-index: 1;
 }

@@ -196,9 +196,61 @@ function expandedMapVisibleItemIds() {
     return (map?.item_rows || []).map((item) => item.item_id);
 }
 
-function dropsPanelHeaderHtml() {
+function dropsPanelHeaderHtml(availableCategories = []) {
+    const { searchOpen, searchTerm, filterOpen, filterCategories } = state.sessionDrops;
+    const searchHasTerm = searchTerm.trim().length > 0;
+    const filterActive = filterCategories.length > 0;
+    const showControls = availableCategories.length > 0;
+
+    // inline-expandable search (icon ↔ input field) + filter toggle button
+    const controlsHtml = showControls ? `
+        <div class="drops-panel-controls">
+            <div class="drops-search" data-expanded="${searchOpen ? 'true' : 'false'}">
+                <button type="button"
+                    class="drops-search-toggle ${searchHasTerm || searchOpen ? 'active' : ''}"
+                    data-action="toggle-search"
+                    aria-label="Search items"
+                    aria-expanded="${searchOpen ? 'true' : 'false'}">
+                    ${window.TLI.icons.iconSvg('search')}
+                </button>
+                <input type="search"
+                    class="drops-search-input"
+                    data-drops-search
+                    placeholder="Search items…"
+                    value="${escapeHtml(searchTerm)}">
+            </div>
+            <button type="button"
+                class="drops-filter-toggle ${filterActive || filterOpen ? 'active' : ''}"
+                data-action="toggle-filter"
+                aria-label="Filter by category"
+                aria-expanded="${filterOpen ? 'true' : 'false'}">
+                ${window.TLI.icons.iconSvg('filter')}
+            </button>
+        </div>
+    ` : '';
+
+    // chips are multi-select: click toggles a category in/out of the set.
+    // "All" is mutually exclusive with the rest — clicking it clears the set;
+    // it reads active when no categories are selected (default state).
+    const chipsHtml = showControls && filterOpen ? `
+        <div class="drops-filter-chips">
+            <button type="button"
+                class="drops-filter-chip ${!filterActive ? 'active' : ''}"
+                data-filter-category="all">All</button>
+            ${availableCategories.map((cat) => `
+                <button type="button"
+                    class="drops-filter-chip ${filterCategories.includes(cat) ? 'active' : ''}"
+                    data-filter-category="${escapeHtml(cat)}">${escapeHtml(cat)}</button>
+            `).join('')}
+        </div>
+    ` : '';
+
     return `
-        <div class="drops-panel-title">Session Drops</div>
+        <div class="drops-panel-titlerow">
+            <div class="drops-panel-title">Session Drops</div>
+            ${controlsHtml}
+        </div>
+        ${chipsHtml}
         <div class="drops-panel-header">
             <span class="stat-label">Item</span>
             <span class="stat-label">Value</span>
@@ -206,9 +258,34 @@ function dropsPanelHeaderHtml() {
     `;
 }
 
+function applySessionDropsFilters(itemRows) {
+    const { searchTerm, filterCategories } = state.sessionDrops;
+    const term = searchTerm.trim().toLowerCase();
+    return itemRows.filter((row) => {
+        if (filterCategories.length > 0) {
+            const rowCat = row.item_type || 'Other';
+            if (!filterCategories.includes(rowCat)) return false;
+        }
+        if (term && !(row.item_name || '').toLowerCase().includes(term)) {
+            return false;
+        }
+        return true;
+    });
+}
+
+function collectDropCategories(itemRows) {
+    const seen = new Set();
+    for (const row of itemRows) {
+        seen.add(row.item_type || 'Other');
+    }
+    return Array.from(seen).sort();
+}
+
 function mapsPanelHeaderHtml() {
     return `
-        <div class="drops-panel-title">Drops Per Map</div>
+        <div class="drops-panel-titlerow">
+            <div class="drops-panel-title">Drops Per Map</div>
+        </div>
         <div class="drops-panel-header">
             <span class="stat-label">Map</span>
             <span class="map-accordion-stats">
@@ -620,7 +697,12 @@ function mountPriceHistoryCharts(root) {
 }
 
 function renderValueMode(itemRows) {
-    const sorted = [...itemRows]
+    // derive filter-chip options from the full row set (pre-filter) so the
+    // chips don't disappear under you as you narrow the list
+    const categories = collectDropCategories(itemRows);
+    const filtered = applySessionDropsFilters(itemRows);
+
+    const sorted = [...filtered]
         .sort((itemA, itemB) => {
             const valueA = itemA.value || 0;
             const valueB = itemB.value || 0;
@@ -638,23 +720,43 @@ function renderValueMode(itemRows) {
         })
         .slice(0, 50);
 
-    const html = sorted.map((item) => {
-        const valueClass = item.value >= 0 ? 'positive' : 'negative';
-        const highValueClass = Math.abs(item.value) >= 10000 ? 'high-value' : '';
-        const valueText = item.value !== 0
-            ? formatValue(item.value)
-            : '(no price)';
+    const bodyHtml = sorted.length === 0
+        ? `<div class="empty-state">No drops match the current filters</div>`
+        : sorted.map((item) => {
+            const valueClass = item.value >= 0 ? 'positive' : 'negative';
+            const highValueClass = Math.abs(item.value) >= 10000 ? 'high-value' : '';
+            const valueText = item.value !== 0
+                ? formatValue(item.value)
+                : '(no price)';
 
-        return renderDropRow(item, {
-            nameHtml: `
-                <span class="drop-item-label">${escapeHtml(item.item_name)}</span>
-                <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
-            `,
-            valueHtml: `<div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>`
-        });
-    }).join('');
+            return renderDropRow(item, {
+                nameHtml: `
+                    <span class="drop-item-label">${escapeHtml(item.item_name)}</span>
+                    <span class="text-gray-500 font-mono text-sm">×${Math.abs(item.quantity)}</span>
+                `,
+                valueHtml: `<div class="stat-value font-mono ${valueClass} ${highValueClass}">${valueText}</div>`
+            });
+        }).join('');
 
-    elements.dropsList.innerHTML = dropsPanelHeaderHtml() + html;
+    // preserve search-input focus + cursor across re-renders so typing during
+    // a live backend update (new drop coming in) doesn't blur the input
+    const prevInput = elements.dropsList.querySelector('[data-drops-search]');
+    const wasFocused = prevInput && document.activeElement === prevInput;
+    const selStart = prevInput?.selectionStart ?? null;
+    const selEnd = prevInput?.selectionEnd ?? null;
+
+    elements.dropsList.innerHTML = dropsPanelHeaderHtml(categories) + bodyHtml;
+
+    if (wasFocused) {
+        const next = elements.dropsList.querySelector('[data-drops-search]');
+        if (next) {
+            next.focus();
+            if (selStart !== null) {
+                try { next.setSelectionRange(selStart, selEnd); } catch (_) {}
+            }
+        }
+    }
+
     mountPriceHistoryCharts(elements.dropsList);
 }
 

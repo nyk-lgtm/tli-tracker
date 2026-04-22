@@ -3,7 +3,7 @@
  */
 
 import { elements } from './elements.js';
-import { state, settings } from './state.js';
+import { state, settings, resetSessionDropsFilters } from './state.js';
 import { formatValue, formatTime, formatRate, formatDate, showStatus } from './utils.js';
 import { closeModal, showConfirmDialog } from './modals.js';
 import { updateState } from './renderers.js';
@@ -97,6 +97,7 @@ export async function viewSession(sessionId, date) {
         state.viewingSessionId = sessionId;
         state.subView = 'drops';
         state.expandedMapIndex = null;
+        resetSessionDropsFilters();
         updateState(stats);
         if (elements.sessionViewerBanner) {
             elements.sessionViewerDate.textContent = date || '';
@@ -114,6 +115,7 @@ export function exitSessionViewing() {
     state.viewingSessionId = null;
     state.subView = 'drops';
     state.expandedMapIndex = null;
+    resetSessionDropsFilters();
     if (elements.sessionViewerBanner) {
         elements.sessionViewerBanner.classList.add('hidden');
     }

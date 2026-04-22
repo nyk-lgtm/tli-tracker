@@ -17,8 +17,24 @@ export const state = {
     subView: 'drops',
     // which map's drops are expanded in the accordion (null = none). in live
     // mode this auto-follows the current map on map_enter.
-    expandedMapIndex: null
+    expandedMapIndex: null,
+    // session drops panel: search + category filter controls. session-scoped,
+    // reset to defaults on a fresh session via resetSessionDropsFilters().
+    // filterCategories is multi-select; empty array = show all categories.
+    sessionDrops: {
+        searchOpen: false,
+        searchTerm: '',
+        filterOpen: false,
+        filterCategories: [],
+    }
 };
+
+export function resetSessionDropsFilters() {
+    state.sessionDrops.searchOpen = false;
+    state.sessionDrops.searchTerm = '';
+    state.sessionDrops.filterOpen = false;
+    state.sessionDrops.filterCategories = [];
+}
 
 export const settings = {
     tax_enabled: true,

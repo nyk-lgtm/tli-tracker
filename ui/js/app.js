@@ -5,7 +5,7 @@
  * The api() and waitForApi() functions are provided by qt_bridge.js.
  */
 
-import { state, settings } from './state.js';
+import { state, settings, resetSessionDropsFilters } from './state.js';
 import { elements, initElements } from './elements.js';
 import { showStatus, tickTimers } from './utils.js';
 import { openModal, closeModal, showConfirmDialog } from './modals.js';
@@ -104,6 +104,7 @@ window.onPythonEvent = function(eventType, data) {
             break;
         case 'session_reset':
             collapseExpandedPriceHistory();
+            resetSessionDropsFilters();
             if (state.viewingSessionId) {
                 state.viewingSessionId = null;
                 state.subView = 'drops';
@@ -240,6 +241,47 @@ function handleDropRowContextMenu(event) {
 }
 
 async function handleDropRowClick(event) {
+    // session drops panel controls (search toggle / clear, filter toggle,
+    // category chips) — checked first so the row-click logic below isn't
+    // reached when the user interacts with these
+    const actionBtn = event.target.closest('[data-action]');
+    if (actionBtn && elements.dropsContainer.contains(actionBtn)) {
+        const action = actionBtn.dataset.action;
+        if (action === 'toggle-search') {
+            const opening = !state.sessionDrops.searchOpen;
+            state.sessionDrops.searchOpen = opening;
+            if (!opening) state.sessionDrops.searchTerm = '';
+            renderDrops();
+            if (opening) {
+                const input = elements.dropsList?.querySelector('[data-drops-search]');
+                input?.focus();
+            }
+            return;
+        }
+        if (action === 'toggle-filter') {
+            state.sessionDrops.filterOpen = !state.sessionDrops.filterOpen;
+            renderDrops();
+            return;
+        }
+    }
+
+    const chip = event.target.closest('[data-filter-category]');
+    if (chip && elements.dropsContainer.contains(chip)) {
+        const cat = chip.dataset.filterCategory;
+        const selected = state.sessionDrops.filterCategories;
+        if (cat === 'all') {
+            // "All" is mutually exclusive — clears any specific selections
+            state.sessionDrops.filterCategories = [];
+        } else {
+            // toggle: if already selected, remove; otherwise add
+            const idx = selected.indexOf(cat);
+            if (idx >= 0) selected.splice(idx, 1);
+            else selected.push(cat);
+        }
+        renderDrops();
+        return;
+    }
+
     const rangeButton = event.target.closest('[data-price-history-range]');
     if (rangeButton && elements.dropsContainer.contains(rangeButton)) {
         const itemId = rangeButton.dataset.itemId;
@@ -432,6 +474,12 @@ function init() {
     elements.btnResetSettings.addEventListener('click', resetDefaults);
     elements.dropsContainer.addEventListener('click', handleDropRowClick);
     elements.dropsContainer.addEventListener('contextmenu', handleDropRowContextMenu);
+    elements.dropsContainer.addEventListener('input', (event) => {
+        const input = event.target.closest('[data-drops-search]');
+        if (!input) return;
+        state.sessionDrops.searchTerm = input.value;
+        renderDrops();
+    });
     document.addEventListener('click', (e) => {
         if (!contextMenuEl || contextMenuEl.classList.contains('hidden')) return;
         if (!contextMenuEl.contains(e.target)) hideContextMenu();
