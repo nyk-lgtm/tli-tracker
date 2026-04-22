@@ -6,14 +6,15 @@ This app doesn't read or write any game releated data outside of ur machine. Unl
 
 <table>
   <tr>
-    <td rowspan="2"><img src="ui/assets/docs/main_window.png" alt="Main Window"></td>
+    <td><img src="ui/assets/docs/main_window.png" alt="Main Window"></td>
     <td align="center" valign="middle"><img src="ui/assets/docs/overlay.png" alt="Overlay"></td>
   </tr>
   <tr>
+    <td><img src="ui/assets/docs/session_viewer.png" alt="Session Viewer"></td>
     <td align="center" valign="middle"><img src="ui/assets/docs/history.png" alt="History"></td>
   </tr>
   <tr>
-    <td align="center"><em>Main Window</em></td>
+    <td align="center"><em>Main Window & Session Viewer</em></td>
     <td align="center"><em>Customizable Overlay & Session History</em></td>
   </tr>
 </table>
