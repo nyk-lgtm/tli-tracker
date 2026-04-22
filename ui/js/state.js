@@ -26,6 +26,12 @@ export const state = {
         searchTerm: '',
         filterOpen: false,
         filterCategories: [],
+    },
+    // drops-per-map panel: name/tier substring search (no category filter —
+    // maps already self-group by tier). session-scoped.
+    mapsPanel: {
+        searchOpen: false,
+        searchTerm: '',
     }
 };
 
@@ -34,6 +40,8 @@ export function resetSessionDropsFilters() {
     state.sessionDrops.searchTerm = '';
     state.sessionDrops.filterOpen = false;
     state.sessionDrops.filterCategories = [];
+    state.mapsPanel.searchOpen = false;
+    state.mapsPanel.searchTerm = '';
 }
 
 export const settings = {

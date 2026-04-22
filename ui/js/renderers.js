@@ -324,10 +324,33 @@ function collectDropCategories(itemRows) {
     return Array.from(seen).sort();
 }
 
-function mapsPanelHeaderHtml() {
+function mapsPanelHeaderHtml(showControls = false) {
+    const { searchOpen, searchTerm } = state.mapsPanel;
+    const searchHasTerm = searchTerm.trim().length > 0;
+
+    const controlsHtml = showControls ? `
+        <div class="drops-panel-controls">
+            <div class="drops-search" data-expanded="${searchOpen ? 'true' : 'false'}">
+                <button type="button"
+                    class="drops-search-toggle ${searchHasTerm || searchOpen ? 'active' : ''}"
+                    data-action="toggle-maps-search"
+                    aria-label="Search maps"
+                    aria-expanded="${searchOpen ? 'true' : 'false'}">
+                    ${window.TLI.icons.iconSvg('search')}
+                </button>
+                <input type="text"
+                    class="drops-search-input"
+                    data-maps-search
+                    placeholder="Search maps…"
+                    value="${escapeHtml(searchTerm)}">
+            </div>
+        </div>
+    ` : '';
+
     return `
         <div class="drops-panel-titlerow">
             <div class="drops-panel-title">Drops Per Map</div>
+            ${controlsHtml}
         </div>
         <div class="drops-panel-header">
             <span class="stat-label">Map</span>
@@ -458,7 +481,7 @@ function renderMapsAccordion() {
     const maps = liveMap ? [...completed, liveMap] : completed;
 
     if (maps.length === 0) {
-        elements.dropsListMaps.innerHTML = mapsPanelHeaderHtml()
+        elements.dropsListMaps.innerHTML = mapsPanelHeaderHtml(false)
             + `<div class="empty-state">No maps yet</div>`;
         return;
     }
@@ -467,11 +490,46 @@ function renderMapsAccordion() {
     // first since its synthesized index is highest)
     const ordered = [...maps].sort((a, b) => (b.index || 0) - (a.index || 0));
 
+    // apply maps-panel search — substring match against the full
+    // "Name (Tier)" label so typing "profound" or "t8" narrows as well
+    const { searchTerm } = state.mapsPanel;
+    const term = searchTerm.trim().toLowerCase();
+    const filtered = term
+        ? ordered.filter((map) => {
+            const label = map.map_name && map.map_name.length > 0
+                ? map.map_name
+                : `Map ${map.index + 1}`;
+            return label.toLowerCase().includes(term);
+        })
+        : ordered;
+
     const expandedIndex = state.expandedMapIndex;
 
-    const headerHtml = mapsPanelHeaderHtml();
+    // preserve focus/cursor on the maps search input across re-renders
+    // (backend updates fire frequently during live sessions)
+    const prevInput = elements.dropsListMaps.querySelector('[data-maps-search]');
+    const wasFocused = prevInput && document.activeElement === prevInput;
+    const selStart = prevInput?.selectionStart ?? null;
+    const selEnd = prevInput?.selectionEnd ?? null;
 
-    const rowsHtml = ordered.map((map) => {
+    const headerHtml = mapsPanelHeaderHtml(true);
+
+    if (filtered.length === 0) {
+        elements.dropsListMaps.innerHTML = headerHtml
+            + `<div class="empty-state">No maps match the current search</div>`;
+        if (wasFocused) {
+            const next = elements.dropsListMaps.querySelector('[data-maps-search]');
+            if (next) {
+                next.focus();
+                if (selStart !== null) {
+                    try { next.setSelectionRange(selStart, selEnd); } catch (_) {}
+                }
+            }
+        }
+        return;
+    }
+
+    const rowsHtml = filtered.map((map) => {
         const isExpanded = expandedIndex === map.index;
         // backend-resolved name when PR#4 captured beacon + level_id; falls
         // back to numbered placeholder for legacy sessions or any capture miss
@@ -520,6 +578,17 @@ function renderMapsAccordion() {
     }).join('');
 
     elements.dropsListMaps.innerHTML = headerHtml + rowsHtml;
+
+    if (wasFocused) {
+        const next = elements.dropsListMaps.querySelector('[data-maps-search]');
+        if (next) {
+            next.focus();
+            if (selStart !== null) {
+                try { next.setSelectionRange(selStart, selEnd); } catch (_) {}
+            }
+        }
+    }
+
     mountPriceHistoryCharts(elements.dropsListMaps);
 }
 

@@ -263,6 +263,17 @@ async function handleDropRowClick(event) {
             renderDrops();
             return;
         }
+        if (action === 'toggle-maps-search') {
+            const opening = !state.mapsPanel.searchOpen;
+            state.mapsPanel.searchOpen = opening;
+            if (!opening) state.mapsPanel.searchTerm = '';
+            renderDrops();
+            if (opening) {
+                const input = elements.dropsListMaps?.querySelector('[data-maps-search]');
+                input?.focus();
+            }
+            return;
+        }
     }
 
     const chip = event.target.closest('[data-filter-category]');
@@ -517,10 +528,17 @@ function init() {
     elements.dropsContainer.addEventListener('click', handleDropRowClick);
     elements.dropsContainer.addEventListener('contextmenu', handleDropRowContextMenu);
     elements.dropsContainer.addEventListener('input', (event) => {
-        const input = event.target.closest('[data-drops-search]');
-        if (!input) return;
-        state.sessionDrops.searchTerm = input.value;
-        renderDrops();
+        const dropsInput = event.target.closest('[data-drops-search]');
+        if (dropsInput) {
+            state.sessionDrops.searchTerm = dropsInput.value;
+            renderDrops();
+            return;
+        }
+        const mapsInput = event.target.closest('[data-maps-search]');
+        if (mapsInput) {
+            state.mapsPanel.searchTerm = mapsInput.value;
+            renderDrops();
+        }
     });
     document.addEventListener('click', (e) => {
         if (!contextMenuEl || contextMenuEl.classList.contains('hidden')) return;
