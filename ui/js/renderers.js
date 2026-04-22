@@ -301,12 +301,45 @@ function dropsPanelHeaderHtml(availableCategories = []) {
     `;
 }
 
+// coarse buckets for the session-drops filter chips. rules are broad
+// substring checks so new raw item_types fall into an existing bucket
+// without needing maintenance; anything unmatched lands in Other.
+const DROP_CATEGORY_BUCKETS = [
+    'Legendaries',
+    'Skills',
+    'Organs',
+    'Cards',
+    'Memory & Prism',
+    'Maps & Compass',
+    'Divinity',
+    'Wedges',
+    'Commodities',
+    'Other',
+];
+
+function bucketForItemType(itemType) {
+    const t = itemType || '';
+    if (t === 'Legendary Equipment') return 'Legendaries';
+    if (t.endsWith('Skill')) return 'Skills';
+    if (t.includes('Organ')) return 'Organs';
+    if (t === 'Fluorescent Memory') return 'Cards';
+    if (t.includes('Memory') || t.includes('Prism')) return 'Memory & Prism';
+    if (
+        t === 'Compass' || t === 'Season Compass' || t === 'Astrolabe'
+        || t === 'Probe' || t === 'Beacon'
+    ) return 'Maps & Compass';
+    if (t.includes('Divinity') || t.includes('God')) return 'Divinity';
+    if (t.includes('Wedge')) return 'Wedges';
+    if (t === 'Fossil' || t === 'Ember' || t === 'Fuel' || t === 'Universal Items') return 'Commodities';
+    return 'Other';
+}
+
 function applySessionDropsFilters(itemRows) {
     const { searchTerm, filterCategories } = state.sessionDrops;
     const term = searchTerm.trim().toLowerCase();
     return itemRows.filter((row) => {
         if (filterCategories.length > 0) {
-            const rowCat = row.item_type || 'Other';
+            const rowCat = bucketForItemType(row.item_type);
             if (!filterCategories.includes(rowCat)) return false;
         }
         if (term && !(row.item_name || '').toLowerCase().includes(term)) {
@@ -319,9 +352,9 @@ function applySessionDropsFilters(itemRows) {
 function collectDropCategories(itemRows) {
     const seen = new Set();
     for (const row of itemRows) {
-        seen.add(row.item_type || 'Other');
+        seen.add(bucketForItemType(row.item_type));
     }
-    return Array.from(seen).sort();
+    return DROP_CATEGORY_BUCKETS.filter((b) => seen.has(b));
 }
 
 function mapsPanelHeaderHtml(showControls = false) {
