@@ -86,18 +86,6 @@ hr {
     padding: 0.375rem 0.5rem;
 }
 
-/* Icon styling for external SVGs */
-.icon {
-    width: 16px;
-    height: 16px;
-    opacity: 0.7;
-    transition: opacity var(--tli-transition-fast);
-}
-
-.btn-secondary:hover .icon {
-    opacity: 1;
-}
-
 /* Sprite-referenced inline SVG icons (see js/icons.js). Stroke inherits
    from currentColor so CSS color themes the icon. */
 .tli-icon {
@@ -132,6 +120,7 @@ hr {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.375rem;
     padding: 0.5rem 1rem;
     background: transparent;
     border: 1px solid var(--tli-color-border);

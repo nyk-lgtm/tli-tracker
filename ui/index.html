@@ -49,13 +49,15 @@
             <img src="assets/logo.webp" alt="TLI Tracker" class="h-10 object-contain">
             <div class="flex gap-2">
                 <button id="btn-overlay" class="btn-secondary">
+                    <svg class="tli-icon" aria-hidden="true"><use href="#icon-overlay"></use></svg>
                     Overlay
                 </button>
                 <button id="btn-history" class="btn-secondary">
+                    <svg class="tli-icon" aria-hidden="true"><use href="#icon-history"></use></svg>
                     History
                 </button>
-                <button id="btn-settings" class="btn-secondary btn-icon">
-                    <img src="assets/icons/settings.svg" alt="Settings" class="icon">
+                <button id="btn-settings" class="btn-secondary btn-icon" aria-label="Settings">
+                    <svg class="tli-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
                 </button>
             </div>
 
@@ -128,7 +130,9 @@
                 <span id="update-notification-text" class="text-sm font-medium"></span>
                 <div class="flex items-center gap-2">
                     <button id="btn-update-restart" class="btn-primary text-xs">Restart to Update</button>
-                    <button id="btn-update-dismiss" class="update-notification-close" aria-label="Dismiss until next restart" data-tooltip="Dismiss until next restart">×</button>
+                    <button id="btn-update-dismiss" class="update-notification-close" aria-label="Dismiss until next restart" data-tooltip="Dismiss until next restart">
+                        <svg class="tli-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+                    </button>
                 </div>
             </div>
             <details id="update-notification-notes" class="update-notification-notes hidden">
@@ -141,14 +145,17 @@
         <div class="flex items-center justify-end gap-3 mt-auto">
             <button id="btn-initialize" class="hidden btn-ghost"
                 data-tooltip="Reset tracking baseline — sort your bag in-game to re-seed. Use if drops stop matching reality.">
+                <svg class="tli-icon" aria-hidden="true"><use href="#icon-refresh"></use></svg>
                 Re-sync Bag
             </button>
 
             <button id="btn-pause" class="btn-ghost hidden">
+                <svg class="tli-icon" aria-hidden="true"><use href="#icon-pause"></use></svg>
                 Pause
             </button>
 
             <button id="btn-reset" class="btn-ghost btn-destructive">
+                <svg class="tli-icon" aria-hidden="true"><use href="#icon-trash"></use></svg>
                 Reset/End Session
             </button>
         </div>
@@ -159,7 +166,9 @@
         <div class="modal-content w-[440px]">
             <div class="modal-header">
                 <h3 class="modal-title">Settings</h3>
-                <button id="btn-close-settings" class="modal-close">&times;</button>
+                <button id="btn-close-settings" class="modal-close" aria-label="Close">
+                    <svg class="tli-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+                </button>
             </div>
 
             <div class="settings-layout">
@@ -400,7 +409,9 @@
         <div class="modal-content w-[500px] max-h-[80vh] overflow-hidden flex flex-col">
             <div class="modal-header">
                 <h3 class="modal-title">Session History</h3>
-                <button id="btn-close-history" class="modal-close">&times;</button>
+                <button id="btn-close-history" class="modal-close" aria-label="Close">
+                    <svg class="tli-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+                </button>
             </div>
 
             <!-- Summary Stats -->
